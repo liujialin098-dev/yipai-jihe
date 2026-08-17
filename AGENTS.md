@@ -6,6 +6,7 @@
 - Tailwind CSS 4、shadcn/ui（Base UI / Nova preset）、lucide-react。
 - Biome 2.4.2；Husky 提交前自动执行格式化、安全 lint 修复和 TypeScript 检查。
 - Spec Kit：`.specify/`；规范驱动开发文档以此目录为准。
+- 项目章程：[`.specify/memory/constitution.md`](.specify/memory/constitution.md)。
 
 ## 项目速览
 

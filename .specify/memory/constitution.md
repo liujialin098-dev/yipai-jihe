@@ -1,50 +1,96 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: 模板（未定稿） → 1.0.0
+- Modified principles: 无（首次将模板具体化为 MVP 项目章程）
+- Added sections: 核心原则具体化、技术与安全约束、开发流程与质量门禁
+- Removed sections: 无
+- Follow-up TODOs: RATIFICATION_DATE 尚无法从仓库历史确认，待项目负责人补录首次采纳日期
+-->
 
-## Core Principles
+# 复杂项目 MVP 演示实现章程
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+## 核心原则
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### I. MVP 结果优先
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+所有开发工作 MUST 以给定需求中的可演示结果和核心用户路径为第一优先级。实现范围
+以验证核心假设、跑通关键流程和支持演示为准；非核心能力、边缘场景和未来扩展点
+可以明确推迟。每项实现 MUST 能对应到具体需求、核心路径或必要的运行约束，避免
+为尚未发生的需求预留复杂结构。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+理由：本项目用于复杂项目的快速 MVP 演示，有限时间应优先转化为可验证的产品结果。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### II. 核心路径正确
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+需求实现 MUST 先识别并跑通从入口到结果的核心路径，再处理次要体验。核心路径上的
+数据流、状态变化、错误反馈和页面跳转 MUST 保持一致且可验证；若资源有限，边缘
+路径可以简化，但不得以牺牲核心路径正确性换取表面功能数量。
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+理由：演示项目的价值取决于关键场景是否完整可信，而不是功能清单是否最大化。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### III. 直接而简洁的实现
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+代码 MUST 采用满足当前需求的最直接方案。除非当前需求已经证明其必要性，不得引入
+额外的抽象层、通用框架、配置系统、扩展点或防御性分支。实现 MUST 优先复用现有
+技术栈和项目约定；当简单实现与可扩展实现均可满足需求时，选择更容易阅读、修改
+和验证的方案。
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+理由：MVP 的目标是快速验证核心价值；过度抽象会增加实现成本和故障面，降低迭代
+速度。
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### IV. 静态质量门禁
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+每次代码变更完成后 MUST 通过项目约定的静态检查，至少包括 `npm run check` 所覆盖
+的格式化、lint 和 TypeScript 检查。提交前发现的静态检查问题 MUST 在提交前修复，
+不得通过关闭规则、跳过检查或提交明显无关的临时文件来规避门禁。除非后续需求
+明确要求，本 MVP 不强制编写自动化测试；但实现者 MUST 对核心路径进行必要的手工
+验证。
+
+理由：静态检查是本项目在不增加测试开发成本的前提下，维持基本可交付质量的最低
+保障。
+
+### V. 约束内的清晰交付
+
+所有项目文档、需求说明、实现说明和交付记录 MUST 使用中文。变更 MUST 保持在当前
+技术栈和仓库结构内，优先复用 `shadcn/ui` 组件、主题 token 和 `lucide-react` 图标。
+除非需求明确提出，无需为本 MVP 单独建设完整的可扩展性方案或无障碍方案；但代码
+和文档 MUST 清楚表达当前实现的范围与已知取舍。
+
+理由：统一语言和既有约定可以降低协作成本，明确取舍可以避免把演示范围误认为
+生产级承诺。
+
+## 技术与安全约束
+
+- 项目 MUST 遵循 Next.js 16.3.1 App Router、React 19、TypeScript、Tailwind CSS 4、
+  shadcn/ui、`lucide-react` 和 Biome 的既有配置。
+- 默认使用 Server Component；只有确实需要浏览器状态或事件处理时才使用
+  `use client`。
+- Supabase 客户端 MUST 遵循项目既定的 browser/server/proxy 分工。敏感密钥 MUST
+  保持在服务端或本地环境配置中，严禁写入浏览器代码、提交仓库或使用
+  `NEXT_PUBLIC_` 前缀暴露。
+- 新增依赖前 MUST 先确认现有技术栈无法满足需求，并记录必要的选择理由。
+
+## 开发流程与质量门禁
+
+- 开始实现前 MUST 从需求中写出核心路径、验收结果和明确不包含的范围。
+- 实现顺序 MUST 优先覆盖核心路径，再补充对演示有直接价值的次要内容。
+- 完成变更后 MUST 运行 `npm run check`；检查失败时不得宣称该变更已完成。
+- 评审或交付说明 MUST 说明已完成内容、已知限制和被推迟的工作；推迟事项不得被
+  隐式包装为已支持能力。
+
+## 治理
+
+本章程是 MVP 需求拆解、实现取舍和交付检查的最高项目级约束。若其他开发说明与本
+章程冲突，以本章程为准；若技术事实发生变化，应在同一变更中同步更新相关项目文档。
+
+章程修订 MUST 说明变更原因、影响范围和版本变化，并更新顶部的 Sync Impact Report。
+版本遵循语义化规则：新增原则或实质扩展约束递增 MINOR；删除或重新定义现有原则、
+造成既有流程不兼容时递增 MAJOR；仅澄清措辞、修复错误或进行不改变约束含义的整理
+时递增 PATCH。修订后的章程 MUST 通过占位符检查、日期格式检查和项目维护者的内容
+复核。
+
+每次功能变更的评审或交付前 MUST 检查其是否遵守核心路径优先、简洁实现、静态质量
+门禁、中文文档和安全约束。任何偏离 MUST 在变更说明中写明具体原因，并限制在当前
+MVP 所需范围内。
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): 补录首次采纳本章程的日期 | **Last Amended**: 2026-08-17
