@@ -23,10 +23,10 @@
 
 ## 统一进度规则
 
-- [ ] 开始阶段前，创建并确认对应 SDD 的 `spec.md`、`plan.md` 和 `tasks.md`。
-- [ ] 涉及数据结构时补充 `data-model.md`，涉及接口时补充 `contracts/`。
-- [ ] 阶段完成前补充 `quickstart.md`，写清独立验收步骤和预期结果。
-- [ ] 开发过程中只实现当前阶段范围，不提前混入后续功能。
+- [x] 开始阶段前，创建并确认对应 SDD 的 `spec.md`、`plan.md` 和 `tasks.md`。
+- [x] 涉及数据结构时补充 `data-model.md`，涉及接口时补充 `contracts/`。
+- [x] 阶段完成前补充 `quickstart.md`，写清独立验收步骤和预期结果。
+- [x] 开发过程中只实现当前阶段范围，不提前混入后续功能。
 - [ ] 阶段完成前运行 `npm run check`，并完成该阶段全部独立验收项。
 - [ ] 阶段完成后更新状态、完成日期、验收结果、已知限制、下一步和提交记录。
 - [ ] 未通过静态检查或独立验收时，不得标记为“已完成”，也不得开始依赖该阶段的后续阶段。
@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：SDD-001 待开始
+- 当前状态：SDD-001 进行中（代码、数据库与 Preview 已就绪；等待开启 Supabase 匿名登录后完成核心验收）
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -46,43 +46,44 @@
 
 ### SDD-001：应用框架与匿名数据底座
 
-- 状态：待开始
+- 状态：进行中（外部配置待处理）
 - SDD 目录：`specs/001-app-foundation/`
 - AI Coding 估算：1 段主对话，复杂度 M
 - 目标：建立移动端应用框架、匿名会话和后续模块共用的数据安全底座。
 
 功能范围：
 
-- [ ] 建立首页、衣橱、添加衣物、推荐、收藏和设置路由骨架。
-- [ ] 建立移动端优先的应用布局、顶部状态区和底部导航。
-- [ ] 首次访问自动创建 Supabase 匿名用户，刷新后保持会话。
-- [ ] 建立用户资料和默认偏好初始化流程。
-- [ ] 业务数据统一绑定 Supabase Auth 用户 ID。
-- [ ] 建立数据库迁移目录、基础 RLS 模式和 Storage 私有路径规则。
-- [ ] 建立通用加载、错误、空状态和环境变量检查。
-- [ ] 部署第一个 Vercel Preview，验证 Supabase 环境变量连接。
+- [x] 建立首页、衣橱、添加衣物、推荐、收藏和设置路由骨架。
+- [x] 建立移动端优先的应用布局、顶部状态区和底部导航。
+- [x] 实现首次访问自动创建 Supabase 匿名用户及会话保持流程；待项目开关开启后验收。
+- [x] 实现用户资料和默认偏好幂等初始化流程；待匿名会话开启后验收。
+- [x] 业务数据统一绑定 Supabase Auth 用户 ID。
+- [x] 建立数据库迁移目录、基础 RLS 模式和 Storage 私有路径规则。
+- [x] 建立通用加载、错误、空状态和环境变量检查。
+- [x] 部署第一个 Vercel Preview，并确认 Vercel 到 Supabase 的公开环境配置可用。
 
 明确不做：
 
-- [ ] 本阶段不实现邮箱绑定。
-- [ ] 本阶段不实现衣橱业务功能。
-- [ ] 本阶段不调用 AI 服务。
+- [x] 本阶段不实现邮箱绑定。
+- [x] 本阶段不实现衣橱业务功能。
+- [x] 本阶段不调用 AI 服务。
 
 独立验收：
 
 - [ ] 新浏览器可以自动获得匿名会话并进入空衣橱引导。
 - [ ] 刷新页面后仍是同一匿名用户。
 - [ ] 两个匿名会话无法读取或修改对方的资料和测试数据。
-- [ ] 主要路由和 Preview 环境可以正常访问。
-- [ ] `npm run check` 通过。
+- [x] 主要路由和 Preview 环境可以正常访问。
+- [x] `npm run check` 通过。
 
 阶段完成记录：
 
-- 完成日期：
-- 验收结果：
-- 已知限制：
-- 下一步：
-- 提交记录：
+- 完成日期：未完成
+- 验收结果：部分通过。6 个页面路由本地与 Preview 均返回 200；390px 视口的标题、导航和错误态正常；`npm run check`、`npm run build`、Supabase 安全/性能顾问全部通过；匿名成功态、刷新保持与双会话隔离尚未通过外部配置门禁。
+- 已知限制：Supabase 项目当前关闭 Anonymous Sign-Ins，实际接口返回 `Anonymous sign-ins are disabled`；Vercel Preview 受团队登录保护；本次两个 `NEXT_PUBLIC_` 值通过部署构建临时注入，后续自动部署前仍需在 Vercel Preview 环境中持久配置。
+- 下一步：在 Supabase Dashboard 开启 Anonymous Sign-Ins，并在 Vercel 项目 `ai-coding` 的 Preview 环境持久配置两个 Supabase 公开变量；随后运行 `npm run verify:sdd-001`，完成新浏览器、3 次刷新、双会话隔离和 Preview 匿名会话复验。验收通过前不得启动 SDD-002。
+- Preview：`https://ai-coding-2m4gteem7-jialin-d583.vercel.app`（READY，受 Vercel Authentication 保护）
+- 提交记录：待本次提交后补记提交号
 
 ### SDD-002：邮箱绑定与会话恢复
 

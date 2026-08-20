@@ -1,0 +1,54 @@
+openapi: 3.1.0
+info:
+  title: 衣拍即合匿名会话初始化接口
+  version: 0.1.0
+  description: SDD-001 内部接口，用于创建或复用匿名会话并初始化用户基础数据。
+paths:
+  /api/session/anonymous:
+    post:
+      operationId: ensureAnonymousSession
+      summary: 确保当前浏览器拥有可用会话和基础资料
+      responses:
+        "200":
+          description: 会话可用，资料与偏好已经存在。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionReadyResponse"
+        "500":
+          description: 会话已建立但基础数据初始化失败，可重试。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: 身份服务、数据库或运行配置暂时不可用，可重试。
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    SessionReadyResponse:
+      type: object
+      additionalProperties: false
+      required: [userId, isAnonymous, initialized]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        isAnonymous:
+          type: boolean
+        initialized:
+          type: boolean
+          const: true
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [message, retryable]
+      properties:
+        message:
+          type: string
+          description: 面向用户的中文错误说明，不包含密钥或内部堆栈。
+        retryable:
+          type: boolean

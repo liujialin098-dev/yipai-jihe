@@ -10,9 +10,11 @@
 
 ## 项目速览
 
-- `app/`：路由、布局和全局样式；当前首页为 `app/page.tsx`。
-- `components/ui/`：shadcn/ui 组件；`lib/utils.ts`：类名合并工具。
-- `lib/supabase/`：Supabase browser、server 和 proxy 客户端工厂；根目录 `proxy.ts` 负责刷新 SSR 会话。
+- `app/`：首页、衣橱、添加衣物、推荐、收藏、设置路由，以及 `api/session/anonymous` 匿名会话初始化接口。
+- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动和空状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs`：双匿名会话 RLS/Storage 隔离验证。
+- `specs/001-app-foundation/`：当前 SDD-001 的规格、计划、任务、数据模型、契约和快速验收记录。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 
 ## 注意事项
@@ -21,14 +23,21 @@
 - 修改后运行 `npm run check`；提交时 hook 会再次执行同一流程。
 - 遵循 Server Component 默认边界，只有需要浏览器状态或事件时才使用 `use client`。
 - 引入新库前先查本地 skill；缺少 skill 时使用 Context7，并把关键结论与 library id 记录在本文件。
-- 当前 Context7 library id：`/biomejs/biome`、`/lucide-icons/lucide`、`/supabase/ssr`。
+- 当前 Context7 library id：`/biomejs/biome`、`/lucide-icons/lucide`、`/supabase/ssr`、`/supabase/supabase`、`/supabase/auth`。
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`，区域：`ap-southeast-1`，状态：`ACTIVE_HEALTHY`）。
 - 本地连接配置放在 `.env.local`，变量为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`；该文件已被 `.gitignore` 忽略。
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
+- SDD-001 数据底座为 `public.profiles` 和 `public.user_preferences`，均以 `auth.users.id` 为主键并启用 RLS；`authenticated` 仅有 `SELECT/INSERT/UPDATE`，`anon` 无表权限。
+- Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
+- 当前 Supabase 项目尚未开启 Anonymous Sign-Ins；开启前 `npm run verify:sdd-001` 会失败，SDD-001 不得标记完成，也不得启动 SDD-002。
+- 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；首个可构建 Preview 已 READY，但受 Vercel Authentication 保护。后续部署前必须在 Preview 环境持久配置两个 Supabase `NEXT_PUBLIC_` 变量，不得配置 `SECRET_KEY`。
+- SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
+
+- 当前阶段：SDD-001 进行中。代码、迁移和 Preview 已就绪；唯一核心阻塞为 Supabase Anonymous Sign-Ins 未开启，详细证据和待办以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
