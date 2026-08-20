@@ -30,14 +30,15 @@
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - SDD-001 数据底座为 `public.profiles` 和 `public.user_preferences`，均以 `auth.users.id` 为主键并启用 RLS；`authenticated` 仅有 `SELECT/INSERT/UPDATE`，`anon` 无表权限。
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
-- 当前 Supabase 项目尚未开启 Anonymous Sign-Ins；开启前 `npm run verify:sdd-001` 会失败，SDD-001 不得标记完成，也不得启动 SDD-002。
-- 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；首个可构建 Preview 已 READY，但受 Vercel Authentication 保护。后续部署前必须在 Preview 环境持久配置两个 Supabase `NEXT_PUBLIC_` 变量，不得配置 `SECRET_KEY`。
+- 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
+- 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；首个 Preview 已 READY 并通过匿名会话、六路由和刷新保持验收，但受 Vercel Authentication 保护。后续自动部署前必须在 Preview 环境持久配置两个 Supabase `NEXT_PUBLIC_` 变量，不得配置 `SECRET_KEY`。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
+- 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。泄露密码保护在 SDD-002 启用邮箱密码能力时复核并处理。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-001 进行中。代码、迁移和 Preview 已就绪；唯一核心阻塞为 Supabase Anonymous Sign-Ins 未开启，详细证据和待办以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-001 已完成，SDD-002 待启动。完成证据、已知限制和下一步以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

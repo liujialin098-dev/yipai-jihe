@@ -71,7 +71,10 @@ npm run build
 - 默认表授权曾宽于最小权限，已用第二个迁移收紧为 `authenticated` 仅 `SELECT/INSERT/UPDATE`。
 - `npm run check` 与 `npm run build` 已通过；6 个页面路由在本地 390px 视口和 Preview 均可访问。
 - Preview `https://ai-coding-2m4gteem7-jialin-d583.vercel.app` 状态为 READY，且 Vercel 到 Supabase 的公开配置已连通。
-- 当前阻塞：Supabase 尚未开启 Anonymous Sign-Ins，所以匿名成功态、刷新保持和双会话隔离尚未完成；开启后从第 2～4 节重新验收。
+- 2026-08-21 已开启 Supabase Anonymous Sign-Ins；双会话脚本、自身访问、交叉访问、Storage 路径隔离与测试对象清理均通过。
+- 本地新会话匿名编号 `CCF08712` 连续刷新 3 次保持一致，资料与偏好各只有 1 条；受保护 Preview 会话 `43FC08A9` 也完成六路由和 3 次刷新复验。
+- 性能顾问为 0 项；安全顾问的 3 项匿名访问策略提示属于本阶段预期行为，实际策略仍以 `auth.uid()` 限制所有权；泄露密码保护提示在 SDD-002 引入邮箱密码前处理。
+- 已知部署限制：当前 Preview 构建中的两个 Supabase 公开变量有效，但仍需在 Vercel Preview 环境持久配置后续自动部署所需变量。
 
 ## 完成条件
 

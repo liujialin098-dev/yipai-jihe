@@ -46,7 +46,7 @@
 - [X] T010 [US1] 在 `components/session-bootstrap.tsx` 实现首次自动启动、加载、失败、重试和成功刷新状态
 - [X] T011 [P] [US1] 在 `components/empty-state.tsx` 建立可复用的中文空状态展示
 - [X] T012 [US1] 在 `app/page.tsx` 组合当前用户状态、会话启动和空衣橱引导，不提前实现衣橱业务
-- [ ] T013 [US1] 按 `specs/001-app-foundation/quickstart.md` 完成全新会话和连续 3 次刷新验收，并把结果写入 `specs/001-app-foundation/tasks.md` 的执行记录
+- [X] T013 [US1] 按 `specs/001-app-foundation/quickstart.md` 完成全新会话和连续 3 次刷新验收，并把结果写入 `specs/001-app-foundation/tasks.md` 的执行记录
 
 **检查点**：用户故事 1 可独立演示，异常时可重试，刷新不重复创建基础数据。
 
@@ -79,8 +79,8 @@
 **独立测试**：运行隔离脚本，两个会话自身读取/更新成功，交叉读取、交叉修改和跨用户路径写入均失败。
 
 - [X] T023 [US3] 在 `scripts/verify-sdd-001.mjs` 实现两组匿名测试会话、非敏感资料/偏好数据和 Storage 路径隔离验证，禁止输出密钥或令牌
-- [ ] T024 [US3] 使用 `.env.local` 运行 `scripts/verify-sdd-001.mjs` 创建测试数据并把自身访问与交叉访问结果写入 `specs/001-app-foundation/tasks.md` 的执行记录
-- [ ] T025 [US3] 用 Supabase 表、策略和顾问结果复核远端隔离状态，将最终安全结论写入 `specs/001-app-foundation/tasks.md` 的执行记录
+- [X] T024 [US3] 使用 `.env.local` 运行 `scripts/verify-sdd-001.mjs` 创建测试数据并把自身访问与交叉访问结果写入 `specs/001-app-foundation/tasks.md` 的执行记录
+- [X] T025 [US3] 用 Supabase 表、策略和顾问结果复核远端隔离状态，将最终安全结论写入 `specs/001-app-foundation/tasks.md` 的执行记录
 
 **检查点**：三个用户故事全部可独立验收，数据安全不依赖客户端界面。
 
@@ -91,7 +91,7 @@
 **目标**：完成质量门禁、可访问 Preview 和唯一进度文档同步。
 
 - [X] T026 运行 `npm run check` 和 `npm run build`，修复所有本阶段静态检查与生产构建问题
-- [ ] T027 按项目现有 Vercel 关联配置发布 Preview，并在 Preview URL 重复主要路由、匿名会话与刷新保持冒烟检查
+- [X] T027 按项目现有 Vercel 关联配置发布 Preview，并在 Preview URL 重复主要路由、匿名会话与刷新保持冒烟检查
 - [X] T028 在 `specs/001-app-foundation/quickstart.md` 补充实际执行差异、Preview 验收方式和 Supabase CLI Windows 兼容性取舍
 - [X] T029 在 `progress.md` 将 SDD-001 的 TODO、状态、完成日期、验收结果、已知限制、下一步和提交记录更新为实际结果
 - [X] T030 在 `AGENTS.md` 同步新增目录、数据模型、安全约定、Context7 library id 与当前阶段状态
@@ -116,3 +116,7 @@
 - 2026-08-20：远端默认表权限曾宽于计划，已通过迁移 `20260820152608_tighten_foundation_grants` 收紧为 `authenticated` 仅 `SELECT/INSERT/UPDATE`、`anon` 无表权限；复跑安全与性能顾问仍为 0 告警。
 - 2026-08-20：Vercel 项目 `ai-coding` 的 Preview `https://ai-coding-2m4gteem7-jialin-d583.vercel.app` 已 READY，六个页面均返回 200；构建注入的两个 Supabase 公开变量已生效，会话接口只剩匿名登录开关阻塞。
 - 2026-08-20：已审查并提交进行中检查点 `da86c2e`；用户原有未跟踪脚本和更新版 PRD 未纳入提交。
+- 2026-08-21：Supabase Anonymous Sign-Ins 开启后，`npm run verify:sdd-001` 复验通过；匿名会话 `17A89388` 与 `8F841A20` 均可访问自身资料和 Storage 路径，交叉读取、更新和跨用户路径上传均被阻止。首次验证遇到一次 Supabase 短暂 `JWT issued at future`，确认令牌时间正常后复跑通过；该次失败产生的测试用户 `F3844030` 已精确删除，资料与偏好数量重新一致。
+- 2026-08-21：390px 本地新会话自动初始化成功，匿名编号 `CCF08712` 连续刷新 3 次保持不变；数据库确认该会话只有 1 条资料和 1 条偏好，页面无错误覆盖层或控制台异常。
+- 2026-08-21：远端复核确认两张表均启用 RLS、6 条 public 表策略和 4 条 Storage 策略存在、`anon` 表授权为 0、`authenticated` 只有预期的 6 项 `SELECT/INSERT/UPDATE` 授权、bucket 保持私有且测试对象无残留。性能顾问 0 项；安全顾问 4 项均已评估，其中 3 项是开启匿名体验后对受所有权条件约束策略的预期提醒，1 项泄露密码保护提示留待 SDD-002 邮箱密码能力启用时处理。
+- 2026-08-21：受保护 Preview 创建匿名会话 `43FC08A9` 成功，六个主要路由均返回 200，设置页连续访问 3 次身份一致；远端确认该会话资料与偏好各 1 条。SDD-001 全部任务完成。
