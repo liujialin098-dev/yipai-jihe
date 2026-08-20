@@ -83,7 +83,7 @@
 - 已知限制：Supabase 项目当前关闭 Anonymous Sign-Ins，实际接口返回 `Anonymous sign-ins are disabled`；Vercel Preview 受团队登录保护；本次两个 `NEXT_PUBLIC_` 值通过部署构建临时注入，后续自动部署前仍需在 Vercel Preview 环境中持久配置。
 - 下一步：在 Supabase Dashboard 开启 Anonymous Sign-Ins，并在 Vercel 项目 `ai-coding` 的 Preview 环境持久配置两个 Supabase 公开变量；随后运行 `npm run verify:sdd-001`，完成新浏览器、3 次刷新、双会话隔离和 Preview 匿名会话复验。验收通过前不得启动 SDD-002。
 - Preview：`https://ai-coding-2m4gteem7-jialin-d583.vercel.app`（READY，受 Vercel Authentication 保护）
-- 提交记录：待本次提交后补记提交号
+- 提交记录：`da86c2e`（SDD-001 进行中检查点；匿名登录与隔离验收待补）
 
 ### SDD-002：邮箱绑定与会话恢复
 

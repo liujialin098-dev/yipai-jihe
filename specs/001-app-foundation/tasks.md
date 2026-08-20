@@ -95,7 +95,7 @@
 - [X] T028 在 `specs/001-app-foundation/quickstart.md` 补充实际执行差异、Preview 验收方式和 Supabase CLI Windows 兼容性取舍
 - [X] T029 在 `progress.md` 将 SDD-001 的 TODO、状态、完成日期、验收结果、已知限制、下一步和提交记录更新为实际结果
 - [X] T030 在 `AGENTS.md` 同步新增目录、数据模型、安全约定、Context7 library id 与当前阶段状态
-- [ ] T031 审查 `git diff` 与 `git status`，确认不包含 `.env.local`、密钥、真实照片或用户原有未跟踪文件，并提交 SDD-001 成果
+- [X] T031 审查 `git diff` 与 `git status`，确认不包含 `.env.local`、密钥、真实照片或用户原有未跟踪文件，并提交 SDD-001 成果
 
 ## 依赖与执行顺序
 
@@ -115,3 +115,4 @@
 - 2026-08-20：匿名登录验证被 Supabase 项目配置阻塞，实际返回 `Anonymous sign-ins are disabled`；应用正确显示中文可重试状态，待在 Dashboard 开启 Anonymous Sign-Ins 后重跑 T013/T024/T025。
 - 2026-08-20：远端默认表权限曾宽于计划，已通过迁移 `20260820152608_tighten_foundation_grants` 收紧为 `authenticated` 仅 `SELECT/INSERT/UPDATE`、`anon` 无表权限；复跑安全与性能顾问仍为 0 告警。
 - 2026-08-20：Vercel 项目 `ai-coding` 的 Preview `https://ai-coding-2m4gteem7-jialin-d583.vercel.app` 已 READY，六个页面均返回 200；构建注入的两个 Supabase 公开变量已生效，会话接口只剩匿名登录开关阻塞。
+- 2026-08-20：已审查并提交进行中检查点 `da86c2e`；用户原有未跟踪脚本和更新版 PRD 未纳入提交。
