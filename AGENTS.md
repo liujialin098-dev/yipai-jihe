@@ -33,12 +33,12 @@
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；首个 Preview 已 READY 并通过匿名会话、六路由和刷新保持验收，但受 Vercel Authentication 保护。后续自动部署前必须在 Preview 环境持久配置两个 Supabase `NEXT_PUBLIC_` 变量，不得配置 `SECRET_KEY`。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
-- 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。泄露密码保护在 SDD-002 启用邮箱密码能力时复核并处理。
+- 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。泄露密码保护在未来恢复 SDD-002 并启用邮箱密码能力时复核处理。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-001 已完成，SDD-002 待启动。完成证据、已知限制和下一步以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-001 已完成，SDD-002 已暂缓并移至 P1，下一阶段为 SDD-003。完成证据、已知限制和下一步以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -47,7 +47,7 @@
 - 阶段未通过独立验收或 `npm run check` 时，不得在 `progress.md` 中标记为“已完成”，也不得开始依赖该阶段的后续阶段。
 - 每个阶段的实现范围 MUST 以对应 SDD 为准；不得为了 P1/P2 需求提前引入当前 MVP 不需要的复杂抽象。
 - 当前 P0 使用原图卡片，不执行自动抠图和穿搭日记；自动抠图与穿搭日记均移至 P1。P1 抠图 MUST 经过服务端 `cutoutService` 调用外部 API，密钥只能通过环境变量提供，失败不得阻塞原图入库。
-- P0 账号范围为匿名体验加可选邮箱绑定、邮件验证、登录和退出；绑定后 MUST 保持同一 `auth_user_id` 和原匿名数据。不实现第三方登录、账号切换和密码找回。
+- P0 账号范围仅包含匿名体验；邮箱绑定、邮件验证、登录、退出和跨设备恢复已移至 P1 的 SDD-002，不得作为 SDD-003 至 SDD-007 的依赖。当前必须明确提示：清除站点数据或更换设备后无法恢复原匿名身份。未来恢复 SDD-002 时，绑定后 MUST 保持同一 `auth_user_id` 和原匿名数据。
 - 演示数据 MUST 按当前用户隔离加载，优先采用可重复的一键加载方式；不得把真实个人敏感照片写入仓库或提交记录。
 
 <!-- BEGIN:nextjs-agent-rules -->
