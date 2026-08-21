@@ -48,6 +48,7 @@ export type Database = {
           occasions: string[];
           primary_color: string;
           seasons: string[];
+          source_ingestion_id: string | null;
           status: string;
           style: string;
           updated_at: string;
@@ -64,6 +65,7 @@ export type Database = {
           occasions: string[];
           primary_color: string;
           seasons: string[];
+          source_ingestion_id?: string | null;
           status?: string;
           style: string;
           updated_at?: string;
@@ -80,6 +82,7 @@ export type Database = {
           occasions?: string[];
           primary_color?: string;
           seasons?: string[];
+          source_ingestion_id?: string | null;
           status?: string;
           style?: string;
           updated_at?: string;
@@ -108,6 +111,63 @@ export type Database = {
           preferred_styles?: string[];
           updated_at?: string;
           user_id?: string;
+        };
+        Relationships: [];
+      };
+      wardrobe_ingestions: {
+        Row: {
+          ai_model: string | null;
+          ai_result: Json | null;
+          byte_size: number;
+          client_request_id: string;
+          corrected_fields: string[];
+          created_at: string;
+          expires_at: string;
+          failure_code: string | null;
+          id: string;
+          image_path: string;
+          mime_type: string;
+          recognition_ms: number | null;
+          status: string;
+          updated_at: string;
+          user_id: string;
+          wardrobe_item_id: string | null;
+        };
+        Insert: {
+          ai_model?: string | null;
+          ai_result?: Json | null;
+          byte_size: number;
+          client_request_id: string;
+          corrected_fields?: string[];
+          created_at?: string;
+          expires_at?: string;
+          failure_code?: string | null;
+          id?: string;
+          image_path: string;
+          mime_type: string;
+          recognition_ms?: number | null;
+          status?: string;
+          updated_at?: string;
+          user_id: string;
+          wardrobe_item_id?: string | null;
+        };
+        Update: {
+          ai_model?: string | null;
+          ai_result?: Json | null;
+          byte_size?: number;
+          client_request_id?: string;
+          corrected_fields?: string[];
+          created_at?: string;
+          expires_at?: string;
+          failure_code?: string | null;
+          id?: string;
+          image_path?: string;
+          mime_type?: string;
+          recognition_ms?: number | null;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+          wardrobe_item_id?: string | null;
         };
         Relationships: [];
       };

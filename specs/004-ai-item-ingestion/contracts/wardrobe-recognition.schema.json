@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WardrobeRecognition",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "category": {
+      "type": "string",
+      "enum": [
+        "tops",
+        "bottoms",
+        "dresses",
+        "outerwear",
+        "shoes",
+        "accessories"
+      ]
+    },
+    "primary_color": {
+      "type": "string",
+      "enum": [
+        "black",
+        "white",
+        "gray",
+        "navy",
+        "blue",
+        "green",
+        "beige",
+        "brown",
+        "red",
+        "pink",
+        "purple",
+        "yellow"
+      ]
+    },
+    "material": {
+      "type": "string",
+      "enum": [
+        "cotton",
+        "linen",
+        "denim",
+        "knit",
+        "wool",
+        "silk",
+        "leather",
+        "synthetic"
+      ]
+    },
+    "style": {
+      "type": "string",
+      "enum": ["minimal", "casual", "commute", "elegant", "sporty", "vintage"]
+    },
+    "seasons": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["spring", "summer", "autumn", "winter"]
+      }
+    },
+    "occasions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["commute", "casual", "date", "formal", "sport"]
+      }
+    },
+    "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+    "note": { "type": "string", "maxLength": 120 }
+  },
+  "required": [
+    "name",
+    "category",
+    "primary_color",
+    "material",
+    "style",
+    "seasons",
+    "occasions",
+    "confidence",
+    "note"
+  ]
+}

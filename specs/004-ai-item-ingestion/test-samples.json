@@ -1,0 +1,62 @@
+[
+  {
+    "file": "public/test-wardrobe/cloud-white-tee.jpg",
+    "name": "云白棉质 T 恤",
+    "category": "tops",
+    "primary_color": "white"
+  },
+  {
+    "file": "public/test-wardrobe/mist-blue-linen-shirt.jpg",
+    "name": "雾蓝亚麻衬衫",
+    "category": "tops",
+    "primary_color": "blue"
+  },
+  {
+    "file": "public/test-wardrobe/indigo-straight-jeans.jpg",
+    "name": "靛蓝直筒牛仔裤",
+    "category": "bottoms",
+    "primary_color": "navy"
+  },
+  {
+    "file": "public/test-wardrobe/sand-wide-trousers.jpg",
+    "name": "沙色阔腿裤",
+    "category": "bottoms",
+    "primary_color": "beige"
+  },
+  {
+    "file": "public/test-wardrobe/black-evening-dress.jpg",
+    "name": "黑色小礼裙",
+    "category": "dresses",
+    "primary_color": "black"
+  },
+  {
+    "file": "public/test-wardrobe/oat-knit-cardigan.jpg",
+    "name": "燕麦针织开衫",
+    "category": "outerwear",
+    "primary_color": "beige"
+  },
+  {
+    "file": "public/test-wardrobe/navy-trench-coat.jpg",
+    "name": "海军蓝风衣",
+    "category": "outerwear",
+    "primary_color": "navy"
+  },
+  {
+    "file": "public/test-wardrobe/clean-white-sneakers.jpg",
+    "name": "净白休闲鞋",
+    "category": "shoes",
+    "primary_color": "white"
+  },
+  {
+    "file": "public/test-wardrobe/chestnut-boots.jpg",
+    "name": "栗棕短靴",
+    "category": "shoes",
+    "primary_color": "brown"
+  },
+  {
+    "file": "public/test-wardrobe/black-work-tote.jpg",
+    "name": "黑色通勤托特包",
+    "category": "accessories",
+    "primary_color": "black"
+  }
+]

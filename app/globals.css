@@ -188,6 +188,26 @@
   box-shadow: var(--shadow-soft);
 }
 
+.field-control {
+  min-height: 2.75rem;
+  width: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: 0.9rem;
+  background: var(--surface-soft);
+  padding: 0 0.75rem;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.field-control:focus {
+  border-color: var(--system-blue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--system-blue) 16%, transparent);
+}
+
 /* Web approximation of Apple-style translucent material. */
 .liquid-glass-web {
   position: relative;

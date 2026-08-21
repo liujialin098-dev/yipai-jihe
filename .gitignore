@@ -19,17 +19,24 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
+Thumbs.db
 browser-check.png
 *.pem
+*.tmp
+*.swp
+.vscode/
+.idea/
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*

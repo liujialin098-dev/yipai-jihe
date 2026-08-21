@@ -1,16 +1,16 @@
 import {
   CATEGORY_OPTIONS,
+  type Category,
   COLOR_OPTIONS,
   isOptionValue,
   MATERIAL_OPTIONS,
+  type Material,
   OCCASION_OPTIONS,
+  type Occasion,
   SEASON_OPTIONS,
+  type Season,
   STATUS_OPTIONS,
   STYLE_OPTIONS,
-  type Category,
-  type Material,
-  type Occasion,
-  type Season,
   type WardrobeColor,
   type WardrobeStatus,
   type WardrobeStyle,
@@ -35,6 +35,19 @@ export type WardrobeItemInput = {
   style: WardrobeStyle;
   seasons: Season[];
   occasions: Occasion[];
+};
+
+export type RecognitionConfidence = "low" | "medium" | "high";
+
+export type WardrobeRecognition = WardrobeItemInput & {
+  confidence: RecognitionConfidence;
+  note: string;
+};
+
+export type IngestionCreateInput = {
+  clientRequestId: string;
+  mimeType: "image/jpeg" | "image/png";
+  byteSize: number;
 };
 
 export type WardrobeFilters = {
@@ -148,6 +161,92 @@ export function validateWardrobeItemForm(
       occasions: occasions as Occasion[],
     },
   };
+}
+
+export function validateWardrobeItemJson(
+  input: unknown,
+):
+  | { success: true; data: WardrobeItemInput }
+  | { success: false; fieldErrors: Record<string, string[]> } {
+  if (!isRecord(input)) {
+    return { success: false, fieldErrors: { form: ["请求内容无效"] } };
+  }
+
+  const formData = new FormData();
+  for (const key of [
+    "name",
+    "category",
+    "primary_color",
+    "material",
+    "style",
+  ]) {
+    if (typeof input[key] === "string") formData.set(key, input[key]);
+  }
+  for (const key of ["seasons", "occasions"]) {
+    if (!Array.isArray(input[key])) continue;
+    for (const value of input[key]) {
+      if (typeof value === "string") formData.append(key, value);
+    }
+  }
+
+  return validateWardrobeItemForm(formData);
+}
+
+export function validateRecognitionResult(
+  input: unknown,
+): { success: true; data: WardrobeRecognition } | { success: false } {
+  if (!isRecord(input)) return { success: false };
+  const wardrobe = validateWardrobeItemJson(input);
+  const confidence = input.confidence;
+  const note = input.note;
+
+  if (
+    !wardrobe.success ||
+    !["low", "medium", "high"].includes(String(confidence)) ||
+    typeof note !== "string" ||
+    note.length > 120
+  ) {
+    return { success: false };
+  }
+
+  return {
+    success: true,
+    data: {
+      ...wardrobe.data,
+      confidence: confidence as RecognitionConfidence,
+      note,
+    },
+  };
+}
+
+export function validateIngestionCreateRequest(
+  input: unknown,
+): { success: true; data: IngestionCreateInput } | { success: false } {
+  if (!isRecord(input)) return { success: false };
+
+  const clientRequestId = input.clientRequestId;
+  const mimeType = input.mimeType;
+  const byteSize = input.byteSize;
+  if (
+    typeof clientRequestId !== "string" ||
+    !isUuid(clientRequestId) ||
+    (mimeType !== "image/jpeg" && mimeType !== "image/png") ||
+    typeof byteSize !== "number" ||
+    !Number.isInteger(byteSize) ||
+    byteSize < 1 ||
+    byteSize > 10 * 1024 * 1024
+  ) {
+    return { success: false };
+  }
+
+  return {
+    success: true,
+    data: { clientRequestId, mimeType, byteSize },
+  };
+}
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export function isUuid(value: string) {

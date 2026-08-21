@@ -1,6 +1,6 @@
+import { getViewer } from "@/lib/auth/viewer";
 import type { Tables } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
-import { getViewer } from "@/lib/auth/viewer";
 import { getDemoWardrobeImageUrl } from "@/lib/wardrobe/catalog";
 import {
   escapeIlike,
@@ -15,7 +15,7 @@ export type WardrobeItem = Omit<WardrobeRow, "image_path" | "user_id"> & {
 };
 
 const ITEM_COLUMNS =
-  "id, demo_key, name, category, primary_color, material, style, seasons, occasions, image_path, status, created_at, updated_at";
+  "id, demo_key, name, category, primary_color, material, style, seasons, occasions, image_path, source_ingestion_id, status, created_at, updated_at";
 
 const SIGNED_URL_TTL_SECONDS = 60 * 30;
 const SIGNED_URL_CACHE_MS = 60 * 25 * 1000;
