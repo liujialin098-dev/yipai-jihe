@@ -19,6 +19,14 @@ export type WardrobeItem = Omit<
 const ITEM_COLUMNS =
   "id, name, category, primary_color, material, style, seasons, occasions, image_path, status, created_at, updated_at";
 
+const SIGNED_URL_TTL_SECONDS = 60 * 30;
+const SIGNED_URL_CACHE_MS = 60 * 25 * 1000;
+const SIGNED_URL_CACHE_LIMIT = 512;
+const signedUrlCache = new Map<
+  string,
+  { expiresAt: number; signedUrl: string }
+>();
+
 async function signedUrlMap(
   supabase: Awaited<ReturnType<typeof createClient>>,
   paths: string[],
@@ -26,17 +34,46 @@ async function signedUrlMap(
   const uniquePaths = [...new Set(paths)];
   if (uniquePaths.length === 0) return new Map<string, string>();
 
+  const now = Date.now();
+  const urls = new Map<string, string>();
+  const missingPaths = uniquePaths.filter((path) => {
+    const cached = signedUrlCache.get(path);
+    if (!cached || cached.expiresAt <= now) {
+      signedUrlCache.delete(path);
+      return true;
+    }
+
+    urls.set(path, cached.signedUrl);
+    return false;
+  });
+
+  if (missingPaths.length === 0) return urls;
+
   const { data, error } = await supabase.storage
     .from("wardrobe-images")
-    .createSignedUrls(uniquePaths, 60 * 30);
+    .createSignedUrls(missingPaths, SIGNED_URL_TTL_SECONDS);
 
-  if (error || !data) return new Map<string, string>();
+  if (error || !data) return urls;
 
-  return new Map(
-    data.flatMap((entry) =>
-      entry.signedUrl ? ([[entry.path, entry.signedUrl]] as const) : [],
-    ),
-  );
+  for (const entry of data) {
+    if (!entry.path || !entry.signedUrl) continue;
+    urls.set(entry.path, entry.signedUrl);
+
+    if (
+      signedUrlCache.size >= SIGNED_URL_CACHE_LIMIT &&
+      !signedUrlCache.has(entry.path)
+    ) {
+      const oldestPath = signedUrlCache.keys().next().value;
+      if (oldestPath) signedUrlCache.delete(oldestPath);
+    }
+
+    signedUrlCache.set(entry.path, {
+      expiresAt: now + SIGNED_URL_CACHE_MS,
+      signedUrl: entry.signedUrl,
+    });
+  }
+
+  return urls;
 }
 
 function toWardrobeItem(

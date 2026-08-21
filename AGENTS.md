@@ -10,11 +10,12 @@
 
 ## 项目速览
 
-- `app/`：首页、衣橱、添加衣物、推荐、收藏、设置路由，以及 `api/session/anonymous` 匿名会话初始化接口。
-- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动和空状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `app/`：首页、衣橱列表与单品详情/编辑、添加衣物、推荐、收藏、设置路由，以及 `api/session/anonymous` 匿名会话初始化接口。
+- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs`：双匿名会话 RLS/Storage 隔离验证。
-- `specs/001-app-foundation/`：当前 SDD-001 的规格、计划、任务、数据模型、契约和快速验收记录。
+- `lib/wardrobe/`：衣物常量、校验、查询、24 件演示目录与安全合成 PNG；私有图片签名地址在服务端短期缓存并限制条目数。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 与 `scripts/verify-sdd-003.mjs`：双匿名会话 RLS/Storage 隔离验证。
+- `specs/001-app-foundation/` 与 `specs/003-wardrobe-core/`：已完成阶段的规格、计划、任务、数据模型、契约和快速验收记录。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 
 ## 注意事项
@@ -29,16 +30,18 @@
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - SDD-001 数据底座为 `public.profiles` 和 `public.user_preferences`，均以 `auth.users.id` 为主键并启用 RLS；`authenticated` 仅有 `SELECT/INSERT/UPDATE`，`anon` 无表权限。
+- SDD-003 衣橱底座为 `public.wardrobe_items`：记录绑定 `user_id`，`demo_key` 保证当前用户演示数据幂等，状态仅为 `active/archived`；表启用四类用户所有权 RLS，`authenticated` 具有 CRUD，`anon` 无表权限。
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；首个 Preview 已 READY 并通过匿名会话、六路由和刷新保持验收，但受 Vercel Authentication 保护。后续自动部署前必须在 Preview 环境持久配置两个 Supabase `NEXT_PUBLIC_` 变量，不得配置 `SECRET_KEY`。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
+- SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。泄露密码保护在未来恢复 SDD-002 并启用邮箱密码能力时复核处理。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-001 已完成，SDD-002 已暂缓并移至 P1，下一阶段为 SDD-003。完成证据、已知限制和下一步以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-001 与 SDD-003 已完成，SDD-002 已暂缓并移至 P1，下一阶段为 SDD-004 原图上传与 AI 识别入库。完成证据、已知限制和下一步以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

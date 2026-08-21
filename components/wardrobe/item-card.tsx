@@ -9,7 +9,13 @@ import {
 } from "@/lib/wardrobe/constants";
 import type { WardrobeItem } from "@/lib/wardrobe/data";
 
-export function WardrobeItemCard({ item }: { item: WardrobeItem }) {
+export function WardrobeItemCard({
+  eager = false,
+  item,
+}: {
+  eager?: boolean;
+  item: WardrobeItem;
+}) {
   return (
     <Link
       href={`/wardrobe/${item.id}`}
@@ -22,6 +28,7 @@ export function WardrobeItemCard({ item }: { item: WardrobeItem }) {
             alt={`${item.name}的合成演示原图`}
             fill
             sizes="(max-width: 480px) 44vw, 210px"
+            loading={eager ? "eager" : "lazy"}
             unoptimized
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           />

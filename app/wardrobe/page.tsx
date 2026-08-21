@@ -5,7 +5,7 @@ import { DemoLoader } from "@/components/wardrobe/demo-loader";
 import { FilterPanel } from "@/components/wardrobe/filter-panel";
 import { WardrobeItemCard } from "@/components/wardrobe/item-card";
 import { CATEGORY_OPTIONS } from "@/lib/wardrobe/constants";
-import { getWardrobeCount, getWardrobeItems } from "@/lib/wardrobe/data";
+import { getWardrobeItems } from "@/lib/wardrobe/data";
 import { parseWardrobeFilters } from "@/lib/wardrobe/validation";
 
 export const metadata: Metadata = { title: "衣橱" };
@@ -18,10 +18,7 @@ export default async function WardrobePage({
   searchParams,
 }: WardrobePageProps) {
   const filters = parseWardrobeFilters(await searchParams);
-  const [{ items, error }, activeCount] = await Promise.all([
-    getWardrobeItems(filters),
-    getWardrobeCount("active"),
-  ]);
+  const { items, error } = await getWardrobeItems(filters);
   const hasFilters = Boolean(
     filters.q ||
       filters.category ||
@@ -30,6 +27,7 @@ export default async function WardrobePage({
       filters.occasion ||
       filters.status === "archived",
   );
+  const hasWardrobeContext = items.length > 0 || hasFilters;
 
   return (
     <div className="px-5 pt-5">
@@ -50,13 +48,33 @@ export default async function WardrobePage({
         </p>
       </header>
 
-      {activeCount > 0 ? (
-        <div className="mt-4 flex items-start justify-between gap-4">
-          <p className="max-w-[12rem] text-xs leading-5 text-[#77717c]">
-            演示数据可重复检查，只会补齐缺失项目。
-          </p>
-          <DemoLoader compact />
-        </div>
+      {!error ? (
+        <section
+          className={
+            hasWardrobeContext
+              ? "mt-4 flex items-start justify-between gap-4"
+              : "mt-5 overflow-hidden rounded-[1.8rem] border border-black/6 bg-white p-6 shadow-[0_16px_48px_rgba(42,38,54,0.06)]"
+          }
+        >
+          {hasWardrobeContext ? (
+            <p className="max-w-[12rem] text-xs leading-5 text-[#77717c]">
+              演示数据可重复检查，只会补齐缺失项目。
+            </p>
+          ) : (
+            <div>
+              <span className="flex size-11 items-center justify-center rounded-2xl bg-[#eeeafe] text-[#725cff]">
+                <Shirt className="size-5" aria-hidden="true" />
+              </span>
+              <h2 className="mt-10 max-w-[16rem] font-heading text-[2rem] leading-[1.1] font-semibold tracking-[-0.04em] text-[#20202a]">
+                先放进一套可用的衣橱
+              </h2>
+              <p className="mt-3 mb-6 max-w-[20rem] text-sm leading-6 text-[#6f6b78]">
+                一次加载 24 件安全合成衣物，马上体验浏览、筛选和维护。
+              </p>
+            </div>
+          )}
+          <DemoLoader compact={hasWardrobeContext} />
+        </section>
       ) : null}
 
       <nav
@@ -81,7 +99,7 @@ export default async function WardrobePage({
         </div>
       </nav>
 
-      {activeCount > 0 || hasFilters ? (
+      {hasWardrobeContext ? (
         <FilterPanel filters={filters} resultCount={items.length} />
       ) : null}
 
@@ -98,26 +116,11 @@ export default async function WardrobePage({
         />
       ) : items.length > 0 ? (
         <section className="mt-5 grid grid-cols-2 gap-3">
-          {items.map((item) => (
-            <WardrobeItemCard key={item.id} item={item} />
+          {items.map((item, index) => (
+            <WardrobeItemCard key={item.id} item={item} eager={index < 2} />
           ))}
         </section>
-      ) : !hasFilters ? (
-        <section className="mt-5 overflow-hidden rounded-[1.8rem] border border-black/6 bg-white p-6 shadow-[0_16px_48px_rgba(42,38,54,0.06)]">
-          <span className="flex size-11 items-center justify-center rounded-2xl bg-[#eeeafe] text-[#725cff]">
-            <Shirt className="size-5" aria-hidden="true" />
-          </span>
-          <h2 className="mt-10 max-w-[16rem] font-heading text-[2rem] leading-[1.1] font-semibold tracking-[-0.04em] text-[#20202a]">
-            先放进一套可用的衣橱
-          </h2>
-          <p className="mt-3 max-w-[20rem] text-sm leading-6 text-[#6f6b78]">
-            一次加载 24 件安全合成衣物，马上体验浏览、筛选和维护。
-          </p>
-          <div className="mt-6">
-            <DemoLoader />
-          </div>
-        </section>
-      ) : (
+      ) : !hasFilters ? null : (
         <WardrobeNotice
           icon={filters.status === "archived" ? Archive : SearchX}
           title={

@@ -57,7 +57,7 @@
 ### Storage
 
 - 复用私有 bucket `wardrobe-images`。
-- 对象路径固定为 `<auth.uid()>/demo/<demo_key>.svg`。
+- 对象路径固定为 `<auth.uid()>/demo/<demo_key>.png`。
 - 复用 SDD-001 的读、写、更新和删除策略：`storage.foldername(name)[1] = auth.uid()::text`。
 - 列表和详情仅返回短期签名 URL，不把 `image_path` 输出到 UI。
 
@@ -75,6 +75,6 @@ active --归档--> archived --恢复--> active
 ## 演示目录
 
 - 固定 24 项，每类 4 项，共 6 类。
-- 每项具有稳定 `demo_key`、完整属性和一张代码生成的合成 SVG。
+- 每项具有稳定 `demo_key`、完整属性和一张代码生成的合成 PNG。
 - 同一用户只补齐缺少的 `demo_key`；已编辑的演示衣物不被重复加载覆盖。
 - 不在数据库创建跨用户共享的演示模板表，目录直接随应用版本管理。
