@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run format && npm run lint:fix && npm run typecheck",
     "verify:sdd-001": "node --env-file=.env.local scripts/verify-sdd-001.mjs",
+    "verify:sdd-003": "node --env-file=.env.local scripts/verify-sdd-003.mjs",
     "prepare": "husky"
   },
   "dependencies": {

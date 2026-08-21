@@ -19,7 +19,11 @@ const items = [
 
 function isCurrent(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
-  if (href === "/wardrobe") return pathname === "/wardrobe";
+  if (href === "/wardrobe") {
+    return (
+      pathname.startsWith("/wardrobe") && !pathname.startsWith("/wardrobe/new")
+    );
+  }
   return pathname.startsWith(href);
 }
 

@@ -36,6 +36,57 @@ export type Database = {
         };
         Relationships: [];
       };
+      wardrobe_items: {
+        Row: {
+          category: string;
+          created_at: string;
+          demo_key: string | null;
+          id: string;
+          image_path: string;
+          material: string;
+          name: string;
+          occasions: string[];
+          primary_color: string;
+          seasons: string[];
+          status: string;
+          style: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          category: string;
+          created_at?: string;
+          demo_key?: string | null;
+          id?: string;
+          image_path: string;
+          material: string;
+          name: string;
+          occasions: string[];
+          primary_color: string;
+          seasons: string[];
+          status?: string;
+          style: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          category?: string;
+          created_at?: string;
+          demo_key?: string | null;
+          id?: string;
+          image_path?: string;
+          material?: string;
+          name?: string;
+          occasions?: string[];
+          primary_color?: string;
+          seasons?: string[];
+          status?: string;
+          style?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_preferences: {
         Row: {
           created_at: string;

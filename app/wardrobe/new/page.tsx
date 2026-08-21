@@ -7,10 +7,10 @@ export const metadata: Metadata = { title: "添加衣物" };
 export default function AddWardrobeItemPage() {
   return (
     <EmptyState
-      eyebrow="下一阶段 · SDD-003"
+      eyebrow="下一阶段"
       icon={ScanLine}
-      title="先把私人空间准备好，再拍第一件。"
-      description="图片上传、衣物信息和原图保存还没有在本阶段开放。安全底座验收后，这里会成为拍照录入入口。"
+      title="拍照识别，会从这里开始。"
+      description="当前可以先用演示衣橱体验管理流程。拍照、相册选择和 AI 属性识别将在下一阶段开放。"
     />
   );
 }
