@@ -33,7 +33,7 @@ export function BottomNavigation() {
   return (
     <nav
       aria-label="主导航"
-      className="sticky bottom-0 z-30 grid grid-cols-5 border-t border-black/7 bg-white/94 px-2 pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] backdrop-blur-xl"
+      className="liquid-glass-web fixed bottom-3 left-1/2 z-30 grid w-[calc(100%-1.5rem)] max-w-[28.5rem] -translate-x-1/2 grid-cols-5 rounded-[1.65rem] px-1.5 py-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))]"
     >
       {items.map(({ href, icon: Icon, label, primary }) => {
         const current = isCurrent(pathname, href);
@@ -43,19 +43,22 @@ export function BottomNavigation() {
             key={href}
             href={href}
             aria-current={current ? "page" : undefined}
-            className={`group flex min-h-13 flex-col items-center justify-center gap-1 rounded-xl text-[0.65rem] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-[#725cff] ${
-              current ? "text-[#725cff]" : "text-[#85808a] hover:text-[#403a47]"
+            className={`group flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-[1.15rem] text-[0.61rem] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-[var(--system-blue)] ${
+              current
+                ? "text-[var(--foreground)]"
+                : "text-[var(--text-tertiary)] hover:text-[var(--foreground)]"
             }`}
           >
             <span
               className={
                 primary
-                  ? "-mt-7 flex size-12 items-center justify-center rounded-full border-4 border-[#f7f8fa] bg-[#20202a] text-white shadow-[0_8px_22px_rgba(32,32,42,0.25)] transition-transform group-hover:-translate-y-0.5"
+                  ? "-mt-6 flex size-12 items-center justify-center rounded-[1.05rem] border-[3px] border-[var(--surface-solid)] bg-[#1d1d1f] text-white shadow-[0_10px_28px_rgba(29,29,31,0.28)] transition-transform duration-300 group-hover:-translate-y-1 group-active:scale-95"
                   : "flex h-6 items-center justify-center"
               }
             >
               <Icon
-                className={primary ? "size-5" : "size-[1.15rem]"}
+                className={primary ? "size-5" : "size-[1.1rem]"}
+                strokeWidth={current ? 2.2 : 1.7}
                 aria-hidden="true"
               />
             </span>

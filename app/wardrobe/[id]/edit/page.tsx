@@ -14,24 +14,26 @@ export default async function EditWardrobeItemPage({
   if (!item) notFound();
 
   return (
-    <div className="px-5 pt-4">
+    <div className="page-enter px-5 pt-3">
       <Link
         href={`/wardrobe/${item.id}`}
-        className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-[#514b56]"
+        aria-label="返回详情"
+        className="liquid-glass-web pressable inline-flex size-10 items-center justify-center rounded-full text-[var(--foreground)]"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
-        返回详情
       </Link>
-      <header className="mt-4">
-        <p className="text-xs font-medium text-[#776c87]">编辑衣物</p>
-        <h1 className="mt-1 font-heading text-[2.25rem] leading-tight font-semibold tracking-[-0.04em] text-[#20202a]">
+      <header className="mt-5">
+        <p className="text-xs font-semibold text-[var(--system-blue)]">
+          编辑衣物
+        </p>
+        <h1 className="mt-2 font-heading text-[2.65rem] leading-[1.02] font-bold tracking-[-0.065em] text-[var(--foreground)]">
           校准这件衣物的信息
         </h1>
-        <p className="mt-3 text-sm leading-6 text-[#746e79]">
+        <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
           本阶段只修改文字属性，原图会保持不变。
         </p>
       </header>
-      <section className="mt-5 rounded-[1.7rem] border border-black/6 bg-white p-5 shadow-[0_16px_46px_rgba(42,38,54,0.06)]">
+      <section className="surface-card mt-6 rounded-[1.6rem] p-5">
         <WardrobeItemForm item={item} />
       </section>
     </div>

@@ -24,30 +24,30 @@ export default async function WardrobeItemPage({
   if (!item) notFound();
 
   return (
-    <div className="px-5 pt-4">
+    <div className="page-enter px-5 pt-3">
       <div className="flex items-center justify-between">
         <Link
           href="/wardrobe"
-          className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-[#514b56]"
+          aria-label="返回衣橱"
+          className="liquid-glass-web pressable inline-flex size-10 items-center justify-center rounded-full text-[var(--foreground)]"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
-          返回衣橱
         </Link>
         <Link
           href={`/wardrobe/${item.id}/edit`}
-          className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#20202a] px-4 text-xs font-semibold text-white"
+          className="pressable inline-flex min-h-10 items-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-xs font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.18)]"
         >
           <Pencil className="size-3.5" aria-hidden="true" />
           编辑
         </Link>
       </div>
 
-      <section className="mt-3 overflow-hidden rounded-[2rem] border border-black/6 bg-white p-3 shadow-[0_18px_54px_rgba(42,38,54,0.07)]">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.45rem] bg-[#ebecef]">
+      <section className="surface-card mt-4 overflow-hidden rounded-[1.75rem] p-3">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.4rem] bg-[var(--surface-soft)]">
           {item.imageUrl ? (
             <Image
               src={item.imageUrl}
-              alt={`${item.name}的合成演示原图`}
+              alt={`${item.name}${item.demo_key ? "的演示棚拍图" : "的原图"}`}
               fill
               sizes="440px"
               unoptimized
@@ -55,7 +55,7 @@ export default async function WardrobeItemPage({
               priority
             />
           ) : (
-            <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-[#77717c]">
+            <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-[var(--text-tertiary)]">
               <ImageOff className="size-7" aria-hidden="true" />
               原图暂时不可用
             </span>
@@ -64,18 +64,18 @@ export default async function WardrobeItemPage({
         <div className="px-2 pt-5 pb-2">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-medium text-[#776c87]">
+              <p className="text-xs font-medium text-[var(--system-blue)]">
                 {optionLabel(CATEGORY_OPTIONS, item.category)}
               </p>
-              <h1 className="mt-1 font-heading text-[2.1rem] leading-tight font-semibold tracking-[-0.04em] text-[#20202a]">
+              <h1 className="mt-1 font-heading text-[2.2rem] leading-tight font-bold tracking-[-0.055em] text-[var(--foreground)]">
                 {item.name}
               </h1>
             </div>
-            <span className="rounded-full bg-[#eeeafe] px-3 py-1.5 text-[0.68rem] font-semibold text-[#5b48c4]">
+            <span className="rounded-full bg-[var(--system-blue-soft)] px-3 py-1.5 text-[0.68rem] font-semibold text-[var(--system-blue)]">
               {item.status === "archived" ? "已归档" : "使用中"}
             </span>
           </div>
-          <p className="mt-3 text-xs text-[#817b85]">
+          <p className="mt-3 text-xs text-[var(--text-tertiary)]">
             最近更新{" "}
             {new Intl.DateTimeFormat("zh-CN", {
               month: "short",
@@ -85,8 +85,8 @@ export default async function WardrobeItemPage({
         </div>
       </section>
 
-      <section className="mt-5 rounded-[1.6rem] border border-black/6 bg-white p-5">
-        <h2 className="font-heading text-xl font-semibold text-[#292631]">
+      <section className="surface-card mt-5 rounded-[1.5rem] p-5">
+        <h2 className="font-heading text-xl font-bold tracking-[-0.035em] text-[var(--foreground)]">
           衣物属性
         </h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -123,7 +123,7 @@ export default async function WardrobeItemPage({
         <ReadOnlyStatus icon={Sparkles} label="推荐使用" value="尚未用于推荐" />
       </section>
 
-      <section className="mt-5 grid gap-3 rounded-[1.6rem] border border-black/6 bg-white p-4">
+      <section className="surface-card mt-5 grid gap-3 rounded-[1.5rem] p-4">
         <WardrobeActionButton
           itemId={item.id}
           mode={item.status === "archived" ? "restore" : "archive"}
@@ -144,9 +144,13 @@ function Attribute({
   wide?: boolean;
 }) {
   return (
-    <div className={`rounded-xl bg-[#f7f8fa] p-3 ${wide ? "col-span-2" : ""}`}>
-      <p className="text-[0.68rem] font-medium text-[#817b85]">{label}</p>
-      <p className="mt-1 text-sm font-semibold leading-5 text-[#3f3945]">
+    <div
+      className={`rounded-[1rem] bg-[var(--surface-soft)] p-3 ${wide ? "col-span-2" : ""}`}
+    >
+      <p className="text-[0.68rem] font-medium text-[var(--text-tertiary)]">
+        {label}
+      </p>
+      <p className="mt-1 text-sm font-semibold leading-5 text-[var(--foreground)]">
         {value}
       </p>
     </div>
@@ -163,10 +167,12 @@ function ReadOnlyStatus({
   value: string;
 }) {
   return (
-    <div className="rounded-[1.35rem] border border-black/6 bg-white p-4">
-      <Icon className="size-4 text-[#725cff]" aria-hidden="true" />
-      <p className="mt-4 text-[0.68rem] text-[#817b85]">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[#3f3945]">{value}</p>
+    <div className="surface-card rounded-[1.4rem] p-4">
+      <Icon className="size-4 text-[var(--system-blue)]" aria-hidden="true" />
+      <p className="mt-5 text-[0.68rem] text-[var(--text-tertiary)]">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-[var(--foreground)]">
+        {value}
+      </p>
     </div>
   );
 }

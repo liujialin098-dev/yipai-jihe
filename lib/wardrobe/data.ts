@@ -1,6 +1,7 @@
 import type { Tables } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth/viewer";
+import { getDemoWardrobeImageUrl } from "@/lib/wardrobe/catalog";
 import {
   escapeIlike,
   isUuid,
@@ -9,15 +10,12 @@ import {
 
 type WardrobeRow = Tables<"wardrobe_items">;
 
-export type WardrobeItem = Omit<
-  WardrobeRow,
-  "demo_key" | "image_path" | "user_id"
-> & {
+export type WardrobeItem = Omit<WardrobeRow, "image_path" | "user_id"> & {
   imageUrl: string | null;
 };
 
 const ITEM_COLUMNS =
-  "id, name, category, primary_color, material, style, seasons, occasions, image_path, status, created_at, updated_at";
+  "id, demo_key, name, category, primary_color, material, style, seasons, occasions, image_path, status, created_at, updated_at";
 
 const SIGNED_URL_TTL_SECONDS = 60 * 30;
 const SIGNED_URL_CACHE_MS = 60 * 25 * 1000;
@@ -77,11 +75,22 @@ async function signedUrlMap(
 }
 
 function toWardrobeItem(
-  row: Omit<WardrobeRow, "demo_key" | "user_id">,
+  row: Omit<WardrobeRow, "user_id">,
   imageUrl: string | null,
 ): WardrobeItem {
   const { image_path: _imagePath, ...item } = row;
-  return { ...item, imageUrl };
+  return {
+    ...item,
+    imageUrl: getDemoWardrobeImageUrl(item.demo_key) ?? imageUrl,
+  };
+}
+
+function privateImagePaths(
+  rows: Array<Pick<WardrobeRow, "demo_key" | "image_path">>,
+) {
+  return rows.flatMap((row) =>
+    getDemoWardrobeImageUrl(row.demo_key) ? [] : [row.image_path],
+  );
 }
 
 export async function getWardrobeItems(filters: WardrobeFilters) {
@@ -119,10 +128,7 @@ export async function getWardrobeItems(filters: WardrobeFilters) {
     };
   }
 
-  const urls = await signedUrlMap(
-    supabase,
-    data.map((item) => item.image_path),
-  );
+  const urls = await signedUrlMap(supabase, privateImagePaths(data));
 
   return {
     items: data.map((item) =>
@@ -146,7 +152,7 @@ export async function getWardrobeItem(id: string) {
     .maybeSingle();
 
   if (error || !data) return null;
-  const urls = await signedUrlMap(supabase, [data.image_path]);
+  const urls = await signedUrlMap(supabase, privateImagePaths([data]));
   return toWardrobeItem(data, urls.get(data.image_path) ?? null);
 }
 
@@ -164,4 +170,26 @@ export async function getWardrobeCount(
     .eq("status", status);
 
   return error ? 0 : (count ?? 0);
+}
+
+export async function getWardrobePreview(limit = 3) {
+  const viewer = await getViewer();
+  if (!viewer) return [] as WardrobeItem[];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("wardrobe_items")
+    .select(ITEM_COLUMNS)
+    .eq("user_id", viewer.userId)
+    .eq("status", "active")
+    .order("updated_at", { ascending: false })
+    .limit(Math.max(1, Math.min(limit, 6)));
+
+  if (error || !data) return [] as WardrobeItem[];
+
+  const urls = await signedUrlMap(supabase, privateImagePaths(data));
+
+  return data.map((item) =>
+    toWardrobeItem(item, urls.get(item.image_path) ?? null),
+  );
 }

@@ -13,33 +13,51 @@ export function FilterPanel({
   filters: WardrobeFilters;
   resultCount: number;
 }) {
+  const hasConfiguredFilters = Boolean(
+    filters.q ||
+      filters.color ||
+      filters.season ||
+      filters.occasion ||
+      filters.status === "archived",
+  );
+
   return (
-    <section className="mt-5 rounded-[1.5rem] border border-black/6 bg-white p-4 shadow-[0_12px_38px_rgba(42,38,54,0.05)]">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm font-semibold text-[#292631]">
+    <details
+      className="surface-card group mt-5 rounded-[1.5rem] p-4"
+      open={hasConfiguredFilters || undefined}
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl focus-visible:outline-2 focus-visible:outline-[var(--system-blue)]">
+        <div className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]">
           <SlidersHorizontal
-            className="size-4 text-[#725cff]"
+            className="size-4 text-[var(--system-blue)]"
             aria-hidden="true"
           />
-          查找衣物
+          搜索与筛选
         </div>
-        <span className="text-xs text-[#7f7984]">{resultCount} 件结果</span>
-      </div>
+        <span className="text-xs text-[var(--text-tertiary)]">
+          {resultCount} 件结果
+        </span>
+      </summary>
       <form action="/wardrobe" className="mt-4 grid grid-cols-2 gap-3">
         {filters.category ? (
           <input type="hidden" name="category" value={filters.category} />
         ) : null}
         <label className="col-span-2">
-          <span className="sr-only">搜索衣物名称</span>
-          <span className="flex min-h-11 items-center gap-2 rounded-xl border border-black/9 bg-[#f7f8fa] px-3 focus-within:border-[#725cff] focus-within:ring-2 focus-within:ring-[#725cff]/15">
-            <Search className="size-4 text-[#85808a]" aria-hidden="true" />
+          <span className="mb-1.5 block text-xs font-medium text-[var(--text-secondary)]">
+            衣物名称
+          </span>
+          <span className="flex min-h-11 items-center gap-2 rounded-[0.9rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3 focus-within:border-[var(--system-blue)] focus-within:ring-2 focus-within:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]">
+            <Search
+              className="size-4 text-[var(--text-tertiary)]"
+              aria-hidden="true"
+            />
             <input
               type="search"
               name="q"
               defaultValue={filters.q}
               maxLength={60}
-              placeholder="搜索名称"
-              className="min-w-0 flex-1 bg-transparent text-sm text-[#292631] outline-none placeholder:text-[#8a858f]"
+              placeholder="例如：针织"
+              className="min-w-0 flex-1 bg-transparent text-sm text-[var(--foreground)] outline-none placeholder:text-[var(--text-tertiary)]"
             />
           </span>
         </label>
@@ -62,11 +80,13 @@ export function FilterPanel({
           options={OCCASION_OPTIONS}
         />
         <label className="grid gap-1.5">
-          <span className="text-xs font-medium text-[#5f5965]">状态</span>
+          <span className="text-xs font-medium text-[var(--text-secondary)]">
+            状态
+          </span>
           <select
             name="status"
             defaultValue={filters.status}
-            className="min-h-11 rounded-xl border border-black/9 bg-[#f7f8fa] px-3 text-sm text-[#292631] outline-none focus:border-[#725cff] focus:ring-2 focus:ring-[#725cff]/15"
+            className="min-h-11 rounded-[0.9rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3 text-sm text-[var(--foreground)] outline-none focus:border-[var(--system-blue)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]"
           >
             <option value="active">日常衣橱</option>
             <option value="archived">已归档</option>
@@ -74,18 +94,18 @@ export function FilterPanel({
         </label>
         <button
           type="submit"
-          className="col-span-2 min-h-11 rounded-xl bg-[#20202a] px-4 text-sm font-semibold text-white transition-transform active:translate-y-px"
+          className="pressable col-span-2 min-h-11 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white"
         >
           应用条件
         </button>
       </form>
       <a
         href="/wardrobe"
-        className="mt-3 inline-flex min-h-9 items-center text-xs font-semibold text-[#6553d8] underline-offset-4 hover:underline"
+        className="mt-3 inline-flex min-h-9 items-center text-xs font-semibold text-[var(--system-blue)] underline-offset-4 hover:underline"
       >
         清除全部条件
       </a>
-    </section>
+    </details>
   );
 }
 
@@ -102,11 +122,13 @@ function FilterSelect({
 }) {
   return (
     <label className="grid gap-1.5">
-      <span className="text-xs font-medium text-[#5f5965]">{label}</span>
+      <span className="text-xs font-medium text-[var(--text-secondary)]">
+        {label}
+      </span>
       <select
         name={name}
         defaultValue={value ?? ""}
-        className="min-h-11 rounded-xl border border-black/9 bg-[#f7f8fa] px-3 text-sm text-[#292631] outline-none focus:border-[#725cff] focus:ring-2 focus:ring-[#725cff]/15"
+        className="min-h-11 rounded-[0.9rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3 text-sm text-[var(--foreground)] outline-none focus:border-[var(--system-blue)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]"
       >
         <option value="">不限</option>
         {options.map((option) => (

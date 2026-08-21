@@ -63,10 +63,10 @@ export function WardrobeActionButton({
         <button
           type="submit"
           disabled={pending}
-          className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-transform active:translate-y-px disabled:opacity-60 ${
+          className={`pressable inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold disabled:opacity-60 ${
             mode === "delete"
-              ? "border border-[#c94f43]/20 bg-[#fff0ed] text-[#a53f35]"
-              : "border border-black/8 bg-white text-[#3f3945]"
+              ? "border border-[#ff453a]/20 bg-[#ff453a]/10 text-[#c9342f]"
+              : "border border-[var(--hairline)] bg-[var(--surface-solid)] text-[var(--foreground)]"
           }`}
         >
           {pending ? (
@@ -81,7 +81,7 @@ export function WardrobeActionButton({
         <p
           aria-live="polite"
           className={`mt-2 text-xs leading-5 ${
-            state.status === "error" ? "text-[#a53f35]" : "text-[#4d745e]"
+            state.status === "error" ? "text-[#c9342f]" : "text-[#248a3d]"
           }`}
         >
           {state.message}

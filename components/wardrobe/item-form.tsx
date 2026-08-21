@@ -35,7 +35,7 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
           maxLength={60}
           required
           aria-invalid={Boolean(state.fieldErrors?.name)}
-          className="min-h-12 w-full rounded-xl border border-black/10 bg-[#f7f8fa] px-3.5 text-sm text-[#292631] outline-none placeholder:text-[#8a858f] focus:border-[#725cff] focus:ring-2 focus:ring-[#725cff]/15"
+          className="min-h-12 w-full rounded-[0.95rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 text-sm text-[var(--foreground)] outline-none focus:border-[var(--system-blue)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]"
         />
       </Field>
       <div className="grid grid-cols-2 gap-3">
@@ -86,7 +86,7 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
         <p
           aria-live="polite"
           className={`text-sm ${
-            state.status === "error" ? "text-[#a53f35]" : "text-[#4d745e]"
+            state.status === "error" ? "text-[#c9342f]" : "text-[#248a3d]"
           }`}
         >
           {state.message}
@@ -95,7 +95,7 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#20202a] px-5 text-sm font-semibold text-white transition-transform active:translate-y-px disabled:opacity-60"
+        className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_12px_26px_rgba(29,29,31,0.18)] disabled:opacity-60"
       >
         {pending ? (
           <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -121,11 +121,14 @@ function Field({
 }) {
   return (
     <div className="grid gap-2">
-      <label htmlFor={htmlFor} className="text-sm font-semibold text-[#3f3945]">
+      <label
+        htmlFor={htmlFor}
+        className="text-sm font-semibold text-[var(--foreground)]"
+      >
         {label}
       </label>
       {children}
-      {error ? <span className="text-xs text-[#a53f35]">{error}</span> : null}
+      {error ? <span className="text-xs text-[#c9342f]">{error}</span> : null}
     </div>
   );
 }
@@ -150,7 +153,7 @@ function SelectField({
         name={name}
         defaultValue={value}
         aria-invalid={Boolean(error)}
-        className="min-h-12 w-full rounded-xl border border-black/10 bg-[#f7f8fa] px-3 text-sm text-[#292631] outline-none focus:border-[#725cff] focus:ring-2 focus:ring-[#725cff]/15"
+        className="min-h-12 w-full rounded-[0.95rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3 text-sm text-[var(--foreground)] outline-none focus:border-[var(--system-blue)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -177,25 +180,27 @@ function CheckboxField({
 }) {
   return (
     <fieldset className="grid gap-2">
-      <legend className="text-sm font-semibold text-[#3f3945]">{label}</legend>
+      <legend className="text-sm font-semibold text-[var(--foreground)]">
+        {label}
+      </legend>
       <div className="grid grid-cols-2 gap-2">
         {options.map((option) => (
           <label
             key={option.value}
-            className="flex min-h-11 items-center gap-2 rounded-xl border border-black/8 bg-[#f7f8fa] px-3 text-sm text-[#514b56] has-checked:border-[#725cff]/35 has-checked:bg-[#eeeafe] has-checked:text-[#4736a1]"
+            className="flex min-h-11 items-center gap-2 rounded-[0.9rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3 text-sm text-[var(--text-secondary)] has-checked:border-[var(--system-blue)]/35 has-checked:bg-[var(--system-blue-soft)] has-checked:text-[var(--system-blue)]"
           >
             <input
               type="checkbox"
               name={name}
               value={option.value}
               defaultChecked={selected.includes(option.value)}
-              className="size-4 accent-[#725cff]"
+              className="size-4 accent-[var(--system-blue)]"
             />
             {option.label}
           </label>
         ))}
       </div>
-      {error ? <p className="text-xs text-[#a53f35]">{error}</p> : null}
+      {error ? <p className="text-xs text-[#c9342f]">{error}</p> : null}
     </fieldset>
   );
 }

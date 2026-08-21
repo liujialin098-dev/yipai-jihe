@@ -60,12 +60,12 @@ export function SessionBootstrap({ isReady }: { isReady: boolean }) {
 
   if (state.kind === "error") {
     return (
-      <section className="mx-5 mt-3 rounded-2xl border border-[#ff8068]/30 bg-[#fff2ef] p-4 text-[#6f3025]">
+      <section className="mx-5 mt-3 rounded-[1.35rem] border border-[#ff453a]/20 bg-[#ff453a]/8 p-4 text-[var(--foreground)]">
         <p className="text-sm font-medium">{state.message}</p>
         <Button
           type="button"
           variant="outline"
-          className="mt-3 border-[#ff8068]/30 bg-white"
+          className="mt-3 border-[var(--hairline)] bg-[var(--surface-solid)]"
           onClick={startSession}
         >
           <RotateCw aria-hidden="true" />
@@ -76,7 +76,7 @@ export function SessionBootstrap({ isReady }: { isReady: boolean }) {
   }
 
   return (
-    <div className="mx-5 mt-3 flex items-center gap-3 rounded-2xl bg-[#eeeafe] px-4 py-3 text-[#4736a1]">
+    <div className="surface-card mx-5 mt-3 flex items-center gap-3 rounded-[1.35rem] px-4 py-3 text-[var(--system-blue)]">
       <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
       <p className="text-sm font-medium">正在为你准备一间私人衣橱…</p>
     </div>

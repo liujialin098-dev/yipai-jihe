@@ -1,66 +1,112 @@
-import { ArrowUpRight, Images, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight, Images, Search, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { getWardrobeCount } from "@/lib/wardrobe/data";
+import { getWardrobeCount, getWardrobePreview } from "@/lib/wardrobe/data";
 
 export default async function Home() {
-  const itemCount = await getWardrobeCount();
+  const [itemCount, previewItems] = await Promise.all([
+    getWardrobeCount(),
+    getWardrobePreview(3),
+  ]);
   const hasItems = itemCount > 0;
 
   return (
-    <div className="px-5 pt-5">
-      <section className="closet-grid relative overflow-hidden rounded-[2.1rem] bg-[#20202a] px-6 pt-6 pb-7 text-white shadow-[0_22px_70px_rgba(32,32,42,0.22)]">
-        <div className="relative z-10 flex items-start justify-between">
-          <p className="text-xs font-medium text-white/55">今日衣橱</p>
-          <span className="rounded-full border border-white/15 bg-white/7 px-3 py-1 text-[0.68rem] text-white/70">
-            私有空间
+    <div className="page-enter px-5 pt-4">
+      <section>
+        <p className="text-xs font-semibold text-[var(--system-blue)]">
+          你的私人穿搭空间
+        </p>
+        <h1 className="mt-3 max-w-[21rem] font-heading text-[3.25rem] leading-[0.98] font-bold tracking-[-0.075em] text-[var(--foreground)]">
+          今天穿什么，从衣橱开始。
+        </h1>
+        <p className="mt-4 max-w-[21rem] text-[0.95rem] leading-6 text-[var(--text-secondary)]">
+          把衣物放在一个清楚的位置，浏览、筛选和后续推荐都会更自然。
+        </p>
+      </section>
+
+      <Link
+        href="/wardrobe"
+        className="surface-card pressable mt-7 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
+      >
+        <div className="flex items-start justify-between gap-5">
+          <div>
+            <p className="text-xs font-medium text-[var(--text-tertiary)]">
+              当前衣橱
+            </p>
+            <div className="mt-2 flex items-end gap-2">
+              <strong className="font-heading text-[4.8rem] leading-[0.82] font-bold tracking-[-0.09em] text-[var(--foreground)]">
+                {String(itemCount).padStart(2, "0")}
+              </strong>
+              <span className="pb-1 text-xs text-[var(--text-secondary)]">
+                件衣物
+              </span>
+            </div>
+          </div>
+          <span className="flex size-10 items-center justify-center rounded-full bg-[#1d1d1f] text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)]">
+            <ArrowRight
+              className="size-4"
+              strokeWidth={1.8}
+              aria-hidden="true"
+            />
           </span>
         </div>
-        <div className="relative z-10 mt-14">
-          <div className="flex items-end gap-2">
-            <strong className="font-heading text-[5.6rem] leading-[0.78] font-semibold tracking-[-0.09em]">
-              {String(itemCount).padStart(2, "0")}
-            </strong>
-            <span className="pb-1 text-sm text-white/55">件衣物</span>
+
+        {previewItems.length > 0 ? (
+          <div className="mt-7 grid grid-cols-3 gap-2.5">
+            {previewItems.map((item, index) => (
+              <div
+                key={item.id}
+                className="stagger-item relative aspect-[4/5] overflow-hidden rounded-[1.15rem] bg-[var(--surface-soft)]"
+                style={{ "--stagger": index } as React.CSSProperties}
+              >
+                {item.imageUrl ? (
+                  <Image
+                    src={item.imageUrl}
+                    alt={`${item.name}${item.demo_key ? "的演示棚拍图" : "的原图"}`}
+                    fill
+                    sizes="120px"
+                    unoptimized
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                ) : null}
+              </div>
+            ))}
           </div>
-          <h1 className="mt-7 max-w-[17rem] font-heading text-[2rem] leading-[1.12] font-semibold tracking-[-0.035em]">
-            {hasItems
-              ? "衣物有了位置，搭配才有依据。"
-              : "衣橱空着，先放进一套日常选择。"}
-          </h1>
-          <p className="mt-3 max-w-[19rem] text-sm leading-6 text-white/62">
-            {hasItems
-              ? "现在可以浏览、筛选和维护单品，后续推荐会直接使用这套衣橱。"
-              : "加载 24 件安全演示衣物，无需拍照也能先体验完整衣橱。"}
+        ) : (
+          <p className="mt-8 max-w-[17rem] text-sm leading-6 text-[var(--text-secondary)]">
+            加载 24 件安全演示衣物，不用拍照也能先体验衣橱。
           </p>
-          <Link
-            href="/wardrobe"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#ff8068] px-4 py-2.5 text-sm font-semibold text-[#351a16] transition-transform active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            {hasItems ? "打开衣橱" : "建立演示衣橱"}
-            <ArrowUpRight className="size-4" aria-hidden="true" />
-          </Link>
+        )}
+
+        <div className="mt-5 flex items-center justify-between border-t border-[var(--hairline)] pt-4">
+          <p className="text-sm font-semibold text-[var(--foreground)]">
+            {hasItems ? "查看全部衣物" : "建立演示衣橱"}
+          </p>
+          <p className="text-xs text-[var(--text-tertiary)]">仅当前身份可见</p>
         </div>
-      </section>
-      <section className="mt-7">
-        <p className="text-xs font-medium text-[#817987]">衣橱能力</p>
-        <h2 className="mt-1 font-heading text-2xl font-semibold tracking-tight text-[#20202a]">
-          先把每件衣物放对位置
+      </Link>
+
+      <section className="mt-8">
+        <h2 className="font-heading text-[1.65rem] font-bold tracking-[-0.045em] text-[var(--foreground)]">
+          衣橱已经准备好
         </h2>
-        <div className="mt-4 grid gap-3">
+        <div className="mt-4 grid grid-cols-2 gap-3">
           <ReadyItem
             icon={Images}
             title="原图目录"
-            description="合成图片存入你的私有空间"
+            description="每件衣物都有自己的位置"
+            wide
           />
           <ReadyItem
             icon={Search}
             title="快速查找"
-            description="类别、颜色、季节和场合可以组合筛选"
+            description="组合条件立即定位"
           />
           <ReadyItem
             icon={ShieldCheck}
-            title="独立维护"
-            description="编辑、归档和删除只影响自己的衣橱"
+            title="私有维护"
+            description="操作只影响自己"
           />
         </div>
       </section>
@@ -72,19 +118,32 @@ function ReadyItem({
   description,
   icon: Icon,
   title,
+  wide = false,
 }: {
   description: string;
   icon: typeof Images;
   title: string;
+  wide?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-[1.35rem] border border-black/6 bg-white px-4 py-3.5">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#eeeafe] text-[#725cff]">
-        <Icon className="size-4.5" aria-hidden="true" />
+    <div
+      className={`surface-card stagger-item rounded-[1.5rem] p-4 ${wide ? "col-span-2 flex items-center gap-4" : "min-h-40"}`}
+      style={
+        {
+          "--stagger": wide ? 0 : title === "快速查找" ? 1 : 2,
+        } as React.CSSProperties
+      }
+    >
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
+        <Icon className="size-4.5" strokeWidth={1.7} aria-hidden="true" />
       </span>
-      <div>
-        <h3 className="text-sm font-semibold text-[#292631]">{title}</h3>
-        <p className="mt-1 text-xs leading-5 text-[#7a7580]">{description}</p>
+      <div className={wide ? "" : "mt-8"}>
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">
+          {title}
+        </h3>
+        <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+          {description}
+        </p>
       </div>
     </div>
   );

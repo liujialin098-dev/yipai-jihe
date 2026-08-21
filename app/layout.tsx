@@ -15,8 +15,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const viewer = await getViewer();
 
   return (
-    <html lang="zh-CN" className="h-full antialiased">
-      <body className="min-h-full bg-[#eceef3]">
+    <html lang="zh-CN" className="light h-full antialiased">
+      <body className="min-h-full bg-background">
         <AppShell viewer={viewer}>{children}</AppShell>
       </body>
     </html>

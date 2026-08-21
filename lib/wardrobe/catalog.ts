@@ -260,3 +260,10 @@ export const DEMO_WARDROBE: DemoWardrobeItem[] = [
     occasions: ["sport", "casual"],
   },
 ];
+
+const DEMO_WARDROBE_KEYS = new Set(DEMO_WARDROBE.map((item) => item.demoKey));
+
+export function getDemoWardrobeImageUrl(demoKey: string | null) {
+  if (!demoKey || !DEMO_WARDROBE_KEYS.has(demoKey)) return null;
+  return `/demo-wardrobe/${demoKey}.webp`;
+}

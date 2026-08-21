@@ -17,10 +17,12 @@
 - `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 与 `scripts/verify-sdd-003.mjs`：双匿名会话 RLS/Storage 隔离验证。
 - `specs/001-app-foundation/` 与 `specs/003-wardrobe-core/`：已完成阶段的规格、计划、任务、数据模型、契约和快速验收记录。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
+- 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。
 
 ## 注意事项
 
 - 优先复用 shadcn/ui 组件和主题 token，图标统一使用 lucide-react。
+- 后续页面 MUST 延续当前视觉 token：卡片使用约 24px 软圆角，主要按钮使用胶囊或圆形，玻璃效果只用于导航和悬浮控件，不得恢复旧紫色模板风格或在所有容器滥用毛玻璃。
 - 修改后运行 `npm run check`；提交时 hook 会再次执行同一流程。
 - 遵循 Server Component 默认边界，只有需要浏览器状态或事件时才使用 `use client`。
 - 引入新库前先查本地 skill；缺少 skill 时使用 Context7，并把关键结论与 library id 记录在本文件。
@@ -52,6 +54,7 @@
 - 当前 P0 使用原图卡片，不执行自动抠图和穿搭日记；自动抠图与穿搭日记均移至 P1。P1 抠图 MUST 经过服务端 `cutoutService` 调用外部 API，密钥只能通过环境变量提供，失败不得阻塞原图入库。
 - P0 账号范围仅包含匿名体验；邮箱绑定、邮件验证、登录、退出和跨设备恢复已移至 P1 的 SDD-002，不得作为 SDD-003 至 SDD-007 的依赖。当前必须明确提示：清除站点数据或更换设备后无法恢复原匿名身份。未来恢复 SDD-002 时，绑定后 MUST 保持同一 `auth_user_id` 和原匿名数据。
 - 演示数据 MUST 按当前用户隔离加载，优先采用可重复的一键加载方式；不得把真实个人敏感照片写入仓库或提交记录。
+- 内置演示衣物图片位于 `public/demo-wardrobe/`，按 `demo_key` 使用同名 768px WebP 棚拍素材；仅演示数据使用公开静态图，真实用户上传仍 MUST 使用 `wardrobe-images` 私有 bucket 与签名 URL。
 
 <!-- BEGIN:nextjs-agent-rules -->
 
