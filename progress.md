@@ -176,7 +176,7 @@
 - 已知限制：当前本地网络会让 Node.js 解析/连接 OpenAI 失败，因此真实 AI 基准改由同机 PowerShell 直连与 Vercel Preview 双重执行；应用线上链路不受影响。物理过期清理由当前用户下次进入入库流程时触发，P0 未配置定时 Cron；匿名身份清除站点数据或换设备后仍无法恢复。
 - 下一步：启动 SDD-005，先明确天气数据方案、每日推荐输入和失败降级边界，再创建对应 Spec Kit SDD。
 - Preview：`https://ai-coding-d8qt4h6g2-jialin-d583.vercel.app`（READY，包含最终 Schema 修复和额度提示）；真实 10 项 AI 批量验收在同配置的 `https://ai-coding-p2br60ssy-jialin-d583.vercel.app` 完成。
-- 提交记录：SDD-004 暂停检查点 `54b6a82`；阶段完成提交待本次提交后回填。
+- 提交记录：SDD-004 暂停检查点 `54b6a82`；阶段完成提交 `66dbf01`（AI Schema 修复、真实验收、验证脚本与完成文档）。
 
 ### SDD-005：每日 3 套 AI 推荐
 

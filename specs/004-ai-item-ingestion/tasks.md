@@ -85,7 +85,7 @@
 - [x] T027 在 `scripts/verify-sdd-004.mjs` 和 `specs/004-ai-item-ingestion/quickstart.md` 记录 10 张样本的模型、耗时、类别正确性和修正字段，验证至少 8/10 类别正确
 - [x] T028 运行 `npm run check`、`npm run build` 和 `npm run verify:sdd-004`，修复发现的问题并在 `specs/004-ai-item-ingestion/tasks.md` 勾选已完成任务
 - [x] T029 更新 `progress.md` 与 `AGENTS.md` 的阶段状态、完成日期、验收结果、已知限制、环境变量和提交记录
-- [ ] T030 仅提交 SDD-004 相关文件并在 `progress.md` 回填最终 commit hash
+- [x] T030 仅提交 SDD-004 相关文件并在 `progress.md` 回填最终 commit hash
 
 ---
 
