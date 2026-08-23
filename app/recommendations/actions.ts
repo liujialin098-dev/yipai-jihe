@@ -2,6 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  addFeedbackEvent,
+  FEEDBACK_WEIGHTS,
+  recalculatePreferenceScores,
+} from "@/lib/feedback/preferences";
+import { replaceRecommendationItem } from "@/lib/feedback/replacement";
+import {
   isRecommendationOccasion,
   isWeatherPreset,
   type RecommendationActionState,
@@ -17,6 +23,11 @@ import {
   InsufficientWardrobeError,
 } from "@/lib/recommendations/rules";
 import { getWeatherSnapshot } from "@/lib/recommendations/weather";
+import {
+  parseRecommendationOccasion,
+  validateRecommendationOutput,
+  validateWeatherSnapshot,
+} from "@/lib/recommendations/validation";
 import type { Json } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 
@@ -142,4 +153,111 @@ export async function generateDailyRecommendations(
       message: "推荐暂时无法完成，请稍后再试。",
     };
   }
+}
+
+export async function replaceDailyRecommendationItem(
+  _previousState: RecommendationActionState,
+  formData: FormData,
+): Promise<RecommendationActionState> {
+  const recommendationId = String(formData.get("recommendationId") ?? "");
+  const currentItemId = String(formData.get("currentItemId") ?? "");
+  const replacementItemId = String(formData.get("replacementItemId") ?? "");
+  const slotValue = Number(formData.get("slot"));
+  if (![1, 2, 3].includes(slotValue)) {
+    return { status: "error", message: "替换位置无效。" };
+  }
+
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userData.user;
+  if (userError || !user) {
+    return { status: "error", message: "体验会话已失效，请刷新后重试。" };
+  }
+
+  const [recommendationResult, items] = await Promise.all([
+    supabase
+      .from("daily_recommendations")
+      .select("occasion, weather, outfits")
+      .eq("id", recommendationId)
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    getActiveRecommendationItems(supabase, user.id),
+  ]);
+  const row = recommendationResult.data;
+  const occasion = row ? parseRecommendationOccasion(row.occasion) : null;
+  const weather = row ? validateWeatherSnapshot(row.weather) : null;
+  const currentOutfits =
+    row && occasion && weather && items
+      ? validateRecommendationOutput(
+          { outfits: row.outfits },
+          items,
+          occasion,
+          weather,
+        )
+      : null;
+  if (!row || !occasion || !weather || !items || !currentOutfits) {
+    return { status: "error", message: "今日方案已变化，请刷新后再试。" };
+  }
+
+  const nextOutfits = replaceRecommendationItem({
+    outfits: currentOutfits,
+    currentItemId,
+    replacementItemId,
+    slot: slotValue as 1 | 2 | 3,
+    items,
+    occasion,
+    weather,
+  });
+  const replacement = items.find((item) => item.id === replacementItemId);
+  if (!nextOutfits || !replacement) {
+    return { status: "error", message: "这件候选不再适合当前方案。" };
+  }
+
+  const updateResult = await supabase
+    .from("daily_recommendations")
+    .update({ outfits: nextOutfits as unknown as Json })
+    .eq("id", recommendationId)
+    .eq("user_id", user.id);
+  if (updateResult.error) {
+    return { status: "error", message: "替换暂时无法保存。" };
+  }
+
+  await addFeedbackEvent(supabase, {
+    userId: user.id,
+    eventKey: `replace:${recommendationId}:${slotValue}:${crypto.randomUUID()}`,
+    eventType: "replace",
+    style: replacement.style,
+    weight: FEEDBACK_WEIGHTS.replacement,
+    recommendationId,
+    outfitSlot: slotValue,
+    wardrobeItemId: replacementItemId,
+    metadata: { currentItemId, replacementItemId },
+  });
+  await recalculatePreferenceScores(supabase, user.id);
+  revalidatePath("/recommendations");
+  return { status: "success", message: `已换成${replacement.name}。` };
+}
+
+export async function recordRecommendationView(
+  recommendationId: string,
+  version: string,
+) {
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userError ? null : userData.user;
+  if (!user) return;
+  const result = await supabase
+    .from("daily_recommendations")
+    .select("id, updated_at")
+    .eq("id", recommendationId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!result.data || result.data.updated_at !== version) return;
+  await addFeedbackEvent(supabase, {
+    userId: user.id,
+    eventKey: `view:${recommendationId}:${version}`,
+    eventType: "view",
+    recommendationId,
+    metadata: { version },
+  });
 }

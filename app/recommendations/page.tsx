@@ -3,8 +3,13 @@ import { CloudRain, CloudSun, Info, Shirt } from "lucide-react";
 import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
+import { RecommendationViewTracker } from "@/components/recommendations/recommendation-view-tracker";
 import { recommendationOccasionLabel } from "@/lib/recommendations/constants";
-import { getRecommendationPageData } from "@/lib/recommendations/data";
+import {
+  getRecommendationPageData,
+  toRecommendationItem,
+} from "@/lib/recommendations/data";
+import { replacementCandidates } from "@/lib/feedback/replacement";
 
 export const metadata: Metadata = { title: "今日推荐" };
 
@@ -18,7 +23,8 @@ function todayLabel() {
 }
 
 export default async function RecommendationsPage() {
-  const { error, items, recommendation } = await getRecommendationPageData();
+  const { error, items, recommendation, itemFavoriteIds, outfitFavoriteKeys } =
+    await getRecommendationPageData();
   const WeatherIcon =
     recommendation && recommendation.weather.weatherCode >= 51
       ? CloudRain
@@ -90,6 +96,10 @@ export default async function RecommendationsPage() {
 
       {recommendation ? (
         <section className="mt-7 space-y-5" aria-label="今日三套推荐">
+          <RecommendationViewTracker
+            recommendationId={recommendation.id}
+            version={recommendation.updatedAt}
+          />
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-medium text-[var(--text-tertiary)]">
@@ -109,6 +119,24 @@ export default async function RecommendationsPage() {
               index={index}
               outfit={outfit}
               items={items}
+              recommendationId={recommendation.id}
+              sourceKey={`${recommendation.id}:${recommendation.updatedAt}:${outfit.slot}`}
+              itemFavoriteIds={itemFavoriteIds}
+              isOutfitFavorite={outfitFavoriteKeys.includes(
+                `${recommendation.id}:${recommendation.updatedAt}:${outfit.slot}`,
+              )}
+              candidateItemsByCurrentId={Object.fromEntries(
+                outfit.itemIds.map((currentItemId) => [
+                  currentItemId,
+                  replacementCandidates({
+                    items: items.map(toRecommendationItem),
+                    outfits: recommendation.outfits,
+                    currentItemId,
+                    occasion: recommendation.occasion,
+                    weather: recommendation.weather,
+                  }).map((candidate) => candidate.id),
+                ]),
+              )}
             />
           ))}
           <div className="flex items-start gap-3 rounded-[1.35rem] bg-[var(--surface-soft)] px-4 py-3.5 text-xs leading-5 text-[var(--text-secondary)]">

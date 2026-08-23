@@ -54,6 +54,81 @@ export type Database = {
         };
         Relationships: [];
       };
+      outfit_favorites: {
+        Row: {
+          created_at: string;
+          id: string;
+          occasion: string;
+          outfit: Json;
+          source_key: string;
+          title: string;
+          user_id: string;
+          weather: Json;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          occasion: string;
+          outfit: Json;
+          source_key: string;
+          title: string;
+          user_id: string;
+          weather: Json;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          occasion?: string;
+          outfit?: Json;
+          source_key?: string;
+          title?: string;
+          user_id?: string;
+          weather?: Json;
+        };
+        Relationships: [];
+      };
+      preference_feedback_events: {
+        Row: {
+          created_at: string;
+          event_key: string;
+          event_type: string;
+          id: string;
+          metadata: Json;
+          outfit_slot: number | null;
+          recommendation_id: string | null;
+          style: string | null;
+          user_id: string;
+          wardrobe_item_id: string | null;
+          weight: number;
+        };
+        Insert: {
+          created_at?: string;
+          event_key: string;
+          event_type: string;
+          id?: string;
+          metadata?: Json;
+          outfit_slot?: number | null;
+          recommendation_id?: string | null;
+          style?: string | null;
+          user_id: string;
+          wardrobe_item_id?: string | null;
+          weight?: number;
+        };
+        Update: {
+          created_at?: string;
+          event_key?: string;
+          event_type?: string;
+          id?: string;
+          metadata?: Json;
+          outfit_slot?: number | null;
+          recommendation_id?: string | null;
+          style?: string | null;
+          user_id?: string;
+          wardrobe_item_id?: string | null;
+          weight?: number;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -135,22 +210,31 @@ export type Database = {
       user_preferences: {
         Row: {
           created_at: string;
+          preference_focus: string;
+          preference_state: string;
           preferred_occasions: string[];
           preferred_styles: string[];
+          style_scores: Json;
           updated_at: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
+          preference_focus?: string;
+          preference_state?: string;
           preferred_occasions?: string[];
           preferred_styles?: string[];
+          style_scores?: Json;
           updated_at?: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
+          preference_focus?: string;
+          preference_state?: string;
           preferred_occasions?: string[];
           preferred_styles?: string[];
+          style_scores?: Json;
           updated_at?: string;
           user_id?: string;
         };
@@ -212,6 +296,35 @@ export type Database = {
           wardrobe_item_id?: string | null;
         };
         Relationships: [];
+      };
+      wardrobe_item_favorites: {
+        Row: {
+          created_at: string;
+          id: string;
+          user_id: string;
+          wardrobe_item_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          user_id: string;
+          wardrobe_item_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          user_id?: string;
+          wardrobe_item_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "wardrobe_item_favorites_wardrobe_item_id_fkey";
+            columns: ["wardrobe_item_id"];
+            isOneToOne: false;
+            referencedRelation: "wardrobe_items";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {

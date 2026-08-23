@@ -40,7 +40,7 @@ type RecommendationItemRow = Pick<
   | "status"
 >;
 
-function toRecommendationItem(
+export function toRecommendationItem(
   item: RecommendationItemRow,
 ): RecommendationWardrobeItem {
   return {
@@ -102,6 +102,8 @@ export type RecommendationPageData = {
   viewerId: string | null;
   items: WardrobeItem[];
   recommendation: DailyRecommendationView | null;
+  itemFavoriteIds: string[];
+  outfitFavoriteKeys: string[];
   error: string | null;
 };
 
@@ -112,13 +114,20 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       viewerId: null,
       items: [],
       recommendation: null,
+      itemFavoriteIds: [],
+      outfitFavoriteKeys: [],
       error: "体验会话正在准备，请稍后刷新。",
     };
   }
 
   const supabase = await createClient();
   const date = recommendationDate();
-  const [wardrobeResult, recommendationResult] = await Promise.all([
+  const [
+    wardrobeResult,
+    recommendationResult,
+    itemFavoritesResult,
+    outfitFavoritesResult,
+  ] = await Promise.all([
     getWardrobeItems({ q: "", status: "active" }),
     supabase
       .from("daily_recommendations")
@@ -128,6 +137,14 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       .eq("user_id", viewer.userId)
       .eq("recommendation_date", date)
       .maybeSingle(),
+    supabase
+      .from("wardrobe_item_favorites")
+      .select("wardrobe_item_id")
+      .eq("user_id", viewer.userId),
+    supabase
+      .from("outfit_favorites")
+      .select("source_key")
+      .eq("user_id", viewer.userId),
   ]);
 
   if (wardrobeResult.error) {
@@ -135,6 +152,8 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       viewerId: viewer.userId,
       items: [],
       recommendation: null,
+      itemFavoriteIds: [],
+      outfitFavoriteKeys: [],
       error: wardrobeResult.error,
     };
   }
@@ -179,6 +198,11 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
     viewerId: viewer.userId,
     items: wardrobeResult.items,
     recommendation,
+    itemFavoriteIds:
+      itemFavoritesResult.data?.map((favorite) => favorite.wardrobe_item_id) ??
+      [],
+    outfitFavoriteKeys:
+      outfitFavoritesResult.data?.map((favorite) => favorite.source_key) ?? [],
     error: recommendationResult.error
       ? "今日推荐暂时无法读取，可以重新生成。"
       : null,

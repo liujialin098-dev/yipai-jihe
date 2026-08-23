@@ -2,6 +2,7 @@ import { ArrowLeft, Heart, ImageOff, Pencil, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { WardrobeActionButton } from "@/components/wardrobe/action-button";
 import {
   CATEGORY_OPTIONS,
@@ -13,6 +14,7 @@ import {
   STYLE_OPTIONS,
 } from "@/lib/wardrobe/constants";
 import { getWardrobeItem } from "@/lib/wardrobe/data";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function WardrobeItemPage({
   params,
@@ -20,8 +22,16 @@ export default async function WardrobeItemPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const item = await getWardrobeItem(id);
+  const [item, supabase] = await Promise.all([
+    getWardrobeItem(id),
+    createClient(),
+  ]);
   if (!item) notFound();
+  const favoriteResult = await supabase
+    .from("wardrobe_item_favorites")
+    .select("id")
+    .eq("wardrobe_item_id", item.id)
+    .maybeSingle();
 
   return (
     <div className="page-enter px-5 pt-3">
@@ -119,7 +129,22 @@ export default async function WardrobeItemPage({
       </section>
 
       <section className="mt-5 grid grid-cols-2 gap-3">
-        <ReadOnlyStatus icon={Heart} label="收藏状态" value="未收藏" />
+        <div className="surface-card rounded-[1.4rem] p-4">
+          <Heart
+            className="size-4 text-[var(--system-blue)]"
+            aria-hidden="true"
+          />
+          <p className="mt-5 text-[0.68rem] text-[var(--text-tertiary)]">
+            收藏状态
+          </p>
+          <div className="mt-2">
+            <FavoriteButton
+              kind="item"
+              itemId={item.id}
+              isFavorite={Boolean(favoriteResult.data)}
+            />
+          </div>
+        </div>
         <ReadOnlyStatus icon={Sparkles} label="推荐使用" value="尚未用于推荐" />
       </section>
 

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
+import { ReplaceItemPanel } from "@/components/recommendations/replace-item-panel";
 import type { RecommendationOutfit } from "@/lib/recommendations/constants";
 import { STYLE_OPTIONS, optionLabel } from "@/lib/wardrobe/constants";
 import type { WardrobeItem } from "@/lib/wardrobe/data";
@@ -14,10 +16,20 @@ export function RecommendationCard({
   index,
   outfit,
   items,
+  recommendationId,
+  sourceKey,
+  itemFavoriteIds,
+  isOutfitFavorite,
+  candidateItemsByCurrentId,
 }: {
   index: number;
   outfit: RecommendationOutfit;
   items: WardrobeItem[];
+  recommendationId: string;
+  sourceKey: string;
+  itemFavoriteIds: string[];
+  isOutfitFavorite: boolean;
+  candidateItemsByCurrentId: Record<string, string[]>;
 }) {
   const itemMap = new Map(items.map((item) => [item.id, item]));
   const outfitItems = outfit.itemIds.flatMap((id) => {
@@ -60,6 +72,14 @@ export function RecommendationCard({
                 {item.name}
               </div>
             )}
+            <div className="absolute top-2 right-2">
+              <FavoriteButton
+                kind="item"
+                itemId={item.id}
+                isFavorite={itemFavoriteIds.includes(item.id)}
+                compact
+              />
+            </div>
           </div>
         ))}
       </div>
@@ -74,9 +94,19 @@ export function RecommendationCard({
               {outfit.title}
             </h2>
           </div>
-          <span className="text-xs text-[var(--text-tertiary)]">
-            {outfitItems.length} 件
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[var(--text-tertiary)]">
+              {outfitItems.length} 件
+            </span>
+            <FavoriteButton
+              kind="outfit"
+              recommendationId={recommendationId}
+              slot={outfit.slot}
+              sourceKey={sourceKey}
+              isFavorite={isOutfitFavorite}
+              compact
+            />
+          </div>
         </div>
         <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
           {outfit.reason}
@@ -89,6 +119,22 @@ export function RecommendationCard({
             >
               {optionLabel(STYLE_OPTIONS, tag)}
             </span>
+          ))}
+        </div>
+        <div className="mt-4 grid gap-2 border-t border-[var(--hairline)] pt-4">
+          {outfitItems.map((item) => (
+            <ReplaceItemPanel
+              key={item.id}
+              recommendationId={recommendationId}
+              slot={outfit.slot}
+              currentItem={item}
+              candidates={(candidateItemsByCurrentId[item.id] ?? []).flatMap(
+                (id) => {
+                  const candidate = itemMap.get(id);
+                  return candidate ? [candidate] : [];
+                },
+              )}
+            />
           ))}
         </div>
       </div>

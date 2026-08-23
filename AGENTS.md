@@ -11,12 +11,13 @@
 ## 项目速览
 
 - `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
-- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/wardrobe/`：衣物常量、校验、查询、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
 - `lib/recommendations/`：天气快照、严格推荐契约、OpenAI 生成、规则降级、归属与搭配结构校验，以及当日批次读取映射。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs`、`scripts/verify-sdd-003.mjs`、`scripts/verify-sdd-004.mjs` 与 `scripts/verify-sdd-005.mjs`：双匿名会话、幂等、固定样本和每日推荐覆盖验证。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/`、`specs/004-ai-item-ingestion/`、`specs/005-daily-recommendations/` 与 `specs/011-global-motion/` 为已完成阶段；`specs/002-account-binding/` 的代码和远端配置已完成，密码设置与重登录等待集中调试。
+- `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs`、`scripts/verify-sdd-003.mjs`、`scripts/verify-sdd-004.mjs`、`scripts/verify-sdd-005.mjs` 与 `scripts/verify-sdd-006.mjs`：双匿名会话、幂等、固定样本、每日推荐和反馈隔离验证。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/`、`specs/004-ai-item-ingestion/`、`specs/005-daily-recommendations/`、`specs/006-outfit-feedback/` 与 `specs/011-global-motion/` 为已完成阶段；`specs/002-account-binding/` 的代码和远端配置已完成，密码设置与重登录等待集中调试。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 - 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。
 
@@ -39,6 +40,7 @@
 - SDD-003 衣橱底座为 `public.wardrobe_items`：记录绑定 `user_id`，`demo_key` 保证当前用户演示数据幂等，状态仅为 `active/archived`；表启用四类用户所有权 RLS，`authenticated` 具有 CRUD，`anon` 无表权限。
 - SDD-004 入库底座为 `public.wardrobe_ingestions`：每张原图使用稳定请求 id、私有路径、处理状态与最长 24 小时有效期；`wardrobe_items.source_ingestion_id` 保证确认重试只创建一件衣物。表启用四类用户所有权 RLS，`anon` 无表权限。
 - SDD-005 推荐底座为 `public.daily_recommendations`：每名用户每天最多一个批次，`outfits` 必须恰好 3 套，AI 来源必须记录模型；表启用四类用户所有权 RLS，`authenticated` 具有 CRUD，`anon` 无表权限。推荐结果 MUST 只引用当前用户活跃衣物，跨套不重复，且不得在同一套中混用连衣裙与上衣裤装。
+- SDD-006 反馈底座为 `public.wardrobe_item_favorites`、`public.outfit_favorites` 和 `public.preference_feedback_events`；收藏使用唯一键幂等，整套收藏保存不可变 JSON 快照，反馈事件通过唯一 `event_key` 去重，三表均启用当前用户所有权 RLS。`user_preferences.style_scores` 必须由事件账本重算，不得让客户端直接写任意分数。
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Confirm email、Anonymous Sign-Ins 和 Manual Linking；Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`。新增部署域名时必须同步确认其匹配白名单。
@@ -47,12 +49,13 @@
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
 - SDD-004 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-004`；最后一项验证 10 张固定 jpg、双会话隔离、确认幂等、取消/过期清理和 10 项批量边界。2026-08-23 真实 `gpt-4o-mini` 基准为 10/10、平均 3504ms；当前本地 Node.js 网络无法直连 OpenAI，真实基准由同机 PowerShell 与 Vercel Preview 双重完成。
 - SDD-005 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-005`；最后一项创建两组非敏感匿名测试衣橱，验证三套契约、同日三次覆盖为一行和跨用户 RLS 后自动清理。390px 浏览器必须另测至少两种场合/天气组合与规则降级。
+- SDD-006 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-006`；最后一项创建两组匿名测试衣物，验证单品/整套收藏和反馈幂等、跨用户读取/写入拒绝后自动清理。390px 浏览器必须另测合法替换持久化、无候选说明、收藏页和 3 题问卷来源说明。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。泄露密码保护在未来恢复 SDD-002 并启用邮箱密码能力时复核处理。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-001、SDD-003、SDD-004、SDD-005 与 SDD-011 已完成；下一步启动 SDD-006 换一件、收藏与偏好反馈。SDD-002 密码设置、退出和重登录保留到与用户集中调试，不作为 SDD-006 依赖。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-001、SDD-003、SDD-004、SDD-005、SDD-006 与 SDD-011 已完成；下一步启动 SDD-007 全链路加固与受控上线。SDD-002 密码设置、退出和重登录保留到与用户集中调试，不作为 SDD-007 依赖。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

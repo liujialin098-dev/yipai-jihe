@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
-import { KeyRound, LogOut, ShieldCheck, UserRound } from "lucide-react";
+import {
+  ChevronRight,
+  KeyRound,
+  LogOut,
+  ShieldCheck,
+  SlidersHorizontal,
+  UserRound,
+} from "lucide-react";
+import Link from "next/link";
 import {
   AccountProtectedBadge,
   EmailBindingForm,
@@ -116,9 +124,14 @@ export default async function SettingsPage({
           <h2 className="font-heading text-xl font-bold tracking-[-0.035em] text-[var(--foreground)]">
             默认偏好
           </h2>
-          <span className="text-xs text-[var(--text-tertiary)]">
-            暂不可编辑
-          </span>
+          <Link
+            href="/settings/preferences"
+            className="motion-button inline-flex h-9 items-center gap-1 rounded-full bg-[var(--surface-soft)] px-3 text-xs font-semibold text-[var(--system-blue)]"
+          >
+            <SlidersHorizontal className="size-3.5" aria-hidden="true" />
+            编辑
+            <ChevronRight className="size-3.5" aria-hidden="true" />
+          </Link>
         </div>
         <PreferenceRow label="风格" values={viewer?.preferredStyles ?? []} />
         <PreferenceRow label="场景" values={viewer?.preferredOccasions ?? []} />
