@@ -28,6 +28,8 @@
 - [x] T012 [US3] 新建 `scripts/verify-sdd-002.mjs` 并接入 `package.json`
 - [ ] T013 运行静态检查、构建、脚本和浏览器独立验收
 - [ ] T014 更新 `quickstart.md`、`progress.md`、`AGENTS.md` 与提交记录
+- [x] T015 [US2] 为已验证但未设密码账号补充一次性密码设置邮件入口
+- [ ] T016 [US2] 在 Preview 完成设置密码、退出、重新登录和原衣橱恢复验收
 
 ## Dependencies
 

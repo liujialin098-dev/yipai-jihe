@@ -135,6 +135,36 @@ export async function signInWithEmail(
   redirect("/");
 }
 
+export async function requestPasswordSetupLink(
+  _previousState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const email = normalizeEmail(formData.get("email"));
+  if (!validateEmail(email)) {
+    return errorState("请填写已经绑定的邮箱。", {
+      email: "邮箱格式不正确。",
+    });
+  }
+
+  const supabase = await createClient();
+  const origin = await getRequestOrigin();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/confirm?next=/settings`,
+  });
+
+  if (error) {
+    return errorState(
+      mapAuthError(error, "设置链接暂时没有发出，请稍后重试。"),
+    );
+  }
+
+  return {
+    message:
+      "如果这个邮箱已绑定，设置链接会发送到邮箱。打开邮件后即可设置密码。",
+    status: "success",
+  };
+}
+
 export async function startAnonymousExperience() {
   const supabase = await createClient();
   await supabase.auth.signOut({ scope: "local" });
