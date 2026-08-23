@@ -260,7 +260,7 @@
 - 已知限制：候选仅来自当前衣橱，不推荐外部商品；当三套已占用全部符合条件的同类衣物时会明确显示无候选。当前候选采用确定性本地排序，未额外调用 AI 重排。Preview 继续受 Vercel Authentication 保护；密码设置、退出和重新登录仍保留到与用户集中调试。
 - 下一步：启动 SDD-007，完成全链路加固、受控评审文档和最终 Preview；随后与用户一起完成 SDD-002 密码设置与重新登录验收。
 - Preview：`https://ai-coding-1ru0zqi0f-jialin-d583.vercel.app`（READY，部署 `dpl_G5M1GZVogSsV8mN48MSiRtVeBuYD`，受 Vercel Authentication 保护）。
-- 提交记录：主体实现与阶段完成文档见本次提交；提交哈希将在提交后补记。
+- 提交记录：`59454e6`（SDD-006 规格、数据库、换件、收藏、偏好、验收、Preview 与阶段完成文档）。
 
 ### SDD-007：全链路加固与受控上线
 

@@ -36,7 +36,7 @@
 - [x] T018 运行 `npm run check`、`npm run build`、`npm run verify:sdd-006` 和 390px quickstart
 - [x] T019 更新 `progress.md` 与 `AGENTS.md`
 - [x] T020 部署 SDD-006 Preview 并记录状态
-- [ ] T021 提交完成变更并记录 commit
+- [x] T021 提交完成变更并记录 commit（`59454e6`）
 
 ## Dependencies
 
