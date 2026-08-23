@@ -54,7 +54,7 @@
 }
 ```
 
-可恢复错误：`409 image_missing`、`410 expired`、`422 invalid_result`、`424 ai_not_configured`、`429 rate_limited`、`504 timeout`、`502 provider_error`。这些错误不得删除原图，项目转为 `failed`。
+可恢复错误：`409 image_missing`、`410 expired`、`422 invalid_result`、`424 ai_not_configured`、`429 rate_limited`、`429 provider_error`（API 额度不足）、`504 timeout`、`502 provider_error`。这些错误不得删除原图，项目转为 `failed`。
 
 ## `POST /api/wardrobe/ingestions/{id}/confirm`
 

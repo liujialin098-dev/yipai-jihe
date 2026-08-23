@@ -56,3 +56,23 @@ npm run verify:sdd-004
 ## 7. 固定样本记录
 
 对 10 张非敏感测试图片记录：模型、耗时、类别是否正确、修正字段数量。至少 8 张类别无需修正才能通过 SC-002；不达标时优先调整提示词，再通过 `OPENAI_VISION_MODEL` 升级模型复测。
+
+2026-08-23 使用 `gpt-4o-mini`、`detail: low`、`store: false` 和严格 JSON Schema 完成真实基准：
+
+| 样本 | 预期类别 | 实际类别 | 类别修正 | 耗时 |
+| --- | --- | --- | ---: | ---: |
+| `cloud-white-tee.jpg` | tops | tops | 0 | 4225ms |
+| `mist-blue-linen-shirt.jpg` | tops | tops | 0 | 2683ms |
+| `indigo-straight-jeans.jpg` | bottoms | bottoms | 0 | 5317ms |
+| `sand-wide-trousers.jpg` | bottoms | bottoms | 0 | 3149ms |
+| `black-evening-dress.jpg` | dresses | dresses | 0 | 5107ms |
+| `oat-knit-cardigan.jpg` | outerwear | outerwear | 0 | 3271ms |
+| `navy-trench-coat.jpg` | outerwear | outerwear | 0 | 2322ms |
+| `clean-white-sneakers.jpg` | shoes | shoes | 0 | 2560ms |
+| `chestnut-boots.jpg` | shoes | shoes | 0 | 3123ms |
+| `black-work-tote.jpg` | accessories | accessories | 0 | 3283ms |
+
+- 类别准确率：10/10（100%），通过 8/10 验收线。
+- 平均耗时：3504ms；最慢 5317ms，全部低于 10 秒目标。
+- Preview 批量验收：10 个不同入库项目均识别成功并确认入库，确认接口全部返回 200。
+- 当前网络对 Node.js 直连 OpenAI 存在异常 DNS/连接阻断，因此 `npm run verify:sdd-004` 的非 AI 验证与真实 AI 基准分别执行；真实 AI 同时通过 PowerShell 直连和 Vercel Preview 完成，不使用模拟结果。

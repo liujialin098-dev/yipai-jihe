@@ -105,7 +105,7 @@ export async function POST(_request: Request, route: RouteContext) {
     await markFailed(context, id, failure.code, recognitionMs);
     return jsonError(
       failure.code,
-      failureMessage(failure.code),
+      failureMessage(failure.code, failure.reason),
       failure.httpStatus,
     );
   }
@@ -135,7 +135,10 @@ async function markFailed(
     .eq("user_id", context.userId);
 }
 
-function failureMessage(code: string) {
+function failureMessage(code: string, reason?: "quota_exhausted") {
+  if (reason === "quota_exhausted") {
+    return "AI 识别额度已用完，可充值后重试或先手工填写。";
+  }
   if (code === "not_configured") return "AI 识别尚未配置，可先手工填写。";
   if (code === "timeout") return "识别超时了，可重试或手工填写。";
   if (code === "rate_limited") return "识别请求较多，请稍后重试。";

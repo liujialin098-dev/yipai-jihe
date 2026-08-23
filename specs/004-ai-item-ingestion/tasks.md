@@ -56,7 +56,7 @@
 - [x] T018 [US2] 在 `app/api/wardrobe/ingestions/[id]/route.ts` 实现未确认项目的幂等取消，按 Storage API 后数据库的顺序清理
 - [x] T019 [US2] 在 `components/wardrobe/ingestion-workspace.tsx` 增加确认入库、取消、成功跳转和错误后保留编辑内容
 - [x] T020 [US2] 在 `lib/wardrobe/data.ts` 与 `app/wardrobe/[id]/page.tsx` 验证真实上传原图沿用现有签名读取和详情展示
-- [ ] T021 [US2] 在 `scripts/verify-sdd-004.mjs` 增加三次确认幂等、两匿名会话 RLS/Storage 隔离、取消清理和过期拒绝检查
+- [x] T021 [US2] 在 `scripts/verify-sdd-004.mjs` 增加三次确认幂等、两匿名会话 RLS/Storage 隔离、取消清理和过期拒绝检查
 
 **检查点**：单件核心闭环完整且可独立验收。
 
@@ -72,7 +72,7 @@
 - [x] T023 [US3] 在 `components/wardrobe/ingestion-workspace.tsx` 实现最多 3 项并发的批量上传与识别，保证单件失败不终止批次
 - [x] T024 [US3] 在 `components/wardrobe/ingestion-workspace.tsx` 实现逐项选择、重试、手工编辑、移除和批量确认
 - [x] T025 [US3] 在 `components/wardrobe/ingestion-workspace.tsx` 增加成功、失败、待处理汇总与 390px 无水平溢出的移动端布局
-- [ ] T026 [US3] 在 `scripts/verify-sdd-004.mjs` 增加 10 项边界、独立失败、并发上限和批量确认结果检查
+- [x] T026 [US3] 在 `scripts/verify-sdd-004.mjs` 增加 10 项边界、独立失败、并发上限和批量确认结果检查
 
 **检查点**：全部三个用户故事可独立演示。
 
@@ -82,7 +82,7 @@
 
 **目标**：完成可重复验收、文档追踪、质量门禁和阶段提交。
 
-- [ ] T027 在 `scripts/verify-sdd-004.mjs` 和 `specs/004-ai-item-ingestion/quickstart.md` 记录 10 张样本的模型、耗时、类别正确性和修正字段，验证至少 8/10 类别正确
+- [x] T027 在 `scripts/verify-sdd-004.mjs` 和 `specs/004-ai-item-ingestion/quickstart.md` 记录 10 张样本的模型、耗时、类别正确性和修正字段，验证至少 8/10 类别正确
 - [x] T028 运行 `npm run check`、`npm run build` 和 `npm run verify:sdd-004`，修复发现的问题并在 `specs/004-ai-item-ingestion/tasks.md` 勾选已完成任务
 - [x] T029 更新 `progress.md` 与 `AGENTS.md` 的阶段状态、完成日期、验收结果、已知限制、环境变量和提交记录
 - [ ] T030 仅提交 SDD-004 相关文件并在 `progress.md` 回填最终 commit hash

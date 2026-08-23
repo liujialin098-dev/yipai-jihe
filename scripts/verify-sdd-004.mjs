@@ -151,6 +151,170 @@ async function verifyConstraints(session) {
   ensure(Boolean(duplicate.error), "稳定请求标识未阻止重复项目");
 }
 
+async function createTransientIngestion(session, label, expiresAt) {
+  const ingestionId = crypto.randomUUID();
+  const imagePath = `${session.userId}/ingestions/${ingestionId}.png`;
+  const insert = await session.client
+    .from("wardrobe_ingestions")
+    .insert({
+      id: ingestionId,
+      user_id: session.userId,
+      client_request_id: crypto.randomUUID(),
+      image_path: imagePath,
+      mime_type: "image/png",
+      byte_size: TEST_PNG.length,
+      status: "uploaded",
+      ...(expiresAt ? { expires_at: expiresAt } : {}),
+    })
+    .select("id, expires_at")
+    .single();
+  ensure(!insert.error, `${label} 项目创建失败`);
+
+  const upload = await session.client.storage
+    .from("wardrobe-images")
+    .upload(imagePath, TEST_PNG, { contentType: "image/png" });
+  ensure(!upload.error, `${label} 原图上传失败`);
+  return { ingestionId, imagePath };
+}
+
+async function removeTransientIngestion(session, fixture, label) {
+  const storageRemove = await session.client.storage
+    .from("wardrobe-images")
+    .remove([fixture.imagePath]);
+  ensure(!storageRemove.error, `${label} 原图删除失败`);
+
+  const rowDelete = await session.client
+    .from("wardrobe_ingestions")
+    .delete()
+    .eq("id", fixture.ingestionId)
+    .select("id");
+  ensure(
+    !rowDelete.error && rowDelete.data?.length === 1,
+    `${label} 记录删除失败`,
+  );
+
+  const row = await session.client
+    .from("wardrobe_ingestions")
+    .select("id")
+    .eq("id", fixture.ingestionId);
+  ensure(!row.error && row.data?.length === 0, `${label} 记录仍然存在`);
+  const object = await session.client.storage
+    .from("wardrobe-images")
+    .download(fixture.imagePath);
+  ensure(Boolean(object.error), `${label} 原图仍然存在`);
+}
+
+async function verifyCancellationAndExpiry(session) {
+  const cancelled = await createTransientIngestion(session, "取消清理");
+  await removeTransientIngestion(session, cancelled, "取消清理");
+
+  const expiredAt = new Date(Date.now() - 60_000).toISOString();
+  const expired = await createTransientIngestion(
+    session,
+    "过期清理",
+    expiredAt,
+  );
+  const row = await session.client
+    .from("wardrobe_ingestions")
+    .select("expires_at")
+    .eq("id", expired.ingestionId)
+    .single();
+  ensure(
+    !row.error && new Date(row.data.expires_at).getTime() < Date.now(),
+    "过期项目未保持过期时间",
+  );
+  await removeTransientIngestion(session, expired, "过期清理");
+}
+
+async function verifyBatchConfirm(session) {
+  const fixtures = Array.from({ length: 10 }, (_, index) => {
+    const ingestionId = crypto.randomUUID();
+    return {
+      index,
+      ingestionId,
+      imagePath: `${session.userId}/ingestions/${ingestionId}.png`,
+    };
+  });
+  const ids = fixtures.map((fixture) => fixture.ingestionId);
+  const paths = fixtures.map((fixture) => fixture.imagePath);
+
+  try {
+    const insert = await session.client.from("wardrobe_ingestions").insert(
+      fixtures.map((fixture) => ({
+        id: fixture.ingestionId,
+        user_id: session.userId,
+        client_request_id: crypto.randomUUID(),
+        image_path: fixture.imagePath,
+        mime_type: "image/png",
+        byte_size: TEST_PNG.length,
+        status: "uploaded",
+      })),
+    );
+    ensure(!insert.error, "10 项批量入库项目创建失败");
+
+    const uploads = await Promise.all(
+      fixtures.map((fixture) =>
+        session.client.storage
+          .from("wardrobe-images")
+          .upload(fixture.imagePath, TEST_PNG, { contentType: "image/png" }),
+      ),
+    );
+    ensure(
+      uploads.every((upload) => !upload.error),
+      "10 项批量原图上传失败",
+    );
+
+    const confirm = await session.client
+      .from("wardrobe_items")
+      .upsert(
+        fixtures.map((fixture) => ({
+          user_id: session.userId,
+          source_ingestion_id: fixture.ingestionId,
+          image_path: fixture.imagePath,
+          name: `SDD-004 批量测试衣物 ${fixture.index + 1}`,
+          category: "tops",
+          primary_color: "white",
+          material: "cotton",
+          style: "minimal",
+          seasons: ["spring"],
+          occasions: ["casual"],
+        })),
+        { onConflict: "user_id,source_ingestion_id" },
+      )
+      .select("id");
+    ensure(
+      !confirm.error && confirm.data?.length === 10,
+      "10 项批量确认结果不完整",
+    );
+  } finally {
+    await session.client
+      .from("wardrobe_items")
+      .delete()
+      .in("source_ingestion_id", ids);
+    await session.client.storage.from("wardrobe-images").remove(paths);
+    await session.client.from("wardrobe_ingestions").delete().in("id", ids);
+  }
+}
+
+async function verifyBatchContract() {
+  const source = await readFile(
+    new URL("../components/wardrobe/ingestion-workspace.tsx", import.meta.url),
+    "utf8",
+  );
+  ensure(source.includes("const MAX_FILES = 10;"), "客户端批量上限不是 10");
+  ensure(source.includes("const CONCURRENCY = 3;"), "客户端识别并发上限不是 3");
+  ensure(
+    source.includes("await runPool(pending, CONCURRENCY, processItem);"),
+    "批量识别未使用受限并发队列",
+  );
+  ensure(
+    source.includes(
+      "const results = await Promise.all(ready.map(confirmItem));",
+    ),
+    "批量确认未汇总逐项结果",
+  );
+}
+
 async function verifyFixedSamples() {
   const samples = JSON.parse(
     await readFile(
@@ -172,6 +336,17 @@ async function verifyFixedSamples() {
       `${sample.file} 无效`,
     );
   }
+  const schema = await readFile(
+    new URL(
+      "../specs/004-ai-item-ingestion/contracts/wardrobe-recognition.schema.json",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  ensure(
+    !schema.includes('"uniqueItems"'),
+    "OpenAI 严格 Schema 包含不支持的 uniqueItems",
+  );
   return samples;
 }
 
@@ -315,13 +490,18 @@ async function main() {
       verifyOwnAndCrossAccess(sessionA, sessionB, "A 到 B"),
       verifyOwnAndCrossAccess(sessionB, sessionA, "B 到 A"),
       verifyConstraints(sessionA),
+      verifyBatchContract(),
     ]);
     await verifyIdempotentConfirm(sessionA);
+    await verifyCancellationAndExpiry(sessionB);
+    await verifyBatchConfirm(sessionA);
     await benchmarkAi(samples);
 
     console.log("10 张固定安全样本边界检查通过");
     console.log("两组匿名会话的入库记录与原图隔离通过");
     console.log("同一项目连续确认 3 次仅产生 1 条正式衣物");
+    console.log("取消与过期项目按先原图后记录的顺序清理通过");
+    console.log("10 项上限、3 项并发配置与批量确认结果通过");
   } finally {
     await Promise.all(sessions.map(cleanup));
   }

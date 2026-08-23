@@ -1,6 +1,6 @@
 # 衣拍即合开发进度
 
-> 版本：MVP 分阶段开发规划 v3 ｜ 更新日期：2026-08-21
+> 版本：MVP 分阶段开发规划 v3 ｜ 更新日期：2026-08-23
 >
 > 本文档依据 `D:\产品经理\衣拍即合_详细版PRD.docx` 的最新内容制定，并覆盖此前所有开发路线图。PRD 负责描述产品需求；本文档是当前唯一有效的开发顺序、阶段边界、验收与上线进度 TODO LIST。
 >
@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：SDD-001、SDD-003 已完成；SDD-002 已暂缓；SDD-004 已于 2026-08-22 暂停，功能、数据库与手工降级已实现，等待配置 OpenAI Key 后继续真实 AI 验收
+- 当前状态：SDD-001、SDD-003、SDD-004 已完成；SDD-002 已暂缓；下一阶段为 SDD-005 每日 3 套 AI 推荐
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -131,8 +131,8 @@
 
 ### SDD-004：原图上传与 AI 识别入库
 
-- 状态：已暂停（2026-08-22；功能已实现，等待真实 AI 验收）
-- AI 服务决策：OpenAI Responses API，默认模型 `gpt-4o-mini`，可通过服务端 `OPENAI_VISION_MODEL` 覆盖；`OPENAI_API_KEY` 尚未配置。
+- 状态：已完成
+- AI 服务决策：OpenAI Responses API，默认模型 `gpt-4o-mini`，可通过服务端 `OPENAI_VISION_MODEL` 覆盖；`OPENAI_API_KEY` 已配置在本地与 Vercel Preview 服务端环境。
 - 临时图片决策：当前用户私有临时区保留不超过 24 小时，确认、取消或到期后清理。
 - SDD 目录：`specs/004-ai-item-ingestion/`
 - AI Coding 估算：1 段主对话，复杂度 L
@@ -150,7 +150,7 @@
 - [x] 展示识别中状态、可编辑结果卡片和确认入库操作。
 - [x] 支持最多 10 张的批量选择、最多 3 项并发识别、逐件修正和批量确认。
 - [x] 识别失败允许重试，并保留手动修正或录入路径。
-- [ ] 创建 10 件固定识别测试样本，记录准确率和修正次数。
+- [x] 创建 10 件固定识别测试样本，记录准确率和修正次数。
 
 明确不做：
 
@@ -160,22 +160,23 @@
 
 独立验收：
 
-- [ ] 10 件测试样本识别准确率达到 80%，或记录未达标字段及修正结果。
+- [x] 10 件测试样本识别准确率达到 80%，或记录未达标字段及修正结果。
 - [x] 原图可上传、预览并只归属当前用户。
 - [x] 用户可以修正识别结果并确认入库。
-- [ ] 真实 AI 正常流程可用，失败时仍可完成手动入库。
-- [ ] 单次识别目标响应时间不超过 10 秒，超时有明确提示。
+- [x] 真实 AI 正常流程可用，失败时仍可完成手动入库。
+- [x] 单次识别目标响应时间不超过 10 秒，超时有明确提示。
 - [x] `npm run check` 通过。
 
 阶段完成记录：
 
-- 完成日期：未完成；功能实现检查点 2026-08-22
-- AI 服务与模型：OpenAI Responses API，默认 `gpt-4o-mini`，`store: false`，严格 JSON Schema，12 秒服务端超时；本地尚无 `OPENAI_API_KEY`。
-- 识别测试结果：10 张无人物逼真 jpg 固定样本已建立；真实 AI 准确率与耗时等待 Key 后运行 `npm run verify:sdd-004` 记录。
-- 验收结果：Supabase migration `ai_item_ingestion` 已应用；SDD-001/003 回归通过；SDD-004 的 10 张样本边界、双匿名会话 RLS/Storage 隔离、连续确认 3 次只产生 1 条记录均通过。390px 浏览器验证无水平溢出、无错误覆盖层；单件上传后在无 Key 情况下正确进入手工填写，修改主色后成功入库并在详情页显示原图与最终值；10 张选择上限正确。`npm run check` 与 `npm run build` 通过。
-- 已知限制：尚未配置 OpenAI Key，因此真实识别结果、8/10 类别准确率、10 秒目标耗时和真实批量识别未验收；物理过期清理由当前用户下次进入入库流程时触发，P0 未配置定时 Cron。
-- 下一步：恢复开发时先由开发者在 `.env.local` 配置服务端 `OPENAI_API_KEY`；随后运行 10 张真实 AI 基准、完整批量确认、取消/过期 API 验收和 Preview 检查，并在部署前把同一变量独立配置到 Vercel Preview；全部通过后再标记阶段完成。
-- 提交记录：本次保存为 SDD-004 暂停检查点；阶段完成提交等待真实 AI 验收通过后补充。
+- 完成日期：2026-08-23（功能实现检查点：2026-08-22）
+- AI 服务与模型：OpenAI Responses API，`gpt-4o-mini`，`detail: low`，`store: false`，严格 JSON Schema，12 秒服务端超时；本地与 Vercel Preview 均已配置服务端 Key。
+- 识别测试结果：10 张无人物逼真 jpg 固定样本类别正确 10/10（100%），类别修正 0；平均耗时 3504ms，最慢 5317ms，全部低于 10 秒目标。逐项结果见 `specs/004-ai-item-ingestion/quickstart.md`。
+- 验收结果：真实批量流程完成 10 项上传、识别和确认，10 个不同项目均成功入库；OpenAI 严格 Schema 已移除不支持的 `uniqueItems`，额度不足会显示准确提示。双匿名会话 RLS/Storage 隔离、连续确认 3 次只产生 1 条记录、取消与过期清理、10 项上限、3 项并发和批量确认均通过；390px 布局沿用本阶段已通过的无水平溢出结果。`npm run check`、`npm run build` 和增强版 `npm run verify:sdd-004` 全部通过。
+- 已知限制：当前本地网络会让 Node.js 解析/连接 OpenAI 失败，因此真实 AI 基准改由同机 PowerShell 直连与 Vercel Preview 双重执行；应用线上链路不受影响。物理过期清理由当前用户下次进入入库流程时触发，P0 未配置定时 Cron；匿名身份清除站点数据或换设备后仍无法恢复。
+- 下一步：启动 SDD-005，先明确天气数据方案、每日推荐输入和失败降级边界，再创建对应 Spec Kit SDD。
+- Preview：`https://ai-coding-d8qt4h6g2-jialin-d583.vercel.app`（READY，包含最终 Schema 修复和额度提示）；真实 10 项 AI 批量验收在同配置的 `https://ai-coding-p2br60ssy-jialin-d583.vercel.app` 完成。
+- 提交记录：SDD-004 暂停检查点 `54b6a82`；阶段完成提交待本次提交后回填。
 
 ### SDD-005：每日 3 套 AI 推荐
 
@@ -310,7 +311,7 @@
 ## 部署检查点
 
 - [x] SDD-001 后：第一个 Preview 可访问，匿名会话、环境变量和基础隔离通过。
-- [ ] SDD-004 后：识别 Preview 可使用真实 AI 完成原图入库。
+- [x] SDD-004 后：识别 Preview 可使用真实 AI 完成原图入库。
 - [ ] SDD-005 后：核心体验 Preview 可完成“演示衣橱 → 每日推荐”。
 - [ ] SDD-007 后：受控评审版完成账号、入库、推荐、反馈和安全验收。
 
@@ -381,7 +382,7 @@
 
 ## 尚待确认的外部服务
 
-- [ ] SDD-004 已确认 OpenAI Responses API 与默认 `gpt-4o-mini`；仍需在本地和 Preview 配置 `OPENAI_API_KEY`。
+- [x] SDD-004 已确认 OpenAI Responses API 与默认 `gpt-4o-mini`，并在本地和 Preview 配置 `OPENAI_API_KEY`。
 - [x] P0 使用支持图片理解和稳定结构化 JSON 的单一服务，不做多供应商切换。
 - [ ] SDD-005 开始前确认天气服务；如果暂时没有 Key，先使用可配置模拟天气完成验收。
 - [ ] SDD-007 部署前确认 Vercel 项目和正式评审域名；邮箱验证 Redirect URL 延后到 SDD-002 恢复时配置。

@@ -50,7 +50,6 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
       type: "array",
       minItems: 1,
       maxItems: 4,
-      uniqueItems: true,
       items: {
         type: "string",
         enum: ["spring", "summer", "autumn", "winter"],
@@ -60,7 +59,6 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
       type: "array",
       minItems: 1,
       maxItems: 5,
-      uniqueItems: true,
       items: {
         type: "string",
         enum: ["commute", "casual", "date", "formal", "sport"],
@@ -93,6 +91,7 @@ export class RecognitionError extends Error {
   constructor(
     public readonly code: RecognitionFailureCode,
     public readonly httpStatus: number,
+    public readonly reason?: "quota_exhausted",
   ) {
     super(code);
     this.name = "RecognitionError";
@@ -168,7 +167,25 @@ export async function recognizeWardrobeImage(imageUrl: string): Promise<{
     });
 
     if (!response.ok) {
+      let providerError: unknown;
+      try {
+        providerError = await response.json();
+      } catch {
+        providerError = null;
+      }
+      const metadata = providerErrorMetadata(providerError);
+      console.error("[wardrobe-recognition] OpenAI request rejected", {
+        status: response.status,
+        requestId: response.headers.get("x-request-id"),
+        ...metadata,
+      });
       if (response.status === 429) {
+        if (
+          metadata.errorType === "insufficient_quota" ||
+          metadata.errorCode === "credit_balance_exhausted"
+        ) {
+          throw new RecognitionError("provider_error", 429, "quota_exhausted");
+        }
         throw new RecognitionError("rate_limited", 429);
       }
       throw new RecognitionError("provider_error", 502);
@@ -196,8 +213,25 @@ export async function recognizeWardrobeImage(imageUrl: string): Promise<{
     if (error instanceof Error && error.name === "AbortError") {
       throw new RecognitionError("timeout", 504);
     }
+    console.error("[wardrobe-recognition] OpenAI transport failed", {
+      errorName: error instanceof Error ? error.name : "unknown",
+    });
     throw new RecognitionError("provider_error", 502);
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function providerErrorMetadata(payload: unknown) {
+  if (!payload || typeof payload !== "object" || !("error" in payload)) {
+    return {};
+  }
+  const error = payload.error;
+  if (!error || typeof error !== "object") return {};
+
+  return {
+    errorType: "type" in error ? String(error.type) : undefined,
+    errorCode: "code" in error ? String(error.code) : undefined,
+    errorParam: "param" in error ? String(error.param) : undefined,
+  };
 }
