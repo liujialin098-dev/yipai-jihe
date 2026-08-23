@@ -86,7 +86,7 @@ description: "SDD-005 每日 3 套 AI 推荐实现任务"
 - [x] T018 运行 `npm run check`、`npm run build`、`npm run verify:sdd-005` 并按 `specs/005-daily-recommendations/quickstart.md` 完成 390px 浏览器验收
 - [x] T019 更新阶段状态、服务选择、验收数据和已知限制 `progress.md`
 - [x] T020 更新项目结构、数据约束、质量命令和当前阶段 `AGENTS.md`
-- [ ] T021 提交 SDD-005 完成变更并记录 commit `progress.md`
+- [x] T021 提交 SDD-005 完成变更并记录 commit `progress.md`
 
 ---
 

@@ -216,7 +216,7 @@
 - 已知限制：当前本机到 `api.openai.com:443` 出现 `UND_ERR_CONNECT_TIMEOUT`，因此本轮浏览器验收实际走规则降级；相同 OpenAI Key 与模型已在 SDD-004 的 Vercel Preview 完成真实 AI 验收，SDD-005 的线上真实 AI 推荐保留到与用户集中调试。Preview 仍受 Vercel Authentication 保护；Supabase Security Advisor 的匿名访问提醒来自当前 P0 匿名体验，策略均以 `auth.uid()` 限制，泄露密码保护继续留到 SDD-002 集中验收。
 - 下一步：启动 SDD-006，实现换一件、收藏和偏好反馈；密码设置、退出与重新登录不作为依赖，等用户集中调试。
 - Preview：`https://ai-coding-ac3eixa7p-jialin-d583.vercel.app`（READY，部署 `dpl_6JzNeHa6nuTBtjLK1SQbqq6HEKYJ`，受 Vercel Authentication 保护）。
-- 提交记录：本阶段完成提交将在保存后补记。
+- 提交记录：`223cc79`（SDD-005 规格、数据库、天气与推荐实现、自动验收、Preview 和阶段完成文档）。
 
 ### SDD-006：换一件、收藏与偏好反馈
 
