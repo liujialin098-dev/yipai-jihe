@@ -23,7 +23,7 @@
 - [x] T011 运行 `npm run check`、`npm run build`、`npm run verify:sdd-007`
 - [x] T012 部署受保护 Vercel Preview 并确认 READY
 - [x] T013 将实际证据写入 quickstart、`progress.md` 与 `AGENTS.md`
-- [ ] T014 提交 SDD-007 主体与完成状态
+- [x] T014 提交 SDD-007 主体与完成状态（`f798207`）
 
 ## Dependencies
 
