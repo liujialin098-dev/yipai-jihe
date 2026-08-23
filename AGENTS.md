@@ -15,7 +15,7 @@
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/wardrobe/`：衣物常量、校验、查询、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
 - `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs`、`scripts/verify-sdd-003.mjs` 与 `scripts/verify-sdd-004.mjs`：双匿名会话、幂等和固定样本验证。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 与 `specs/004-ai-item-ingestion/` 为已完成阶段；`specs/002-account-binding/` 和 `specs/011-global-motion/` 为当前待完成外部配置与 Preview 验收的 SDD。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/`、`specs/004-ai-item-ingestion/` 与 `specs/011-global-motion/` 为已完成阶段；`specs/002-account-binding/` 的代码和远端配置已完成，等待用户真实邮箱验收。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 - 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。
 
@@ -37,6 +37,7 @@
 - SDD-004 入库底座为 `public.wardrobe_ingestions`：每张原图使用稳定请求 id、私有路径、处理状态与最长 24 小时有效期；`wardrobe_items.source_ingestion_id` 保证确认重试只创建一件衣物。表启用四类用户所有权 RLS，`anon` 无表权限。
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
+- 当前 Supabase Auth 已开启 Email、Confirm email、Anonymous Sign-Ins 和 Manual Linking；Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`。新增部署域名时必须同步确认其匹配白名单。
 - 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；Preview 环境已持久配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY`。Preview 受 Vercel Authentication 保护。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -46,7 +47,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-001、SDD-003 与 SDD-004 已完成；用户已恢复 SDD-002，并同时启动 SDD-011。两阶段代码、规格、静态检查、生产构建和 SDD-002 身份保持脚本已完成，Preview `https://ai-coding-gq6wt4chx-jialin-d583.vercel.app` 已 READY；下一步完成 Supabase Manual Linking/Redirect URL 配置、真实邮件绑定与 Preview 动效验收。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-001、SDD-003、SDD-004 与 SDD-011 已完成；SDD-002 代码、Supabase Manual Linking/Redirect URL 配置、自动身份保持验证和 Preview 页面验收均已完成。下一步由用户本人完成真实邮件确认、设置密码与退出/重登录，随后更新 SDD-002 为已完成。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -55,7 +56,7 @@
 - 阶段未通过独立验收或 `npm run check` 时，不得在 `progress.md` 中标记为“已完成”，也不得开始依赖该阶段的后续阶段。
 - 每个阶段的实现范围 MUST 以对应 SDD 为准；不得为了 P1/P2 需求提前引入当前 MVP 不需要的复杂抽象。
 - 当前 P0 使用原图卡片，不执行自动抠图和穿搭日记；自动抠图与穿搭日记均移至 P1。P1 抠图 MUST 经过服务端 `cutoutService` 调用外部 API，密钥只能通过环境变量提供，失败不得阻塞原图入库。
-- SDD-002 正在恢复邮箱绑定、邮件验证、登录、退出和跨设备恢复，但仍不得作为 SDD-003 至 SDD-007 的依赖。匿名用户必须明确知道清除站点数据或换设备后无法恢复未绑定身份；绑定流程 MUST 保持同一 `auth_user_id` 和原匿名数据。登录与认证回调页面 MUST 跳过自动匿名初始化，只有用户主动选择时才创建新匿名身份。
+- SDD-002 已实现邮箱绑定、邮件验证、登录、退出和跨设备恢复，但在用户完成真实邮箱验收前保持“验收中”，且仍不得作为 SDD-003 至 SDD-007 的依赖。匿名用户必须明确知道清除站点数据或换设备后无法恢复未绑定身份；绑定流程 MUST 保持同一 `auth_user_id` 和原匿名数据。登录与认证回调页面 MUST 跳过自动匿名初始化，只有用户主动选择时才创建新匿名身份。
 - 全局动效以 `app/globals.css` 的气泡扩散、分层显现、导航选中气泡、按钮填充/光泽和卡片景深为准；不得恢复所有控件统一上下弹跳。所有后续 UI MUST 支持 `prefers-reduced-motion` 和 `prefers-reduced-transparency`。
 - 演示数据 MUST 按当前用户隔离加载，优先采用可重复的一键加载方式；不得把真实个人敏感照片写入仓库或提交记录。
 - 内置演示衣物图片位于 `public/demo-wardrobe/`，按 `demo_key` 使用同名 768px WebP 棚拍素材；仅演示数据使用公开静态图，真实用户上传仍 MUST 使用 `wardrobe-images` 私有 bucket 与签名 URL。

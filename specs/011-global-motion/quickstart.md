@@ -8,3 +8,4 @@
 6. 模拟 `prefers-reduced-motion: reduce` 与 `prefers-reduced-transparency: reduce`，确认无持续动画且功能完整。
 7. 在桌面宽度检查无横向溢出、错误覆盖层和控制台错误。
 
+2026-08-24 Preview 验收：设置页与衣橱页在桌面和 390px 宽度正常；390px 下 `scrollWidth` 为 375、无横向溢出，控制台无错误。页面分层、导航气泡、按钮反馈与卡片层级已按本清单确认；降级规则同时由 `app/globals.css` 媒体查询和构建检查覆盖。

@@ -11,3 +11,4 @@
 
 > 密码只在应用表单中输入，不得写入聊天、脚本、日志或仓库。
 
+当前远端配置（2026-08-24）：Email、Confirm email、Anonymous Sign-Ins 与 Manual Linking 已开启；Site URL 为 `http://localhost:3000`，Redirect URL 已加入 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`。真实邮箱、邮件链接和最终密码仍必须由验收者本人操作。

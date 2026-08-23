@@ -19,8 +19,8 @@
 ## Phase 4: User Story 3 - 降级与验收
 
 - [x] T008 [US3] 补齐 reduced-motion 与 reduced-transparency 降级
-- [ ] T009 [US3] 运行 390px、桌面、键盘、快速导航和控制台验收
-- [ ] T010 更新 `quickstart.md`、`progress.md`、`AGENTS.md` 并提交
+- [x] T009 [US3] 运行 390px、桌面、键盘、快速导航和控制台验收
+- [x] T010 更新 `quickstart.md`、`progress.md`、`AGENTS.md` 并提交
 
 ## Dependencies
 
