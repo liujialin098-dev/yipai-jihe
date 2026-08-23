@@ -353,10 +353,11 @@
 
 - 实现结果：匿名账号邮箱验证、确认回调、密码设置、邮箱密码登录、本地退出、主动新匿名体验和账号状态 UI 已完成；退出后的 `/login` 不会自动创建匿名身份。
 - 自动验收：`npm run check`、`npm run build` 通过；`npm run verify:sdd-002` 使用远端 Supabase 验证身份原地更新后用户 ID 与资料保持不变、本地退出清除会话、无效凭据被拒绝。
-- Preview：`https://ai-coding-gq6wt4chx-jialin-d583.vercel.app`（READY）。
+- Preview：主体版本 `https://ai-coding-gq6wt4chx-jialin-d583.vercel.app`；账号状态修复版 `https://ai-coding-pkoq7hy1h-jialin-d583.vercel.app`（READY）。
 - 远端配置：2026-08-24 已在 Supabase 开启 Manual Linking；Email、Confirm email 和 Anonymous Sign-Ins 保持开启；Site URL 为 `http://localhost:3000`，Redirect URL 已加入 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`。
 - Preview 验收：设置页已显示匿名身份、邮箱绑定表单与状态说明，衣橱页正常加载 24 件隔离演示衣物，390px 无横向溢出且控制台无错误。
-- 待完成：由用户本人在应用中输入真实邮箱、打开验证邮件、设置密码，再完成退出/重登录；密码不得写入聊天或测试日志。完成这一步后才能将 SDD-002 标记为已完成。
+- 真实账号状态：2026-08-24 已确认匿名编号 `FE462561` 原地升级为邮箱账号，邮箱已验证、用户 ID 未变化，尚未设置登录密码。发现 JWT 旧匿名声明导致页面仍显示绑定表单，已改为使用 Auth 服务端最新用户记录，并让旧表单提交自动转入密码设置页。
+- 待完成：由用户本人设置密码，再完成退出/重登录；密码不得写入聊天或测试日志。完成这一步后才能将 SDD-002 标记为已完成。
 
 ### SDD-011：全局高级动效系统
 

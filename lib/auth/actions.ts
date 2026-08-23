@@ -49,7 +49,7 @@ export async function requestEmailBinding(
     });
   }
   if (!data.user.is_anonymous) {
-    return errorState("当前账号已经绑定邮箱，无需重复操作。");
+    redirect("/settings?binding=verified");
   }
 
   const origin = await getRequestOrigin();

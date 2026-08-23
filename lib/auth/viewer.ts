@@ -18,17 +18,15 @@ export type Viewer = {
 export const getViewer = cache(async (): Promise<Viewer | null> => {
   try {
     const supabase = await createClient();
-    const { data: claimsData, error: claimsError } =
-      await supabase.auth.getClaims();
-    const userId = claimsData?.claims?.sub;
+    // Account attributes can change while the current JWT still contains the
+    // previous anonymous claim. getUser() returns the fresh Auth server record.
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const user = userData.user;
 
-    if (claimsError || !userId) return null;
+    if (userError || !user) return null;
 
-    const claims = claimsData.claims as typeof claimsData.claims & {
-      email?: string;
-      user_metadata?: { account_password_configured?: boolean };
-    };
-    const email = typeof claims.email === "string" ? claims.email : null;
+    const userId = user.id;
+    const email = typeof user.email === "string" ? user.email : null;
     const [profileResult, preferencesResult] = await Promise.all([
       supabase
         .from("profiles")
@@ -55,10 +53,10 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       displayName: profileResult.data.display_name,
       email,
       emailMasked: maskEmail(email),
-      isAnonymous: claimsData.claims.is_anonymous === true,
+      isAnonymous: user.is_anonymous === true,
       onboardingState: profileResult.data.onboarding_state,
       passwordConfigured:
-        claims.user_metadata?.account_password_configured === true,
+        user.user_metadata?.account_password_configured === true,
       preferredOccasions: preferencesResult.data.preferred_occasions,
       preferredStyles: preferencesResult.data.preferred_styles,
       shortId: userId.slice(0, 8).toUpperCase(),
