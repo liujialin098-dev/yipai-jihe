@@ -12,6 +12,48 @@ export type Database = {
   };
   public: {
     Tables: {
+      daily_recommendations: {
+        Row: {
+          ai_model: string | null;
+          created_at: string;
+          generation_ms: number;
+          id: string;
+          occasion: string;
+          outfits: Json;
+          recommendation_date: string;
+          source: string;
+          updated_at: string;
+          user_id: string;
+          weather: Json;
+        };
+        Insert: {
+          ai_model?: string | null;
+          created_at?: string;
+          generation_ms: number;
+          id?: string;
+          occasion: string;
+          outfits: Json;
+          recommendation_date: string;
+          source: string;
+          updated_at?: string;
+          user_id: string;
+          weather: Json;
+        };
+        Update: {
+          ai_model?: string | null;
+          created_at?: string;
+          generation_ms?: number;
+          id?: string;
+          occasion?: string;
+          outfits?: Json;
+          recommendation_date?: string;
+          source?: string;
+          updated_at?: string;
+          user_id?: string;
+          weather?: Json;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           created_at: string;

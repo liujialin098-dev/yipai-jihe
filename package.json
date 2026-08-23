@@ -15,6 +15,7 @@
     "verify:sdd-002": "node --env-file=.env.local scripts/verify-sdd-002.mjs",
     "verify:sdd-003": "node --env-file=.env.local scripts/verify-sdd-003.mjs",
     "verify:sdd-004": "node --env-file=.env.local scripts/verify-sdd-004.mjs",
+    "verify:sdd-005": "node --env-file=.env.local scripts/verify-sdd-005.mjs",
     "prepare": "husky"
   },
   "dependencies": {
