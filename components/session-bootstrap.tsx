@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle, RotateCw } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +23,8 @@ async function requestSession() {
 
 export function SessionBootstrap({ isReady }: { isReady: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const shouldSkip = pathname === "/login" || pathname.startsWith("/auth/");
   const hasStarted = useRef(false);
   const [state, setState] = useState<BootstrapState>({ kind: "loading" });
 
@@ -48,13 +50,13 @@ export function SessionBootstrap({ isReady }: { isReady: boolean }) {
   }, [router]);
 
   useEffect(() => {
-    if (!isReady && !hasStarted.current) {
+    if (!isReady && !shouldSkip && !hasStarted.current) {
       hasStarted.current = true;
       void startSession();
     }
-  }, [isReady, startSession]);
+  }, [isReady, shouldSkip, startSession]);
 
-  if (isReady) {
+  if (isReady || shouldSkip) {
     return null;
   }
 

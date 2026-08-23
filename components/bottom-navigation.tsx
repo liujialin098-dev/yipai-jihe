@@ -30,6 +30,8 @@ function isCurrent(pathname: string, href: string) {
 export function BottomNavigation() {
   const pathname = usePathname();
 
+  if (pathname === "/login" || pathname.startsWith("/auth/")) return null;
+
   return (
     <nav
       aria-label="主导航"
@@ -43,17 +45,20 @@ export function BottomNavigation() {
             key={href}
             href={href}
             aria-current={current ? "page" : undefined}
-            className={`group flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-[1.15rem] text-[0.61rem] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-[var(--system-blue)] ${
+            data-current={current ? "true" : "false"}
+            data-primary={primary ? "true" : "false"}
+            className={`nav-item group relative flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-[1.15rem] text-[0.61rem] font-medium focus-visible:outline-2 focus-visible:outline-[var(--system-blue)] ${
               current
                 ? "text-[var(--foreground)]"
                 : "text-[var(--text-tertiary)] hover:text-[var(--foreground)]"
             }`}
           >
+            <span className="nav-bubble" aria-hidden="true" />
             <span
               className={
                 primary
-                  ? "-mt-6 flex size-12 items-center justify-center rounded-[1.05rem] border-[3px] border-[var(--surface-solid)] bg-[#1d1d1f] text-white shadow-[0_10px_28px_rgba(29,29,31,0.28)] transition-transform duration-300 group-hover:-translate-y-1 group-active:scale-95"
-                  : "flex h-6 items-center justify-center"
+                  ? "nav-icon-shell -mt-6 flex size-12 items-center justify-center rounded-[1.05rem] border-[3px] border-[var(--surface-solid)] bg-[#1d1d1f] text-white shadow-[0_10px_28px_rgba(29,29,31,0.28)]"
+                  : "nav-icon-shell flex h-6 items-center justify-center"
               }
             >
               <Icon
@@ -62,7 +67,7 @@ export function BottomNavigation() {
                 aria-hidden="true"
               />
             </span>
-            <span>{label}</span>
+            <span className="relative z-[1]">{label}</span>
           </Link>
         );
       })}

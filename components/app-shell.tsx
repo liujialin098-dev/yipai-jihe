@@ -21,7 +21,7 @@ export function AppShell({
       </a>
       <StatusHeader viewer={viewer} />
       <SessionBootstrap isReady={Boolean(viewer)} />
-      <main id="main-content" className="flex-1 pb-28">
+      <main id="main-content" className="motion-stage flex-1 pb-28">
         {children}
       </main>
       <BottomNavigation />

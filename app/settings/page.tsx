@@ -1,31 +1,50 @@
 import type { Metadata } from "next";
-import { ShieldCheck, UserRound } from "lucide-react";
+import { KeyRound, LogOut, ShieldCheck, UserRound } from "lucide-react";
+import {
+  AccountProtectedBadge,
+  EmailBindingForm,
+  PasswordSetupForm,
+} from "@/components/auth/account-forms";
+import { signOut } from "@/lib/auth/actions";
 import { getViewer } from "@/lib/auth/viewer";
 
 export const metadata: Metadata = { title: "设置" };
 
-export default async function SettingsPage() {
-  const viewer = await getViewer();
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ binding?: string }>;
+}) {
+  const [viewer, params] = await Promise.all([getViewer(), searchParams]);
+  const verifiedNow = params.binding === "verified";
+  const heading = viewer?.isAnonymous
+    ? "给这间衣橱，留一把回来的钥匙。"
+    : "你的衣橱，随时都能回来。";
 
   return (
     <div className="page-enter px-5 pt-4">
       <p className="text-xs font-semibold text-[var(--system-blue)]">
         账户与偏好
       </p>
-      <h1 className="mt-2 max-w-[20rem] font-heading text-[2.65rem] leading-[1.02] font-bold tracking-[-0.065em] text-[var(--foreground)]">
-        先匿名体验，资料只属于你。
+      <h1 className="mt-2 max-w-[22rem] font-heading text-[2.55rem] leading-[1.02] font-bold tracking-[-0.065em] text-[var(--foreground)]">
+        {heading}
       </h1>
-      <section className="surface-card mt-7 rounded-[1.65rem] p-5">
+
+      <section className="surface-card stagger-item mt-7 rounded-[1.65rem] p-5">
         <div className="flex items-center gap-4">
           <span className="flex size-12 items-center justify-center rounded-full bg-[#1d1d1f] text-white shadow-[0_10px_24px_rgba(29,29,31,0.18)]">
             <UserRound className="size-5" aria-hidden="true" />
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="font-semibold text-[var(--foreground)]">
               {viewer?.displayName ?? "正在准备身份"}
             </p>
-            <p className="mt-1 text-xs text-[var(--text-tertiary)]">
-              {viewer ? `匿名编号 ${viewer.shortId}` : "请稍候"}
+            <p className="mt-1 truncate text-xs text-[var(--text-tertiary)]">
+              {viewer
+                ? viewer.isAnonymous
+                  ? `匿名编号 ${viewer.shortId}`
+                  : `${viewer.emailMasked ?? "邮箱账号"} · 编号 ${viewer.shortId}`
+                : "请稍候"}
             </p>
           </div>
         </div>
@@ -34,11 +53,65 @@ export default async function SettingsPage() {
             className="mt-0.5 size-4 shrink-0 text-[var(--system-blue)]"
             aria-hidden="true"
           />
-          当前资料由 Supabase 匿名身份隔离。邮箱绑定和跨设备恢复将在 SDD-002
-          开放。
+          {viewer?.isAnonymous
+            ? "当前资料已按匿名身份隔离。绑定邮箱不会换号，也不会搬走或清空已有衣物。"
+            : "邮箱已与原身份连接。退出或更换设备后，仍可恢复同一份衣橱数据。"}
         </div>
       </section>
-      <section className="surface-card mt-5 rounded-[1.5rem] p-5">
+
+      {viewer?.isAnonymous ? (
+        <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
+              <KeyRound className="size-4" aria-hidden="true" />
+            </span>
+            <div>
+              <h2 className="font-heading text-xl font-bold tracking-[-0.035em]">
+                绑定邮箱
+              </h2>
+              <p className="mt-1 text-xs text-[var(--text-tertiary)]">
+                先验证邮箱，再设置密码
+              </p>
+            </div>
+          </div>
+          <EmailBindingForm />
+        </section>
+      ) : null}
+
+      {viewer && !viewer.isAnonymous && !viewer.passwordConfigured ? (
+        <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
+          <p className="text-xs font-semibold text-[var(--system-blue)]">
+            {verifiedNow ? "邮箱验证成功" : "最后一步"}
+          </p>
+          <h2 className="mt-2 font-heading text-2xl font-bold tracking-[-0.045em]">
+            设置登录密码
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+            密码只会交给认证服务处理，不会保存到衣拍即合的数据表中。
+          </p>
+          <PasswordSetupForm />
+        </section>
+      ) : null}
+
+      {viewer && !viewer.isAnonymous && viewer.passwordConfigured ? (
+        <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
+          <h2 className="font-heading text-xl font-bold tracking-[-0.035em]">
+            邮箱登录
+          </h2>
+          <AccountProtectedBadge />
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="motion-button mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-sm font-semibold"
+            >
+              <LogOut className="size-4" aria-hidden="true" />
+              退出当前设备
+            </button>
+          </form>
+        </section>
+      ) : null}
+
+      <section className="surface-card stagger-item mt-5 rounded-[1.5rem] p-5 [--stagger:2]">
         <div className="flex items-center justify-between">
           <h2 className="font-heading text-xl font-bold tracking-[-0.035em] text-[var(--foreground)]">
             默认偏好
