@@ -57,7 +57,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007 与 SDD-011 已完成，受控评审 Preview 已 READY。下一步等待用户一起完成 SDD-002 密码设置、退出和重登录；不得替用户输入、保存或记录密码，也不得自动发布 Production、设置正式域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007 与 SDD-011 已完成，受控评审 Preview 已 READY。SDD-002 的邮箱已绑定并验证；新 Preview 上重复绑定返回 `email_exists`，下一步应先尝试原 Preview 会话设置密码，旧会话失效时暂停并由用户决定是否采用仅限本地的一次性管理员重置。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得自动发布 Production、设置正式域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
