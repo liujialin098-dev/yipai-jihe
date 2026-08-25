@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、全局动效 SDD-011、账号个性化 SDD-012 与真实两日天气 SDD-013 已完成；当前本地账号已保存武汉与男装，可分别按武汉今日实时天气和明日真实预报生成搭配。受控评审 Preview 仍为 SDD-012 之前的版本。SDD-002 已改为无需邮件验证的直接注册/登录，代码与 Supabase 认证配置均已完成，等待历史账号本地设密、部署与真实账号重登录验收
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、全局动效 SDD-011、账号个性化 SDD-012 与真实两日天气 SDD-013 已完成；2026-08-25 已发布并验收公开可访问的 `yipai-jihe` Production，包含武汉今日/明日真实天气与男装偏好。SDD-002 已改为无需邮件验证的直接注册/登录，代码与 Supabase 认证配置均已完成，等待历史账号本地设密与真实账号重登录验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -318,6 +318,7 @@
 - [x] SDD-005 后：核心体验 Preview 已包含“演示衣橱 → 每日推荐”，部署构建为 READY；受保护页面与线上真实 AI 留到集中调试。
 - [x] SDD-006 后：反馈体验 Preview 已包含换件、单品/整套收藏和偏好问卷，部署构建为 READY。
 - [x] SDD-007 后：受控评审版完成匿名入库、推荐、反馈、发布文档和安全验收；邮箱密码重登录仍按 SDD-002 单独等待人工验收。
+- [x] 2026-08-25 Production：新建 `yipai-jihe` 项目，修正框架预设为 Next.js，配置 Production 环境变量并发布 `dpl_Eq4fjWm1ZVY9iETcLPANVEALiWpN`；固定域名 `https://yipai-jihe.vercel.app` 已公开，五个核心页面、匿名会话与带会话衣橱访问均验收通过。
 
 ## P1 扩展 SDD
 
@@ -511,7 +512,7 @@
 - [x] SDD-004 已确认 OpenAI Responses API 与默认 `gpt-4o-mini`，并在本地和 Preview 配置 `OPENAI_API_KEY`。
 - [x] P0 使用支持图片理解和稳定结构化 JSON 的单一服务，不做多供应商切换。
 - [x] SDD-005 已采用免密钥 Open-Meteo；SDD-013 起普通推荐只允许账号城市的真实今日天气或明日预报，测试预设退出用户界面，天气失败直接停止生成。
-- [x] SDD-007 已复用当前 Vercel 项目和受保护 Preview；未设置正式域名或发布 Production。邮箱验证 Redirect URL 已覆盖 Preview 通配域，密码人工验收仍在 SDD-002。
+- [x] 2026-08-25 已新建并使用 Vercel `yipai-jihe` 项目发布 Production；经用户明确同意关闭项目级 SSO，固定 `vercel.app` 域名可公开访问。未设置自定义域名，密码人工验收仍在 SDD-002。
 - [ ] SDD-008 开始前确认外部抠图 API；已确定只在 P1 接入。
 
 ## 阶段完成后的固定更新模板
