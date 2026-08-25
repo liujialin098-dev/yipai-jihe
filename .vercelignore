@@ -1,0 +1,6 @@
+.env*
+.git
+.next
+node_modules
+revise_prd_mvp.py
+衣拍即合_详细版PRD_已更新.docx

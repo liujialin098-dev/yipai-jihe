@@ -49,7 +49,8 @@
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
-- 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；Preview 环境已持久配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY`。SDD-007 受控评审 Preview 为 `https://ai-coding-84l2zuiur-jialin-d583.vercel.app`（部署 `dpl_AKheXxJmJbQNPVF1bzybPPbLnp5Z`，READY），受 Vercel Authentication 保护且未发布 Production。
+- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-08-25 部署 `dpl_GeKrmiAaxYDT9KzDM87DQ6NdkN8c` 已 `READY`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY` 或 `VERCEL_OIDC_TOKEN`。团队级 SSO 当前保护所有 `vercel.app` 域名，公开访问返回 404；只有用户明确同意扩大公开访问边界后，才可执行关闭 SSO 的命令。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
+- Vercel Production 发布流程：先运行 `npx vercel link --yes --project yipai-jihe --scope jialin-d583` 与 `npx vercel env ls production --scope jialin-d583` 核对项目和变量名称，再运行 `npm run check`、`npm run build`，最后执行 `npx vercel deploy --prod --yes --scope jialin-d583`。发布后使用 `npx vercel inspect <deployment-url> --scope jialin-d583` 核对 `target=production`、`status=Ready` 和固定别名；不得把密钥放进命令参数、日志或仓库。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
 - SDD-004 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-004`；最后一项验证 10 张固定 jpg、双会话隔离、确认幂等、取消/过期清理和 10 项批量边界。2026-08-23 真实 `gpt-4o-mini` 基准为 10/10、平均 3504ms；2026-08-25 Windows 本地传输修复后，当前页面 10 张真实图片全部识别成功。
@@ -63,7 +64,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011、账号个性化 SDD-012 与真实两日天气 SDD-013 已完成；当前本地账号已保存武汉与男装，可分别使用武汉实时天气和明日真实预报。受控评审 Preview 仍是 SDD-012 之前的版本。SDD-002 下一步仍须由用户本人完成历史账号密码和重新登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得自动发布 Production、设置正式域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011、账号个性化 SDD-012 与真实两日天气 SDD-013 已完成；2026-08-25 已按用户明确要求发布 `yipai-jihe` Production，但团队级 SSO 仍保护 `vercel.app` 域名，公开可用性验收等待用户明确决定是否关闭保护。SDD-002 下一步仍须由用户本人完成历史账号密码和重新登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时关闭部署保护、设置正式域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
