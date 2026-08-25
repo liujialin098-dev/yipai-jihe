@@ -80,7 +80,7 @@
 - [x] T019 编写双会话、字段约束、RLS、过滤可逆和静态边界验收 `scripts/verify-sdd-012.mjs`
 - [x] T020 执行 `npm run check`、`npm run build`、`npm run verify:sdd-012` 和移动端窄栏浏览器验收 `specs/012-personalized-context/quickstart.md`
 - [x] T021 更新阶段状态、已知限制和开发约定 `progress.md`、`AGENTS.md`
-- [ ] T022 提交 SDD-012 与 SDD-011 回归修复并记录提交号 `progress.md`
+- [x] T022 提交 SDD-012 与 SDD-011 回归修复并记录提交号 `progress.md`
 
 ---
 
