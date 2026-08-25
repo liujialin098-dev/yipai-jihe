@@ -17,7 +17,7 @@
 - `lib/recommendations/`：天气快照、严格推荐契约、OpenAI 生成、规则降级、归属与搭配结构校验，以及当日批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
 - `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs`、`scripts/verify-sdd-003.mjs`、`scripts/verify-sdd-004.mjs`、`scripts/verify-sdd-005.mjs`、`scripts/verify-sdd-006.mjs` 与 `scripts/verify-sdd-007.mjs`：双匿名会话、幂等、固定样本、每日推荐、反馈隔离和静态发布门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/` 与 `specs/011-global-motion/` 为已完成阶段；`specs/002-account-binding/` 的无邮件注册代码已完成，远端 Confirm email 切换、本地历史账号设密与重登录等待集中调试。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/` 与 `specs/011-global-motion/` 为已完成阶段；`specs/002-account-binding/` 的无邮件注册代码与远端 Confirm email 切换已完成，本地历史账号设密与重登录等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 - 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。
@@ -45,7 +45,7 @@
 - SDD-006 反馈底座为 `public.wardrobe_item_favorites`、`public.outfit_favorites` 和 `public.preference_feedback_events`；收藏使用唯一键幂等，整套收藏保存不可变 JSON 快照，反馈事件通过唯一 `event_key` 去重，三表均启用当前用户所有权 RLS。`user_preferences.style_scores` 必须由事件账本重算，不得让客户端直接写任意分数。
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
-- 当前 Supabase Auth 已开启 Email、Confirm email、Anonymous Sign-Ins 和 Manual Linking；SDD-002 的目标配置是保持 Email、Anonymous Sign-Ins 与 Manual Linking 开启并关闭 Confirm email，尚未与用户共同执行。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
+- 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
 - 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；Preview 环境已持久配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY`。SDD-007 受控评审 Preview 为 `https://ai-coding-84l2zuiur-jialin-d583.vercel.app`（部署 `dpl_AKheXxJmJbQNPVF1bzybPPbLnp5Z`，READY），受 Vercel Authentication 保护且未发布 Production。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -53,12 +53,12 @@
 - SDD-005 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-005`；最后一项创建两组非敏感匿名测试衣橱，验证三套契约、同日三次覆盖为一行和跨用户 RLS 后自动清理。390px 浏览器必须另测至少两种场合/天气组合与规则降级。
 - SDD-006 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-006`；最后一项创建两组匿名测试衣物，验证单品/整套收藏和反馈幂等、跨用户读取/写入拒绝后自动清理。390px 浏览器必须另测合法替换持久化、无候选说明、收藏页和 3 题问卷来源说明。
 - SDD-007 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-007`；最后一项为无网络静态门禁，核对 7 个核心页面、演示/测试素材、迁移、npm 脚本、README、环境模板和客户端密钥边界。远端隔离继续复跑 SDD-001、003、005、006；真实 AI 识别仅在模型、提示词或识别代码变化时复跑以避免无意义付费。
-- 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力，关闭 Confirm email 并完成真实登录验收时必须同步复核泄露密码保护提示。
+- 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007 与 SDD-011 已完成，受控评审 Preview 已 READY。SDD-002 已于 2026-08-25 改为“邮箱＋密码直接注册、已有账号直接登录、不发送验证邮件”，主页入口、输入框修复和仅限本地的管理员设密工具已完成。下一步必须暂停并与用户共同关闭 Supabase Confirm email、为历史账号设置密码、部署 Preview，再完成退出和重登录。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得自动发布 Production、设置正式域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007 与 SDD-011 已完成，受控评审 Preview 已 READY。SDD-002 已于 2026-08-25 改为“邮箱＋密码直接注册、已有账号直接登录、不发送验证邮件”，主页入口、输入框修复、仅限本地的管理员设密工具和 Supabase Confirm email 关闭均已完成。下一步必须暂停并由用户本人为历史账号设置密码，再部署 Preview，完成无邮件注册、退出和重登录。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得自动发布 Production、设置正式域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
