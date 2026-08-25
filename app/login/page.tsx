@@ -5,11 +5,11 @@ import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
 import { getViewer } from "@/lib/auth/viewer";
 
-export const metadata: Metadata = { title: "登录恢复" };
+export const metadata: Metadata = { title: "账号登录" };
 
 const feedback = {
   "anonymous-unavailable": "暂时无法建立新的匿名身份，请稍后重试。",
-  "invalid-link": "验证链接已失效或已使用，请回到设置页重新发送。",
+  "invalid-link": "旧验证链接已失效，请直接使用邮箱和密码登录。",
   "signed-out": "已安全退出当前设备。你的衣橱数据仍保留在原账号中。",
 } as const;
 
@@ -39,13 +39,13 @@ export default async function LoginPage({
         </Link>
       ) : null}
       <p className="mt-5 text-xs font-semibold text-[var(--system-blue)]">
-        跨设备恢复
+        已有账号
       </p>
       <h1 className="mt-2 max-w-[21rem] font-heading text-[2.75rem] leading-[1.01] font-bold tracking-[-0.07em]">
-        欢迎回来，衣橱还在原处。
+        直接登录，衣橱还在原处。
       </h1>
       <p className="mt-4 max-w-[22rem] text-sm leading-6 text-[var(--text-secondary)]">
-        使用已经验证并设置密码的邮箱登录，恢复同一账号下的衣物和偏好。
+        使用已绑定的邮箱和密码直接登录，不会发送验证邮件。
       </p>
 
       {message ? (

@@ -1,12 +1,21 @@
-import { ArrowRight, Images, Search, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Images,
+  LogIn,
+  Search,
+  ShieldCheck,
+  UserPlus,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { getViewer } from "@/lib/auth/viewer";
 import { getWardrobeCount, getWardrobePreview } from "@/lib/wardrobe/data";
 
 export default async function Home() {
-  const [itemCount, previewItems] = await Promise.all([
+  const [itemCount, previewItems, viewer] = await Promise.all([
     getWardrobeCount(),
     getWardrobePreview(3),
+    getViewer(),
   ]);
   const hasItems = itemCount > 0;
 
@@ -86,6 +95,46 @@ export default async function Home() {
           <p className="text-xs text-[var(--text-tertiary)]">仅当前身份可见</p>
         </div>
       </Link>
+
+      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
+        <p className="text-xs font-semibold text-[var(--system-blue)]">
+          账号入口
+        </p>
+        <h2 className="mt-2 font-heading text-[1.55rem] font-bold tracking-[-0.045em] text-[var(--foreground)]">
+          把这间衣橱带到下一台设备。
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+          {viewer && !viewer.isAnonymous
+            ? "当前衣橱已经绑定账号，可以前往设置管理登录状态。"
+            : "注册会保留当前衣橱；已有账号可直接登录，不发送验证邮件。"}
+        </p>
+        {viewer && !viewer.isAnonymous ? (
+          <Link
+            href="/settings"
+            className="motion-button mt-4 flex h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+          >
+            <ShieldCheck className="size-4" aria-hidden="true" />
+            查看账号设置
+          </Link>
+        ) : (
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <Link
+              href="/settings#account"
+              className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-3 text-center text-sm font-semibold text-white"
+            >
+              <UserPlus className="size-4 shrink-0" aria-hidden="true" />
+              注册账号
+            </Link>
+            <Link
+              href="/login"
+              className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-3 text-center text-sm font-semibold text-[var(--foreground)]"
+            >
+              <LogIn className="size-4 shrink-0" aria-hidden="true" />
+              登录
+            </Link>
+          </div>
+        )}
+      </section>
 
       <section className="mt-8">
         <h2 className="font-heading text-[1.65rem] font-bold tracking-[-0.045em] text-[var(--foreground)]">

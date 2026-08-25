@@ -1,6 +1,6 @@
 # 衣拍即合开发进度
 
-> 版本：MVP 分阶段开发规划 v3 ｜ 更新日期：2026-08-24
+> 版本：MVP 分阶段开发规划 v3 ｜ 更新日期：2026-08-25
 >
 > 本文档依据 `D:\产品经理\衣拍即合_详细版PRD.docx` 的最新内容制定，并覆盖此前所有开发路线图。PRD 负责描述产品需求；本文档是当前唯一有效的开发顺序、阶段边界、验收与上线进度 TODO LIST。
 >
@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007 与全局动效 SDD-011 已完成，受控评审 Preview 已 READY。下一步与用户集中调试 SDD-002 密码设置、退出和重新登录
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007 与全局动效 SDD-011 已完成，受控评审 Preview 已 READY。SDD-002 已改为无需邮件验证的直接注册/登录，代码已保存，等待与用户共同切换 Supabase 认证配置并完成真实账号验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -322,7 +322,7 @@
 
 ### SDD-002：邮箱绑定与会话恢复
 
-- 状态：验收中（邮箱已绑定并验证，等待用户本人完成密码设置与重新登录）
+- 状态：验收中（无邮件注册代码已完成，等待认证配置切换、历史账号本地设密与重新登录）
 - SDD 目录：`specs/002-account-binding/`
 - AI Coding 估算：1 段主对话，复杂度 M
 - 依赖：SDD-001
@@ -331,18 +331,21 @@
 
 功能范围：
 
-- [ ] 匿名用户可填写邮箱和密码，将当前身份升级为邮箱账号。
-- [x] 配置 Supabase 邮件验证、Site URL 和 Redirect URL。
+- [x] 主页为匿名用户提供“注册账号”和“登录”入口。
+- [x] 匿名用户可在一个表单填写邮箱和两次密码，将当前身份直接升级为邮箱账号。
+- [ ] 关闭 Supabase Confirm email；Email、Anonymous Sign-Ins 与 Manual Linking 保持开启。
 - [x] 支持邮箱登录、退出和重新登录。
 - [x] 绑定后保持原 `auth_user_id`，匿名阶段数据不得迁移到新用户或丢失。
 - [x] 设置页展示当前匿名或邮箱账号状态。
-- [x] 对重复邮箱、弱密码、验证链接失效和登录失败提供明确反馈。
+- [x] 已绑定邮箱只走密码登录，不再展示或调用密码设置邮件入口。
+- [x] 对重复邮箱、弱密码、旧链接失效和登录失败提供明确反馈。
+- [x] 邮箱及密码输入框采用独立图标留白，避免文字与图标重叠。
 
 独立验收：
 
-- [ ] 匿名用户可以绑定邮箱、完成验证、退出并重新登录。
+- [ ] 匿名用户可以不打开邮件直接注册、退出并重新登录。
 - [x] 绑定前创建的测试数据在账号原地升级后仍属于同一用户。
-- [x] 未完成验证或密码错误时得到明确提示。
+- [x] 项目仍开启邮件确认、邮箱重复或密码错误时得到明确提示。
 - [x] 其他匿名或邮箱会话无法访问该账号的数据。
 - [x] `npm run check` 通过。
 
@@ -354,15 +357,16 @@
 
 阶段进行记录：
 
-- 实现结果：匿名账号邮箱验证、确认回调、密码设置、邮箱密码登录、本地退出、主动新匿名体验和账号状态 UI 已完成；退出后的 `/login` 不会自动创建匿名身份。
-- 自动验收：`npm run check`、`npm run build` 通过；`npm run verify:sdd-002` 使用远端 Supabase 验证身份原地更新后用户 ID 与资料保持不变、本地退出清除会话、无效凭据被拒绝。
+- 实现结果：2026-08-25 已将旧邮件验证流程改为邮箱和密码一次提交的原地注册；主页增加注册/登录入口，登录页移除邮件恢复入口，已绑定账号只走密码登录；新增仅本地可运行的 `account:set-password-local` 管理员工具，未建立线上管理员接口。
+- 自动验收：`npm run check`、`npm run build` 通过；`npm run verify:sdd-002` 在网络限制外连接远端 Supabase，验证身份原地更新后用户 ID 与资料保持不变、本地退出清除会话、无效凭据被拒绝，并检查主页入口、无邮件代码边界、本地恢复命令和输入框留白。390px 本地登录页两处输入框左内边距均为 44px，图标与文字起点间距 12px，无横向溢出。
+- 安全复核：Supabase Security Advisor 仍只有预期的匿名身份策略提醒和 `Leaked Password Protection Disabled`；所有业务策略继续以当前 `auth.uid()` 或私有路径限制。建议在关闭 Confirm email 时同时开启泄露密码保护，作为无需邮箱确认后的密码安全补偿措施。
 - Preview：主体版本 `https://ai-coding-gq6wt4chx-jialin-d583.vercel.app`；密码设置入口版 `https://ai-coding-5sr1vo74n-jialin-d583.vercel.app`（READY）。
-- 远端配置：2026-08-24 已在 Supabase 开启 Manual Linking；Email、Confirm email 和 Anonymous Sign-Ins 保持开启；Site URL 为 `http://localhost:3000`，Redirect URL 已加入 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`。
+- 远端配置：截至本次保存，Email、Confirm email、Anonymous Sign-Ins 与 Manual Linking 仍开启；下一步必须与用户共同关闭 Confirm email，Site URL 和 Redirect URL 只保留旧链接兼容。本地 `.env.local` 已具备真实 `SECRET_KEY`，该密钥不得进入 Vercel、浏览器或提交。
 - Preview 验收：设置页已显示匿名身份、邮箱绑定表单与状态说明，衣橱页正常加载 24 件隔离演示衣物，390px 无横向溢出且控制台无错误。
 - 真实账号状态：2026-08-24 已确认匿名编号 `FE462561` 原地升级为邮箱账号，邮箱已验证、用户 ID 未变化，尚未设置登录密码。发现 JWT 旧匿名声明导致页面仍显示绑定表单，已改为使用 Auth 服务端最新用户记录，并让旧表单提交自动转入密码设置页。
-- 会话恢复补救：由于 Vercel 唯一 Preview 域名不可原地更新且 Cookie 不跨域，登录页已增加“已绑定邮箱，但还没有密码？”入口。它通过 Supabase 一次性恢复邮件在新 Preview 建立同一账号会话，不泄露邮箱是否存在，也不会创建或迁移业务数据。
+- 旧流程记录：曾为跨 Preview 会话增加一次性密码设置邮件入口；2026-08-25 按用户决定已从登录页和服务端动作移除，不再发送恢复邮件。
 - 2026-08-24 暂停检查点：新 Preview `https://ai-coding-84l2zuiur-jialin-d583.vercel.app` 使用了另一匿名会话，再次绑定原邮箱时 Supabase Auth 日志明确返回 `email_exists`（HTTP 422）。这证明邮箱仍属于原账号，不应更换邮箱或继续重复绑定。已重新打开原会话域名 `https://ai-coding-gq6wt4chx-jialin-d583.vercel.app`；若该域名仍保留原账号 Cookie，由用户本人直接设置密码；若旧会话已失效，再由用户明确确认是否采用仅限本地的一次性管理员密码重置。管理员方案不得建立线上重置入口，也不得记录密码、邮箱或服务端密钥。
-- 待完成：由用户本人设置密码，再完成退出/重登录；密码不得写入聊天或测试日志。完成这一步后才能将 SDD-002 标记为已完成。
+- 2026-08-25 暂停检查点：代码、SDD 文档、自动检查和本地布局验收均已完成。关键待办为：关闭 Supabase Confirm email；由用户本人在本地终端运行 `npm run account:set-password-local` 为历史账号隐藏输入密码并确认；部署新 Preview 后完成退出/重登录和原衣橱恢复。不得替用户输入、保存或记录密码，完成真实验收前不得标记 SDD-002 已完成。
 
 ### SDD-011：全局高级动效系统
 

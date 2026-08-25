@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { readFile } from "node:fs/promises";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -22,6 +23,40 @@ function createIsolatedClient() {
 }
 
 async function main() {
+  const projectRoot = new URL("../", import.meta.url);
+  const [homeSource, actionSource, loginSource, cssSource, packageSource] =
+    await Promise.all([
+      readFile(new URL("app/page.tsx", projectRoot), "utf8"),
+      readFile(new URL("lib/auth/actions.ts", projectRoot), "utf8"),
+      readFile(new URL("components/auth/login-form.tsx", projectRoot), "utf8"),
+      readFile(new URL("app/globals.css", projectRoot), "utf8"),
+      readFile(new URL("package.json", projectRoot), "utf8"),
+    ]);
+  ensure(homeSource.includes('href="/settings#account"'), "主页缺少注册入口");
+  ensure(homeSource.includes('href="/login"'), "主页缺少登录入口");
+  ensure(
+    actionSource.includes("registerCurrentAccount") &&
+      actionSource.includes("email,") &&
+      actionSource.includes("password,"),
+    "注册动作没有一次提交邮箱和密码",
+  );
+  ensure(
+    !actionSource.includes("resetPasswordForEmail"),
+    "登录流程仍会发送密码设置邮件",
+  );
+  ensure(
+    !loginSource.includes("PasswordSetupLinkForm"),
+    "登录页仍展示邮件密码设置入口",
+  );
+  ensure(
+    cssSource.includes(".field-control-with-icon"),
+    "图标输入框缺少独立左侧留白",
+  );
+  ensure(
+    packageSource.includes("account:set-password-local"),
+    "缺少本地一次性密码设置命令",
+  );
+
   const client = createIsolatedClient();
   const { data: anonymousData, error: anonymousError } =
     await client.auth.signInAnonymously();
@@ -70,7 +105,8 @@ async function main() {
     `测试身份 ${userId.slice(0, 8).toUpperCase()}：原地更新后用户 ID 与资料保持不变`,
   );
   console.log("本地退出清除会话、无效凭据拒绝验证通过");
-  console.log("真实邮箱验证与跨设备恢复需按 quickstart 在 Preview 完成");
+  console.log("主页入口、无邮件注册边界、本地恢复命令和输入框留白检查通过");
+  console.log("真实邮箱注册与跨设备恢复需按 quickstart 在 Preview 完成");
 }
 
 main().catch((error) => {

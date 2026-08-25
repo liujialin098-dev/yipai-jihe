@@ -12,13 +12,13 @@
 
 ## 状态流转
 
-`anonymous` → `verification_sent` → `email_verified` → `password_ready`
+`anonymous` → `email_password_ready`
 
-- 前三步都使用同一 `userId`。
+- 流转使用同一 `userId`，不经过邮件等待状态。
 - 退出仅清除当前会话，不删除 Auth 用户或业务数据。
 - 邮箱密码登录恢复同一 `userId` 后，现有 RLS 自动恢复数据访问。
+- 历史遗留的 `email_bound_without_password` 只允许本地管理员工具流转到 `email_password_ready`。
 
 ## 现有关系
 
 `auth.users.id` 继续一对一关联 `profiles.user_id`、`user_preferences.user_id`，并一对多关联 `wardrobe_items.user_id` 与 `wardrobe_ingestions.user_id`。本阶段无迁移。
-

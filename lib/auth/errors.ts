@@ -39,11 +39,12 @@ export function mapAuthError(
       return "邮箱格式不正确，请检查后重试。";
     case "email_exists":
     case "identity_already_exists":
+      return "这个邮箱已经绑定，请直接登录原账号；系统不会发送验证邮件。";
     case "email_address_not_authorized":
-      return "这个邮箱暂时无法绑定，请换一个邮箱或直接登录原账号。";
+      return "这个邮箱当前不可用于注册，请检查地址或联系管理员。";
     case "over_email_send_rate_limit":
     case "over_request_rate_limit":
-      return "验证邮件发送得有些频繁，请稍后再试。";
+      return "请求较多，请稍后再试。";
     case "weak_password":
       return "密码强度不足，请使用至少 8 位且不容易猜到的密码。";
     case "invalid_credentials":

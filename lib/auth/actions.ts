@@ -1,8 +1,7 @@
 "use server";
 
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import {
   type AuthActionState,
   mapAuthError,
@@ -19,26 +18,26 @@ function errorState(
   return { fieldErrors, message, status: "error" };
 }
 
-async function getRequestOrigin() {
-  const requestHeaders = await headers();
-  const origin = requestHeaders.get("origin");
-  if (origin && /^https?:\/\//.test(origin)) return origin;
-
-  const host =
-    requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? "https";
-  return host ? `${protocol}://${host}` : "http://localhost:3000";
-}
-
-export async function requestEmailBinding(
+export async function registerCurrentAccount(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
   const email = normalizeEmail(formData.get("email"));
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const fieldErrors: AuthActionState["fieldErrors"] = {};
+
   if (!validateEmail(email)) {
-    return errorState("请填写可以接收验证邮件的邮箱。", {
-      email: "邮箱格式不正确。",
-    });
+    fieldErrors.email = "邮箱格式不正确。";
+  }
+  if (!validatePassword(password)) {
+    fieldErrors.password = "请使用至少 8 位密码。";
+  }
+  if (password !== confirmPassword) {
+    fieldErrors.confirmPassword = "请再次输入相同密码。";
+  }
+  if (Object.keys(fieldErrors).length > 0) {
+    return errorState("请检查注册信息后再试。", fieldErrors);
   }
 
   const supabase = await createClient();
@@ -49,23 +48,44 @@ export async function requestEmailBinding(
     });
   }
   if (!data.user.is_anonymous) {
-    redirect("/settings?binding=verified");
+    redirect("/settings");
   }
 
-  const origin = await getRequestOrigin();
-  const { error } = await supabase.auth.updateUser(
+  const { data: emailData, error: emailError } = await supabase.auth.updateUser(
     { email },
-    { emailRedirectTo: `${origin}/auth/confirm?next=/settings` },
   );
 
-  if (error) {
+  if (emailError) {
     return errorState(
-      mapAuthError(error, "验证邮件暂时没有发出，请稍后重试。"),
+      mapAuthError(emailError, "账号暂时无法注册，请稍后重试。"),
     );
   }
 
+  if (!emailData.user || emailData.user.is_anonymous || !emailData.user.email) {
+    return errorState(
+      "项目仍要求邮箱验证，暂时没有完成注册。请先关闭邮件确认后再试。",
+    );
+  }
+
+  const currentMetadata = emailData.user.user_metadata ?? {};
+  const { error: passwordError } = await supabase.auth.updateUser({
+    data: { ...currentMetadata, account_password_configured: true },
+    password,
+  });
+  if (passwordError) {
+    revalidatePath("/settings");
+    return errorState(
+      mapAuthError(
+        passwordError,
+        "邮箱已绑定，但密码暂时没有设置成功。请刷新页面后直接设置密码。",
+      ),
+    );
+  }
+
+  revalidatePath("/");
+  revalidatePath("/settings");
   return {
-    message: `验证邮件已发送到 ${email}。请在邮件中确认后返回这里设置密码。`,
+    message: "注册完成。以后可以直接使用邮箱和密码登录这间衣橱。",
     status: "success",
   };
 }
@@ -91,8 +111,8 @@ export async function setAccountPassword(
   const supabase = await createClient();
   const { data, error: userError } = await supabase.auth.getUser();
   if (userError || !data.user || data.user.is_anonymous || !data.user.email) {
-    return errorState("邮箱还没有完成验证，请先打开验证邮件。", {
-      password: "需要已验证的邮箱会话。",
+    return errorState("当前不是已绑定邮箱的账号，请先注册或登录。", {
+      password: "需要已绑定邮箱的登录会话。",
     });
   }
 
@@ -107,7 +127,7 @@ export async function setAccountPassword(
 
   revalidatePath("/settings");
   return {
-    message: "邮箱账号已保护。现在退出后也能用邮箱密码找回这间衣橱。",
+    message: "密码设置完成。现在可以直接使用邮箱和密码登录。",
     status: "success",
   };
 }
@@ -133,36 +153,6 @@ export async function signInWithEmail(
   }
 
   redirect("/");
-}
-
-export async function requestPasswordSetupLink(
-  _previousState: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const email = normalizeEmail(formData.get("email"));
-  if (!validateEmail(email)) {
-    return errorState("请填写已经绑定的邮箱。", {
-      email: "邮箱格式不正确。",
-    });
-  }
-
-  const supabase = await createClient();
-  const origin = await getRequestOrigin();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/confirm?next=/settings`,
-  });
-
-  if (error) {
-    return errorState(
-      mapAuthError(error, "设置链接暂时没有发出，请稍后重试。"),
-    );
-  }
-
-  return {
-    message:
-      "如果这个邮箱已绑定，设置链接会发送到邮箱。打开邮件后即可设置密码。",
-    status: "success",
-  };
 }
 
 export async function startAnonymousExperience() {

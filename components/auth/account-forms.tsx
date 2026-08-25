@@ -4,7 +4,7 @@ import { Check, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import { requestEmailBinding, setAccountPassword } from "@/lib/auth/actions";
+import { registerCurrentAccount, setAccountPassword } from "@/lib/auth/actions";
 import { initialAuthState } from "@/lib/auth/errors";
 
 function SubmitButton({ children }: { children: string }) {
@@ -38,7 +38,15 @@ function FormMessage({ state }: { state: typeof initialAuthState }) {
 }
 
 export function EmailBindingForm() {
-  const [state, action] = useActionState(requestEmailBinding, initialAuthState);
+  const router = useRouter();
+  const [state, action] = useActionState(
+    registerCurrentAccount,
+    initialAuthState,
+  );
+
+  useEffect(() => {
+    if (state.status === "success") router.refresh();
+  }, [router, state.status]);
 
   return (
     <form action={action} className="mt-5">
@@ -60,13 +68,31 @@ export function EmailBindingForm() {
           aria-invalid={Boolean(state.fieldErrors?.email)}
           aria-describedby="binding-email-error"
           placeholder="name@example.com"
-          className="field-control h-12 pl-11 text-sm"
+          className="field-control field-control-with-icon h-12 text-sm"
         />
       </div>
       <p id="binding-email-error" className="mt-2 text-xs text-[#b42318]">
         {state.fieldErrors?.email}
       </p>
-      <SubmitButton>发送验证邮件</SubmitButton>
+      <div className="mt-4">
+        <PasswordField
+          id="register-password"
+          name="password"
+          label="设置登录密码"
+          error={state.fieldErrors?.password}
+          autoComplete="new-password"
+        />
+      </div>
+      <div className="mt-4">
+        <PasswordField
+          id="register-confirm-password"
+          name="confirmPassword"
+          label="再次输入"
+          error={state.fieldErrors?.confirmPassword}
+          autoComplete="new-password"
+        />
+      </div>
+      <SubmitButton>注册并保护衣橱</SubmitButton>
       <FormMessage state={state} />
     </form>
   );
@@ -136,7 +162,7 @@ function PasswordField({
           autoComplete={autoComplete}
           aria-invalid={Boolean(error)}
           aria-describedby={`${id}-error`}
-          className="field-control h-12 pl-11 text-sm"
+          className="field-control field-control-with-icon h-12 text-sm"
         />
       </div>
       <p id={`${id}-error`} className="mt-2 text-xs text-[#b42318]">

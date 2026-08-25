@@ -68,17 +68,20 @@ export default async function SettingsPage({
       </section>
 
       {viewer?.isAnonymous ? (
-        <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
+        <section
+          id="account"
+          className="surface-card stagger-item mt-5 scroll-mt-6 rounded-[1.65rem] p-5 [--stagger:1]"
+        >
           <div className="flex items-center gap-3">
             <span className="flex size-9 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
               <KeyRound className="size-4" aria-hidden="true" />
             </span>
             <div>
               <h2 className="font-heading text-xl font-bold tracking-[-0.035em]">
-                绑定邮箱
+                注册账号
               </h2>
               <p className="mt-1 text-xs text-[var(--text-tertiary)]">
-                先验证邮箱，再设置密码
+                输入邮箱和密码，当前页面直接完成
               </p>
             </div>
           </div>
@@ -89,13 +92,13 @@ export default async function SettingsPage({
       {viewer && !viewer.isAnonymous && !viewer.passwordConfigured ? (
         <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
           <p className="text-xs font-semibold text-[var(--system-blue)]">
-            {verifiedNow ? "邮箱验证成功" : "最后一步"}
+            {verifiedNow ? "邮箱已绑定" : "最后一步"}
           </p>
           <h2 className="mt-2 font-heading text-2xl font-bold tracking-[-0.045em]">
             设置登录密码
           </h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            密码只会交给认证服务处理，不会保存到衣拍即合的数据表中。
+            直接在当前页面设置，无需再打开验证邮件。密码只会交给认证服务处理，不会保存到衣拍即合的数据表中。
           </p>
           <PasswordSetupForm />
         </section>
