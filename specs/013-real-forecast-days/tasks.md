@@ -63,7 +63,7 @@
 - [x] T013 运行 `npm run check`、`npm run build`、`npm run verify:sdd-013` `specs/013-real-forecast-days/quickstart.md`
 - [x] T014 完成 390px 浏览器今天/明天、失败提示和互不覆盖验收 `specs/013-real-forecast-days/quickstart.md`
 - [x] T015 更新阶段状态、天气真实性约束和质量命令 `progress.md`、`AGENTS.md`
-- [ ] T016 提交 SDD-013 完成变更并记录提交号 `progress.md`
+- [x] T016 提交 SDD-013 完成变更并记录提交号 `progress.md`
 
 ---
 
