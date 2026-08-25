@@ -1,43 +1,18 @@
 import type {
-  WeatherPreset,
+  RecommendationTargetDay,
   WeatherSnapshot,
 } from "@/lib/recommendations/constants";
+import { recommendationDate } from "@/lib/recommendations/data";
 import type { WeatherLocation } from "@/lib/recommendations/location";
 
-const WEATHER_TIMEOUT_MS = 2_500;
+const WEATHER_TIMEOUT_MS = 4_000;
 
-const SIMULATED_WEATHER: Record<
-  Exclude<WeatherPreset, "live">,
-  Pick<
-    WeatherSnapshot,
-    "temperatureC" | "apparentTemperatureC" | "weatherCode" | "summary"
-  >
-> = {
-  mild: {
-    temperatureC: 22,
-    apparentTemperatureC: 22,
-    weatherCode: 1,
-    summary: "晴间多云",
-  },
-  hot: {
-    temperatureC: 33,
-    apparentTemperatureC: 36,
-    weatherCode: 0,
-    summary: "晴热",
-  },
-  cold: {
-    temperatureC: 4,
-    apparentTemperatureC: 1,
-    weatherCode: 3,
-    summary: "阴冷",
-  },
-  rainy: {
-    temperatureC: 18,
-    apparentTemperatureC: 16,
-    weatherCode: 61,
-    summary: "小雨",
-  },
-};
+export class RealWeatherUnavailableError extends Error {
+  constructor() {
+    super("real_weather_unavailable");
+    this.name = "RealWeatherUnavailableError";
+  }
+}
 
 type OpenMeteoResponse = {
   current?: {
@@ -45,10 +20,20 @@ type OpenMeteoResponse = {
     apparent_temperature?: unknown;
     weather_code?: unknown;
   };
+  daily?: {
+    time?: unknown;
+    temperature_2m_min?: unknown;
+    apparent_temperature_min?: unknown;
+    weather_code?: unknown;
+  };
 };
 
 function finiteNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function arrayNumber(value: unknown, index: number) {
+  return Array.isArray(value) ? finiteNumber(value[index]) : null;
 }
 
 function weatherSummary(code: number) {
@@ -64,32 +49,39 @@ function weatherSummary(code: number) {
   return "天气多变";
 }
 
-function simulatedWeather(
-  preset: Exclude<WeatherPreset, "live">,
-  location?: WeatherLocation | null,
-) {
-  return {
-    city: location?.city ?? "测试城市",
-    ...SIMULATED_WEATHER[preset],
-    source: "simulated" as const,
-    observedAt: new Date().toISOString(),
-    preset,
-  } satisfies WeatherSnapshot;
+function validWeatherValues(
+  temperatureC: number | null,
+  apparentTemperatureC: number | null,
+  weatherCode: number | null,
+): temperatureC is number {
+  return Boolean(
+    temperatureC !== null &&
+      apparentTemperatureC !== null &&
+      weatherCode !== null &&
+      temperatureC >= -60 &&
+      temperatureC <= 60 &&
+      apparentTemperatureC >= -60 &&
+      apparentTemperatureC <= 60 &&
+      weatherCode >= 0 &&
+      weatherCode <= 99,
+  );
 }
 
 export async function getWeatherSnapshot(
-  preset: WeatherPreset,
-  location?: WeatherLocation | null,
+  targetDay: RecommendationTargetDay,
+  location: WeatherLocation | null,
+  requestedAt = new Date(),
 ): Promise<WeatherSnapshot> {
-  if (preset !== "live") return simulatedWeather(preset, location);
-  if (!location) throw new Error("weather_location_required");
+  if (!location) throw new RealWeatherUnavailableError();
 
   const query = new URLSearchParams({
     latitude: String(location.latitude),
     longitude: String(location.longitude),
     current: "temperature_2m,apparent_temperature,weather_code",
+    daily:
+      "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max",
     timezone: location.timezone,
-    forecast_days: "1",
+    forecast_days: "2",
   });
 
   try {
@@ -100,27 +92,44 @@ export async function getWeatherSnapshot(
         cache: "no-store",
       },
     );
-    if (!response.ok) return simulatedWeather("mild", location);
+    if (!response.ok) throw new RealWeatherUnavailableError();
 
     const payload = (await response.json()) as OpenMeteoResponse;
-    const temperatureC = finiteNumber(payload.current?.temperature_2m);
-    const apparentTemperatureC = finiteNumber(
+    let temperatureC = finiteNumber(payload.current?.temperature_2m);
+    let apparentTemperatureC = finiteNumber(
       payload.current?.apparent_temperature,
     );
-    const weatherCode = finiteNumber(payload.current?.weather_code);
+    let weatherCode = finiteNumber(payload.current?.weather_code);
+
+    if (targetDay === "tomorrow") {
+      const targetDate = recommendationDate(
+        requestedAt,
+        location.timezone,
+        "tomorrow",
+      );
+      const forecastDates = Array.isArray(payload.daily?.time)
+        ? payload.daily.time
+        : [];
+      const forecastIndex = forecastDates.indexOf(targetDate);
+      if (forecastIndex < 0) throw new RealWeatherUnavailableError();
+
+      temperatureC = arrayNumber(
+        payload.daily?.temperature_2m_min,
+        forecastIndex,
+      );
+      apparentTemperatureC = arrayNumber(
+        payload.daily?.apparent_temperature_min,
+        forecastIndex,
+      );
+      weatherCode = arrayNumber(payload.daily?.weather_code, forecastIndex);
+    }
 
     if (
-      temperatureC === null ||
+      !validWeatherValues(temperatureC, apparentTemperatureC, weatherCode) ||
       apparentTemperatureC === null ||
-      weatherCode === null ||
-      temperatureC < -60 ||
-      temperatureC > 60 ||
-      apparentTemperatureC < -60 ||
-      apparentTemperatureC > 60 ||
-      weatherCode < 0 ||
-      weatherCode > 99
+      weatherCode === null
     ) {
-      return simulatedWeather("mild", location);
+      throw new RealWeatherUnavailableError();
     }
 
     return {
@@ -133,7 +142,8 @@ export async function getWeatherSnapshot(
       observedAt: new Date().toISOString(),
       preset: "live",
     };
-  } catch {
-    return simulatedWeather("mild", location);
+  } catch (error) {
+    if (error instanceof RealWeatherUnavailableError) throw error;
+    throw new RealWeatherUnavailableError();
   }
 }

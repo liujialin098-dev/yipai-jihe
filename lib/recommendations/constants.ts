@@ -23,9 +23,16 @@ export const WEATHER_PRESETS = [
   { value: "rainy", label: "雨天测试" },
 ] as const;
 
+export const RECOMMENDATION_TARGET_DAYS = [
+  { value: "today", label: "今天" },
+  { value: "tomorrow", label: "明天" },
+] as const;
+
 export type RecommendationOccasion =
   (typeof RECOMMENDATION_OCCASIONS)[number]["value"];
 export type WeatherPreset = (typeof WEATHER_PRESETS)[number]["value"];
+export type RecommendationTargetDay =
+  (typeof RECOMMENDATION_TARGET_DAYS)[number]["value"];
 export type RecommendationSource = "ai" | "rules";
 
 export type WeatherSnapshot = {
@@ -124,6 +131,19 @@ export function isRecommendationOccasion(
 
 export function isWeatherPreset(value: string): value is WeatherPreset {
   return WEATHER_PRESETS.some((option) => option.value === value);
+}
+
+export function isRecommendationTargetDay(
+  value: unknown,
+): value is RecommendationTargetDay {
+  return (
+    typeof value === "string" &&
+    RECOMMENDATION_TARGET_DAYS.some((option) => option.value === value)
+  );
+}
+
+export function recommendationTargetDayLabel(value: RecommendationTargetDay) {
+  return value === "tomorrow" ? "明日" : "今日";
 }
 
 export function recommendationOccasionLabel(value: RecommendationOccasion) {

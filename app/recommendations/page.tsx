@@ -4,25 +4,41 @@ import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
 import { RecommendationViewTracker } from "@/components/recommendations/recommendation-view-tracker";
-import { recommendationOccasionLabel } from "@/lib/recommendations/constants";
+import {
+  isRecommendationTargetDay,
+  recommendationOccasionLabel,
+  type RecommendationTargetDay,
+} from "@/lib/recommendations/constants";
 import {
   getRecommendationPageData,
   toRecommendationItem,
 } from "@/lib/recommendations/data";
 import { replacementCandidates } from "@/lib/feedback/replacement";
 
-export const metadata: Metadata = { title: "今日推荐" };
+export const metadata: Metadata = { title: "穿搭推荐" };
 
-function todayLabel() {
+function dateLabel(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
   return new Intl.DateTimeFormat("zh-CN", {
     month: "long",
     day: "numeric",
     weekday: "short",
-    timeZone: "Asia/Shanghai",
-  }).format(new Date());
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, day, 12)));
 }
 
-export default async function RecommendationsPage() {
+function dayHref(targetDay: RecommendationTargetDay) {
+  return `/recommendations?day=${targetDay}`;
+}
+
+export default async function RecommendationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ day?: string | string[] }>;
+}) {
+  const dayValue = (await searchParams).day;
+  const targetDay = isRecommendationTargetDay(dayValue) ? dayValue : "today";
+  const targetLabel = targetDay === "tomorrow" ? "明日" : "今日";
   const {
     error,
     items,
@@ -30,7 +46,8 @@ export default async function RecommendationsPage() {
     itemFavoriteIds,
     outfitFavoriteKeys,
     weatherCity,
-  } = await getRecommendationPageData();
+    targetDate,
+  } = await getRecommendationPageData(targetDay);
   const WeatherIcon =
     recommendation && recommendation.weather.weatherCode >= 51
       ? CloudRain
@@ -40,15 +57,40 @@ export default async function RecommendationsPage() {
     <div className="page-enter px-5 pt-4">
       <header>
         <p className="text-xs font-semibold text-[var(--system-blue)]">
-          {todayLabel()}，今日穿搭
+          {dateLabel(targetDate)}，{targetLabel}穿搭
         </p>
         <h1 className="mt-2 font-heading text-[2.75rem] leading-[1.02] font-bold tracking-[-0.07em] text-[var(--foreground)]">
-          今天穿什么
+          {targetDay === "tomorrow" ? "明天穿什么" : "今天穿什么"}
         </h1>
         <p className="mt-3 max-w-[22rem] text-sm leading-6 text-[var(--text-secondary)]">
-          用你的真实衣橱，结合天气和场合整理三种选择。
+          用你的真实衣橱，结合
+          {targetDay === "tomorrow" ? "明日预报" : "当前天气"}
+          和场合整理三种选择。
         </p>
       </header>
+
+      <nav
+        aria-label="选择搭配日期"
+        className="mt-5 grid grid-cols-2 gap-1 rounded-full bg-[var(--surface-soft)] p-1"
+      >
+        {(["today", "tomorrow"] as const).map((day) => {
+          const selected = day === targetDay;
+          return (
+            <Link
+              key={day}
+              href={dayHref(day)}
+              aria-current={selected ? "page" : undefined}
+              className={`motion-button flex h-11 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
+                selected
+                  ? "bg-[#1d1d1f] text-white shadow-[0_8px_22px_rgba(29,29,31,0.16)]"
+                  : "text-[var(--text-secondary)]"
+              }`}
+            >
+              {day === "today" ? "今天" : "明天"}
+            </Link>
+          );
+        })}
+      </nav>
 
       {recommendation ? (
         <section className="bubble-enter mt-6 overflow-hidden rounded-[1.65rem] bg-[#1d1d1f] p-4.5 text-white shadow-[0_18px_50px_rgba(29,29,31,0.2)]">
@@ -64,12 +106,13 @@ export default async function RecommendationsPage() {
               <div>
                 <p className="text-xs text-white/62">
                   {recommendation.weather.city}，
-                  {recommendation.weather.source === "live"
-                    ? "实时天气"
-                    : "模拟天气"}
+                  {targetDay === "tomorrow"
+                    ? "Open-Meteo 明日预报"
+                    : "Open-Meteo 实时天气"}
                 </p>
                 <p className="mt-0.5 text-sm font-semibold">
-                  {recommendation.weather.summary}，体感{" "}
+                  {recommendation.weather.summary}，
+                  {targetDay === "tomorrow" ? "最低体感" : "体感"}{" "}
                   {recommendation.weather.apparentTemperatureC}°C
                 </p>
               </div>
@@ -99,10 +142,10 @@ export default async function RecommendationsPage() {
           </Link>
         ) : null}
         <RecommendationControls
-          key={`${recommendation?.id ?? "new"}-${recommendation?.occasion ?? "commute"}-${recommendation?.weather.preset ?? "live"}`}
+          key={`${targetDay}-${recommendation?.id ?? "new"}-${recommendation?.occasion ?? "commute"}`}
           defaultOccasion={recommendation?.occasion ?? "commute"}
-          defaultWeatherPreset={recommendation?.weather.preset ?? "live"}
           hasRecommendation={Boolean(recommendation)}
+          targetDay={targetDay}
         />
       </section>
 
@@ -113,7 +156,10 @@ export default async function RecommendationsPage() {
       ) : null}
 
       {recommendation ? (
-        <section className="mt-7 space-y-5" aria-label="今日三套推荐">
+        <section
+          className="mt-7 space-y-5"
+          aria-label={`${targetLabel}三套推荐`}
+        >
           <RecommendationViewTracker
             recommendationId={recommendation.id}
             version={recommendation.updatedAt}
@@ -121,7 +167,7 @@ export default async function RecommendationsPage() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-medium text-[var(--text-tertiary)]">
-                今日方案
+                {targetLabel}方案
               </p>
               <h2 className="mt-1 font-heading text-[1.8rem] font-bold tracking-[-0.05em] text-[var(--foreground)]">
                 三套，都来自你的衣橱

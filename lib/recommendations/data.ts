@@ -7,6 +7,7 @@ import type {
   RecommendationOccasion,
   RecommendationOutfit,
   RecommendationSource,
+  RecommendationTargetDay,
   RecommendationWardrobeItem,
   WeatherSnapshot,
 } from "@/lib/recommendations/constants";
@@ -63,6 +64,7 @@ export function toRecommendationItem(
 export function recommendationDate(
   date = new Date(),
   timeZone = DEFAULT_TIMEZONE,
+  targetDay: RecommendationTargetDay = "today",
 ) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -73,7 +75,14 @@ export function recommendationDate(
   const value = Object.fromEntries(
     parts.map((part) => [part.type, part.value]),
   );
-  return `${value.year}-${value.month}-${value.day}`;
+  const targetDate = new Date(
+    Date.UTC(
+      Number(value.year),
+      Number(value.month) - 1,
+      Number(value.day) + (targetDay === "tomorrow" ? 1 : 0),
+    ),
+  );
+  return targetDate.toISOString().slice(0, 10);
 }
 
 export async function getActiveRecommendationItems(
@@ -127,9 +136,12 @@ export type RecommendationPageData = {
   outfitFavoriteKeys: string[];
   error: string | null;
   weatherCity: string | null;
+  targetDate: string;
 };
 
-export async function getRecommendationPageData(): Promise<RecommendationPageData> {
+export async function getRecommendationPageData(
+  targetDay: RecommendationTargetDay = "today",
+): Promise<RecommendationPageData> {
   const viewer = await getViewer();
   if (!viewer) {
     return {
@@ -140,11 +152,16 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       outfitFavoriteKeys: [],
       error: "体验会话正在准备，请稍后刷新。",
       weatherCity: null,
+      targetDate: recommendationDate(new Date(), DEFAULT_TIMEZONE, targetDay),
     };
   }
 
   const supabase = await createClient();
-  const date = recommendationDate();
+  const date = recommendationDate(
+    new Date(),
+    viewer.weatherTimezone ?? DEFAULT_TIMEZONE,
+    targetDay,
+  );
   const [
     wardrobeResult,
     recommendationResult,
@@ -179,6 +196,7 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       outfitFavoriteKeys: [],
       error: wardrobeResult.error,
       weatherCity: viewer.weatherCity,
+      targetDate: date,
     };
   }
 
@@ -203,7 +221,7 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
     const source =
       row.source === "ai" || row.source === "rules" ? row.source : null;
 
-    if (occasion && weather && outfits && source) {
+    if (occasion && weather?.source === "live" && outfits && source) {
       recommendation = {
         id: row.id,
         recommendationDate: row.recommendation_date,
@@ -228,8 +246,11 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
     outfitFavoriteKeys:
       outfitFavoritesResult.data?.map((favorite) => favorite.source_key) ?? [],
     error: recommendationResult.error
-      ? "今日推荐暂时无法读取，可以重新生成。"
-      : null,
+      ? `${targetDay === "tomorrow" ? "明日" : "今日"}推荐暂时无法读取，可以重新生成。`
+      : row && validateWeatherSnapshot(row.weather)?.source === "simulated"
+        ? "旧的模拟天气方案已停用，请使用真实天气重新生成。"
+        : null,
     weatherCity: viewer.weatherCity,
+    targetDate: date,
   };
 }

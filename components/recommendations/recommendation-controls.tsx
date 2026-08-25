@@ -1,24 +1,23 @@
 "use client";
 
-import { CloudSun, LoaderCircle, Sparkles } from "lucide-react";
+import { CalendarDays, LoaderCircle, Sparkles } from "lucide-react";
 import { useActionState } from "react";
 import { generateDailyRecommendations } from "@/app/recommendations/actions";
 import {
   INITIAL_RECOMMENDATION_ACTION_STATE,
   RECOMMENDATION_OCCASIONS,
-  WEATHER_PRESETS,
   type RecommendationOccasion,
-  type WeatherPreset,
+  type RecommendationTargetDay,
 } from "@/lib/recommendations/constants";
 
 export function RecommendationControls({
   defaultOccasion,
-  defaultWeatherPreset,
   hasRecommendation,
+  targetDay,
 }: {
   defaultOccasion: RecommendationOccasion;
-  defaultWeatherPreset: WeatherPreset;
   hasRecommendation: boolean;
+  targetDay: RecommendationTargetDay;
 }) {
   const [state, action, pending] = useActionState(
     generateDailyRecommendations,
@@ -27,9 +26,10 @@ export function RecommendationControls({
 
   return (
     <form action={action} className="surface-card rounded-[1.65rem] p-4.5">
+      <input type="hidden" name="targetDay" value={targetDay} />
       <fieldset disabled={pending}>
         <legend className="text-xs font-semibold text-[var(--text-secondary)]">
-          今天要去哪里
+          {targetDay === "tomorrow" ? "明天" : "今天"}要去哪里
         </legend>
         <div className="mt-3 grid grid-cols-4 gap-2">
           {RECOMMENDATION_OCCASIONS.map((option) => (
@@ -49,28 +49,15 @@ export function RecommendationControls({
         </div>
       </fieldset>
 
-      <label className="mt-4 block text-xs font-semibold text-[var(--text-secondary)]">
-        天气方式
-        <span className="mt-2 flex items-center gap-2 rounded-[1.1rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5">
-          <CloudSun
-            className="size-4 shrink-0 text-[var(--system-blue)]"
-            strokeWidth={1.8}
-            aria-hidden="true"
-          />
-          <select
-            name="weatherPreset"
-            defaultValue={defaultWeatherPreset}
-            disabled={pending}
-            className="h-11 min-w-0 flex-1 appearance-none bg-transparent text-sm font-medium text-[var(--foreground)] outline-none"
-          >
-            {WEATHER_PRESETS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </span>
-      </label>
+      <div className="mt-4 flex items-center gap-2 rounded-[1.1rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 py-3 text-xs leading-5 text-[var(--text-secondary)]">
+        <CalendarDays
+          className="size-4 shrink-0 text-[var(--system-blue)]"
+          strokeWidth={1.8}
+          aria-hidden="true"
+        />
+        仅使用账号城市的
+        {targetDay === "tomorrow" ? "真实明日预报" : "真实当前天气"}
+      </div>
 
       <button
         type="submit"
@@ -85,8 +72,8 @@ export function RecommendationControls({
         {pending
           ? "正在整理三套搭配…"
           : hasRecommendation
-            ? "刷新今日三套"
-            : "生成今日三套"}
+            ? `刷新${targetDay === "tomorrow" ? "明日" : "今日"}三套`
+            : `生成${targetDay === "tomorrow" ? "明日" : "今日"}三套`}
       </button>
 
       {state.message ? (

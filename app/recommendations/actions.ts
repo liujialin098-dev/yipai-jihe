@@ -13,9 +13,10 @@ import {
 } from "@/lib/personalization/constants";
 import {
   isRecommendationOccasion,
-  isWeatherPreset,
+  isRecommendationTargetDay,
   type RecommendationActionState,
   type RecommendationOutfit,
+  recommendationTargetDayLabel,
 } from "@/lib/recommendations/constants";
 import {
   getActiveRecommendationItems,
@@ -27,7 +28,10 @@ import {
   buildRuleRecommendations,
   InsufficientWardrobeError,
 } from "@/lib/recommendations/rules";
-import { getWeatherSnapshot } from "@/lib/recommendations/weather";
+import {
+  getWeatherSnapshot,
+  RealWeatherUnavailableError,
+} from "@/lib/recommendations/weather";
 import {
   parseRecommendationOccasion,
   validateRecommendationOutput,
@@ -41,14 +45,14 @@ export async function generateDailyRecommendations(
   formData: FormData,
 ): Promise<RecommendationActionState> {
   const occasionValue = String(formData.get("occasion") ?? "");
-  const presetValue = String(formData.get("weatherPreset") ?? "");
+  const targetDayValue = String(formData.get("targetDay") ?? "");
   if (
     !isRecommendationOccasion(occasionValue) ||
-    !isWeatherPreset(presetValue)
+    !isRecommendationTargetDay(targetDayValue)
   ) {
     return {
       status: "error",
-      message: "请选择有效的场合和天气后再生成。",
+      message: "请选择有效的日期和场合后再生成。",
     };
   }
 
@@ -85,17 +89,30 @@ export async function generateDailyRecommendations(
       ? preferencesResult.data.clothing_preference
       : "unrestricted";
     const location = storedWeatherLocation(preferencesResult.data);
-    if (presetValue === "live" && !location) {
+    if (!location) {
       return {
         status: "error",
-        message: "请先在个人偏好中设置常用城市，再使用实时天气。",
+        message: "请先在个人偏好中设置常用城市，再生成真实天气搭配。",
       };
     }
 
-    const [items, weather] = await Promise.all([
-      getActiveRecommendationItems(supabase, user.id, clothingPreference),
-      getWeatherSnapshot(presetValue, location),
-    ]);
+    const requestedAt = new Date();
+    let items: Awaited<ReturnType<typeof getActiveRecommendationItems>>;
+    let weather: Awaited<ReturnType<typeof getWeatherSnapshot>>;
+    try {
+      [items, weather] = await Promise.all([
+        getActiveRecommendationItems(supabase, user.id, clothingPreference),
+        getWeatherSnapshot(targetDayValue, location, requestedAt),
+      ]);
+    } catch (error) {
+      if (error instanceof RealWeatherUnavailableError) {
+        return {
+          status: "error",
+          message: "真实天气暂时无法获取，请稍后重试。本次不会使用模拟天气。",
+        };
+      }
+      throw error;
+    }
     if (!items) {
       return {
         status: "error",
@@ -148,7 +165,11 @@ export async function generateDailyRecommendations(
       .upsert(
         {
           user_id: user.id,
-          recommendation_date: recommendationDate(),
+          recommendation_date: recommendationDate(
+            requestedAt,
+            location.timezone,
+            targetDayValue,
+          ),
           occasion: occasionValue,
           weather: weather as unknown as Json,
           outfits: outfits as unknown as Json,
@@ -162,7 +183,7 @@ export async function generateDailyRecommendations(
     if (saveError) {
       return {
         status: "error",
-        message: "方案已经生成，但今日记录暂时无法保存，请稍后重试。",
+        message: `方案已经生成，但${recommendationTargetDayLabel(targetDayValue)}记录暂时无法保存，请稍后重试。`,
       };
     }
 
@@ -172,8 +193,8 @@ export async function generateDailyRecommendations(
       source,
       message:
         source === "ai"
-          ? "今日 3 套 AI 穿搭已更新。"
-          : "AI 暂时不可用，已用稳定搭配规则生成 3 套方案。",
+          ? `${recommendationTargetDayLabel(targetDayValue)} 3 套 AI 穿搭已更新。`
+          : `AI 暂时不可用，已按真实${recommendationTargetDayLabel(targetDayValue)}天气用稳定规则生成 3 套方案。`,
     };
   } catch {
     return {
@@ -224,7 +245,7 @@ export async function replaceDailyRecommendationItem(
         )
       : null;
   if (!row || !occasion || !weather || !items || !currentOutfits) {
-    return { status: "error", message: "今日方案已变化，请刷新后再试。" };
+    return { status: "error", message: "当前方案已变化，请刷新后再试。" };
   }
 
   const nextOutfits = replaceRecommendationItem({
