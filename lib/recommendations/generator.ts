@@ -7,6 +7,7 @@ import {
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
 import type { ClothingPreference } from "@/lib/personalization/constants";
+import { requestOpenAiResponse } from "@/lib/openai/responses";
 import { validateRecommendationOutput } from "@/lib/recommendations/validation";
 
 export type RecommendationFailureCode =
@@ -86,12 +87,8 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
   )}`;
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+    const response = await requestOpenAiResponse({
+      apiKey,
       body: JSON.stringify({
         model,
         store: false,

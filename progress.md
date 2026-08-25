@@ -173,7 +173,8 @@
 - AI 服务与模型：OpenAI Responses API，`gpt-4o-mini`，`detail: low`，`store: false`，严格 JSON Schema，12 秒服务端超时；本地与 Vercel Preview 均已配置服务端 Key。
 - 识别测试结果：10 张无人物逼真 jpg 固定样本类别正确 10/10（100%），类别修正 0；平均耗时 3504ms，最慢 5317ms，全部低于 10 秒目标。逐项结果见 `specs/004-ai-item-ingestion/quickstart.md`。
 - 验收结果：真实批量流程完成 10 项上传、识别和确认，10 个不同项目均成功入库；OpenAI 严格 Schema 已移除不支持的 `uniqueItems`，额度不足会显示准确提示。双匿名会话 RLS/Storage 隔离、连续确认 3 次只产生 1 条记录、取消与过期清理、10 项上限、3 项并发和批量确认均通过；390px 布局沿用本阶段已通过的无水平溢出结果。`npm run check`、`npm run build` 和增强版 `npm run verify:sdd-004` 全部通过。
-- 已知限制：当前本地网络会让 Node.js 解析/连接 OpenAI 失败，因此真实 AI 基准改由同机 PowerShell 直连与 Vercel Preview 双重执行；应用线上链路不受影响。物理过期清理由当前用户下次进入入库流程时触发，P0 未配置定时 Cron；匿名身份清除站点数据或换设备后仍无法恢复。
+- 已知限制：物理过期清理由当前用户下次进入入库流程时触发，P0 未配置定时 Cron；匿名身份清除站点数据或换设备后仍无法恢复。2026-08-25 已修复 Windows 本地 Node.js 无法直连 OpenAI 的环境问题，详见下方回归记录。
+- 2026-08-25 回归修复：确认密钥和额度正常、标准 Responses API 请求格式正确，故障根因是 Windows 本机仅 Node.js 网络栈连接 OpenAI 超时。新增共享服务端传输层：Windows 本地通过 PowerShell 系统网络栈发送 Base64 编码 JSON，Vercel/非 Windows 仍使用标准 `fetch`；密钥只放入子进程环境，不进入命令行、浏览器或日志。当前添加页原有 10 张图片重新识别全部成功，服务端请求均返回 200，单张约 6.4～11.6 秒。
 - 下一步：启动 SDD-005，先明确天气数据方案、每日推荐输入和失败降级边界，再创建对应 Spec Kit SDD。
 - Preview：`https://ai-coding-d8qt4h6g2-jialin-d583.vercel.app`（READY，包含最终 Schema 修复和额度提示）；真实 10 项 AI 批量验收在同配置的 `https://ai-coding-p2br60ssy-jialin-d583.vercel.app` 完成。
 - 提交记录：SDD-004 暂停检查点 `54b6a82`；阶段完成提交 `66dbf01`（AI Schema 修复、真实验收、验证脚本与完成文档）。
@@ -213,7 +214,7 @@
 - 完成日期：2026-08-24
 - 推荐模型与天气服务：OpenAI Responses API，默认 `gpt-4o-mini`，服务端严格 JSON Schema、`store: false` 和 10 秒 AI 超时；天气使用免密钥 Open-Meteo，北京为默认演示城市，并提供温和、热天、冷天和雨天四组明确标识的模拟天气。
 - 验收结果：Supabase 已应用 `daily_recommendations` 迁移并启用四类当前用户所有权 RLS。双匿名会话 `14BF60F7`、`96F1C658` 验证交叉读取与更新被拒绝；两名用户各自同日连续写入 3 次后均只保留 1 个最新批次，数据库拒绝少于 3 套的结果。390px 本地浏览器以 25 件真实演示衣物完成通勤温和天气与约会冷天两轮生成，分别得到恰好 3 套不重复原图卡片；冷天三套均含鞋和外套，修正后不再混用连衣裙与上衣裤装。规则降级实测 11.2～13.3 秒。`npm run check`、`npm run build`、`npm run verify:sdd-005` 和 Vercel 构建全部通过。
-- 已知限制：当前本机到 `api.openai.com:443` 出现 `UND_ERR_CONNECT_TIMEOUT`，因此本轮浏览器验收实际走规则降级；相同 OpenAI Key 与模型已在 SDD-004 的 Vercel Preview 完成真实 AI 验收，SDD-005 的线上真实 AI 推荐保留到与用户集中调试。Preview 仍受 Vercel Authentication 保护；Supabase Security Advisor 的匿名访问提醒来自当前 P0 匿名体验，策略均以 `auth.uid()` 限制，泄露密码保护继续留到 SDD-002 集中验收。
+- 已知限制：2026-08-23 本轮浏览器验收因本机 Node.js 直连 OpenAI 超时而走规则降级；2026-08-25 已增加 Windows 系统网络栈传输并完成识别 10/10 回归。推荐仍保持 10 秒 AI 时限，模型响应较慢时按设计降级，不阻塞三套结果。Preview 仍受 Vercel Authentication 保护；Supabase Security Advisor 的匿名访问提醒来自当前 P0 匿名体验，策略均以 `auth.uid()` 限制，泄露密码保护继续留到 SDD-002 集中验收。
 - 下一步：启动 SDD-006，实现换一件、收藏和偏好反馈；密码设置、退出与重新登录不作为依赖，等用户集中调试。
 - Preview：`https://ai-coding-ac3eixa7p-jialin-d583.vercel.app`（READY，部署 `dpl_6JzNeHa6nuTBtjLK1SQbqq6HEKYJ`，受 Vercel Authentication 保护）。
 - 提交记录：`223cc79`（SDD-005 规格、数据库、天气与推荐实现、自动验收、Preview 和阶段完成文档）。
@@ -306,7 +307,7 @@
 - 评审链接：`https://ai-coding-84l2zuiur-jialin-d583.vercel.app`（受 Vercel Authentication 保护）
 - 部署版本：`dpl_AKheXxJmJbQNPVF1bzybPPbLnp5Z`，READY，Preview，未发布 Production。
 - 验收结果：`npm run check`、`npm run build` 和无网络 `npm run verify:sdd-007` 全部通过，静态门禁核对 7 个核心页面、24 张演示图片、10 张识别样本、7 个迁移和服务端密钥边界。复跑 SDD-001、003、005、006 共 8 个新匿名会话，资料、Storage、衣橱、推荐、收藏和反馈的交叉访问均被拒绝并完成清理。390px 七个核心页面 `scrollWidth` 均等于内容视口宽度，共 47 张页面图片无损坏、无运行时错误。Supabase 无缺失 RLS 或未索引外键；Vercel 生产构建 14 个路由并达到 READY。
-- 已知限制：Preview 需团队 Vercel 登录；本机 Node.js 到 OpenAI 偶发超时，真实识别沿用 SDD-004 的 10/10 线上证据，推荐规则降级可用，线上真实 AI 推荐留集中调试。未自动清除当前浏览器站点数据，因为该会话已绑定邮箱且尚未完成密码设置；以两个全新独立匿名会话完成等价的新身份与旧数据隔离验证。
+- 已知限制：Preview 需团队 Vercel 登录；Windows 本地 OpenAI 传输已于 2026-08-25 修复并以当前页面 10 张图片通过真实识别，推荐超过 10 秒仍会按设计规则降级。未自动清除当前浏览器站点数据，因为该会话已绑定邮箱且尚未完成密码设置；以两个全新独立匿名会话完成等价的新身份与旧数据隔离验证。
 - 下一步：与用户一起完成 SDD-002 密码设置、退出和重新登录；这是必须由用户输入密码并确认邮箱的人工步骤，继续保持暂停等待，不自动操作。正式 Production、域名与公开访问策略也等待用户明确决定。
 - 提交记录：`f798207`（SDD-007 规格、静态发布门禁、README、全链路回归、最终 Preview 与阶段完成文档）。
 

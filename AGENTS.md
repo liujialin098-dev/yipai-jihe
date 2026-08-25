@@ -13,6 +13,7 @@
 - `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
 - `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
+- `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
 - `lib/wardrobe/`：衣物常量、校验、查询、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
 - `lib/personalization/`：账号衣着偏好、衣物归属和共享可逆过滤规则。
 - `lib/recommendations/`：账号城市解析、当地天气快照、严格推荐契约、OpenAI 生成、规则降级、归属与搭配结构校验，以及当日批次读取映射。
@@ -35,7 +36,7 @@
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`，区域：`ap-southeast-1`，状态：`ACTIVE_HEALTHY`）。
 - 本地连接配置放在 `.env.local`，变量为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`；该文件已被 `.gitignore` 忽略。
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
-- SDD-004 的 `OPENAI_API_KEY` 必须仅配置在 `.env.local` 和 Vercel 服务端环境；可选 `OPENAI_VISION_MODEL` 默认 `gpt-4o-mini`。浏览器不得读取这两个变量，OpenAI 请求必须使用 Responses API、`store: false` 和严格 JSON Schema。
+- SDD-004 的 `OPENAI_API_KEY` 必须仅配置在 `.env.local` 和 Vercel 服务端环境；可选 `OPENAI_VISION_MODEL` 默认 `gpt-4o-mini`。浏览器不得读取这两个变量，OpenAI 请求必须使用 Responses API、`store: false` 和严格 JSON Schema。Windows 本地 Node.js 直连超时时统一经过 `lib/openai/responses.ts` 使用系统网络栈，密钥不得出现在命令参数、日志或响应中。
 - SDD-005 推荐默认复用 `gpt-4o-mini`，可通过服务端 `OPENAI_RECOMMENDATION_MODEL` 单独覆盖；OpenAI 失败、超时或输出不合法时 MUST 在 15 秒目标内转为规则推荐。SDD-012 起天气位置只能来自当前账号保存的常用城市，由服务端通过 Open-Meteo 解析并获取天气；未设置时不得静默回退北京，天气失败必须显示同城模拟天气来源。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - `lib/auth/viewer.ts` 的账号属性必须使用 `auth.getUser()` 获取 Auth 服务端最新记录；`getClaims()` 继续用于 Proxy 和轻量身份校验，但不得用于邮箱绑定后的即时匿名状态判断，因为当前 JWT 可能仍携带旧声明。
@@ -51,7 +52,7 @@
 - 当前 Vercel 项目为 `ai-coding`（project id：`prj_xUFZtC1OoY5mTQci9o8GaR3CIsK6`）；Preview 环境已持久配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY`。SDD-007 受控评审 Preview 为 `https://ai-coding-84l2zuiur-jialin-d583.vercel.app`（部署 `dpl_AKheXxJmJbQNPVF1bzybPPbLnp5Z`，READY），受 Vercel Authentication 保护且未发布 Production。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
-- SDD-004 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-004`；最后一项验证 10 张固定 jpg、双会话隔离、确认幂等、取消/过期清理和 10 项批量边界。2026-08-23 真实 `gpt-4o-mini` 基准为 10/10、平均 3504ms；当前本地 Node.js 网络无法直连 OpenAI，真实基准由同机 PowerShell 与 Vercel Preview 双重完成。
+- SDD-004 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-004`；最后一项验证 10 张固定 jpg、双会话隔离、确认幂等、取消/过期清理和 10 项批量边界。2026-08-23 真实 `gpt-4o-mini` 基准为 10/10、平均 3504ms；2026-08-25 Windows 本地传输修复后，当前页面 10 张真实图片全部识别成功。
 - SDD-005 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-005`；最后一项创建两组非敏感匿名测试衣橱，验证三套契约、同日三次覆盖为一行和跨用户 RLS 后自动清理。390px 浏览器必须另测至少两种场合/天气组合与规则降级。
 - SDD-006 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-006`；最后一项创建两组匿名测试衣物，验证单品/整套收藏和反馈幂等、跨用户读取/写入拒绝后自动清理。390px 浏览器必须另测合法替换持久化、无候选说明、收藏页和 3 题问卷来源说明。
 - SDD-007 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-007`；最后一项为无网络静态门禁，核对 7 个核心页面、演示/测试素材、迁移、npm 脚本、README、环境模板和客户端密钥边界。远端隔离继续复跑 SDD-001、003、005、006；真实 AI 识别仅在模型、提示词或识别代码变化时复跑以避免无意义付费。

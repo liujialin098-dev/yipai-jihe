@@ -76,3 +76,10 @@ npm run verify:sdd-004
 - 平均耗时：3504ms；最慢 5317ms，全部低于 10 秒目标。
 - Preview 批量验收：10 个不同入库项目均识别成功并确认入库，确认接口全部返回 200。
 - 当前网络对 Node.js 直连 OpenAI 存在异常 DNS/连接阻断，因此 `npm run verify:sdd-004` 的非 AI 验证与真实 AI 基准分别执行；真实 AI 同时通过 PowerShell 直连和 Vercel Preview 完成，不使用模拟结果。
+
+### 2026-08-25 Windows 本地回归
+
+- 复现结果：Supabase 上传正常，Node.js 标准 `fetch` 到 OpenAI 超时；同机 Windows 网络栈立即获得 OpenAI 响应，排除密钥、额度和请求 Schema 问题。
+- 修复方式：`lib/openai/responses.ts` 在 Windows 服务端使用 PowerShell 系统网络栈，JSON 请求体经 Base64 无损传递；非 Windows 和 Vercel 继续使用标准 `fetch`。
+- 安全边界：API Key 只通过子进程环境传递，不写入命令参数、标准输出、浏览器或仓库。
+- 真实验收：当前添加页原有 10 张图片全部从失败状态重试为“等待核对”，服务端 10/10 返回 200，单张约 6.4～11.6 秒。

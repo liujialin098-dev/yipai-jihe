@@ -2,6 +2,7 @@ import {
   validateRecognitionResult,
   type WardrobeRecognition,
 } from "@/lib/wardrobe/validation";
+import { requestOpenAiResponse } from "@/lib/openai/responses";
 
 export const WARDROBE_RECOGNITION_SCHEMA = {
   type: "object",
@@ -140,12 +141,8 @@ export async function recognizeWardrobeImage(imageUrl: string): Promise<{
   const timeout = setTimeout(() => controller.abort(), 12_000);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+    const response = await requestOpenAiResponse({
+      apiKey,
       body: JSON.stringify({
         model,
         store: false,
