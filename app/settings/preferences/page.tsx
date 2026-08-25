@@ -35,7 +35,7 @@ export default async function PreferencesPage() {
     supabase
       .from("user_preferences")
       .select(
-        "preference_state, preference_focus, preferred_styles, preferred_occasions, style_scores",
+        "preference_state, preference_focus, preferred_styles, preferred_occasions, style_scores, clothing_preference, weather_city, weather_admin1",
       )
       .eq("user_id", viewer.userId)
       .single(),
@@ -91,6 +91,11 @@ export default async function PreferencesPage() {
             ["casual", "commute"],
           )}
           defaultFocus={preference?.preference_focus ?? "versatile"}
+          defaultCity={preference?.weather_city ?? ""}
+          defaultAdmin1={preference?.weather_admin1 ?? ""}
+          defaultClothingPreference={
+            preference?.clothing_preference ?? "unrestricted"
+          }
         />
       </section>
 

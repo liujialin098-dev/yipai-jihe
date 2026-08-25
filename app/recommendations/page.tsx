@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CloudRain, CloudSun, Info, Shirt } from "lucide-react";
+import { CloudRain, CloudSun, Info, MapPin, Shirt } from "lucide-react";
 import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
@@ -18,13 +18,19 @@ function todayLabel() {
     month: "long",
     day: "numeric",
     weekday: "short",
-    timeZone: process.env.WEATHER_TIMEZONE?.trim() || "Asia/Shanghai",
+    timeZone: "Asia/Shanghai",
   }).format(new Date());
 }
 
 export default async function RecommendationsPage() {
-  const { error, items, recommendation, itemFavoriteIds, outfitFavoriteKeys } =
-    await getRecommendationPageData();
+  const {
+    error,
+    items,
+    recommendation,
+    itemFavoriteIds,
+    outfitFavoriteKeys,
+    weatherCity,
+  } = await getRecommendationPageData();
   const WeatherIcon =
     recommendation && recommendation.weather.weatherCode >= 51
       ? CloudRain
@@ -80,6 +86,18 @@ export default async function RecommendationsPage() {
       ) : null}
 
       <section className="mt-5">
+        {!weatherCity ? (
+          <Link
+            href="/settings/preferences"
+            className="pressable mb-3 flex items-center justify-between gap-3 rounded-[1.2rem] border border-[var(--system-blue)]/18 bg-[var(--system-blue-soft)] px-4 py-3 text-sm font-semibold text-[var(--system-blue)]"
+          >
+            <span className="flex items-center gap-2">
+              <MapPin className="size-4" strokeWidth={1.8} aria-hidden="true" />
+              先设置常用城市
+            </span>
+            <span className="text-xs font-medium">用于当地天气</span>
+          </Link>
+        ) : null}
         <RecommendationControls
           key={`${recommendation?.id ?? "new"}-${recommendation?.occasion ?? "commute"}-${recommendation?.weather.preset ?? "live"}`}
           defaultOccasion={recommendation?.occasion ?? "commute"}

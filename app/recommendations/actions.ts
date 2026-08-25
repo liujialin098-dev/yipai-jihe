@@ -8,6 +8,10 @@ import {
 } from "@/lib/feedback/preferences";
 import { replaceRecommendationItem } from "@/lib/feedback/replacement";
 import {
+  isClothingPreference,
+  type ClothingPreference,
+} from "@/lib/personalization/constants";
+import {
   isRecommendationOccasion,
   isWeatherPreset,
   type RecommendationActionState,
@@ -18,6 +22,7 @@ import {
   recommendationDate,
 } from "@/lib/recommendations/data";
 import { generateAiRecommendations } from "@/lib/recommendations/generator";
+import { storedWeatherLocation } from "@/lib/recommendations/location";
 import {
   buildRuleRecommendations,
   InsufficientWardrobeError,
@@ -59,20 +64,42 @@ export async function generateDailyRecommendations(
       };
     }
 
-    const [items, preferencesResult, weather] = await Promise.all([
-      getActiveRecommendationItems(supabase, user.id),
-      supabase
-        .from("user_preferences")
-        .select("preferred_styles, preferred_occasions")
-        .eq("user_id", user.id)
-        .maybeSingle(),
-      getWeatherSnapshot(presetValue),
-    ]);
+    const preferencesResult = await supabase
+      .from("user_preferences")
+      .select(
+        "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone",
+      )
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (!items || preferencesResult.error || !preferencesResult.data) {
+    if (preferencesResult.error || !preferencesResult.data) {
       return {
         status: "error",
         message: "衣橱或偏好暂时无法读取，请稍后重试。",
+      };
+    }
+
+    const clothingPreference: ClothingPreference = isClothingPreference(
+      preferencesResult.data.clothing_preference,
+    )
+      ? preferencesResult.data.clothing_preference
+      : "unrestricted";
+    const location = storedWeatherLocation(preferencesResult.data);
+    if (presetValue === "live" && !location) {
+      return {
+        status: "error",
+        message: "请先在个人偏好中设置常用城市，再使用实时天气。",
+      };
+    }
+
+    const [items, weather] = await Promise.all([
+      getActiveRecommendationItems(supabase, user.id, clothingPreference),
+      getWeatherSnapshot(presetValue, location),
+    ]);
+    if (!items) {
+      return {
+        status: "error",
+        message: "衣橱暂时无法读取，请稍后重试。",
       };
     }
 
@@ -89,7 +116,7 @@ export async function generateDailyRecommendations(
         return {
           status: "error",
           message:
-            "还缺少能组成 3 套完整穿搭的衣物，请先补充上装、下装、连衣裙、外套或鞋。",
+            "当前衣着偏好下还缺少能组成 3 套完整穿搭的衣物，请补充上装、下装、外套或鞋。",
         };
       }
       throw error;
@@ -105,6 +132,7 @@ export async function generateDailyRecommendations(
         weather,
         preferredStyles: preferencesResult.data.preferred_styles,
         preferredOccasions: preferencesResult.data.preferred_occasions,
+        clothingPreference,
       });
       outfits = aiResult.outfits;
       source = "ai";

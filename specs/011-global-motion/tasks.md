@@ -21,6 +21,7 @@
 - [x] T008 [US3] 补齐 reduced-motion 与 reduced-transparency 降级
 - [x] T009 [US3] 运行 390px、桌面、键盘、快速导航和控制台验收
 - [x] T010 更新 `quickstart.md`、`progress.md`、`AGENTS.md` 并提交
+- [x] T011 [US2] 2026-08-25 回归修复：移除黑色按钮在悬停或聚焦时掠过的白色扫光，保留克制的按压扩散与焦点反馈
 
 ## Dependencies
 

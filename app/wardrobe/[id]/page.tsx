@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { WardrobeActionButton } from "@/components/wardrobe/action-button";
+import { wardrobeAudienceLabel } from "@/lib/personalization/constants";
 import {
   CATEGORY_OPTIONS,
   COLOR_OPTIONS,
@@ -111,6 +112,10 @@ export default async function WardrobeItemPage({
           <Attribute
             label="风格"
             value={optionLabel(STYLE_OPTIONS, item.style)}
+          />
+          <Attribute
+            label="衣着归属"
+            value={wardrobeAudienceLabel(item.audience)}
           />
           <Attribute
             label="适用季节"

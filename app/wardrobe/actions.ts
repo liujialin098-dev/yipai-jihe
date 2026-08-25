@@ -96,6 +96,7 @@ export async function loadDemoWardrobe(
     const rows: TablesInsert<"wardrobe_items">[] = uploaded.map(
       ({ imagePath, item }) => ({
         user_id: userId,
+        audience: item.audience,
         demo_key: item.demoKey,
         name: item.name,
         category: item.category,

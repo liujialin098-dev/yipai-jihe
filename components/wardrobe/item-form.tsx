@@ -3,6 +3,7 @@
 import { LoaderCircle, Save } from "lucide-react";
 import { useActionState } from "react";
 import { updateWardrobeItem } from "@/app/wardrobe/actions";
+import { WARDROBE_AUDIENCE_OPTIONS } from "@/lib/personalization/constants";
 import {
   CATEGORY_OPTIONS,
   COLOR_OPTIONS,
@@ -66,6 +67,13 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
           value={item.style}
           options={STYLE_OPTIONS}
           error={state.fieldErrors?.style?.[0]}
+        />
+        <SelectField
+          label="衣着归属"
+          name="audience"
+          value={item.audience}
+          options={WARDROBE_AUDIENCE_OPTIONS}
+          error={state.fieldErrors?.audience?.[0]}
         />
       </div>
       <CheckboxField

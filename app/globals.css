@@ -353,29 +353,6 @@
     color var(--motion-fast) ease;
 }
 
-.motion-button::before {
-  position: absolute;
-  top: -100%;
-  left: -42%;
-  width: 32%;
-  height: 300%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(255 255 255 / 32%),
-    transparent
-  );
-  content: "";
-  pointer-events: none;
-  transform: rotate(18deg) translateX(-180%);
-  transition: transform 620ms var(--motion-gentle);
-}
-
-.motion-button:hover::before,
-.motion-button:focus-visible::before {
-  transform: rotate(18deg) translateX(620%);
-}
-
 .motion-status {
   animation: status-bloom 460ms var(--motion-spring) both;
 }
@@ -555,7 +532,6 @@
 
   .pressable,
   .motion-button,
-  .motion-button::before,
   .motion-button::after,
   .pressable::after,
   .nav-bubble,
@@ -571,7 +547,6 @@
     transform: none;
   }
 
-  .motion-button::before,
   .motion-button::after,
   .pressable::after {
     display: none;

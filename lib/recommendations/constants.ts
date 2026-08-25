@@ -6,6 +6,7 @@ import type {
   WardrobeColor,
   WardrobeStyle,
 } from "@/lib/wardrobe/constants";
+import type { WardrobeAudience } from "@/lib/personalization/constants";
 
 export const RECOMMENDATION_OCCASIONS = [
   { value: "commute", label: "通勤" },
@@ -39,6 +40,7 @@ export type WeatherSnapshot = {
 };
 
 export type RecommendationWardrobeItem = {
+  audience: WardrobeAudience;
   id: string;
   name: string;
   category: Category;

@@ -15,6 +15,10 @@ import {
   type WardrobeStatus,
   type WardrobeStyle,
 } from "@/lib/wardrobe/constants";
+import {
+  isWardrobeAudience,
+  type WardrobeAudience,
+} from "@/lib/personalization/constants";
 
 export type ActionState = {
   status: "idle" | "success" | "error";
@@ -28,6 +32,7 @@ export const INITIAL_ACTION_STATE: ActionState = {
 };
 
 export type WardrobeItemInput = {
+  audience: WardrobeAudience;
   name: string;
   category: Category;
   primary_color: WardrobeColor;
@@ -106,6 +111,7 @@ export function validateWardrobeItemForm(
   | { success: true; data: WardrobeItemInput }
   | { success: false; fieldErrors: Record<string, string[]> } {
   const name = stringValue(formData, "name").trim();
+  const audience = stringValue(formData, "audience");
   const category = stringValue(formData, "category");
   const primaryColor = stringValue(formData, "primary_color");
   const material = stringValue(formData, "material");
@@ -118,6 +124,10 @@ export function validateWardrobeItemForm(
     fieldErrors.name = ["请填写衣物名称"];
   } else if (name.length > 60) {
     fieldErrors.name = ["名称最多 60 个字符"];
+  }
+
+  if (!isWardrobeAudience(audience)) {
+    fieldErrors.audience = ["请选择有效衣着归属"];
   }
 
   if (!isOptionValue(CATEGORY_OPTIONS, category)) {
@@ -152,6 +162,7 @@ export function validateWardrobeItemForm(
   return {
     success: true,
     data: {
+      audience: audience as WardrobeAudience,
       name,
       category: category as Category,
       primary_color: primaryColor as WardrobeColor,
@@ -175,6 +186,7 @@ export function validateWardrobeItemJson(
   const formData = new FormData();
   for (const key of [
     "name",
+    "audience",
     "category",
     "primary_color",
     "material",

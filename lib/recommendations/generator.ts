@@ -6,6 +6,7 @@ import {
   type RecommendationWardrobeItem,
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
+import type { ClothingPreference } from "@/lib/personalization/constants";
 import { validateRecommendationOutput } from "@/lib/recommendations/validation";
 
 export type RecommendationFailureCode =
@@ -42,6 +43,7 @@ function outputText(response: OpenAIResponse) {
 }
 
 type GenerateInput = {
+  clothingPreference: ClothingPreference;
   items: RecommendationWardrobeItem[];
   occasion: RecommendationOccasion;
   weather: WeatherSnapshot;
@@ -68,9 +70,11 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
 天气：${JSON.stringify(input.weather)}
 偏好风格：${JSON.stringify(input.preferredStyles)}
 偏好场合：${JSON.stringify(input.preferredOccasions)}
+衣着偏好：${input.clothingPreference}
 衣物清单：${JSON.stringify(
     input.items.slice(0, 80).map((item) => ({
       id: item.id,
+      audience: item.audience,
       name: item.name,
       category: item.category,
       color: item.primary_color,

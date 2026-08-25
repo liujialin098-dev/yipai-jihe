@@ -3,6 +3,7 @@ import { maskEmail } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/server";
 
 export type Viewer = {
+  clothingPreference: string;
   displayName: string;
   email: string | null;
   emailMasked: string | null;
@@ -13,6 +14,8 @@ export type Viewer = {
   preferredStyles: string[];
   shortId: string;
   userId: string;
+  weatherAdmin1: string | null;
+  weatherCity: string | null;
 };
 
 export const getViewer = cache(async (): Promise<Viewer | null> => {
@@ -35,7 +38,9 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
         .maybeSingle(),
       supabase
         .from("user_preferences")
-        .select("preferred_styles, preferred_occasions")
+        .select(
+          "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1",
+        )
         .eq("user_id", userId)
         .maybeSingle(),
     ]);
@@ -50,6 +55,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     }
 
     return {
+      clothingPreference: preferencesResult.data.clothing_preference,
       displayName: profileResult.data.display_name,
       email,
       emailMasked: maskEmail(email),
@@ -61,6 +67,8 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       preferredStyles: preferencesResult.data.preferred_styles,
       shortId: userId.slice(0, 8).toUpperCase(),
       userId,
+      weatherAdmin1: preferencesResult.data.weather_admin1,
+      weatherCity: preferencesResult.data.weather_city,
     };
   } catch {
     return null;

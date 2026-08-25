@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { WARDROBE_AUDIENCE_OPTIONS } from "@/lib/personalization/constants";
 import {
   CATEGORY_OPTIONS,
   COLOR_OPTIONS,
@@ -58,6 +59,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
 const CONCURRENCY = 3;
 
 const DEFAULT_FIELDS: WardrobeItemInput = {
+  audience: "unisex",
   name: "待确认衣物",
   category: "tops",
   primary_color: "black",
@@ -511,6 +513,14 @@ function IngestionCard({
                 updateField("style", value as WardrobeItemInput["style"])
               }
             />
+            <SelectField
+              label="衣着归属"
+              value={item.fields.audience}
+              options={WARDROBE_AUDIENCE_OPTIONS}
+              onChange={(value) =>
+                updateField("audience", value as WardrobeItemInput["audience"])
+              }
+            />
           </div>
           <ChoiceField
             label="季节"
@@ -754,6 +764,7 @@ function isConfirmResponse(
 
 function toWardrobeFields(result: WardrobeRecognition): WardrobeItemInput {
   return {
+    audience: result.audience,
     name: result.name,
     category: result.category,
     primary_color: result.primary_color,

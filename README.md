@@ -37,10 +37,11 @@ npm run dev
 - `OPENAI_API_KEY`：仅服务端使用，严禁 `NEXT_PUBLIC_` 前缀或提交仓库。
 - `OPENAI_VISION_MODEL`：可选，图片识别模型，默认 `gpt-4o-mini`。
 - `OPENAI_RECOMMENDATION_MODEL`：可选，推荐模型，默认 `gpt-4o-mini`。
-- `WEATHER_CITY`、`WEATHER_LATITUDE`、`WEATHER_LONGITUDE`、`WEATHER_TIMEZONE`：可选，默认北京。
 - `SECRET_KEY`：只保留 Supabase 服务端密钥模板；当前应用流程不需要部署它，严禁浏览器读取。
 
 `.env.local` 已被 Git 忽略。Vercel 只配置实际需要的服务端变量和两个 Supabase 公开变量。
+
+天气位置由登录账号在“设置 → 个人偏好”保存常用城市，系统只保存城市级坐标并使用 Open-Meteo 获取当地天气；未设置时不会静默回退到其他城市。
 
 ## 数据库与 Storage
 
@@ -65,6 +66,7 @@ npm run verify:sdd-001
 npm run verify:sdd-003
 npm run verify:sdd-005
 npm run verify:sdd-006
+npm run verify:sdd-012
 ```
 
 `verify:sdd-004` 会在配置 OpenAI Key 后执行 10 张真实识别并产生少量 API 费用，只在模型、提示词或识别代码变化后运行。当前真实结果和全部阶段证据见 `specs/*/quickstart.md` 与 `progress.md`。
@@ -76,7 +78,7 @@ npm run verify:sdd-006
 3. 在添加页选一张测试图，使用 AI 识别或手工填写后入库。
 4. 在推荐页选择场合，生成来自当前衣橱的今日 3 套。
 5. 完成一次“换一件”，再收藏一件单品和一套穿搭。
-6. 在收藏页回看，在设置 → 个人偏好保存 3 题并查看反馈来源。
+6. 在设置 → 个人偏好保存常用城市、衣着偏好和 3 题问卷，再到收藏页查看反馈来源。
 
 完整评审步骤和发布门禁见 `specs/007-release-deploy/quickstart.md`。
 

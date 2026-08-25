@@ -43,6 +43,7 @@ const requiredPaths = [
   "supabase/migrations/20260821223000_ai_item_ingestion.sql",
   "supabase/migrations/20260823172604_daily_recommendations.sql",
   "supabase/migrations/20260823180500_outfit_feedback.sql",
+  "supabase/migrations/20260825193817_personalized_context.sql",
 ];
 for (const path of requiredPaths) {
   check(existsSync(join(root, path)), `缺少发布必需文件：${path}`);
@@ -58,6 +59,7 @@ for (const script of [
   "verify:sdd-005",
   "verify:sdd-006",
   "verify:sdd-007",
+  "verify:sdd-012",
 ]) {
   check(Boolean(packageJson.scripts?.[script]), `缺少 npm 脚本：${script}`);
 }
@@ -69,10 +71,6 @@ for (const key of [
   "OPENAI_API_KEY",
   "OPENAI_VISION_MODEL",
   "OPENAI_RECOMMENDATION_MODEL",
-  "WEATHER_CITY",
-  "WEATHER_LATITUDE",
-  "WEATHER_LONGITUDE",
-  "WEATHER_TIMEZONE",
 ]) {
   check(new RegExp(`^${key}=`, "m").test(envExample), `环境模板缺少：${key}`);
 }

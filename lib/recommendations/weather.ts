@@ -2,10 +2,8 @@ import type {
   WeatherPreset,
   WeatherSnapshot,
 } from "@/lib/recommendations/constants";
+import type { WeatherLocation } from "@/lib/recommendations/location";
 
-const DEFAULT_CITY = "北京";
-const DEFAULT_LATITUDE = 39.9042;
-const DEFAULT_LONGITUDE = 116.4074;
 const WEATHER_TIMEOUT_MS = 2_500;
 
 const SIMULATED_WEATHER: Record<
@@ -53,11 +51,6 @@ function finiteNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-function configuredCoordinate(name: string, fallback: number) {
-  const value = Number(process.env[name]);
-  return Number.isFinite(value) ? value : fallback;
-}
-
 function weatherSummary(code: number) {
   if (code === 0) return "晴";
   if (code <= 2) return "晴间多云";
@@ -71,9 +64,12 @@ function weatherSummary(code: number) {
   return "天气多变";
 }
 
-function simulatedWeather(preset: Exclude<WeatherPreset, "live">) {
+function simulatedWeather(
+  preset: Exclude<WeatherPreset, "live">,
+  location?: WeatherLocation | null,
+) {
   return {
-    city: process.env.WEATHER_CITY_NAME?.trim() || DEFAULT_CITY,
+    city: location?.city ?? "测试城市",
     ...SIMULATED_WEATHER[preset],
     source: "simulated" as const,
     observedAt: new Date().toISOString(),
@@ -83,21 +79,16 @@ function simulatedWeather(preset: Exclude<WeatherPreset, "live">) {
 
 export async function getWeatherSnapshot(
   preset: WeatherPreset,
+  location?: WeatherLocation | null,
 ): Promise<WeatherSnapshot> {
-  if (preset !== "live") return simulatedWeather(preset);
+  if (preset !== "live") return simulatedWeather(preset, location);
+  if (!location) throw new Error("weather_location_required");
 
-  const city = process.env.WEATHER_CITY_NAME?.trim() || DEFAULT_CITY;
-  const latitude = configuredCoordinate("WEATHER_LATITUDE", DEFAULT_LATITUDE);
-  const longitude = configuredCoordinate(
-    "WEATHER_LONGITUDE",
-    DEFAULT_LONGITUDE,
-  );
-  const timezone = process.env.WEATHER_TIMEZONE?.trim() || "Asia/Shanghai";
   const query = new URLSearchParams({
-    latitude: String(latitude),
-    longitude: String(longitude),
+    latitude: String(location.latitude),
+    longitude: String(location.longitude),
     current: "temperature_2m,apparent_temperature,weather_code",
-    timezone,
+    timezone: location.timezone,
     forecast_days: "1",
   });
 
@@ -109,7 +100,7 @@ export async function getWeatherSnapshot(
         cache: "no-store",
       },
     );
-    if (!response.ok) return simulatedWeather("mild");
+    if (!response.ok) return simulatedWeather("mild", location);
 
     const payload = (await response.json()) as OpenMeteoResponse;
     const temperatureC = finiteNumber(payload.current?.temperature_2m);
@@ -129,11 +120,11 @@ export async function getWeatherSnapshot(
       weatherCode < 0 ||
       weatherCode > 99
     ) {
-      return simulatedWeather("mild");
+      return simulatedWeather("mild", location);
     }
 
     return {
-      city,
+      city: location.city,
       temperatureC: Math.round(temperatureC),
       apparentTemperatureC: Math.round(apparentTemperatureC),
       weatherCode: Math.round(weatherCode),
@@ -143,6 +134,6 @@ export async function getWeatherSnapshot(
       preset: "live",
     };
   } catch {
-    return simulatedWeather("mild");
+    return simulatedWeather("mild", location);
   }
 }

@@ -12,6 +12,10 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
       type: "string",
       enum: ["tops", "bottoms", "dresses", "outerwear", "shoes", "accessories"],
     },
+    audience: {
+      type: "string",
+      enum: ["male", "female", "unisex"],
+    },
     primary_color: {
       type: "string",
       enum: [
@@ -70,6 +74,7 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
   required: [
     "name",
     "category",
+    "audience",
     "primary_color",
     "material",
     "style",
@@ -108,7 +113,8 @@ type OpenAIResponse = {
 const PROMPT = `识别图片中最主要的一件衣物。只按提供的枚举返回结果。
 name 使用简洁中文；无法确定材质时选最接近项并把 confidence 设为 low。
 一图多件、真人穿搭或背景复杂时只识别视觉中心的主单品，并在 note 提醒用户核对。
-颜色取面积最大的主色；seasons 和 occasions 至少各选一项。`;
+颜色取面积最大的主色；seasons 和 occasions 至少各选一项。
+audience 表示衣物版型归属：明确男装选 male，明确女装选 female，无法判断或通用款选 unisex。`;
 
 function outputText(response: OpenAIResponse) {
   if (typeof response.output_text === "string") return response.output_text;

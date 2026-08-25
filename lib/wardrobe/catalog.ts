@@ -6,8 +6,10 @@ import type {
   WardrobeColor,
   WardrobeStyle,
 } from "@/lib/wardrobe/constants";
+import type { WardrobeAudience } from "@/lib/personalization/constants";
 
 export type DemoWardrobeItem = {
+  audience: WardrobeAudience;
   demoKey: string;
   name: string;
   category: Category;
@@ -18,7 +20,7 @@ export type DemoWardrobeItem = {
   occasions: Occasion[];
 };
 
-export const DEMO_WARDROBE: DemoWardrobeItem[] = [
+const DEMO_WARDROBE_SOURCE: Array<Omit<DemoWardrobeItem, "audience">> = [
   {
     demoKey: "cloud-white-tee",
     name: "云白棉质 T 恤",
@@ -260,6 +262,13 @@ export const DEMO_WARDROBE: DemoWardrobeItem[] = [
     occasions: ["sport", "casual"],
   },
 ];
+
+export const DEMO_WARDROBE: DemoWardrobeItem[] = DEMO_WARDROBE_SOURCE.map(
+  (item) => ({
+    ...item,
+    audience: item.category === "dresses" ? "female" : "unisex",
+  }),
+);
 
 const DEMO_WARDROBE_KEYS = new Set(DEMO_WARDROBE.map((item) => item.demoKey));
 

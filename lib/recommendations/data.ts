@@ -1,4 +1,8 @@
 import { getViewer } from "@/lib/auth/viewer";
+import {
+  allowedWardrobeAudiences,
+  type ClothingPreference,
+} from "@/lib/personalization/constants";
 import type {
   RecommendationOccasion,
   RecommendationOutfit,
@@ -24,12 +28,13 @@ import type {
 import { getWardrobeItems, type WardrobeItem } from "@/lib/wardrobe/data";
 
 const RECOMMENDATION_ITEM_COLUMNS =
-  "id, name, category, primary_color, material, style, seasons, occasions, status";
+  "id, name, category, primary_color, material, style, seasons, occasions, audience, status";
 const DEFAULT_TIMEZONE = "Asia/Shanghai";
 
 type RecommendationItemRow = Pick<
   Tables<"wardrobe_items">,
   | "id"
+  | "audience"
   | "name"
   | "category"
   | "primary_color"
@@ -45,6 +50,7 @@ export function toRecommendationItem(
 ): RecommendationWardrobeItem {
   return {
     ...item,
+    audience: item.audience as RecommendationWardrobeItem["audience"],
     category: item.category as Category,
     primary_color: item.primary_color as WardrobeColor,
     material: item.material as Material,
@@ -56,7 +62,7 @@ export function toRecommendationItem(
 
 export function recommendationDate(
   date = new Date(),
-  timeZone = process.env.WEATHER_TIMEZONE?.trim() || DEFAULT_TIMEZONE,
+  timeZone = DEFAULT_TIMEZONE,
 ) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -73,12 +79,27 @@ export function recommendationDate(
 export async function getActiveRecommendationItems(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
+  clothingPreference?: ClothingPreference,
 ) {
+  let resolvedPreference = clothingPreference;
+  if (!resolvedPreference) {
+    const preferenceResult = await supabase
+      .from("user_preferences")
+      .select("clothing_preference")
+      .eq("user_id", userId)
+      .maybeSingle();
+    resolvedPreference =
+      preferenceResult.data?.clothing_preference === "male" ||
+      preferenceResult.data?.clothing_preference === "female"
+        ? preferenceResult.data.clothing_preference
+        : "unrestricted";
+  }
   const { data, error } = await supabase
     .from("wardrobe_items")
     .select(RECOMMENDATION_ITEM_COLUMNS)
     .eq("user_id", userId)
     .eq("status", "active")
+    .in("audience", allowedWardrobeAudiences(resolvedPreference))
     .order("updated_at", { ascending: false })
     .limit(200);
 
@@ -105,6 +126,7 @@ export type RecommendationPageData = {
   itemFavoriteIds: string[];
   outfitFavoriteKeys: string[];
   error: string | null;
+  weatherCity: string | null;
 };
 
 export async function getRecommendationPageData(): Promise<RecommendationPageData> {
@@ -117,6 +139,7 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       itemFavoriteIds: [],
       outfitFavoriteKeys: [],
       error: "体验会话正在准备，请稍后刷新。",
+      weatherCity: null,
     };
   }
 
@@ -155,6 +178,7 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
       itemFavoriteIds: [],
       outfitFavoriteKeys: [],
       error: wardrobeResult.error,
+      weatherCity: viewer.weatherCity,
     };
   }
 
@@ -206,5 +230,6 @@ export async function getRecommendationPageData(): Promise<RecommendationPageDat
     error: recommendationResult.error
       ? "今日推荐暂时无法读取，可以重新生成。"
       : null,
+    weatherCity: viewer.weatherCity,
   };
 }

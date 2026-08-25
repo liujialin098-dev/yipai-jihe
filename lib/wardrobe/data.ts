@@ -1,4 +1,8 @@
 import { getViewer } from "@/lib/auth/viewer";
+import {
+  allowedWardrobeAudiences,
+  isClothingPreference,
+} from "@/lib/personalization/constants";
 import type { Tables } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import { getDemoWardrobeImageUrl } from "@/lib/wardrobe/catalog";
@@ -15,7 +19,7 @@ export type WardrobeItem = Omit<WardrobeRow, "image_path" | "user_id"> & {
 };
 
 const ITEM_COLUMNS =
-  "id, demo_key, name, category, primary_color, material, style, seasons, occasions, image_path, source_ingestion_id, status, created_at, updated_at";
+  "id, demo_key, name, category, primary_color, material, style, seasons, occasions, audience, image_path, source_ingestion_id, status, created_at, updated_at";
 
 const SIGNED_URL_TTL_SECONDS = 60 * 30;
 const SIGNED_URL_CACHE_MS = 60 * 25 * 1000;
@@ -103,11 +107,15 @@ export async function getWardrobeItems(filters: WardrobeFilters) {
   }
 
   const supabase = await createClient();
+  const clothingPreference = isClothingPreference(viewer.clothingPreference)
+    ? viewer.clothingPreference
+    : "unrestricted";
   let query = supabase
     .from("wardrobe_items")
     .select(ITEM_COLUMNS)
     .eq("user_id", viewer.userId)
     .eq("status", filters.status)
+    .in("audience", allowedWardrobeAudiences(clothingPreference))
     .order("updated_at", { ascending: false });
 
   if (filters.category) query = query.eq("category", filters.category);
@@ -163,11 +171,15 @@ export async function getWardrobeCount(
   if (!viewer) return 0;
 
   const supabase = await createClient();
+  const clothingPreference = isClothingPreference(viewer.clothingPreference)
+    ? viewer.clothingPreference
+    : "unrestricted";
   const { count, error } = await supabase
     .from("wardrobe_items")
     .select("id", { count: "exact", head: true })
     .eq("user_id", viewer.userId)
-    .eq("status", status);
+    .eq("status", status)
+    .in("audience", allowedWardrobeAudiences(clothingPreference));
 
   return error ? 0 : (count ?? 0);
 }
@@ -177,11 +189,15 @@ export async function getWardrobePreview(limit = 3) {
   if (!viewer) return [] as WardrobeItem[];
 
   const supabase = await createClient();
+  const clothingPreference = isClothingPreference(viewer.clothingPreference)
+    ? viewer.clothingPreference
+    : "unrestricted";
   const { data, error } = await supabase
     .from("wardrobe_items")
     .select(ITEM_COLUMNS)
     .eq("user_id", viewer.userId)
     .eq("status", "active")
+    .in("audience", allowedWardrobeAudiences(clothingPreference))
     .order("updated_at", { ascending: false })
     .limit(Math.max(1, Math.min(limit, 6)));
 

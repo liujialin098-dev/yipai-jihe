@@ -155,6 +155,7 @@ export type Database = {
       };
       wardrobe_items: {
         Row: {
+          audience: string;
           category: string;
           created_at: string;
           demo_key: string | null;
@@ -172,6 +173,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          audience?: string;
           category: string;
           created_at?: string;
           demo_key?: string | null;
@@ -189,6 +191,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          audience?: string;
           category?: string;
           created_at?: string;
           demo_key?: string | null;
@@ -209,6 +212,7 @@ export type Database = {
       };
       user_preferences: {
         Row: {
+          clothing_preference: string;
           created_at: string;
           preference_focus: string;
           preference_state: string;
@@ -217,8 +221,14 @@ export type Database = {
           style_scores: Json;
           updated_at: string;
           user_id: string;
+          weather_admin1: string | null;
+          weather_city: string | null;
+          weather_latitude: number | null;
+          weather_longitude: number | null;
+          weather_timezone: string | null;
         };
         Insert: {
+          clothing_preference?: string;
           created_at?: string;
           preference_focus?: string;
           preference_state?: string;
@@ -227,8 +237,14 @@ export type Database = {
           style_scores?: Json;
           updated_at?: string;
           user_id: string;
+          weather_admin1?: string | null;
+          weather_city?: string | null;
+          weather_latitude?: number | null;
+          weather_longitude?: number | null;
+          weather_timezone?: string | null;
         };
         Update: {
+          clothing_preference?: string;
           created_at?: string;
           preference_focus?: string;
           preference_state?: string;
@@ -237,6 +253,11 @@ export type Database = {
           style_scores?: Json;
           updated_at?: string;
           user_id?: string;
+          weather_admin1?: string | null;
+          weather_city?: string | null;
+          weather_latitude?: number | null;
+          weather_longitude?: number | null;
+          weather_timezone?: string | null;
         };
         Relationships: [];
       };
