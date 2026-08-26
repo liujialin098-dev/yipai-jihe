@@ -130,6 +130,7 @@ function toRecommendationItems(source) {
 
 function assertThreeValidOutfits(items, occasion, weather, outfits) {
   const itemMap = new Map(items.map((item) => [item.id, item]));
+  const profile = OCCASION_PROFILES[occasion];
   assert.equal(outfits.length, 3, `${occasion} 必须生成三套`);
   for (const outfit of outfits) {
     const outfitItems = outfit.itemIds.map((itemId) => itemMap.get(itemId));
@@ -142,6 +143,15 @@ function assertThreeValidOutfits(items, occasion, weather, outfits) {
       false,
       `${occasion} 第 ${outfit.slot} 套包含场景硬冲突单品`,
     );
+    for (const item of outfitItems.filter((item) =>
+      ["accessories", "outerwear"].includes(item.category),
+    )) {
+      assert.equal(
+        profile.discouragedStyles.includes(item.style),
+        false,
+        `${occasion} 第 ${outfit.slot} 套不应主动补入不推荐风格的${item.name}`,
+      );
+    }
   }
   assert.deepEqual(
     validateRecommendationOutput({ outfits }, items, occasion, weather),

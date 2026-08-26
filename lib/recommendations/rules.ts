@@ -7,6 +7,7 @@ import {
 } from "@/lib/recommendations/constants";
 import {
   evaluateOccasionFit,
+  getOccasionProfile,
   hasOccasionConflict,
   itemProvidesOccasionSignal,
   occasionProfileScore,
@@ -77,17 +78,26 @@ function take(
   category: Category | null,
   used: Set<string>,
   selected: RecommendationWardrobeItem[],
+  allowDiscouragedFallback = true,
 ) {
   const candidates = sortedCandidates(input.items, category, used, input);
+  const profile = getOccasionProfile(input.occasion);
+  const suitableCandidates = candidates.filter(
+    (candidate) => !profile.discouragedStyles.includes(candidate.style),
+  );
+  const candidatePool =
+    suitableCandidates.length > 0 || !allowDiscouragedFallback
+      ? suitableCandidates
+      : candidates;
   const needsSignal =
     evaluateOccasionFit(selected, input.occasion).signalCount < 2;
   const item = needsSignal
-    ? (candidates.find((candidate) =>
+    ? (candidatePool.find((candidate) =>
         itemProvidesOccasionSignal(candidate, input.occasion),
-      ) ?? candidates[0])
-    : (candidates.find(
+      ) ?? candidatePool[0])
+    : (candidatePool.find(
         (candidate) => !itemProvidesOccasionSignal(candidate, input.occasion),
-      ) ?? candidates[0]);
+      ) ?? candidatePool[0]);
   if (!item) return null;
   used.add(item.id);
   selected.push(item);
@@ -242,7 +252,7 @@ export function buildRuleRecommendations(input: RuleInput) {
       selected.length < 5 &&
       !selected.some((item) => item.category === "accessories")
     ) {
-      take(input, "accessories", used, selected);
+      take(input, "accessories", used, selected, false);
     }
 
     if (
@@ -251,7 +261,7 @@ export function buildRuleRecommendations(input: RuleInput) {
       selected.length < 5 &&
       !selected.some((item) => item.category === "outerwear")
     ) {
-      take(input, "outerwear", used, selected);
+      take(input, "outerwear", used, selected, false);
     }
 
     raw.push({
