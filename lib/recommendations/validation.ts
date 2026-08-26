@@ -6,6 +6,7 @@ import {
   type RecommendationWardrobeItem,
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
+import { evaluateOccasionFit } from "@/lib/recommendations/occasion-profile";
 import { STYLE_OPTIONS, type Season } from "@/lib/wardrobe/constants";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -137,9 +138,7 @@ export function validateRecommendationOutput(
     ) {
       return null;
     }
-    if (!outfitItems.some((item) => item.occasions.includes(occasion))) {
-      return null;
-    }
+    if (!evaluateOccasionFit(outfitItems, occasion).passes) return null;
     if (
       !outfitItems.some((item) =>
         item.seasons.some((season) => expectedSeasons.includes(season)),

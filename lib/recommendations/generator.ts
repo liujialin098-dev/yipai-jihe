@@ -8,6 +8,7 @@ import {
 } from "@/lib/recommendations/constants";
 import type { ClothingPreference } from "@/lib/personalization/constants";
 import { requestOpenAiResponse } from "@/lib/openai/responses";
+import { getOccasionProfile } from "@/lib/recommendations/occasion-profile";
 import { validateRecommendationOutput } from "@/lib/recommendations/validation";
 
 export type RecommendationFailureCode =
@@ -63,11 +64,20 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
     process.env.OPENAI_RECOMMENDATION_MODEL?.trim() ||
     process.env.OPENAI_VISION_MODEL?.trim() ||
     "gpt-4o-mini";
+  const occasionProfile = getOccasionProfile(input.occasion);
   const prompt = `你是衣橱穿搭顾问。请只使用给定衣物 ID，为${recommendationOccasionLabel(input.occasion)}生成恰好 3 套完整穿搭。
 每套必须包含连衣裙，或同时包含上装与下装；每套必须包含鞋。体感 8°C 以下必须加外套。
-三套之间不能重复任何衣物 ID。至少有一件衣物明确适合所选场合和当前季节。
+三套之间不能重复任何衣物 ID。每套至少要有两件不同衣物提供当前场景信号：衣物的 occasions 包含当前场景，或 style 属于场景偏好风格。
+不要只替换标题、理由或配饰来制造差异，三套的核心单品和搭配思路都要不同。
+正式场景不得使用 occasions 只有 sport 的仅运动单品。约会场景不得强制使用裙装，要适配当前衣着偏好。
 理由使用简洁中文，说明天气、场合、颜色或材质逻辑。不要推荐清单之外的商品。
 
+场景画像：${JSON.stringify({
+    summary: occasionProfile.summary,
+    preferredStyles: occasionProfile.preferredStyles,
+    discouragedStyles: occasionProfile.discouragedStyles,
+    selectionGuidance: occasionProfile.selectionGuidance,
+  })}
 天气：${JSON.stringify(input.weather)}
 偏好风格：${JSON.stringify(input.preferredStyles)}
 偏好场合：${JSON.stringify(input.preferredOccasions)}

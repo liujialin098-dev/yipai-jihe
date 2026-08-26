@@ -20,6 +20,7 @@
     "verify:sdd-007": "node scripts/verify-sdd-007.mjs",
     "verify:sdd-012": "node --env-file=.env.local scripts/verify-sdd-012.mjs",
     "verify:sdd-013": "node --env-file=.env.local scripts/verify-sdd-013.mjs",
+    "verify:sdd-014": "node scripts/verify-sdd-014.mjs",
     "account:set-password-local": "node --env-file=.env.local scripts/set-local-account-password.mjs",
     "prepare": "husky"
   },
