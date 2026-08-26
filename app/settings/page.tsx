@@ -26,18 +26,14 @@ export default async function SettingsPage({
 }) {
   const [viewer, params] = await Promise.all([getViewer(), searchParams]);
   const verifiedNow = params.binding === "verified";
-  const heading = viewer?.isAnonymous
-    ? "给这间衣橱，留一把回来的钥匙。"
-    : "你的衣橱，随时都能回来。";
+  const summary = viewer?.isAnonymous
+    ? "注册后可以在其他设备登录，并继续使用当前衣橱。"
+    : "管理登录状态、常用城市和穿衣偏好。";
 
   return (
     <div className="page-enter px-5 pt-4">
-      <p className="text-xs font-semibold text-[var(--system-blue)]">
-        账户与偏好
-      </p>
-      <h1 className="mt-2 max-w-[22rem] font-heading text-[2.55rem] leading-[1.02] font-bold tracking-[-0.065em] text-[var(--foreground)]">
-        {heading}
-      </h1>
+      <h1 className="app-page-title">账号与偏好</h1>
+      <p className="app-page-lead mt-3">{summary}</p>
 
       <section className="surface-card stagger-item mt-7 rounded-[1.65rem] p-5">
         <div className="flex items-center gap-4">
@@ -78,9 +74,7 @@ export default async function SettingsPage({
               <KeyRound className="size-4" aria-hidden="true" />
             </span>
             <div>
-              <h2 className="font-heading text-xl font-bold tracking-[-0.035em]">
-                注册账号
-              </h2>
+              <h2 className="app-section-title">注册账号</h2>
               <p className="mt-1 text-xs text-[var(--text-tertiary)]">
                 输入邮箱和密码，当前页面直接完成
               </p>
@@ -95,9 +89,7 @@ export default async function SettingsPage({
           <p className="text-xs font-semibold text-[var(--system-blue)]">
             {verifiedNow ? "邮箱已绑定" : "最后一步"}
           </p>
-          <h2 className="mt-2 font-heading text-2xl font-bold tracking-[-0.045em]">
-            设置登录密码
-          </h2>
+          <h2 className="app-section-title mt-2">设置登录密码</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
             直接在当前页面设置，无需再打开验证邮件。密码只会交给认证服务处理，不会保存到衣拍即合的数据表中。
           </p>
@@ -107,9 +99,7 @@ export default async function SettingsPage({
 
       {viewer && !viewer.isAnonymous && viewer.passwordConfigured ? (
         <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
-          <h2 className="font-heading text-xl font-bold tracking-[-0.035em]">
-            邮箱登录
-          </h2>
+          <h2 className="app-section-title">邮箱登录</h2>
           <AccountProtectedBadge />
           <form action={signOut}>
             <button
@@ -125,9 +115,7 @@ export default async function SettingsPage({
 
       <section className="surface-card stagger-item mt-5 rounded-[1.5rem] p-5 [--stagger:2]">
         <div className="flex items-center justify-between">
-          <h2 className="font-heading text-xl font-bold tracking-[-0.035em] text-[var(--foreground)]">
-            默认偏好
-          </h2>
+          <h2 className="app-section-title">默认偏好</h2>
           <Link
             href="/settings/preferences"
             className="motion-button inline-flex h-9 items-center gap-1 rounded-full bg-[var(--surface-soft)] px-3 text-xs font-semibold text-[var(--system-blue)]"

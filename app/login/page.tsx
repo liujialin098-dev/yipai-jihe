@@ -38,13 +38,10 @@ export default async function LoginPage({
           <ArrowLeft className="size-4" aria-hidden="true" />
         </Link>
       ) : null}
-      <p className="mt-5 text-xs font-semibold text-[var(--system-blue)]">
-        已有账号
-      </p>
-      <h1 className="mt-2 max-w-[21rem] font-heading text-[2.75rem] leading-[1.01] font-bold tracking-[-0.07em]">
-        直接登录，衣橱还在原处。
+      <h1 className={`${viewer?.isAnonymous ? "mt-5 " : ""}app-page-title`}>
+        登录衣拍即合
       </h1>
-      <p className="mt-4 max-w-[22rem] text-sm leading-6 text-[var(--text-secondary)]">
+      <p className="app-page-lead mt-4">
         使用已绑定的邮箱和密码直接登录，不会发送验证邮件。
       </p>
 

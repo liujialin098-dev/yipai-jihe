@@ -75,12 +75,10 @@ export default async function WardrobeItemPage({
         <div className="px-2 pt-5 pb-2">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-medium text-[var(--system-blue)]">
+              <p className="app-page-meta">
                 {optionLabel(CATEGORY_OPTIONS, item.category)}
               </p>
-              <h1 className="mt-1 font-heading text-[2.2rem] leading-tight font-bold tracking-[-0.055em] text-[var(--foreground)]">
-                {item.name}
-              </h1>
+              <h1 className="app-page-title mt-1 text-[2.1rem]">{item.name}</h1>
             </div>
             <span className="rounded-full bg-[var(--system-blue-soft)] px-3 py-1.5 text-[0.68rem] font-semibold text-[var(--system-blue)]">
               {item.status === "archived" ? "已归档" : "使用中"}
@@ -97,9 +95,7 @@ export default async function WardrobeItemPage({
       </section>
 
       <section className="surface-card mt-5 rounded-[1.5rem] p-5">
-        <h2 className="font-heading text-xl font-bold tracking-[-0.035em] text-[var(--foreground)]">
-          衣物属性
-        </h2>
+        <h2 className="app-section-title">衣物属性</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Attribute
             label="主色"

@@ -21,15 +21,10 @@ export default async function Home() {
 
   return (
     <div className="page-enter px-5 pt-4">
-      <section>
-        <p className="text-xs font-semibold text-[var(--system-blue)]">
-          你的私人穿搭空间
-        </p>
-        <h1 className="mt-3 max-w-[21rem] font-heading text-[3.25rem] leading-[0.98] font-bold tracking-[-0.075em] text-[var(--foreground)]">
-          今天穿什么，从衣橱开始。
-        </h1>
-        <p className="mt-4 max-w-[21rem] text-[0.95rem] leading-6 text-[var(--text-secondary)]">
-          把衣物放在一个清楚的位置，浏览、筛选和后续推荐都会更自然。
+      <section className="pt-2">
+        <h1 className="app-page-title app-page-title-home">今天穿什么</h1>
+        <p className="app-page-lead mt-4">
+          从你的衣橱里，找出适合天气和场合的一套。
         </p>
       </section>
 
@@ -43,9 +38,7 @@ export default async function Home() {
               当前衣橱
             </p>
             <div className="mt-2 flex items-end gap-2">
-              <strong className="font-heading text-[4.8rem] leading-[0.82] font-bold tracking-[-0.09em] text-[var(--foreground)]">
-                {String(itemCount).padStart(2, "0")}
-              </strong>
+              <strong className="app-display-number">{itemCount}</strong>
               <span className="pb-1 text-xs text-[var(--text-secondary)]">
                 件衣物
               </span>
@@ -97,16 +90,11 @@ export default async function Home() {
       </Link>
 
       <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
-        <p className="text-xs font-semibold text-[var(--system-blue)]">
-          账号入口
-        </p>
-        <h2 className="mt-2 font-heading text-[1.55rem] font-bold tracking-[-0.045em] text-[var(--foreground)]">
-          把这间衣橱带到下一台设备。
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+        <h2 className="app-section-title">登录后可跨设备使用</h2>
+        <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">
           {viewer && !viewer.isAnonymous
-            ? "当前衣橱已经绑定账号，可以前往设置管理登录状态。"
-            : "注册会保留当前衣橱；已有账号可直接登录，不发送验证邮件。"}
+            ? "当前衣橱已绑定账号，可在设置中管理登录状态。"
+            : "注册会保留现有衣物。已有账号可以直接登录。"}
         </p>
         {viewer && !viewer.isAnonymous ? (
           <Link
@@ -137,9 +125,7 @@ export default async function Home() {
       </section>
 
       <section className="mt-8">
-        <h2 className="font-heading text-[1.65rem] font-bold tracking-[-0.045em] text-[var(--foreground)]">
-          衣橱已经准备好
-        </h2>
+        <h2 className="app-section-title">管理衣橱</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <ReadyItem
             icon={Images}

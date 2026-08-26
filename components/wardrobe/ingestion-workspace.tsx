@@ -309,12 +309,10 @@ export function IngestionWorkspace() {
         <>
           <div className="mt-6 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold text-[var(--system-blue)]">
+              <p className="app-page-meta">
                 待处理 {items.length}/{MAX_FILES}
               </p>
-              <h2 className="mt-1 font-heading text-2xl font-bold tracking-[-0.045em]">
-                逐件核对，再放进衣橱
-              </h2>
+              <h2 className="app-section-title mt-1">核对衣物信息</h2>
             </div>
             <p className="shrink-0 text-xs text-[var(--text-tertiary)]">
               已完成 {confirmedCount}

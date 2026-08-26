@@ -33,21 +33,10 @@ export default async function WardrobePage({
     <div className="page-enter px-5 pt-4">
       <header>
         <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold text-[var(--system-blue)]">
-              我的衣橱
-            </p>
-            <h1 className="mt-2 font-heading text-[2.85rem] leading-none font-bold tracking-[-0.07em] text-[var(--foreground)]">
-              所有衣物
-            </h1>
-          </div>
-          <span className="font-heading text-[2rem] font-bold tracking-[-0.06em] text-[var(--text-tertiary)]">
-            {String(items.length).padStart(2, "0")}
-          </span>
+          <h1 className="app-page-title">衣橱</h1>
+          <span className="app-page-meta pb-1">{items.length} 件</span>
         </div>
-        <p className="mt-3 max-w-[21rem] text-sm leading-6 text-[var(--text-secondary)]">
-          分类浏览、组合筛选和单品维护都在这里。
-        </p>
+        <p className="app-page-lead mt-3">浏览、筛选和编辑每件衣物。</p>
       </header>
 
       {!error ? (
@@ -67,11 +56,11 @@ export default async function WardrobePage({
               <span className="flex size-11 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
                 <Shirt className="size-5" aria-hidden="true" />
               </span>
-              <h2 className="mt-12 max-w-[18rem] font-heading text-[2.25rem] leading-[1.06] font-bold tracking-[-0.06em] text-[var(--foreground)]">
-                先放进一套可用的衣橱
+              <h2 className="app-page-title mt-12 max-w-[18rem]">
+                衣橱还是空的
               </h2>
               <p className="mt-3 mb-6 max-w-[20rem] text-sm leading-6 text-[var(--text-secondary)]">
-                一次加载 24 件安全合成衣物，马上体验浏览、筛选和维护。
+                可先加载 24 件演示衣物，体验浏览、筛选和编辑。
               </p>
             </div>
           )}
@@ -207,9 +196,7 @@ function WardrobeNotice({
       <span className="flex size-10 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
         <Icon className="size-4.5" aria-hidden="true" />
       </span>
-      <h2 className="mt-7 font-heading text-2xl font-bold tracking-[-0.045em] text-[var(--foreground)]">
-        {title}
-      </h2>
+      <h2 className="app-section-title mt-7">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
         {description}
       </p>

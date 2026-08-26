@@ -78,12 +78,10 @@ export default async function FavoritesPage() {
 
   return (
     <div className="page-enter px-5 pt-4">
-      <p className="text-xs font-semibold text-[var(--system-blue)]">
-        收藏 · {favoriteItems.length + favoriteOutfits.length} 项
+      <h1 className="app-page-title">收藏</h1>
+      <p className="app-page-lead mt-3">
+        已保存 {favoriteItems.length + favoriteOutfits.length} 项内容。
       </p>
-      <h1 className="mt-2 font-heading text-[2.65rem] leading-[1.02] font-bold tracking-[-0.065em]">
-        喜欢的，留在这里。
-      </h1>
 
       <FavoriteSection
         title="整套穿搭"
@@ -109,9 +107,7 @@ export default async function FavoritesPage() {
               <div className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-heading text-xl font-bold tracking-[-0.04em]">
-                      {favorite.outfit.title}
-                    </h3>
+                    <h3 className="app-card-title">{favorite.outfit.title}</h3>
                     <p className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--text-secondary)]">
                       {favorite.outfit.reason}
                     </p>
@@ -203,7 +199,7 @@ function FavoriteSection({
   return (
     <section className="mt-8">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 font-heading text-xl font-bold">
+        <h2 className="app-section-title flex items-center gap-2">
           <Icon
             className="size-4 text-[var(--system-blue)]"
             aria-hidden="true"

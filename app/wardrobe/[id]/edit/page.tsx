@@ -23,14 +23,9 @@ export default async function EditWardrobeItemPage({
         <ArrowLeft className="size-4" aria-hidden="true" />
       </Link>
       <header className="mt-5">
-        <p className="text-xs font-semibold text-[var(--system-blue)]">
-          编辑衣物
-        </p>
-        <h1 className="mt-2 font-heading text-[2.65rem] leading-[1.02] font-bold tracking-[-0.065em] text-[var(--foreground)]">
-          校准这件衣物的信息
-        </h1>
-        <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-          本阶段只修改文字属性，原图会保持不变。
+        <h1 className="app-page-title">编辑衣物</h1>
+        <p className="app-page-lead mt-3">
+          修改名称、类别和使用场景。原图保持不变。
         </p>
       </header>
       <section className="surface-card mt-6 rounded-[1.6rem] p-5">

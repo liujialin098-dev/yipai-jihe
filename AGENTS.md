@@ -18,11 +18,11 @@
 - `lib/personalization/`：账号衣着偏好、衣物归属和共享可逆过滤规则。
 - `lib/recommendations/`：账号城市解析、真实今日/明日天气快照、四场景共享画像、严格推荐契约、OpenAI 生成、差异化规则降级、归属与搭配结构校验，以及目标日期批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-014.mjs`：双匿名会话、幂等、固定样本、每日推荐、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离和四场景差异门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/011-global-motion/` 至 `specs/014-scene-diversity/` 为已完成阶段；`specs/002-account-binding/` 的无邮件注册代码与远端 Confirm email 切换已完成，本地历史账号设密与重登录等待集中调试。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-015.mjs`：双匿名会话、幂等、固定样本、每日推荐、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异与自然化排版门禁。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/011-global-motion/` 至 `specs/015-natural-typography/` 为已完成或已进入发布验收的阶段；`specs/002-account-binding/` 的无邮件注册代码与远端 Confirm email 切换已完成，本地历史账号设密与重登录等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
-- 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。黑色按钮不得恢复高对比白色扫光。
+- 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用 `.app-page-meta`、`.app-page-title`、`.app-page-lead`、`.app-section-title`、`.app-card-title` 和 `.app-display-number` 六级语义 token；页面标题保持中等字重和自然字距，不得恢复重复蓝色眉题、装饰性前导零、超大计数或宣传式比喻。黑色按钮不得恢复高对比白色扫光。
 
 ## 注意事项
 
@@ -61,12 +61,13 @@
 - SDD-012 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-012`；最后一项创建武汉男装与上海女装两组隔离账号，验证字段约束、跨用户 RLS、过滤不删除和按钮扫光静态边界。浏览器另验收账号摘要、20 件男装视图及武汉实时天气。
 - SDD-013 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-013`；最后一项读取武汉真实两日天气、精确匹配明日日期，验证代码无模拟降级，并用匿名会话确认今天/明天分别保存且同日刷新不覆盖另一日期。390px 浏览器另验收日期切换、真实来源和无水平溢出。
 - SDD-014 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-014`，并回归 `npm run verify:sdd-005`、`npm run verify:sdd-012` 与 `npm run verify:sdd-013`；独立门禁覆盖四场景 12 套、两个场景信号、正式雷区、六组核心单品重合度、20 件男装、冷热天气和最小衣橱边界。
+- SDD-015 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-015`；独立门禁覆盖 8 个核心页面的语义排版接入、旧超大字号、极端负字距、前导零计数、模板式文案和长破折号边界。390px 浏览器另验收标题换行、横向溢出、AI 来源层级和控制台错误。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011、账号个性化 SDD-012、真实两日天气 SDD-013 与四场景差异化推荐 SDD-014 已完成；2026-08-26 已发布并验收最新 `yipai-jihe` Production。SDD-002 下一步仍须由用户本人完成历史账号密码和重新登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011、账号个性化 SDD-012、真实两日天气 SDD-013 与四场景差异化推荐 SDD-014 已完成；自然化排版 SDD-015 已完成代码与本地验收，正在发布到既有 `yipai-jihe` Production。SDD-002 下一步仍须由用户本人完成历史账号密码和重新登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

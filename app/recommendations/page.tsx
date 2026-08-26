@@ -56,16 +56,16 @@ export default async function RecommendationsPage({
   return (
     <div className="page-enter px-5 pt-4">
       <header>
-        <p className="text-xs font-semibold text-[var(--system-blue)]">
+        <p className="app-page-meta">
           {dateLabel(targetDate)}，{targetLabel}穿搭
         </p>
-        <h1 className="mt-2 font-heading text-[2.75rem] leading-[1.02] font-bold tracking-[-0.07em] text-[var(--foreground)]">
+        <h1 className="app-page-title mt-2">
           {targetDay === "tomorrow" ? "明天穿什么" : "今天穿什么"}
         </h1>
-        <p className="mt-3 max-w-[22rem] text-sm leading-6 text-[var(--text-secondary)]">
-          用你的真实衣橱，结合
+        <p className="app-page-lead mt-3">
+          从现有衣物中，按
           {targetDay === "tomorrow" ? "明日预报" : "当前天气"}
-          和场合整理三种选择。
+          和场合生成 3 套搭配。
         </p>
       </header>
 
@@ -117,13 +117,13 @@ export default async function RecommendationsPage({
                 </p>
               </div>
             </div>
-            <span className="rounded-full bg-white/10 px-3 py-1.5 text-[0.68rem] font-medium text-white/76">
-              {recommendation.source === "ai" ? "AI 推荐" : "规则推荐"}
-            </span>
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-white/12 pt-3 text-xs text-white/62">
+          <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/12 pt-3 text-xs text-white/62">
             <span>{recommendationOccasionLabel(recommendation.occasion)}</span>
-            <span>{(recommendation.generationMs / 1000).toFixed(1)} 秒</span>
+            <span>
+              {recommendation.source === "ai" ? "AI 生成" : "基础生成"}，
+              {(recommendation.generationMs / 1000).toFixed(1)} 秒
+            </span>
           </div>
         </section>
       ) : null}
@@ -166,15 +166,11 @@ export default async function RecommendationsPage({
           />
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-medium text-[var(--text-tertiary)]">
-                {targetLabel}方案
-              </p>
-              <h2 className="mt-1 font-heading text-[1.8rem] font-bold tracking-[-0.05em] text-[var(--foreground)]">
-                三套，都来自你的衣橱
-              </h2>
+              <h2 className="app-section-title">搭配结果</h2>
+              <p className="app-page-meta mt-1">全部来自当前衣橱</p>
             </div>
             <span className="pb-1 text-xs text-[var(--text-tertiary)]">
-              03 套
+              3 套
             </span>
           </div>
           {recommendation.outfits.map((outfit, index) => (
@@ -217,7 +213,7 @@ export default async function RecommendationsPage({
           <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
             <Shirt className="size-5" strokeWidth={1.7} aria-hidden="true" />
           </span>
-          <h2 className="mt-4 font-heading text-xl font-bold tracking-[-0.035em] text-[var(--foreground)]">
+          <h2 className="app-section-title mt-4">
             {items.length > 0 ? "衣橱已就绪，可以开始" : "先准备你的衣橱"}
           </h2>
           <p className="mx-auto mt-2 max-w-[17rem] text-sm leading-6 text-[var(--text-secondary)]">

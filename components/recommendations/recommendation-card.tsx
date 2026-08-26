@@ -87,12 +87,8 @@ export function RecommendationCard({
       <div className="p-5 pt-4.5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium text-[var(--system-blue)]">
-              第 {outfit.slot} 套
-            </p>
-            <h2 className="mt-1 font-heading text-[1.55rem] font-bold tracking-[-0.045em] text-[var(--foreground)]">
-              {outfit.title}
-            </h2>
+            <p className="app-page-meta">搭配 {outfit.slot}</p>
+            <h2 className="app-card-title mt-1">{outfit.title}</h2>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-[var(--text-tertiary)]">

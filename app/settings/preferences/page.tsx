@@ -68,14 +68,9 @@ export default async function PreferencesPage() {
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
       </Link>
-      <p className="mt-5 text-xs font-semibold text-[var(--system-blue)]">
-        个人偏好
-      </p>
-      <h1 className="mt-2 font-heading text-[2.55rem] leading-[1.03] font-bold tracking-[-0.06em]">
-        让推荐更像你。
-      </h1>
-      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-        三个简单选择建立起点；收藏和换件只会做小幅、可说明的调整。
+      <h1 className="app-page-title mt-5">穿衣偏好</h1>
+      <p className="app-page-lead mt-3">
+        设置常用城市、衣着类型和风格，推荐会据此调整。
       </p>
 
       <section className="surface-card mt-6 rounded-[1.65rem] p-5">
@@ -101,7 +96,7 @@ export default async function PreferencesPage() {
 
       <section className="surface-card mt-5 rounded-[1.65rem] p-5">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="font-heading text-xl font-bold">当前风格排序</h2>
+          <h2 className="app-section-title">当前风格排序</h2>
           <span className="rounded-full bg-[var(--system-blue-soft)] px-3 py-1 text-[0.68rem] font-semibold text-[var(--system-blue)]">
             {preference?.preference_state === "completed"
               ? "已完成问卷"
@@ -126,7 +121,7 @@ export default async function PreferencesPage() {
       </section>
 
       <section className="surface-card mt-5 rounded-[1.65rem] p-5">
-        <h2 className="font-heading text-xl font-bold">为什么会变化</h2>
+        <h2 className="app-section-title">调整依据</h2>
         <div className="mt-4 grid gap-3">
           <SourceRow
             icon={SlidersHorizontal}

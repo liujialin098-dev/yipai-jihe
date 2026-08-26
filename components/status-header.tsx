@@ -12,7 +12,7 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
     <header className="sticky top-0 z-30 flex min-h-18 items-center justify-between bg-[color-mix(in_srgb,var(--background)_78%,transparent)] px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur-2xl">
       <Link href="/" className="group flex items-center gap-3">
         <span>
-          <span className="block font-heading text-[1.3rem] leading-none font-bold tracking-[-0.045em] text-[var(--foreground)]">
+          <span className="block font-heading text-[1.25rem] leading-none font-semibold tracking-[-0.02em] text-[var(--foreground)]">
             衣拍即合
           </span>
           <span className="mt-1.5 flex items-center gap-1.5 text-[0.64rem] font-medium text-[var(--text-tertiary)]">
