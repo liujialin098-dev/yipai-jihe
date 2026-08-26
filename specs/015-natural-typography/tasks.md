@@ -24,7 +24,7 @@
 - [x] T011 新增 `verify:sdd-015` 静态排版门禁
 - [x] T012 运行 `npm run check`、`npm run build` 和独立门禁
 - [x] T013 在 390px 验收核心页面的换行、溢出和层级
-- [ ] T014 更新 `progress.md`、`AGENTS.md`，提交并发布 Production
+- [x] T014 更新 `progress.md`、`AGENTS.md`，提交并发布 Production
 
 ## Dependencies
 

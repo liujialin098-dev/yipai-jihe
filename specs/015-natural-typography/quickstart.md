@@ -9,3 +9,5 @@
 7. 检查浏览器控制台无错误，并复核首页到推荐的核心操作没有行为变化。
 
 2026-08-26 本地验收：`npm run check`、`npm run build` 和 `npm run verify:sdd-015` 全部通过。390px 下首页标题为 40.95px/600，其他核心页面标题为 33.15px/600；首页、衣橱、添加、推荐、收藏、设置与偏好页面均无水平溢出或 Next.js 错误覆盖层。首页、推荐与添加衣物首屏人工复核通过，推荐页保留普通文字形式的 AI 来源，添加页不再以 AI 作为主标题，浏览器 error 日志为 0。
+
+2026-08-26 Production 验收：部署 `dpl_E2tN22pa8wsEqr2GGWKuUvgs6WPm` 为 `READY`、`target=production`，固定别名 `https://yipai-jihe.vercel.app` 生效。首页、登录、衣橱、添加、推荐、收藏和设置均返回 200；390px 线上首页和推荐页复核结果与本地一致，无水平溢出、Next.js 错误覆盖层或高亮“AI 推荐”徽章，AI 生成来源仍以普通文字展示；最近 30 分钟无 error 日志。

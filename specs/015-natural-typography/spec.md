@@ -4,7 +4,7 @@
 
 **Created**: 2026-08-26
 
-**Status**: Approved
+**Status**: Complete
 
 **Input**: 用户希望全站文字排版减少 AI 模板感，同时保持现有苹果式视觉和业务功能。
 
