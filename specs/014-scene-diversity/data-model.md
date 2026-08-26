@@ -8,6 +8,7 @@
 - `label`: 用户可读场景名称。
 - `summary`: 供模型与理由使用的整体气质说明。
 - `preferredStyles`: 能提供场景正向信号的衣物风格集合。
+- `relatedOccasions`: 可提供弱场景信号的语义相邻场合集合。
 - `discouragedStyles`: 候选排序时需要降低优先级的风格集合。
 - `forbidSportOnly`: 是否禁止仅适合运动场合的单品；正式场景为真。
 - `selectionGuidance`: 对核心单品、鞋、外套和配饰选择的简洁指导。
@@ -28,6 +29,7 @@
 ### Signal Rules
 
 - 衣物 `occasions` 包含目标场景，计一个正向信号。
+- 衣物 `occasions` 包含画像允许的邻近场合，也可计一个弱正向信号。
 - 衣物风格属于画像的 `preferredStyles`，也可计一个正向信号。
 - 同一衣物无论同时命中多少条件，只计一个信号。
 - 正式场景中 `occasions` 只有 `sport` 的衣物计为硬冲突。

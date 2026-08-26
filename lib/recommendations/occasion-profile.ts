@@ -2,12 +2,17 @@ import type {
   RecommendationOccasion,
   RecommendationWardrobeItem,
 } from "@/lib/recommendations/constants";
-import type { Category, WardrobeStyle } from "@/lib/wardrobe/constants";
+import type {
+  Category,
+  Occasion,
+  WardrobeStyle,
+} from "@/lib/wardrobe/constants";
 
 export type OccasionProfile = {
   discouragedStyles: readonly WardrobeStyle[];
   forbidSportOnly: boolean;
   preferredStyles: readonly WardrobeStyle[];
+  relatedOccasions: readonly Occasion[];
   selectionGuidance: string;
   summary: string;
 };
@@ -26,6 +31,7 @@ export const OCCASION_PROFILES: Record<
   commute: {
     summary: "利落、克制、方便行动，适合工作与城市通勤",
     preferredStyles: ["commute", "minimal", "elegant"],
+    relatedOccasions: ["formal"],
     discouragedStyles: ["sporty"],
     forbidSportOnly: false,
     selectionGuidance:
@@ -34,6 +40,7 @@ export const OCCASION_PROFILES: Record<
   casual: {
     summary: "舒适、放松、低负担，允许更轻快的颜色和运动感",
     preferredStyles: ["casual", "sporty", "minimal"],
+    relatedOccasions: ["sport"],
     discouragedStyles: ["commute"],
     forbidSportOnly: false,
     selectionGuidance: "优先棉质、牛仔、宽松或运动休闲单品；避免整套过于严肃。",
@@ -41,6 +48,7 @@ export const OCCASION_PROFILES: Record<
   date: {
     summary: "精致、柔和、有视觉重点，但不限定性别或裙装",
     preferredStyles: ["elegant", "vintage", "minimal"],
+    relatedOccasions: [],
     discouragedStyles: ["sporty"],
     forbidSportOnly: false,
     selectionGuidance:
@@ -49,6 +57,7 @@ export const OCCASION_PROFILES: Record<
   formal: {
     summary: "结构清晰、优雅、低随意度，适合正式活动",
     preferredStyles: ["elegant", "commute", "minimal"],
+    relatedOccasions: ["commute"],
     discouragedStyles: ["sporty", "casual"],
     forbidSportOnly: true,
     selectionGuidance:
@@ -87,6 +96,9 @@ export function itemProvidesOccasionSignal(
   const profile = OCCASION_PROFILES[occasion];
   return (
     item.occasions.includes(occasion) ||
+    item.occasions.some((itemOccasion) =>
+      profile.relatedOccasions.includes(itemOccasion),
+    ) ||
     profile.preferredStyles.includes(item.style)
   );
 }
@@ -99,6 +111,13 @@ export function occasionProfileScore(
   const profile = OCCASION_PROFILES[occasion];
   let score = 0;
   if (item.occasions.includes(occasion)) score += 12;
+  if (
+    item.occasions.some((itemOccasion) =>
+      profile.relatedOccasions.includes(itemOccasion),
+    )
+  ) {
+    score += 3;
+  }
   if (profile.preferredStyles.includes(item.style)) score += 5;
   if (profile.discouragedStyles.includes(item.style)) score -= 5;
   return score;

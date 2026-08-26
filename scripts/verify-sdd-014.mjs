@@ -152,6 +152,11 @@ function assertThreeValidOutfits(items, occasion, weather, outfits) {
         `${occasion} 第 ${outfit.slot} 套不应主动补入不推荐风格的${item.name}`,
       );
     }
+    assert.equal(
+      outfit.styleTags[0],
+      profile.preferredStyles[0],
+      `${occasion} 风格标签必须优先体现当前场景`,
+    );
   }
   assert.deepEqual(
     validateRecommendationOutput({ outfits }, items, occasion, weather),
@@ -271,6 +276,23 @@ for (const outfit of hotOutfits) {
     }),
     false,
     "热天不得选择仅冬季单品",
+  );
+}
+
+const hotMaleFormalOutfits = buildRuleRecommendations({
+  items: maleDemoItems,
+  occasion: "formal",
+  weather: hotWeather,
+  preferredStyles: [],
+});
+for (const outfit of hotMaleFormalOutfits) {
+  assert.equal(
+    outfit.itemIds.some((itemId) => {
+      const item = maleDemoItems.find((candidate) => candidate.id === itemId);
+      return item?.category === "outerwear" && !item.seasons.includes("summer");
+    }),
+    false,
+    "男装热天正式搭配不得为凑场景信号强加非夏季外套",
   );
 }
 

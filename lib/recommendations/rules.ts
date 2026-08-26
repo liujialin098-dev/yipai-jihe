@@ -191,10 +191,12 @@ function completeSeasonAnchor(
 function styleTags(
   selected: RecommendationWardrobeItem[],
   preferredStyles: string[],
+  occasion: RecommendationOccasion,
 ) {
   const styles = [
-    ...preferredStyles,
+    ...getOccasionProfile(occasion).preferredStyles,
     ...selected.map((item) => item.style),
+    ...preferredStyles,
   ].filter((style): style is WardrobeStyle =>
     ["minimal", "casual", "commute", "elegant", "sporty", "vintage"].includes(
       style,
@@ -268,7 +270,7 @@ export function buildRuleRecommendations(input: RuleInput) {
       slot: (index + 1) as 1 | 2 | 3,
       title: `${TITLE_PREFIXES[index]}${recommendationOccasionLabel(input.occasion)}`,
       reason: reasonFor(selected, input.occasion, input.weather),
-      styleTags: styleTags(selected, input.preferredStyles),
+      styleTags: styleTags(selected, input.preferredStyles, input.occasion),
       itemIds: selected.map((item) => item.id),
     });
   }
