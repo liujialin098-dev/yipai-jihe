@@ -6,8 +6,15 @@ import {
   type RecommendationWardrobeItem,
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
-import { evaluateOccasionFit } from "@/lib/recommendations/occasion-profile";
-import { STYLE_OPTIONS, type Season } from "@/lib/wardrobe/constants";
+import {
+  evaluateOccasionFit,
+  getOccasionProfile,
+} from "@/lib/recommendations/occasion-profile";
+import {
+  STYLE_OPTIONS,
+  type Season,
+  type WardrobeStyle,
+} from "@/lib/wardrobe/constants";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -90,6 +97,7 @@ export function validateRecommendationOutput(
   const seenSlots = new Set<number>();
   const expectedSeasons = seasonForTemperature(weather.apparentTemperatureC);
   const styleValues = new Set(STYLE_OPTIONS.map((option) => option.value));
+  const occasionProfile = getOccasionProfile(occasion);
   const outfits: RecommendationOutfit[] = [];
 
   for (const candidate of value.outfits) {
@@ -111,6 +119,9 @@ export function validateRecommendationOutput(
         (tag) => typeof tag === "string" && styleValues.has(tag as never),
       ) ||
       new Set(styleTags).size !== styleTags.length ||
+      !occasionProfile.preferredStyles.includes(
+        styleTags[0] as WardrobeStyle,
+      ) ||
       !Array.isArray(itemIds) ||
       itemIds.length < 2 ||
       itemIds.length > 5 ||
@@ -153,6 +164,15 @@ export function validateRecommendationOutput(
       weather.apparentTemperatureC >= 27 &&
       outfitItems.some(
         (item) => item.seasons.length === 1 && item.seasons[0] === "winter",
+      )
+    ) {
+      return null;
+    }
+    if (
+      weather.apparentTemperatureC >= 27 &&
+      outfitItems.some(
+        (item) =>
+          item.category === "outerwear" && !item.seasons.includes("summer"),
       )
     ) {
       return null;

@@ -279,6 +279,35 @@ for (const outfit of hotOutfits) {
   );
 }
 
+const hotWithAutumnOuterwear = structuredClone(hotOutfits);
+const unusedFormalOuterwear = sufficientItems.find(
+  (item) => item.category === "outerwear" && item.occasions.includes("formal"),
+);
+hotWithAutumnOuterwear[0].itemIds.push(unusedFormalOuterwear.id);
+assert.equal(
+  validateRecommendationOutput(
+    { outfits: hotWithAutumnOuterwear },
+    sufficientItems,
+    "formal",
+    hotWeather,
+  ),
+  null,
+  "统一校验必须拒绝热天非夏季外套",
+);
+
+const wrongSceneTagOutfits = structuredClone(results.formal);
+wrongSceneTagOutfits[0].styleTags = ["sporty"];
+assert.equal(
+  validateRecommendationOutput(
+    { outfits: wrongSceneTagOutfits },
+    sufficientItems,
+    "formal",
+    mildWeather,
+  ),
+  null,
+  "统一校验必须拒绝未体现当前场景的首个风格标签",
+);
+
 const hotMaleFormalOutfits = buildRuleRecommendations({
   items: maleDemoItems,
   occasion: "formal",
