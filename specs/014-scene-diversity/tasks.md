@@ -84,8 +84,8 @@
 
 - [x] T014 [P] 更新 `AGENTS.md` 与 `progress.md`，记录 SDD-014 约束、质量命令、验收证据和阶段状态
 - [x] T015 在 `specs/014-scene-diversity/tasks.md` 勾选已完成任务，并运行 `npm run check`、`npm run build` 与 `git diff --check`
-- [ ] T016 提交 SDD-014 代码与文档，使用 `npx vercel deploy --prod --yes --scope jialin-d583` 发布到既有 `yipai-jihe` 项目
-- [ ] T017 使用固定 Production 域名验证核心页面、匿名会话、四场景生成与最近 30 分钟 error 日志，并把最终部署 ID 写入 `AGENTS.md` 和 `progress.md`
+- [x] T016 提交 SDD-014 代码与文档，使用 `npx vercel deploy --prod --yes --scope jialin-d583` 发布到既有 `yipai-jihe` 项目
+- [x] T017 使用固定 Production 域名验证核心页面、匿名会话、四场景生成与最近 30 分钟 error 日志，并把最终部署 ID 写入 `AGENTS.md` 和 `progress.md`
 
 ---
 

@@ -19,7 +19,7 @@
 - `lib/recommendations/`：账号城市解析、真实今日/明日天气快照、四场景共享画像、严格推荐契约、OpenAI 生成、差异化规则降级、归属与搭配结构校验，以及目标日期批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
 - `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-014.mjs`：双匿名会话、幂等、固定样本、每日推荐、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离和四场景差异门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/011-global-motion/` 至 `specs/014-scene-diversity/` 为已完成或进入最终发布验收的阶段；`specs/002-account-binding/` 的无邮件注册代码与远端 Confirm email 切换已完成，本地历史账号设密与重登录等待集中调试。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/011-global-motion/` 至 `specs/014-scene-diversity/` 为已完成阶段；`specs/002-account-binding/` 的无邮件注册代码与远端 Confirm email 切换已完成，本地历史账号设密与重登录等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 - 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。黑色按钮不得恢复高对比白色扫光。
@@ -38,7 +38,7 @@
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
 - SDD-004 的 `OPENAI_API_KEY` 必须仅配置在 `.env.local` 和 Vercel 服务端环境；可选 `OPENAI_VISION_MODEL` 默认 `gpt-4o-mini`。浏览器不得读取这两个变量，OpenAI 请求必须使用 Responses API、`store: false` 和严格 JSON Schema。Windows 本地 Node.js 直连超时时统一经过 `lib/openai/responses.ts` 使用系统网络栈，密钥不得出现在命令参数、日志或响应中。
 - SDD-005 推荐默认复用 `gpt-4o-mini`，可通过服务端 `OPENAI_RECOMMENDATION_MODEL` 单独覆盖；OpenAI 失败、超时或输出不合法时 MUST 在 15 秒目标内转为规则推荐。SDD-012 起天气位置只能来自当前账号保存的常用城市，由服务端通过 Open-Meteo 解析并获取天气；未设置时不得静默回退北京。SDD-013 起普通推荐只允许 `today | tomorrow`：今天取当前天气，明天按账号时区精确匹配日预报；天气失败 MUST 停止生成，不得返回或保存模拟天气。AI 失败仍可在真实天气成功后使用规则推荐。
-- SDD-014 起 AI、规则降级和服务端校验 MUST 复用 `lib/recommendations/occasion-profile.ts` 的四场景画像；每套至少有两个独立场景信号，正式场景不得包含仅运动单品。天气、衣着偏好、当前用户活跃衣物、完整性和跨套不重复优先于差异度；库存充足的固定样本六组场景核心单品 Jaccard MUST 不超过 0.5，小衣橱不得为追求差异伪造或错误搭配。AI 无效时沿用单次规则降级，不追加模型调用。
+- SDD-014 起 AI、规则降级和服务端校验 MUST 复用 `lib/recommendations/occasion-profile.ts` 的四场景画像；每套至少有两个独立场景信号，正式场景不得包含仅运动单品，可选配饰/外套不得使用场景明确不推荐的风格，热天不得使用非夏季外套，首个风格标签必须来自当前场景画像。语义相邻场合只提供弱信号，不得覆盖硬冲突。天气、衣着偏好、当前用户活跃衣物、完整性和跨套不重复优先于差异度；库存充足的固定样本六组场景核心单品 Jaccard MUST 不超过 0.5，小衣橱不得为追求差异伪造或错误搭配。AI 无效时沿用单次规则降级，不追加模型调用。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - `lib/auth/viewer.ts` 的账号属性必须使用 `auth.getUser()` 获取 Auth 服务端最新记录；`getClaims()` 继续用于 Proxy 和轻量身份校验，但不得用于邮箱绑定后的即时匿名状态判断，因为当前 JWT 可能仍携带旧声明。
 - SDD-001 数据底座为 `public.profiles` 和 `public.user_preferences`，均以 `auth.users.id` 为主键并启用 RLS；`authenticated` 仅有 `SELECT/INSERT/UPDATE`，`anon` 无表权限。
@@ -50,7 +50,7 @@
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
-- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-08-25 部署 `dpl_Eq4fjWm1ZVY9iETcLPANVEALiWpN` 已 `READY`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY` 或 `VERCEL_OIDC_TOKEN`。经用户明确同意，项目级 SSO 已关闭；首页、登录、衣橱、明日推荐与设置页面公网均返回 200，匿名会话建立及带会话衣橱访问均通过。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
+- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-08-26 部署 `dpl_6GFTNKHAWaBZdK76KDXoByPGaEqQ` 已 `READY`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY` 或 `VERCEL_OIDC_TOKEN`。经用户明确同意，项目级 SSO 已关闭；首页、登录、衣橱、推荐与设置页面公网均返回 200，匿名会话建立、24 件演示衣橱加载、武汉男装偏好及四场景三套生成均通过。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
 - Vercel Production 发布流程：先运行 `npx vercel link --yes --project yipai-jihe --scope jialin-d583`、`npx vercel project inspect yipai-jihe --scope jialin-d583` 与 `npx vercel env ls production --scope jialin-d583`，确认链接项目正确、框架预设为 Next.js 且变量名称齐全；再运行 `npm run check`、`npm run build`，最后执行 `npx vercel deploy --prod --yes --scope jialin-d583`。发布后使用 `npx vercel inspect <deployment-url> --scope jialin-d583` 核对 `target=production`、`status=Ready` 和固定别名，并检查核心页面 HTTP 状态及 `npx vercel logs <deployment-id> --level error --since 30m --scope jialin-d583`；不得把密钥放进命令参数、日志或仓库。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -66,7 +66,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011、账号个性化 SDD-012 与真实两日天气 SDD-013 已完成；SDD-014 四场景差异化推荐已完成代码与自动验收，等待发布到既有 `yipai-jihe` Production。SDD-002 下一步仍须由用户本人完成历史账号密码和重新登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011、账号个性化 SDD-012、真实两日天气 SDD-013 与四场景差异化推荐 SDD-014 已完成；2026-08-26 已发布并验收最新 `yipai-jihe` Production。SDD-002 下一步仍须由用户本人完成历史账号密码和重新登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
