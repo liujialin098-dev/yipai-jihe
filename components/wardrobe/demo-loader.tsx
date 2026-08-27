@@ -31,10 +31,10 @@ export function DemoLoader({ compact = false }: { compact?: boolean }) {
             <Database className="size-4" aria-hidden="true" />
           )}
           {pending
-            ? "正在准备 24 件衣物"
+            ? "正在准备 28 件衣物"
             : compact
               ? "检查并补齐演示数据"
-              : "加载 24 件演示衣物"}
+              : "加载 28 件演示衣物"}
         </button>
       </form>
       {state.message ? (

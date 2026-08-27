@@ -10,6 +10,7 @@ import type {
 
 export type OccasionProfile = {
   discouragedStyles: readonly WardrobeStyle[];
+  forbiddenForeignOccasions: readonly Occasion[];
   forbidSportOnly: boolean;
   preferredStyles: readonly WardrobeStyle[];
   relatedOccasions: readonly Occasion[];
@@ -33,6 +34,7 @@ export const OCCASION_PROFILES: Record<
     preferredStyles: ["commute", "minimal", "elegant"],
     relatedOccasions: ["formal"],
     discouragedStyles: ["sporty"],
+    forbiddenForeignOccasions: [],
     forbidSportOnly: false,
     selectionGuidance:
       "优先衬衫、针织、利落裤装和通勤鞋；颜色克制，避免整套都偏运动。",
@@ -42,6 +44,7 @@ export const OCCASION_PROFILES: Record<
     preferredStyles: ["casual", "sporty", "minimal"],
     relatedOccasions: ["sport"],
     discouragedStyles: ["commute"],
+    forbiddenForeignOccasions: ["date", "formal", "commute"],
     forbidSportOnly: false,
     selectionGuidance: "优先棉质、牛仔、宽松或运动休闲单品；避免整套过于严肃。",
   },
@@ -49,19 +52,21 @@ export const OCCASION_PROFILES: Record<
     summary: "精致、柔和、有视觉重点，但不限定性别或裙装",
     preferredStyles: ["elegant", "vintage", "minimal"],
     relatedOccasions: [],
-    discouragedStyles: ["sporty"],
+    discouragedStyles: ["sporty", "casual"],
+    forbiddenForeignOccasions: ["casual"],
     forbidSportOnly: false,
     selectionGuidance:
       "优先质感面料、协调配色和一处精致重点；男装、女装都不得强制裙装。",
   },
   formal: {
     summary: "结构清晰、优雅、低随意度，适合正式活动",
-    preferredStyles: ["elegant", "commute", "minimal"],
-    relatedOccasions: ["commute"],
-    discouragedStyles: ["sporty", "casual"],
+    preferredStyles: ["elegant", "minimal"],
+    relatedOccasions: [],
+    discouragedStyles: ["sporty", "casual", "commute"],
+    forbiddenForeignOccasions: ["casual", "commute"],
     forbidSportOnly: true,
     selectionGuidance:
-      "优先西裤、通勤鞋、结构感外套和克制配饰；不得使用仅适合运动的单品。",
+      "优先西裤、正式鞋、结构感外套和克制配饰；未明确标记正式的休闲或通勤单品不得混入。",
   },
 };
 
@@ -85,7 +90,16 @@ export function hasOccasionConflict(
   item: RecommendationWardrobeItem,
   occasion: RecommendationOccasion,
 ) {
-  return OCCASION_PROFILES[occasion].forbidSportOnly && isSportOnlyItem(item);
+  const profile = OCCASION_PROFILES[occasion];
+  if (item.occasions.includes(occasion)) return false;
+  if (
+    item.occasions.some((itemOccasion) =>
+      profile.forbiddenForeignOccasions.includes(itemOccasion),
+    )
+  ) {
+    return true;
+  }
+  return profile.forbidSportOnly && isSportOnlyItem(item);
 }
 
 export function itemProvidesOccasionSignal(

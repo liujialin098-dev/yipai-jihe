@@ -68,7 +68,7 @@ export async function loadDemoWardrobe(
   if (missingItems.length === 0) {
     return {
       status: "success",
-      message: "24 件演示衣物已经齐全，没有产生重复数据。",
+      message: "28 件演示衣物已经齐全，没有产生重复数据。",
     };
   }
 

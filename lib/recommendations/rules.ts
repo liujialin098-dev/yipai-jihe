@@ -12,7 +12,17 @@ import {
   itemProvidesOccasionSignal,
   occasionProfileScore,
 } from "@/lib/recommendations/occasion-profile";
-import { validateRecommendationOutput } from "@/lib/recommendations/validation";
+import {
+  hasCompleteRainProtectionCandidate,
+  isRainyWeatherCode,
+  outfitHasCompleteRainProtection,
+  rainProtectionRole,
+  type RainProtectionRole,
+} from "@/lib/recommendations/rain-protection";
+import {
+  seasonForTemperature,
+  validateRecommendationOutput,
+} from "@/lib/recommendations/validation";
 import type { Category, Season, WardrobeStyle } from "@/lib/wardrobe/constants";
 
 export class InsufficientWardrobeError extends Error {
@@ -73,14 +83,20 @@ function sortedCandidates(
     });
 }
 
-function take(
+function takeMatching(
   input: RuleInput,
   category: Category | null,
   used: Set<string>,
   selected: RecommendationWardrobeItem[],
+  predicate: (item: RecommendationWardrobeItem) => boolean,
   allowDiscouragedFallback = true,
 ) {
-  const candidates = sortedCandidates(input.items, category, used, input);
+  const candidates = sortedCandidates(
+    input.items,
+    category,
+    used,
+    input,
+  ).filter(predicate);
   const profile = getOccasionProfile(input.occasion);
   const suitableCandidates = candidates.filter(
     (candidate) => !profile.discouragedStyles.includes(candidate.style),
@@ -92,9 +108,15 @@ function take(
   const needsSignal =
     evaluateOccasionFit(selected, input.occasion).signalCount < 2;
   const item = needsSignal
-    ? (candidatePool.find((candidate) =>
+    ? (suitableCandidates.find((candidate) =>
         itemProvidesOccasionSignal(candidate, input.occasion),
-      ) ?? candidatePool[0])
+      ) ??
+      (allowDiscouragedFallback
+        ? candidates.find((candidate) =>
+            itemProvidesOccasionSignal(candidate, input.occasion),
+          )
+        : null) ??
+      candidatePool[0])
     : (candidatePool.find(
         (candidate) => !itemProvidesOccasionSignal(candidate, input.occasion),
       ) ?? candidatePool[0]);
@@ -102,6 +124,38 @@ function take(
   used.add(item.id);
   selected.push(item);
   return item;
+}
+
+function take(
+  input: RuleInput,
+  category: Category | null,
+  used: Set<string>,
+  selected: RecommendationWardrobeItem[],
+  allowDiscouragedFallback = true,
+) {
+  return takeMatching(
+    input,
+    category,
+    used,
+    selected,
+    () => true,
+    allowDiscouragedFallback,
+  );
+}
+
+function takeRainProtection(
+  input: RuleInput,
+  role: RainProtectionRole,
+  used: Set<string>,
+  selected: RecommendationWardrobeItem[],
+) {
+  return takeMatching(
+    input,
+    role,
+    used,
+    selected,
+    (item) => rainProtectionRole(item) === role,
+  );
 }
 
 function enoughForThree(items: RecommendationWardrobeItem[], input: RuleInput) {
@@ -126,8 +180,11 @@ function takeBase(
   input: RuleInput,
   used: Set<string>,
   selected: RecommendationWardrobeItem[],
+  prioritizeRainProtection = false,
 ) {
-  const prefersDress = input.occasion === "date" || input.occasion === "formal";
+  const prefersDress =
+    !prioritizeRainProtection &&
+    (input.occasion === "date" || input.occasion === "formal");
   const dress = prefersDress
     ? sortedCandidates(input.items, "dresses", used, input).find((item) =>
         itemProvidesOccasionSignal(item, input.occasion),
@@ -140,7 +197,9 @@ function takeBase(
   }
 
   const top = take(input, "tops", used, selected);
-  const bottom = take(input, "bottoms", used, selected);
+  const bottom = prioritizeRainProtection
+    ? takeRainProtection(input, "bottoms", used, selected)
+    : take(input, "bottoms", used, selected);
   if (!top || !bottom) throw new InsufficientWardrobeError();
 }
 
@@ -167,7 +226,7 @@ function completeSeasonAnchor(
   used: Set<string>,
   selected: RecommendationWardrobeItem[],
 ) {
-  const seasons = expectedSeasons(input.weather.apparentTemperatureC);
+  const seasons = seasonForTemperature(input.weather.apparentTemperatureC);
   if (
     selected.some((item) =>
       item.seasons.some((season) => seasons.includes(season)),
@@ -176,13 +235,28 @@ function completeSeasonAnchor(
     return;
   }
   const hasDress = selected.some((item) => item.category === "dresses");
-  const anchor = sortedCandidates(input.items, null, used, input).find(
+  const anchorCandidates = sortedCandidates(
+    input.items,
+    null,
+    used,
+    input,
+  ).filter(
     (item) =>
       item.seasons.some((season) => seasons.includes(season)) &&
+      !(
+        input.weather.apparentTemperatureC >= 27 &&
+        item.category === "outerwear" &&
+        !item.seasons.includes("summer")
+      ) &&
       (hasDress
         ? item.category !== "tops" && item.category !== "bottoms"
         : item.category !== "dresses"),
   );
+  const anchor =
+    anchorCandidates.find(
+      (item) =>
+        item.category === "accessories" || item.category === "outerwear",
+    ) ?? anchorCandidates[0];
   if (!anchor || selected.length >= 5) throw new InsufficientWardrobeError();
   used.add(anchor.id);
   selected.push(anchor);
@@ -214,7 +288,21 @@ function reasonFor(
     .slice(0, 3)
     .map((item) => item.name)
     .join("、");
-  const rainNote = weather.weatherCode >= 51 ? "，并照顾到雨天行动" : "";
+  const itemMap = new Map(selected.map((item) => [item.id, item]));
+  const rainNote =
+    isRainyWeatherCode(weather.weatherCode) &&
+    outfitHasCompleteRainProtection(
+      {
+        slot: 1,
+        title: "",
+        reason: "",
+        styleTags: [],
+        itemIds: selected.map((item) => item.id),
+      },
+      itemMap,
+    )
+      ? "，并用完整防水组合应对降雨"
+      : "";
   return `${weather.summary}，体感 ${weather.apparentTemperatureC}°C。用${names}完成${recommendationOccasionLabel(occasion)}层次${rainNote}，颜色和材质保持轻重平衡。`.slice(
     0,
     140,
@@ -228,14 +316,32 @@ export function buildRuleRecommendations(input: RuleInput) {
 
   const used = new Set<string>();
   const raw: RecommendationOutfit[] = [];
+  const shouldBuildRainProtection =
+    isRainyWeatherCode(input.weather.weatherCode) &&
+    hasCompleteRainProtectionCandidate(
+      input.items,
+      input.occasion,
+      seasonForTemperature(input.weather.apparentTemperatureC),
+      input.weather.apparentTemperatureC,
+    );
 
   for (let index = 0; index < 3; index += 1) {
     const selected: RecommendationWardrobeItem[] = [];
-    takeBase(input, used, selected);
+    const prioritizeRainProtection = shouldBuildRainProtection && index === 0;
+    takeBase(input, used, selected, prioritizeRainProtection);
 
     if (
       !selected.some((item) => item.category === "shoes") &&
-      !take(input, "shoes", used, selected)
+      !(prioritizeRainProtection
+        ? takeRainProtection(input, "shoes", used, selected)
+        : take(input, "shoes", used, selected))
+    ) {
+      throw new InsufficientWardrobeError();
+    }
+    if (
+      prioritizeRainProtection &&
+      !selected.some((item) => item.category === "outerwear") &&
+      !takeRainProtection(input, "outerwear", used, selected)
     ) {
       throw new InsufficientWardrobeError();
     }

@@ -11,6 +11,11 @@ import {
   getOccasionProfile,
 } from "@/lib/recommendations/occasion-profile";
 import {
+  hasCompleteRainProtectionCandidate,
+  isRainyWeatherCode,
+  outfitHasCompleteRainProtection,
+} from "@/lib/recommendations/rain-protection";
+import {
   STYLE_OPTIONS,
   type Season,
   type WardrobeStyle,
@@ -99,6 +104,14 @@ export function validateRecommendationOutput(
   const styleValues = new Set(STYLE_OPTIONS.map((option) => option.value));
   const occasionProfile = getOccasionProfile(occasion);
   const outfits: RecommendationOutfit[] = [];
+  const requiresRainProtection =
+    isRainyWeatherCode(weather.weatherCode) &&
+    hasCompleteRainProtectionCandidate(
+      items,
+      occasion,
+      expectedSeasons,
+      weather.apparentTemperatureC,
+    );
 
   for (const candidate of value.outfits) {
     if (!isRecord(candidate)) return null;
@@ -189,7 +202,16 @@ export function validateRecommendationOutput(
     });
   }
 
-  return outfits.sort((a, b) => a.slot - b.slot);
+  const sortedOutfits = outfits.sort((a, b) => a.slot - b.slot);
+  if (
+    requiresRainProtection &&
+    !sortedOutfits.some((outfit) =>
+      outfitHasCompleteRainProtection(outfit, itemMap),
+    )
+  ) {
+    return null;
+  }
+  return sortedOutfits;
 }
 
 export function parseRecommendationOccasion(value: unknown) {

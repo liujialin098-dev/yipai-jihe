@@ -60,7 +60,7 @@ export default async function WardrobePage({
                 衣橱还是空的
               </h2>
               <p className="mt-3 mb-6 max-w-[20rem] text-sm leading-6 text-[var(--text-secondary)]">
-                可先加载 24 件演示衣物，体验浏览、筛选和编辑。
+                可先加载 28 件演示衣物，体验浏览、筛选和编辑。
               </p>
             </div>
           )}
