@@ -1,11 +1,11 @@
 # 衣拍即合
 
-衣拍即合是一个移动端优先的 AI 私人衣橱 MVP：用户可以匿名体验、管理真实衣物原图、用 AI 辅助识别入库、按天气和场合生成每日 3 套穿搭，并通过换件、收藏和 3 题偏好持续调整结果。
+衣拍即合是一个移动端优先的 AI 私人衣橱 MVP：用户先登录、直接注册或明确选择体验身份，再管理真实衣物原图、用 AI 辅助识别入库、按真实天气和场合生成每日 3 套穿搭，并通过换件、收藏和 3 题偏好持续调整结果。
 
 当前 P0 核心闭环：
 
 ```text
-匿名体验 → 演示/真实衣橱 → AI 或手工入库 → 每日三套 → 换一件 → 收藏与偏好
+选择登录 / 注册 / 体验 → 演示或真实衣橱 → AI 或手工入库 → 每日三套 → 换一件 → 收藏与偏好
 ```
 
 ## 技术栈
@@ -26,7 +26,7 @@ copy .env.example .env.local
 npm run dev
 ```
 
-打开 `http://localhost:3000`。首次访问会创建匿名会话；未绑定邮箱时，清除站点数据或更换设备后无法恢复原匿名身份。
+打开 `http://localhost:3000`。首次访问只显示账号入口，不会自动创建匿名会话。新用户可用邮箱和密码直接注册，不需要邮件确认；也可以主动选择体验身份。体验身份清除站点数据或更换设备后无法恢复。
 
 ## 环境变量
 
@@ -67,13 +67,17 @@ npm run verify:sdd-003
 npm run verify:sdd-005
 npm run verify:sdd-006
 npm run verify:sdd-012
+npm run verify:sdd-013
+npm run verify:sdd-014
+npm run verify:sdd-015
+npm run verify:sdd-016
 ```
 
 `verify:sdd-004` 会在配置 OpenAI Key 后执行 10 张真实识别并产生少量 API 费用，只在模型、提示词或识别代码变化后运行。当前真实结果和全部阶段证据见 `specs/*/quickstart.md` 与 `progress.md`。
 
 ## 5 分钟演示
 
-1. 打开首页并进入匿名体验。
+1. 打开首页，选择登录、直接注册或体验身份进入。
 2. 衣橱不足 20 件时，一键加载演示衣橱。
 3. 在添加页选一张测试图，使用 AI 识别或手工填写后入库。
 4. 在推荐页选择今天或明天与场合，生成来自当前衣橱的 3 套；两个日期分别保存。
@@ -84,19 +88,22 @@ npm run verify:sdd-012
 
 ## 部署
 
-当前使用 Vercel 受保护 Preview，不自动发布 Production 或正式域名。部署前必须在 Preview 环境配置两个 Supabase 公开变量与实际使用的 OpenAI 服务端变量，然后执行：
+当前 Production 项目为 `jialin-d583/yipai-jihe`，固定地址为 `https://yipai-jihe.vercel.app`。发布前确认项目链接、Next.js 预设和 Production 环境变量名称，再执行质量检查、生产构建与正式部署：
 
 ```bash
-npx vercel deploy --yes
+npx vercel link --yes --project yipai-jihe --scope jialin-d583
+npm run check
+npm run build
+npx vercel deploy --prod --yes --scope jialin-d583
 ```
 
-最新受控评审链接、部署 ID、保护状态和验收证据以 `progress.md` 为准。
+最新 Production 链接、部署 ID、访问状态和验收证据以 `progress.md` 为准。
 
 ## 已知限制
 
-- 邮箱绑定代码已实现，但密码设置、退出和重新登录仍需与用户一起完成人工验收。
+- 直接注册、退出和密码重新登录已通过合成账号自动验收；历史遗留的已绑定无密码账号仍需用户本人在本机设密并完成人工重登录。
 - Windows 本地通过系统网络栈访问 OpenAI；识别超时仍可手工填写，推荐超过时限会自动使用规则降级。
 - P0 使用原图卡片，不包含自动抠图、穿搭日记、分享、社交、电商或真人虚拟试穿。
-- Preview 受 Vercel Authentication 保护，不提供公开绕过链接。
+- 常规忘记密码与第三方登录尚未实现；Production 固定域名已公开，历史 Preview 不再作为默认访问入口。
 
 开发顺序、阶段边界和提交记录以 `progress.md` 为唯一入口；代码约定见 `AGENTS.md`。

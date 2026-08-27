@@ -39,7 +39,7 @@ export function mapAuthError(
       return "邮箱格式不正确，请检查后重试。";
     case "email_exists":
     case "identity_already_exists":
-      return "这个邮箱已经绑定，请直接登录原账号；系统不会发送验证邮件。";
+      return "这个邮箱已经注册，请直接登录；系统不会发送验证邮件。";
     case "email_address_not_authorized":
       return "这个邮箱当前不可用于注册，请检查地址或联系管理员。";
     case "over_email_send_rate_limit":

@@ -11,6 +11,30 @@ import {
 } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/server";
 
+type ServerSupabaseClient = Awaited<ReturnType<typeof createClient>>;
+
+async function initializeAccountRecords(
+  supabase: ServerSupabaseClient,
+  userId: string,
+) {
+  const [profileResult, preferencesResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .upsert(
+        { user_id: userId },
+        { ignoreDuplicates: true, onConflict: "user_id" },
+      ),
+    supabase
+      .from("user_preferences")
+      .upsert(
+        { user_id: userId },
+        { ignoreDuplicates: true, onConflict: "user_id" },
+      ),
+  ]);
+
+  return !profileResult.error && !preferencesResult.error;
+}
+
 function errorState(
   message: string,
   fieldErrors?: AuthActionState["fieldErrors"],
@@ -42,13 +66,51 @@ export async function registerCurrentAccount(
 
   const supabase = await createClient();
   const { data, error: userError } = await supabase.auth.getUser();
-  if (userError || !data.user) {
-    return errorState("匿名身份已失效，请刷新页面重新开始。", {
-      email: "当前没有可绑定的匿名身份。",
-    });
+  const currentUser = userError ? null : data.user;
+
+  if (!currentUser) {
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+        options: {
+          data: { account_password_configured: true },
+        },
+      },
+    );
+
+    if (signUpError) {
+      return errorState(
+        mapAuthError(signUpError, "账号暂时无法注册，请稍后重试。"),
+      );
+    }
+
+    if (!signUpData.session || !signUpData.user) {
+      const existingIdentity = signUpData.user?.identities?.length === 0;
+      return errorState(
+        existingIdentity
+          ? "这个邮箱已经注册，请切换到登录。"
+          : "注册没有立即建立会话。请确认 Supabase 已关闭邮件确认后再试。",
+      );
+    }
+
+    if (!(await initializeAccountRecords(supabase, signUpData.user.id))) {
+      await supabase.auth.signOut({ scope: "local" });
+      return errorState(
+        "账号已建立，但衣橱资料暂时没有准备好。请稍后直接登录，系统会继续完成初始化。",
+      );
+    }
+
+    revalidatePath("/");
+    revalidatePath("/settings");
+    return {
+      message: "注册完成，正在进入你的衣橱。",
+      status: "success",
+    };
   }
-  if (!data.user.is_anonymous) {
-    redirect("/settings");
+
+  if (!currentUser.is_anonymous) {
+    redirect("/");
   }
 
   const { data: emailData, error: emailError } = await supabase.auth.updateUser(
@@ -147,9 +209,17 @@ export async function signInWithEmail(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error || !data.user) {
     return errorState(mapAuthError(error, "邮箱或密码不正确，请检查后重试。"));
+  }
+
+  if (!(await initializeAccountRecords(supabase, data.user.id))) {
+    await supabase.auth.signOut({ scope: "local" });
+    return errorState("衣橱资料暂时没有准备好，请稍后重新登录。");
   }
 
   redirect("/");
@@ -159,25 +229,11 @@ export async function startAnonymousExperience() {
   const supabase = await createClient();
   await supabase.auth.signOut({ scope: "local" });
   const { data, error } = await supabase.auth.signInAnonymously();
-  if (error || !data.user) redirect("/login?error=anonymous-unavailable");
+  if (error || !data.user) redirect("/?error=anonymous-unavailable");
 
-  const userId = data.user.id;
-  const [profileResult, preferencesResult] = await Promise.all([
-    supabase
-      .from("profiles")
-      .upsert(
-        { user_id: userId },
-        { ignoreDuplicates: true, onConflict: "user_id" },
-      ),
-    supabase
-      .from("user_preferences")
-      .upsert(
-        { user_id: userId },
-        { ignoreDuplicates: true, onConflict: "user_id" },
-      ),
-  ]);
-  if (profileResult.error || preferencesResult.error) {
-    redirect("/login?error=anonymous-unavailable");
+  if (!(await initializeAccountRecords(supabase, data.user.id))) {
+    await supabase.auth.signOut({ scope: "local" });
+    redirect("/?error=anonymous-unavailable");
   }
   redirect("/");
 }
@@ -185,5 +241,5 @@ export async function startAnonymousExperience() {
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut({ scope: "local" });
-  redirect("/login?status=signed-out");
+  redirect("/?status=signed-out");
 }

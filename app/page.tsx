@@ -8,14 +8,34 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { AuthEntryGateway } from "@/components/auth/auth-entry-gateway";
 import { getViewer } from "@/lib/auth/viewer";
 import { getWardrobeCount, getWardrobePreview } from "@/lib/wardrobe/data";
 
-export default async function Home() {
-  const [itemCount, previewItems, viewer] = await Promise.all([
+const entryFeedback = {
+  "anonymous-unavailable": "暂时无法建立体验身份，请稍后重试。",
+  "signed-out": "已退出当前身份。使用原邮箱登录可以找回已注册衣橱。",
+} as const;
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; status?: string }>;
+}) {
+  const [viewer, params] = await Promise.all([getViewer(), searchParams]);
+
+  if (!viewer) {
+    const feedbackKey = params.error ?? params.status;
+    const feedback =
+      feedbackKey && feedbackKey in entryFeedback
+        ? entryFeedback[feedbackKey as keyof typeof entryFeedback]
+        : null;
+    return <AuthEntryGateway feedback={feedback} />;
+  }
+
+  const [itemCount, previewItems] = await Promise.all([
     getWardrobeCount(),
     getWardrobePreview(3),
-    getViewer(),
   ]);
   const hasItems = itemCount > 0;
 

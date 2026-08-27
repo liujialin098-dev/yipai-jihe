@@ -19,12 +19,15 @@ export function AppShell({
       >
         跳到主要内容
       </a>
-      <StatusHeader viewer={viewer} />
+      {viewer ? <StatusHeader viewer={viewer} /> : null}
       <SessionBootstrap isReady={Boolean(viewer)} />
-      <main id="main-content" className="motion-stage flex-1 pb-28">
+      <main
+        id="main-content"
+        className={`motion-stage flex-1 ${viewer ? "pb-28" : "pb-0"}`}
+      >
         {children}
       </main>
-      <BottomNavigation />
+      {viewer ? <BottomNavigation /> : null}
     </div>
   );
 }

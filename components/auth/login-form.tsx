@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle, LockKeyhole, Mail } from "lucide-react";
+import { ArrowRight, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { signInWithEmail, startAnonymousExperience } from "@/lib/auth/actions";
@@ -20,12 +20,23 @@ function LoginSubmit() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({
+  embedded = false,
+  showExperience = true,
+}: {
+  embedded?: boolean;
+  showExperience?: boolean;
+}) {
   const [state, action] = useActionState(signInWithEmail, initialAuthState);
 
   return (
     <>
-      <form action={action} className="surface-card mt-7 rounded-[1.7rem] p-5">
+      <form
+        action={action}
+        className={
+          embedded ? "mt-6 px-1" : "surface-card mt-7 rounded-[1.7rem] p-5"
+        }
+      >
         <label htmlFor="login-email" className="text-sm font-semibold">
           邮箱
         </label>
@@ -77,23 +88,49 @@ export function LoginForm() {
         ) : null}
       </form>
 
-      <div className="my-6 flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
-        <span className="h-px flex-1 bg-[var(--hairline)]" />
-        或者
-        <span className="h-px flex-1 bg-[var(--hairline)]" />
-      </div>
+      {showExperience ? <AnonymousExperienceForm /> : null}
+    </>
+  );
+}
 
+function ExperienceSubmit() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="motion-button flex h-12 w-full items-center justify-center gap-2 rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-sm font-semibold text-[var(--foreground)] disabled:opacity-55"
+    >
+      {pending ? (
+        <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+      ) : (
+        <ArrowRight className="size-4" aria-hidden="true" />
+      )}
+      {pending ? "正在建立体验身份…" : "使用体验身份进入"}
+    </button>
+  );
+}
+
+export function AnonymousExperienceForm({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
+  return (
+    <div className={compact ? "" : "mt-6"}>
+      {compact ? null : (
+        <div className="mb-6 flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
+          <span className="h-px flex-1 bg-[var(--hairline)]" />
+          或者
+          <span className="h-px flex-1 bg-[var(--hairline)]" />
+        </div>
+      )}
       <form action={startAnonymousExperience}>
-        <button
-          type="submit"
-          className="motion-button h-12 w-full rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-sm font-semibold text-[var(--foreground)]"
-        >
-          开始新的匿名体验
-        </button>
+        <ExperienceSubmit />
       </form>
       <p className="mt-3 text-center text-xs leading-5 text-[var(--text-tertiary)]">
-        新匿名身份不会显示旧数据；旧衣橱仍可用原邮箱登录恢复。
+        适合先试用；清除站点数据或换设备后无法找回体验衣橱。
       </p>
-    </>
+    </div>
   );
 }

@@ -37,7 +37,11 @@ function FormMessage({ state }: { state: typeof initialAuthState }) {
   );
 }
 
-export function EmailBindingForm() {
+export function RegistrationForm({
+  submitLabel = "注册并进入衣橱",
+}: {
+  submitLabel?: string;
+}) {
   const router = useRouter();
   const [state, action] = useActionState(
     registerCurrentAccount,
@@ -92,10 +96,14 @@ export function EmailBindingForm() {
           autoComplete="new-password"
         />
       </div>
-      <SubmitButton>注册并保护衣橱</SubmitButton>
+      <SubmitButton>{submitLabel}</SubmitButton>
       <FormMessage state={state} />
     </form>
   );
+}
+
+export function EmailBindingForm() {
+  return <RegistrationForm submitLabel="注册并保护衣橱" />;
 }
 
 export function PasswordSetupForm() {
