@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-017 已完成；SDD-017 场景一致性与雨天防水搭配已在本地及远端隔离门禁通过，尚未部署。2026-08-27 线上基线仍为此前验收的 `yipai-jihe` Production。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-017 已完成并部署到 `yipai-jihe` Production；SDD-017 场景一致性、雨天防水搭配与 28 件演示衣橱已上线。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -320,6 +320,7 @@
 - [x] SDD-007 后：受控评审版完成匿名入库、推荐、反馈、发布文档和安全验收；邮箱密码重登录仍按 SDD-002 单独等待人工验收。
 - [x] 2026-08-25 Production：新建 `yipai-jihe` 项目，修正框架预设为 Next.js，配置 Production 环境变量并发布 `dpl_Eq4fjWm1ZVY9iETcLPANVEALiWpN`；固定域名 `https://yipai-jihe.vercel.app` 已公开，五个核心页面、匿名会话与带会话衣橱访问均验收通过。
 - [x] 2026-08-27 Production：将 SDD-016 完整提交 `9f13798` 更新部署为 `dpl_Cd3RCLVjoJkRqPgWTeBiTxUgXxww`；固定域名继续为 `https://yipai-jihe.vercel.app`，首页、登录、衣橱、添加、推荐、收藏和设置均返回 200，最近 30 分钟无 error 日志。
+- [x] 2026-08-27 Production：将包含 SDD-017 的提交 `d6860a4` 更新部署为 `dpl_CbxB5MKuTX4FSggKiAcBfsnP1L5M`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`，七个核心页面均返回 200，最近 30 分钟无 error 日志。
 
 ## P1 扩展 SDD
 
@@ -592,7 +593,7 @@
 
 ### SDD-017：场景一致性与雨天防水搭配
 
-- 状态：已完成（2026-08-27，待部署）
+- 状态：已完成并部署（2026-08-27）
 - SDD 目录：`specs/017-scene-consistency-rain/`
 - AI Coding 估算：1 段主对话，复杂度 M
 - 依赖：SDD-005、SDD-012、SDD-013、SDD-014
@@ -623,10 +624,11 @@
 
 - 完成日期：2026-08-27
 - 验收结果：固定样本中异场景违规为 0；库存支持时雨天首套使用完整防水组合，库存缺任一角色时继续生成普通合法三套；热天不使用仅冬季防水外层。远端回归会话 A `71200AA8` / B `33DF012A` 通过推荐隔离，会话 A `CBF1548C` / B `6456BDAC` 通过城市、衣着偏好与 RLS；武汉真实明日预报日期精确匹配。
-- 已知限制：防水能力当前只根据明确名称语义与类别保守判断，普通功能面料不会自动视为防水；已有账号需在衣橱页点击“检查并补齐演示数据”才能从 24 件补到 28 件；本阶段尚未发布到 Vercel Production。
-- 下一步：用户要求线上体验时更新 `yipai-jihe` Production，并在真实雨天或可控固定样本下抽验防水组合；历史账号设密仍等待用户本人集中调试。
+- 已知限制：防水能力当前只根据明确名称语义与类别保守判断，普通功能面料不会自动视为防水；已有账号需在衣橱页点击“检查并补齐演示数据”才能从 24 件补到 28 件。
+- 下一步：在真实雨天或可控固定样本下抽验线上防水组合；历史账号设密仍等待用户本人集中调试。
 - 素材说明：新增象牙白正装衬衫、深蓝修身西裤、黑色修身西装外套和深棕德比鞋，均为内置图像生成工具生成的 768px 透明 WebP 棚拍素材；不含人物、品牌、文字或真实个人数据。
 - 提交记录：`c23707b`（场景硬边界、雨天完整防水组合、28 件演示衣橱、完整 SDD 与回归门禁）。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_CbxB5MKuTX4FSggKiAcBfsnP1L5M`，`READY`，`target=production`，对应部署源提交 `d6860a4`；七个核心页面均为 200，最近 30 分钟无 error 日志）。
 
 ### SDD-008：自动抠图
 
