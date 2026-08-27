@@ -16,6 +16,8 @@ import {
   validateRecommendationOutput,
   validateWeatherSnapshot,
 } from "@/lib/recommendations/validation";
+import { storedWeatherLocation } from "@/lib/recommendations/location";
+import { getWeatherLocationContext } from "@/lib/recommendations/location-context";
 import type { Tables } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import type {
@@ -135,7 +137,10 @@ export type RecommendationPageData = {
   itemFavoriteIds: string[];
   outfitFavoriteKeys: string[];
   error: string | null;
+  ipCitySuggestion: { city: string } | null;
+  usingWeatherCityOverride: boolean;
   weatherCity: string | null;
+  weatherSavedCity: string | null;
   targetDate: string;
 };
 
@@ -151,15 +156,30 @@ export async function getRecommendationPageData(
       itemFavoriteIds: [],
       outfitFavoriteKeys: [],
       error: "体验会话正在准备，请稍后刷新。",
+      ipCitySuggestion: null,
+      usingWeatherCityOverride: false,
       weatherCity: null,
+      weatherSavedCity: null,
       targetDate: recommendationDate(new Date(), DEFAULT_TIMEZONE, targetDay),
     };
   }
 
+  const savedLocation = storedWeatherLocation({
+    weather_admin1: viewer.weatherAdmin1,
+    weather_city: viewer.weatherCity,
+    weather_latitude: viewer.weatherLatitude,
+    weather_longitude: viewer.weatherLongitude,
+    weather_timezone: viewer.weatherTimezone,
+  });
+  const locationContext = await getWeatherLocationContext(
+    viewer.userId,
+    savedLocation,
+  );
+  const effectiveLocation = locationContext.effectiveLocation;
   const supabase = await createClient();
   const date = recommendationDate(
     new Date(),
-    viewer.weatherTimezone ?? DEFAULT_TIMEZONE,
+    effectiveLocation?.timezone ?? DEFAULT_TIMEZONE,
     targetDay,
   );
   const [
@@ -195,7 +215,12 @@ export async function getRecommendationPageData(
       itemFavoriteIds: [],
       outfitFavoriteKeys: [],
       error: wardrobeResult.error,
-      weatherCity: viewer.weatherCity,
+      ipCitySuggestion: locationContext.ipSuggestion
+        ? { city: locationContext.ipSuggestion.city }
+        : null,
+      usingWeatherCityOverride: locationContext.overrideActive,
+      weatherCity: effectiveLocation?.city ?? null,
+      weatherSavedCity: savedLocation?.city ?? null,
       targetDate: date,
     };
   }
@@ -221,7 +246,13 @@ export async function getRecommendationPageData(
     const source =
       row.source === "ai" || row.source === "rules" ? row.source : null;
 
-    if (occasion && weather?.source === "live" && outfits && source) {
+    if (
+      occasion &&
+      weather?.source === "live" &&
+      weather.city === effectiveLocation?.city &&
+      outfits &&
+      source
+    ) {
       recommendation = {
         id: row.id,
         recommendationDate: row.recommendation_date,
@@ -250,7 +281,12 @@ export async function getRecommendationPageData(
       : row && validateWeatherSnapshot(row.weather)?.source === "simulated"
         ? "旧的模拟天气方案已停用，请使用真实天气重新生成。"
         : null,
-    weatherCity: viewer.weatherCity,
+    ipCitySuggestion: locationContext.ipSuggestion
+      ? { city: locationContext.ipSuggestion.city }
+      : null,
+    usingWeatherCityOverride: locationContext.overrideActive,
+    weatherCity: effectiveLocation?.city ?? null,
+    weatherSavedCity: savedLocation?.city ?? null,
     targetDate: date,
   };
 }

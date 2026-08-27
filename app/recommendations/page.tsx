@@ -46,7 +46,10 @@ export default async function RecommendationsPage({
     recommendation,
     itemFavoriteIds,
     outfitFavoriteKeys,
+    ipCitySuggestion,
+    usingWeatherCityOverride,
     weatherCity,
+    weatherSavedCity,
     targetDate,
   } = await getRecommendationPageData(targetDay);
   const WeatherIcon =
@@ -129,7 +132,12 @@ export default async function RecommendationsPage({
         </section>
       ) : null}
 
-      <WeatherCitySelector currentCity={weatherCity} />
+      <WeatherCitySelector
+        currentCity={weatherCity}
+        savedCity={weatherSavedCity}
+        ipSuggestion={ipCitySuggestion}
+        usingSessionOverride={usingWeatherCityOverride}
+      />
 
       <section className="mt-5">
         <RecommendationControls

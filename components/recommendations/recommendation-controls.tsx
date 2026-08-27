@@ -55,7 +55,7 @@ export function RecommendationControls({
           strokeWidth={1.8}
           aria-hidden="true"
         />
-        仅使用账号城市的
+        仅使用当前选择城市的
         {targetDay === "tomorrow" ? "真实明日预报" : "真实当前天气"}
       </div>
 

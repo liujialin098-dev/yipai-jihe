@@ -16,6 +16,8 @@ export type Viewer = {
   userId: string;
   weatherAdmin1: string | null;
   weatherCity: string | null;
+  weatherLatitude: number | null;
+  weatherLongitude: number | null;
   weatherTimezone: string | null;
 };
 
@@ -40,7 +42,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       supabase
         .from("user_preferences")
         .select(
-          "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1, weather_timezone",
+          "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone",
         )
         .eq("user_id", userId)
         .maybeSingle(),
@@ -70,6 +72,8 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       userId,
       weatherAdmin1: preferencesResult.data.weather_admin1,
       weatherCity: preferencesResult.data.weather_city,
+      weatherLatitude: preferencesResult.data.weather_latitude,
+      weatherLongitude: preferencesResult.data.weather_longitude,
       weatherTimezone: preferencesResult.data.weather_timezone,
     };
   } catch {

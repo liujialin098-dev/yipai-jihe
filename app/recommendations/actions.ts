@@ -29,6 +29,11 @@ import {
   storedWeatherLocation,
 } from "@/lib/recommendations/location";
 import {
+  clearWeatherLocationOverride,
+  getEffectiveWeatherLocation,
+  setWeatherLocationOverride,
+} from "@/lib/recommendations/location-context";
+import {
   buildRuleRecommendations,
   InsufficientWardrobeError,
 } from "@/lib/recommendations/rules";
@@ -51,11 +56,18 @@ export type WeatherCityActionState = {
   admin1?: string;
 };
 
+function revalidateWeatherCityPaths() {
+  revalidatePath("/recommendations");
+  revalidatePath("/settings");
+  revalidatePath("/settings/preferences");
+}
+
 export async function saveWeatherCity(
   _previousState: WeatherCityActionState,
   formData: FormData,
 ): Promise<WeatherCityActionState> {
   const cityInput = String(formData.get("city") ?? "").trim();
+  const mode = formData.get("mode") === "session" ? "session" : "saved";
   if (cityInput.length < 2 || cityInput.length > 40) {
     return { status: "error", message: "请输入完整城市名，例如上海。" };
   }
@@ -93,6 +105,21 @@ export async function saveWeatherCity(
     return { status: "error", message: "天气城市暂时无法保存。" };
   }
 
+  if (mode === "session") {
+    try {
+      await setWeatherLocationOverride(user.id, location);
+    } catch {
+      return { status: "error", message: "本次天气城市暂时无法启用。" };
+    }
+    revalidateWeatherCityPaths();
+    return {
+      status: "success",
+      message: `本次天气已切换为${location.city}，账号常用城市没有改变。`,
+      city: location.city,
+      admin1: location.admin1,
+    };
+  }
+
   const preferenceResult = await supabase
     .from("user_preferences")
     .update({
@@ -110,14 +137,48 @@ export async function saveWeatherCity(
     return { status: "error", message: "天气城市暂时无法保存。" };
   }
 
-  revalidatePath("/recommendations");
-  revalidatePath("/settings");
-  revalidatePath("/settings/preferences");
+  await clearWeatherLocationOverride();
+  revalidateWeatherCityPaths();
   return {
     status: "success",
-    message: `天气城市已切换为${location.city}，请重新生成搭配。`,
+    message: `常用城市已切换为${location.city}，请重新生成搭配。`,
     city: location.city,
     admin1: location.admin1,
+  };
+}
+
+export async function restoreSavedWeatherCity(
+  _previousState: WeatherCityActionState,
+  _formData: FormData,
+): Promise<WeatherCityActionState> {
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userError ? null : userData.user;
+  if (!user) {
+    return { status: "error", message: "当前登录已失效，请重新进入应用。" };
+  }
+
+  const [preferenceResult, clearResult] = await Promise.all([
+    supabase
+      .from("user_preferences")
+      .select("weather_city")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase.from("daily_recommendations").delete().eq("user_id", user.id),
+  ]);
+  if (preferenceResult.error || clearResult.error) {
+    return { status: "error", message: "常用城市暂时无法恢复。" };
+  }
+
+  await clearWeatherLocationOverride();
+  revalidateWeatherCityPaths();
+  const city = preferenceResult.data?.weather_city ?? undefined;
+  return {
+    status: "success",
+    message: city
+      ? `已恢复常用城市${city}，请重新生成搭配。`
+      : "本次城市已清除，请选择一个常用城市。",
+    city,
   };
 }
 
@@ -169,7 +230,11 @@ export async function generateDailyRecommendations(
     )
       ? preferencesResult.data.clothing_preference
       : "unrestricted";
-    const location = storedWeatherLocation(preferencesResult.data);
+    const savedLocation = storedWeatherLocation(preferencesResult.data);
+    const { effectiveLocation: location } = await getEffectiveWeatherLocation(
+      user.id,
+      savedLocation,
+    );
     if (!location) {
       return {
         status: "error",
