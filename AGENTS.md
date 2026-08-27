@@ -40,6 +40,7 @@
 - SDD-005 推荐默认复用 `gpt-4o-mini`，可通过服务端 `OPENAI_RECOMMENDATION_MODEL` 单独覆盖；OpenAI 失败、超时或输出不合法时 MUST 在 15 秒目标内转为规则推荐。SDD-012 起天气位置只能来自当前账号保存的常用城市，由服务端通过 Open-Meteo 解析并获取天气；未设置时不得静默回退北京。SDD-013 起普通推荐只允许 `today | tomorrow`：今天取当前天气，明天按账号时区精确匹配日预报；天气失败 MUST 停止生成，不得返回或保存模拟天气。AI 失败仍可在真实天气成功后使用规则推荐。
 - SDD-014 起 AI、规则降级和服务端校验 MUST 复用 `lib/recommendations/occasion-profile.ts` 的四场景画像；每套至少有两个独立场景信号，正式场景不得包含仅运动单品，可选配饰/外套不得使用场景明确不推荐的风格，热天不得使用非夏季外套，首个风格标签必须来自当前场景画像。语义相邻场合只提供弱信号，不得覆盖硬冲突。天气、衣着偏好、当前用户活跃衣物、完整性和跨套不重复优先于差异度；库存充足的固定样本六组场景核心单品 Jaccard MUST 不超过 0.5，小衣橱不得为追求差异伪造或错误搭配。AI 无效时沿用单次规则降级，不追加模型调用。
 - SDD-017 起异场景标签是 AI、规则降级与最终复验共用的硬边界：衣物明确包含当前场景时可跨场景使用；否则休闲拒绝约会/正式/通勤标签，约会拒绝休闲标签，正式拒绝休闲/通勤标签，通勤不新增排斥。正式画像不得再把通勤作为弱关联或偏好风格。雨天只包含 WMO 51～67、80～82、95～99；雪天不得误判。防水能力只按明确名称语义与类别识别，普通 `synthetic` 不等于防水；若场景合法且季节适配的防水外层、下装与鞋三类候选完整，3 套中 MUST 至少 1 套使用完整组合，否则不得强行补齐。不得覆盖温度、衣着偏好、归属、完整性、跨套不重复或单次规则降级边界。
+- SDD-018 起普通天气位置仍只来自当前账号主动保存的城市，不根据 IP、邮箱或浏览器位置静默变化；推荐页“选择城市”只接收城市名，Server Action 必须用 `auth.getUser()` 派生当前用户并复用城市解析，成功后更新城市五元组并删除当前用户全部旧推荐。失败不得覆盖原城市。入库工作区只有在单批 10 件全部 `confirmed` 后才显示“继续添加衣服”；该操作只释放浏览器预览 URL 并清空本地队列，严禁调用删除接口或修改已入库衣物。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - `lib/auth/viewer.ts` 的账号属性必须使用 `auth.getUser()` 获取 Auth 服务端最新记录；`getClaims()` 继续用于 Proxy 和轻量身份校验，但不得用于邮箱绑定后的即时匿名状态判断，因为当前 JWT 可能仍携带旧声明。
 - SDD-001 数据底座为 `public.profiles` 和 `public.user_preferences`，均以 `auth.users.id` 为主键并启用 RLS；`authenticated` 仅有 `SELECT/INSERT/UPDATE`，`anon` 无表权限。
@@ -65,12 +66,13 @@
 - SDD-015 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-015`；独立门禁覆盖 8 个核心页面的语义排版接入、旧超大字号、极端负字距、前导零计数、模板式文案和长破折号边界。390px 浏览器另验收标题换行、横向溢出、AI 来源层级和控制台错误。
 - SDD-016 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-016`，并回归 `npm run verify:sdd-002`；无会话首页 MUST 只显示登录、直接注册和显式体验身份入口，不得自动调用匿名登录或展示业务 App chrome。直接注册依赖 Supabase Confirm email 关闭并必须立即返回会话；登录后需幂等补齐资料与偏好。390px 浏览器另验收标签切换、字段留白、无横向溢出和无控制台 error。
 - SDD-017 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-017`，并回归 `npm run verify:sdd-007`、`npm run verify:sdd-014`、`npm run verify:sdd-005`、`npm run verify:sdd-012` 与 `npm run verify:sdd-013`；独立门禁覆盖 6 组异场景硬冲突、多场景基础款例外、雨/阵雨/雷雨与雪天边界、完整/不完整防水库存、热天冬季外层、28 件演示素材和 24 件男装/中性候选。
+- SDD-018 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-018`，并回归 `npm run verify:sdd-007`、`npm run verify:sdd-015`、`npm run verify:sdd-012` 与 `npm run verify:sdd-013`；独立门禁覆盖 10/10 满批重置、预览资源释放、无持久删除、推荐页城市选择、无 IP 定位、当前会话身份、偏好 RLS 和旧推荐失效。识别模型、提示词或 API 未变化时不得为本 UI 重置重复执行 10 张付费 AI 识别。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-017 已完成；SDD-017 已于 2026-08-27 部署到 `yipai-jihe` Production 并通过固定域名、七个核心页面和错误日志验收。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-018 已完成；SDD-018 已通过本地、Supabase 隔离、真实天气与 390px 浏览器验收，但尚未部署，当前 `yipai-jihe` Production 仍为 SDD-017。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

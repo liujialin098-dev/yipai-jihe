@@ -258,6 +258,24 @@ export function IngestionWorkspace() {
     );
   }
 
+  function resetCompletedBatch() {
+    if (
+      busy ||
+      items.length !== MAX_FILES ||
+      items.some((item) => item.status !== "confirmed")
+    ) {
+      return;
+    }
+    for (const item of items) URL.revokeObjectURL(item.previewUrl);
+    setItems([]);
+    setNotice("上一批 10 件已入库，可以继续选择下一批。");
+    requestAnimationFrame(() => {
+      document
+        .getElementById("wardrobe-upload-picker")
+        ?.scrollIntoView({ block: "start" });
+    });
+  }
+
   const actionableCount = items.filter((item) =>
     ["selected", "failed"].includes(item.status),
   ).length;
@@ -269,10 +287,15 @@ export function IngestionWorkspace() {
   const confirmedCount = items.filter(
     (item) => item.status === "confirmed",
   ).length;
+  const batchComplete =
+    items.length === MAX_FILES && confirmedCount === MAX_FILES;
 
   return (
     <div className="pb-8">
-      <label className="pressable surface-card mt-6 flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-[var(--hairline)] px-6 text-center">
+      <label
+        id="wardrobe-upload-picker"
+        className="pressable surface-card mt-6 flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-[var(--hairline)] px-6 text-center"
+      >
         <span className="flex size-12 items-center justify-center rounded-full bg-[#1d1d1f] text-white shadow-[0_12px_24px_rgba(29,29,31,0.2)]">
           <ImagePlus className="size-5" aria-hidden="true" />
         </span>
@@ -332,30 +355,49 @@ export function IngestionWorkspace() {
             ))}
           </div>
 
-          <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[auto_1fr] gap-2 rounded-[1.35rem] border border-white/70 bg-white/85 p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
-            <button
-              type="button"
-              disabled={busy || actionableCount === 0}
-              onClick={recognizePending}
-              className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[var(--hairline)] px-4 text-sm font-semibold disabled:opacity-45"
-            >
-              {busy ? (
-                <LoaderCircle className="size-4 animate-spin" />
-              ) : (
-                <Sparkles className="size-4" />
-              )}
-              识别 {actionableCount || ""}
-            </button>
-            <button
-              type="button"
-              disabled={busy || confirmableCount === 0}
-              onClick={confirmSelected}
-              className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
-            >
-              <Upload className="size-4" />
-              入库 {confirmableCount || ""}
-            </button>
-          </div>
+          {batchComplete ? (
+            <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[1.35fr_1fr] gap-2 rounded-[1.35rem] border border-white/70 bg-white/85 p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
+              <button
+                type="button"
+                onClick={resetCompletedBatch}
+                className="motion-button inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)]"
+              >
+                <ImagePlus className="size-4" aria-hidden="true" />
+                继续添加衣服
+              </button>
+              <Link
+                href="/wardrobe"
+                className="pressable inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--hairline)] px-4 text-sm font-semibold text-[var(--foreground)]"
+              >
+                查看衣橱
+              </Link>
+            </div>
+          ) : (
+            <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[auto_1fr] gap-2 rounded-[1.35rem] border border-white/70 bg-white/85 p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
+              <button
+                type="button"
+                disabled={busy || actionableCount === 0}
+                onClick={recognizePending}
+                className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[var(--hairline)] px-4 text-sm font-semibold disabled:opacity-45"
+              >
+                {busy ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <Sparkles className="size-4" />
+                )}
+                识别 {actionableCount || ""}
+              </button>
+              <button
+                type="button"
+                disabled={busy || confirmableCount === 0}
+                onClick={confirmSelected}
+                className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
+              >
+                <Upload className="size-4" />
+                入库 {confirmableCount || ""}
+              </button>
+            </div>
+          )}
         </>
       ) : null}
     </div>

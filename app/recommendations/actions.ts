@@ -23,7 +23,11 @@ import {
   recommendationDate,
 } from "@/lib/recommendations/data";
 import { generateAiRecommendations } from "@/lib/recommendations/generator";
-import { storedWeatherLocation } from "@/lib/recommendations/location";
+import {
+  LocationResolutionError,
+  resolveChineseCity,
+  storedWeatherLocation,
+} from "@/lib/recommendations/location";
 import {
   buildRuleRecommendations,
   InsufficientWardrobeError,
@@ -39,6 +43,83 @@ import {
 } from "@/lib/recommendations/validation";
 import type { Json } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
+
+export type WeatherCityActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+  city?: string;
+  admin1?: string;
+};
+
+export async function saveWeatherCity(
+  _previousState: WeatherCityActionState,
+  formData: FormData,
+): Promise<WeatherCityActionState> {
+  const cityInput = String(formData.get("city") ?? "").trim();
+  if (cityInput.length < 2 || cityInput.length > 40) {
+    return { status: "error", message: "请输入完整城市名，例如上海。" };
+  }
+
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userError ? null : userData.user;
+  if (!user) {
+    return { status: "error", message: "当前登录已失效，请重新进入应用。" };
+  }
+
+  let location: Awaited<ReturnType<typeof resolveChineseCity>>;
+  try {
+    location = await resolveChineseCity(cityInput);
+  } catch (error) {
+    if (error instanceof LocationResolutionError) {
+      if (error.code === "invalid") {
+        return { status: "error", message: "请输入完整城市名，例如上海。" };
+      }
+      if (error.code === "not_found") {
+        return {
+          status: "error",
+          message: "没有找到这个中国城市，请检查名称后重试。",
+        };
+      }
+    }
+    return { status: "error", message: "城市暂时无法确认，请稍后重试。" };
+  }
+
+  const clearResult = await supabase
+    .from("daily_recommendations")
+    .delete()
+    .eq("user_id", user.id);
+  if (clearResult.error) {
+    return { status: "error", message: "天气城市暂时无法保存。" };
+  }
+
+  const preferenceResult = await supabase
+    .from("user_preferences")
+    .update({
+      weather_city: location.city,
+      weather_admin1: location.admin1,
+      weather_latitude: location.latitude,
+      weather_longitude: location.longitude,
+      weather_timezone: location.timezone,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", user.id)
+    .select("user_id")
+    .maybeSingle();
+  if (preferenceResult.error || !preferenceResult.data) {
+    return { status: "error", message: "天气城市暂时无法保存。" };
+  }
+
+  revalidatePath("/recommendations");
+  revalidatePath("/settings");
+  revalidatePath("/settings/preferences");
+  return {
+    status: "success",
+    message: `天气城市已切换为${location.city}，请重新生成搭配。`,
+    city: location.city,
+    admin1: location.admin1,
+  };
+}
 
 export async function generateDailyRecommendations(
   _previousState: RecommendationActionState,

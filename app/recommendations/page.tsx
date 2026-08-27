@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { CloudRain, CloudSun, Info, MapPin, Shirt } from "lucide-react";
+import { CloudRain, CloudSun, Info, Shirt } from "lucide-react";
 import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
 import { RecommendationViewTracker } from "@/components/recommendations/recommendation-view-tracker";
+import { WeatherCitySelector } from "@/components/recommendations/weather-city-selector";
 import {
   isRecommendationTargetDay,
   recommendationOccasionLabel,
@@ -128,19 +129,9 @@ export default async function RecommendationsPage({
         </section>
       ) : null}
 
+      <WeatherCitySelector currentCity={weatherCity} />
+
       <section className="mt-5">
-        {!weatherCity ? (
-          <Link
-            href="/settings/preferences"
-            className="pressable mb-3 flex items-center justify-between gap-3 rounded-[1.2rem] border border-[var(--system-blue)]/18 bg-[var(--system-blue-soft)] px-4 py-3 text-sm font-semibold text-[var(--system-blue)]"
-          >
-            <span className="flex items-center gap-2">
-              <MapPin className="size-4" strokeWidth={1.8} aria-hidden="true" />
-              先设置常用城市
-            </span>
-            <span className="text-xs font-medium">用于当地天气</span>
-          </Link>
-        ) : null}
         <RecommendationControls
           key={`${targetDay}-${recommendation?.id ?? "new"}-${recommendation?.occasion ?? "commute"}`}
           defaultOccasion={recommendation?.occasion ?? "commute"}
