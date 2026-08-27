@@ -83,7 +83,7 @@
 - [x] T022 [P] 更新 `AGENTS.md`，记录场景硬边界、雨天条件规则和质量命令
 - [x] T023 更新 `specs/017-scene-consistency-rain/quickstart.md` 与本文件完成状态
 - [x] T024 [P] 在 `lib/wardrobe/catalog.ts`、`public/demo-wardrobe/` 与现有衣橱加载文案中补足 28 件演示衣橱和 4 件正式胶囊
-- [ ] T025 仅暂存本阶段文件并提交，不包含用户未跟踪的 PRD 脚本和文档
+- [x] T025 仅暂存本阶段文件并提交，不包含用户未跟踪的 PRD 脚本和文档
 
 ---
 
