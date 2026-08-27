@@ -68,9 +68,9 @@
 - [x] T018 运行 `npm run check`、`npm run build` 与 `npm run verify:sdd-019`
 - [x] T019 运行 `npm run verify:sdd-012`、`npm run verify:sdd-013` 与 `npm run verify:sdd-018`
 - [x] T020 在 390px 本地浏览器使用合成账号和可控请求头验收无 IP 安静降级、杭州建议、双操作、无溢出和无控制台 error；临时、恢复与永久分支由真实 Cookie 纯函数和 Action 契约覆盖
-- [ ] T021 [P] 更新 `progress.md` 与 `AGENTS.md`，记录 SDD-019 状态、IP 仅作建议、会话城市边界和质量命令
+- [x] T021 [P] 更新 `progress.md` 与 `AGENTS.md`，记录 SDD-019 状态、IP 仅作建议、会话城市边界和质量命令
 - [x] T022 更新 `specs/019-ip-weather-suggestion/spec.md`、`quickstart.md` 与本文件的完成状态和实际证据
-- [ ] T023 仅暂存本阶段文件并提交，不包含用户未跟踪的 PRD 脚本和文档
+- [x] T023 仅暂存本阶段文件并提交，不包含用户未跟踪的 PRD 脚本和文档
 
 ---
 
