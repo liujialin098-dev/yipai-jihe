@@ -319,7 +319,7 @@
 - [x] SDD-006 后：反馈体验 Preview 已包含换件、单品/整套收藏和偏好问卷，部署构建为 READY。
 - [x] SDD-007 后：受控评审版完成匿名入库、推荐、反馈、发布文档和安全验收；邮箱密码重登录仍按 SDD-002 单独等待人工验收。
 - [x] 2026-08-25 Production：新建 `yipai-jihe` 项目，修正框架预设为 Next.js，配置 Production 环境变量并发布 `dpl_Eq4fjWm1ZVY9iETcLPANVEALiWpN`；固定域名 `https://yipai-jihe.vercel.app` 已公开，五个核心页面、匿名会话与带会话衣橱访问均验收通过。
-- [x] 2026-08-27 Production：发布 SDD-016 首次账号入口部署 `dpl_BiTsmTRdV3j8e9ytx3Y7zfdKwwot`；固定域名继续为 `https://yipai-jihe.vercel.app`，首页、登录、衣橱、添加、推荐、收藏和设置均返回 200，最近 30 分钟无 error 日志。
+- [x] 2026-08-27 Production：将 SDD-016 完整提交 `9f13798` 更新部署为 `dpl_Cd3RCLVjoJkRqPgWTeBiTxUgXxww`；固定域名继续为 `https://yipai-jihe.vercel.app`，首页、登录、衣橱、添加、推荐、收藏和设置均返回 200，最近 30 分钟无 error 日志。
 
 ## P1 扩展 SDD
 
@@ -587,7 +587,7 @@
 - 验收结果：自动注册和认证回归使用随机合成邮箱与密码，不记录个人凭据；注册账号 `9DAE4CFC` 与体验身份 `895E9929` 通过会话、重登录和隔离门禁。390px 本地入口 `scrollWidth=375`、视口宽度 `390`，Production 七个核心页面均返回 200，最近 30 分钟无 error 日志。
 - 已知限制：常规忘记密码和第三方登录不在本阶段；历史遗留的已绑定无密码账号仍只能由用户本人在本机运行 `npm run account:set-password-local` 后完成人工重登录验收。Production 浏览器首轮远程抓取发生超时，已由固定域名 HTTP 检查、Vercel Ready 状态与无 error 日志完成等价发布校验。
 - 下一步：由用户本人集中验收历史账号设密与真实账号重新登录；后续产品扩展按 P1 顺序评估 SDD-008 自动抠图。
-- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_BiTsmTRdV3j8e9ytx3Y7zfdKwwot`，`READY`，`target=production`）。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_Cd3RCLVjoJkRqPgWTeBiTxUgXxww`，`READY`，`target=production`，对应提交 `9f13798`）。
 - 提交记录：`c0f7a26`（首次账号入口、直接无邮件注册、显式体验身份、认证恢复、完整 SDD、验收与 Production 发布记录）。
 
 ### SDD-008：自动抠图
