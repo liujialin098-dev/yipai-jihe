@@ -588,7 +588,7 @@
 - 已知限制：常规忘记密码和第三方登录不在本阶段；历史遗留的已绑定无密码账号仍只能由用户本人在本机运行 `npm run account:set-password-local` 后完成人工重登录验收。Production 浏览器首轮远程抓取发生超时，已由固定域名 HTTP 检查、Vercel Ready 状态与无 error 日志完成等价发布校验。
 - 下一步：由用户本人集中验收历史账号设密与真实账号重新登录；后续产品扩展按 P1 顺序评估 SDD-008 自动抠图。
 - Production：`https://yipai-jihe.vercel.app`（部署 `dpl_BiTsmTRdV3j8e9ytx3Y7zfdKwwot`，`READY`，`target=production`）。
-- 提交记录：本次 SDD-016 实现、验收与发布记录将在本阶段收尾提交中填写。
+- 提交记录：`c0f7a26`（首次账号入口、直接无邮件注册、显式体验身份、认证恢复、完整 SDD、验收与 Production 发布记录）。
 
 ### SDD-008：自动抠图
 
