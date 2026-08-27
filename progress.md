@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 已完成；SDD-018 推荐页城市切换与连续入库、SDD-019 IP 天气城市建议均已通过本地、远端隔离与真实天气门禁，尚未部署。当前 `yipai-jihe` Production 已上线至 SDD-017。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 已完成并部署；SDD-018 推荐页城市切换与连续入库、SDD-019 确认式 IP 天气城市建议已上线至 `yipai-jihe` Production。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -321,6 +321,7 @@
 - [x] 2026-08-25 Production：新建 `yipai-jihe` 项目，修正框架预设为 Next.js，配置 Production 环境变量并发布 `dpl_Eq4fjWm1ZVY9iETcLPANVEALiWpN`；固定域名 `https://yipai-jihe.vercel.app` 已公开，五个核心页面、匿名会话与带会话衣橱访问均验收通过。
 - [x] 2026-08-27 Production：将 SDD-016 完整提交 `9f13798` 更新部署为 `dpl_Cd3RCLVjoJkRqPgWTeBiTxUgXxww`；固定域名继续为 `https://yipai-jihe.vercel.app`，首页、登录、衣橱、添加、推荐、收藏和设置均返回 200，最近 30 分钟无 error 日志。
 - [x] 2026-08-27 Production：将包含 SDD-017 的提交 `d6860a4` 更新部署为 `dpl_CbxB5MKuTX4FSggKiAcBfsnP1L5M`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`，七个核心页面均返回 200，最近 30 分钟无 error 日志。
+- [x] 2026-08-27 Production：将包含 SDD-018 与 SDD-019 的提交 `99cc24e` 更新部署为 `dpl_aNTXkogETtNb5wk268tzVE1ueYCD`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`。390px 体验身份、推荐页手动保存武汉和七个核心页面 200 均通过，最近 30 分钟无 error 日志。
 
 ## P1 扩展 SDD
 
@@ -632,7 +633,7 @@
 
 ### SDD-018：推荐页城市切换与连续入库
 
-- 状态：已完成（2026-08-27，待部署）
+- 状态：已完成并部署（2026-08-27）
 - SDD 目录：`specs/018-city-switch-batch-reset/`
 - AI Coding 估算：1 段主对话，复杂度 M
 - 依赖：SDD-004、SDD-012、SDD-013、SDD-016
@@ -661,13 +662,14 @@
 
 - 完成日期：2026-08-27
 - 验收结果：天气来源确认不是 IP，而是当前账号保存城市；推荐页可原地切换上海，旧城市推荐会失效。满 10 件后的继续添加只重置本地队列，代码路径不发送删除请求。14 个页面 Production 构建成功，相关静态、账号隔离和真实天气回归全部通过。
-- 已知限制：城市选择当前只支持既有中国城市解析，不自动读取 IP 或浏览器 GPS；满批按钮只在恰好 10 件全部确认后出现。识别模型、提示词和入库 API 未改，按成本约束未重复执行 10 张付费 AI 识别，沿用 SDD-004 的真实 10/10 与确认幂等证据。
-- 下一步：用户要求线上体验时更新 `yipai-jihe` Production；历史账号设密仍等待用户本人集中调试。
+- 已知限制：城市选择当前只支持既有中国城市解析；SDD-019 增加的 IP 城市仅作待确认建议，不读取浏览器 GPS。满批按钮只在恰好 10 件全部确认后出现。识别模型、提示词和入库 API 未改，按成本约束未重复执行 10 张付费 AI 识别，沿用 SDD-004 的真实 10/10 与确认幂等证据。
+- 下一步：历史账号设密仍等待用户本人集中调试；后续扩展继续按 P1 顺序评估 SDD-008 自动抠图。
 - 提交记录：`5993e7f`（满批连续入库、推荐页城市选择、账号城市安全更新、完整 SDD 与验收门禁）。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_aNTXkogETtNb5wk268tzVE1ueYCD`，`READY`，`target=production`，对应部署源提交 `99cc24e`）。
 
 ### SDD-019：IP 天气城市建议
 
-- 状态：已完成（2026-08-27，待部署）
+- 状态：已完成并部署（2026-08-27）
 - SDD 目录：`specs/019-ip-weather-suggestion/`
 - AI Coding 估算：1 段主对话，复杂度 M
 - 依赖：SDD-012、SDD-013、SDD-018
@@ -696,9 +698,10 @@
 
 - 完成日期：2026-08-27
 - 验收结果：已实现“IP 发现变化、用户决定是否切换”的完整边界。临时城市按账号隔离并只在当前浏览器会话有效，常用城市继续由 Supabase RLS 保护；推荐读取与生成均使用同一有效城市，真实天气失败时仍停止生成而不编造天气。
-- 已知限制：IP 地理信息可能受代理、运营商出口和部署平台字段完整度影响，因此只作为提示；当前只接受中国大陆有效城市建议。本地开发通常没有 Vercel IP 请求头，仍可使用手动选择城市。功能尚未部署，Production 仍为 SDD-017。
-- 下一步：用户要求上线时将 SDD-018 与 SDD-019 一并更新到 `yipai-jihe` Production；历史账号设密仍等待用户本人集中调试。
+- 已知限制：IP 地理信息可能受代理、运营商出口和部署平台字段完整度影响，因此只作为提示；当前只接受中国大陆有效城市建议。本地开发通常没有 Vercel IP 请求头，仍可使用手动选择城市。线上体验身份首次请求曾出现一次可重试的瞬时失败，隔离 API 为 200，UI 重试后正常进入，Vercel 无 error 日志。
+- 下一步：历史账号设密仍等待用户本人集中调试；后续扩展继续按 P1 顺序评估 SDD-008 自动抠图。
 - 提交记录：`0edeb92`（IP 城市建议、账号隔离会话切换、有效位置统一读取、完整 SDD 与验收门禁）。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_aNTXkogETtNb5wk268tzVE1ueYCD`，`READY`，`target=production`，对应部署源提交 `99cc24e`；七个核心页面均为 200，390px 推荐页无溢出或浏览器 error，最近 30 分钟无 error 日志）。
 
 ### SDD-008：自动抠图
 

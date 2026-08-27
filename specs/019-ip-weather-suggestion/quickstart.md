@@ -49,4 +49,6 @@ npm run verify:sdd-018
 - `npm run verify:sdd-013` 读取武汉 2026-08-28 真实明日预报，最低 29°C、最低体感 33°C，双日期隔离通过。
 - 独立门禁直接执行生产代码中的 IP 解析、Haversine 距离、Cookie 编码和 Cookie 解析，验证杭州编码、同城过滤、非中国拒绝、损坏值忽略和跨账号不继承。
 - 390px 合成体验会话在没有 Vercel 头时保持安静并保留手动入口；注入杭州固定请求头后显示“本次使用”和“设为常用城市”，`scrollWidth=390`、错误覆盖层为 false、浏览器 error 为 0。
-- 杭州提示全页视觉复核通过，双按钮、说明文案、手动城市输入和底部 Dock 无重叠；本阶段未修改或部署 Production。
+- 杭州提示全页视觉复核通过，双按钮、说明文案、手动城市输入和底部 Dock 无重叠。
+- 提交 `99cc24e` 已部署到 `https://yipai-jihe.vercel.app`，部署 `dpl_aNTXkogETtNb5wk268tzVE1ueYCD` 为 `READY`、`target=production`。390px 线上推荐页明确显示“IP 只提供待确认建议”，保存武汉成功且 `scrollWidth=390`；七个核心页面均为 200，最近 30 分钟无 error 日志。
+- 线上体验身份首次 Server Action 曾出现一次可重试的瞬时失败；隔离匿名会话 API 立即返回 200，同一 UI 重试后正常进入 App，未出现错误覆盖层或浏览器 error。
