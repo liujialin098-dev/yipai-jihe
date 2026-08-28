@@ -46,6 +46,40 @@ export async function loadDemoWardrobe(
   }
 
   const { supabase, userId } = context;
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userData.user;
+
+  if (userError || !user || user.id !== userId) {
+    return {
+      status: "error",
+      message: "体验身份暂时无法确认，请刷新后重试。",
+    };
+  }
+
+  if (user.is_anonymous !== true) {
+    return {
+      status: "error",
+      message: "演示衣橱仅供体验身份使用，请直接添加自己的衣物。",
+    };
+  }
+
+  const { count: realItemCount, error: realItemError } = await supabase
+    .from("wardrobe_items")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .is("demo_key", null);
+
+  if (realItemError) {
+    return { status: "error", message: "无法确认当前衣橱，请稍后重试。" };
+  }
+
+  if ((realItemCount ?? 0) > 0) {
+    return {
+      status: "error",
+      message: "衣橱已有自己的衣物，不再加载演示衣橱。",
+    };
+  }
+
   const { data: existingItems, error: existingError } = await supabase
     .from("wardrobe_items")
     .select("demo_key")
@@ -68,7 +102,7 @@ export async function loadDemoWardrobe(
   if (missingItems.length === 0) {
     return {
       status: "success",
-      message: "28 件演示衣物已经齐全，没有产生重复数据。",
+      message: `${DEMO_WARDROBE.length} 件演示衣物已经齐全，没有产生重复数据。`,
     };
   }
 
@@ -128,7 +162,10 @@ export async function loadDemoWardrobe(
     .from("wardrobe_items")
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId)
-    .not("demo_key", "is", null);
+    .in(
+      "demo_key",
+      DEMO_WARDROBE.map((item) => item.demoKey),
+    );
 
   if ((count ?? 0) > 0) {
     await supabase

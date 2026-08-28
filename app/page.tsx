@@ -41,6 +41,8 @@ export default async function Home({
     getTodayDiarySummary(),
   ]);
   const hasItems = itemCount > 0;
+  const wardrobeHref =
+    hasItems || viewer.isAnonymous ? "/wardrobe" : "/wardrobe/new";
 
   return (
     <div className="page-enter px-5 pt-4">
@@ -52,7 +54,7 @@ export default async function Home({
       </section>
 
       <Link
-        href="/wardrobe"
+        href={wardrobeHref}
         className="surface-card pressable mt-7 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
       >
         <div className="flex items-start justify-between gap-5">
@@ -100,13 +102,19 @@ export default async function Home({
           </div>
         ) : (
           <p className="mt-8 max-w-[17rem] text-sm leading-6 text-[var(--text-secondary)]">
-            加载 24 件安全演示衣物，不用拍照也能先体验衣橱。
+            {viewer.isAnonymous
+              ? "可先建立演示衣橱体验完整流程，也可以直接添加自己的衣物。"
+              : "添加第一件自己的衣物，开始整理衣橱和生成搭配。"}
           </p>
         )}
 
         <div className="mt-5 flex items-center justify-between border-t border-[var(--hairline)] pt-4">
           <p className="text-sm font-semibold text-[var(--foreground)]">
-            {hasItems ? "查看全部衣物" : "建立演示衣橱"}
+            {hasItems
+              ? "查看全部衣物"
+              : viewer.isAnonymous
+                ? "建立体验衣橱"
+                : "添加第一件衣物"}
           </p>
           <p className="text-xs text-[var(--text-tertiary)]">仅当前身份可见</p>
         </div>

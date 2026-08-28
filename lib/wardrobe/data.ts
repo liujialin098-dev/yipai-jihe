@@ -5,7 +5,7 @@ import {
 } from "@/lib/personalization/constants";
 import type { Tables } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
-import { getDemoWardrobeImageUrl } from "@/lib/wardrobe/catalog";
+import { DEMO_WARDROBE, getDemoWardrobeImageUrl } from "@/lib/wardrobe/catalog";
 import {
   escapeIlike,
   isUuid,
@@ -16,6 +16,12 @@ type WardrobeRow = Tables<"wardrobe_items">;
 
 export type WardrobeItem = Omit<WardrobeRow, "image_path" | "user_id"> & {
   imageUrl: string | null;
+};
+
+export type WardrobeComposition = {
+  demoCount: number;
+  error: string | null;
+  realCount: number;
 };
 
 const ITEM_COLUMNS =
@@ -182,6 +188,48 @@ export async function getWardrobeCount(
     .in("audience", allowedWardrobeAudiences(clothingPreference));
 
   return error ? 0 : (count ?? 0);
+}
+
+export async function getWardrobeComposition(): Promise<WardrobeComposition> {
+  const viewer = await getViewer();
+  if (!viewer) {
+    return {
+      demoCount: 0,
+      error: "当前身份暂时无法读取。",
+      realCount: 0,
+    };
+  }
+
+  const supabase = await createClient();
+  const [demoResult, realResult] = await Promise.all([
+    supabase
+      .from("wardrobe_items")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", viewer.userId)
+      .in(
+        "demo_key",
+        DEMO_WARDROBE.map((item) => item.demoKey),
+      ),
+    supabase
+      .from("wardrobe_items")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", viewer.userId)
+      .is("demo_key", null),
+  ]);
+
+  if (demoResult.error || realResult.error) {
+    return {
+      demoCount: 0,
+      error: "衣橱组成暂时无法读取。",
+      realCount: 0,
+    };
+  }
+
+  return {
+    demoCount: demoResult.count ?? 0,
+    error: null,
+    realCount: realResult.count ?? 0,
+  };
 }
 
 export async function getWardrobePreview(limit = 3) {

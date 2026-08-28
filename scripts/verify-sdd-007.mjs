@@ -105,6 +105,32 @@ for (const keyword of [
   check(readme.includes(keyword), `README 缺少发布说明：${keyword}`);
 }
 
+const homePage = read("app/page.tsx");
+const wardrobePage = read("app/wardrobe/page.tsx");
+const wardrobeActions = read("app/wardrobe/actions.ts");
+const demoLoader = read("components/wardrobe/demo-loader.tsx");
+check(
+  !homePage.includes("加载 24 件") &&
+    !demoLoader.includes("检查并补齐演示数据"),
+  "仍存在过时或面向开发者的演示数据文案",
+);
+check(
+  wardrobePage.includes("viewer?.isAnonymous === true") &&
+    wardrobePage.includes("composition.realCount === 0") &&
+    wardrobePage.includes("composition.demoCount < DEMO_WARDROBE.length"),
+  "衣橱页未按体验身份、真实衣物和演示完整度限制入口",
+);
+check(
+  wardrobeActions.includes("supabase.auth.getUser()") &&
+    wardrobeActions.includes("user.is_anonymous !== true") &&
+    wardrobeActions.includes('.is("demo_key", null)'),
+  "演示衣橱 Action 缺少服务端身份或真实衣物防绕过检查",
+);
+check(
+  demoLoader.includes("继续加载演示衣橱"),
+  "演示衣橱缺少部分失败后的继续加载入口",
+);
+
 const demoImages = filesUnder("public/demo-wardrobe").filter(
   (path) => extname(path) === ".webp",
 );
