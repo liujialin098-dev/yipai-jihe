@@ -14,7 +14,7 @@
 - `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
-- `lib/wardrobe/`：衣物常量、校验、查询、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
+- `lib/wardrobe/`：衣物常量、校验、查询、衣橱组成判断、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
 - `lib/personalization/`：账号衣着偏好、衣物归属和共享可逆过滤规则。
 - `lib/recommendations/`：账号城市与 Vercel IP 城市建议解析、账号隔离的临时城市会话、有效位置选择、真实今日/明日天气快照、四场景共享画像与异场景硬边界、雨天防水角色、严格推荐契约、OpenAI 生成、差异化规则降级、归属与搭配结构校验，以及目标日期批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
@@ -78,7 +78,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记与基础利用率报告已于 2026-08-28 通过本地、Supabase 双账号隔离和 390px Production 浏览器验收，当前 `yipai-jihe` Production 部署为 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记与基础利用率报告已于 2026-08-28 通过本地、Supabase 双账号隔离和 390px Production 浏览器验收。演示衣橱入口收敛已在提交 `0838ef0` 完成本地实现，尚待下一次 Production 发布；当前 `yipai-jihe` Production 仍为 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -91,7 +91,7 @@
 - SDD-016 起首次访问不得自动创建匿名身份。无会话首页 MUST 先展示完整账号入口；新用户可直接邮箱密码注册，已有用户可登录，体验身份只允许由明确按钮触发。无会话深链接必须返回 `/`，不得在跳转前展示顶部状态或底部导航；已有会话继续进入原应用。
 - SDD-002 不再发送注册确认或密码设置邮件。历史遗留的已绑定无密码账号只允许在本机运行 `npm run account:set-password-local`，通过 `.env.local` 的 `SECRET_KEY` 和 `auth.admin.updateUserById` 一次性设密；不得把该能力做成 Route Handler、Server Action 或 Vercel 环境能力。常规忘记密码仍不在当前范围。
 - 全局动效以 `app/globals.css` 的气泡扩散、分层显现、导航选中气泡、按钮径向反馈和卡片景深为准；不得恢复所有控件统一上下弹跳，也不得恢复黑色按钮的白色横向扫光。所有后续 UI MUST 支持 `prefers-reduced-motion` 和 `prefers-reduced-transparency`。
-- 演示数据 MUST 按当前用户隔离加载，优先采用可重复的一键加载方式；不得把真实个人敏感照片写入仓库或提交记录。
+- 演示数据 MUST 按当前用户隔离加载，且入口只允许空衣橱体验身份使用：正式账号、已有任意真实衣物或内置演示衣橱已经完整时 MUST 隐藏入口；体验身份部分加载失败且没有真实衣物时只显示“继续加载演示衣橱”。`loadDemoWardrobe` Server Action MUST 使用 `auth.getUser()` 重新确认匿名身份并在服务端拒绝正式账号和已有真实衣物的账号，不能只依赖页面显隐。不得把真实个人敏感照片写入仓库或提交记录。
 - 内置演示衣物共 28 件，图片位于 `public/demo-wardrobe/`，按 `demo_key` 使用同名 768px WebP 棚拍素材；其中 4 件 SDD-017 正式胶囊为无人物、无品牌的透明背景生成素材。仅演示数据使用公开静态图，真实用户上传仍 MUST 使用 `wardrobe-images` 私有 bucket 与签名 URL。
 - SDD-004 固定识别样本位于 `public/test-wardrobe/`，期望值在 `specs/004-ai-item-ingestion/test-samples.json`；这些图片只用于测试，不得作为用户真实衣橱数据自动加载。
 
