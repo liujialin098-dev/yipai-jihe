@@ -11,7 +11,7 @@
 ## 项目速览
 
 - `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
-- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `components/`：移动端应用外壳、统一品牌标志、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
 - `lib/wardrobe/`：衣物常量、校验、查询、衣橱组成判断、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
@@ -22,8 +22,9 @@
 - `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-019.mjs`：双匿名会话、幂等、固定样本、每日推荐、日记与利用率、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异、自然化排版、首次账号入口、场景一致性、雨天防水、连续入库、手动选城与确认式 IP 城市建议门禁。
 - `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/019-ip-weather-suggestion/` 为已完成并部署阶段。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
+- `public/brand/`：抽象品牌主标、保留设计稿和冷白底 512px App 图标；页面统一通过 `components/brand-mark.tsx` 使用正式 App 图标。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
-- 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用 `.app-page-meta`、`.app-page-title`、`.app-page-lead`、`.app-section-title`、`.app-card-title` 和 `.app-display-number` 六级语义 token；页面标题保持中等字重和自然字距，不得恢复重复蓝色眉题、装饰性前导零、超大计数或宣传式比喻。黑色按钮不得恢复高对比白色扫光。
+- 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；正式 Logo 为两片交叠衣料与系统蓝节点组成的抽象标志，顶部栏、账号入口和站点图标 MUST 复用 `BrandMark`，不得另造衣架、机器人或渐变字母标志。`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用 `.app-page-meta`、`.app-page-title`、`.app-page-lead`、`.app-section-title`、`.app-card-title` 和 `.app-display-number` 六级语义 token；页面标题保持中等字重和自然字距，不得恢复重复蓝色眉题、装饰性前导零、超大计数或宣传式比喻。黑色按钮不得恢复高对比白色扫光。
 
 ## 注意事项
 
@@ -56,7 +57,7 @@
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
-- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-08-28 最新部署 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi` 已 `READY`，对应部署源 Git 提交 `9f5ebec`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY` 或 `VERCEL_OIDC_TOKEN`。经用户明确同意，项目级 SSO 已关闭；首页、登录、衣橱、添加、推荐、收藏、设置、日记与手工记录页面公网均返回 200，首次账号入口、显式体验身份、28 件演示衣橱、武汉男装偏好、四场景一致性、雨天防水组合、连续入库、手动选城、确认式 IP 城市建议、穿搭日记、基础利用率报告及自然化排版均已上线。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
+- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-08-28 最新部署 `dpl_GWYzhLiwS2FNNQMuVjWjpyAkT8C3` 已 `READY`，对应部署源 Git 提交 `1e65360`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`，不得配置 `SECRET_KEY` 或 `VERCEL_OIDC_TOKEN`。经用户明确同意，项目级 SSO 已关闭；首页、登录、衣橱、添加、推荐、收藏、设置、日记与手工记录页面公网均返回 200，首次账号入口、显式体验身份、28 件演示衣橱、武汉男装偏好、四场景一致性、雨天防水组合、连续入库、手动选城、确认式 IP 城市建议、穿搭日记、基础利用率报告、演示入口收敛、自然化排版及抽象品牌 Logo 均已上线。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
 - Vercel Production 发布流程：先运行 `npx vercel link --yes --project yipai-jihe --scope jialin-d583`、`npx vercel project inspect yipai-jihe --scope jialin-d583` 与 `npx vercel env ls production --scope jialin-d583`，确认链接项目正确、框架预设为 Next.js 且变量名称齐全；再运行 `npm run check`、`npm run build`，最后执行 `npx vercel deploy --prod --yes --scope jialin-d583`。发布后使用 `npx vercel inspect <deployment-url> --scope jialin-d583` 核对 `target=production`、`status=Ready` 和固定别名，并检查核心页面 HTTP 状态及 `npx vercel logs <deployment-id> --level error --since 30m --scope jialin-d583`；不得把密钥放进命令参数、日志或仓库。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -78,7 +79,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记与基础利用率报告已于 2026-08-28 通过本地、Supabase 双账号隔离和 390px Production 浏览器验收。演示衣橱入口收敛已在提交 `0838ef0` 完成本地实现，尚待下一次 Production 发布；当前 `yipai-jihe` Production 仍为 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记、基础利用率报告、演示衣橱入口收敛与抽象品牌 Logo 已于 2026-08-28 上线。当前 `yipai-jihe` Production 为 `dpl_GWYzhLiwS2FNNQMuVjWjpyAkT8C3`，对应部署源提交 `1e65360`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

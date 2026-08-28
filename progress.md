@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记与基础利用率报告已上线 `yipai-jihe` Production。2026-08-28 已在本地完成演示衣橱入口收敛，尚待下一次 Production 发布。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记、基础利用率报告、演示衣橱入口收敛和抽象品牌 Logo 均已上线 `yipai-jihe` Production。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -322,6 +322,7 @@
 - [x] 2026-08-27 Production：将 SDD-016 完整提交 `9f13798` 更新部署为 `dpl_Cd3RCLVjoJkRqPgWTeBiTxUgXxww`；固定域名继续为 `https://yipai-jihe.vercel.app`，首页、登录、衣橱、添加、推荐、收藏和设置均返回 200，最近 30 分钟无 error 日志。
 - [x] 2026-08-27 Production：将包含 SDD-017 的提交 `d6860a4` 更新部署为 `dpl_CbxB5MKuTX4FSggKiAcBfsnP1L5M`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`，七个核心页面均返回 200，最近 30 分钟无 error 日志。
 - [x] 2026-08-27 Production：将包含 SDD-018 与 SDD-019 的提交 `99cc24e` 更新部署为 `dpl_aNTXkogETtNb5wk268tzVE1ueYCD`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`。390px 体验身份、推荐页手动保存武汉和七个核心页面 200 均通过，最近 30 分钟无 error 日志。
+- [x] 2026-08-28 Production：将演示入口收敛提交 `0838ef0` 与抽象品牌 Logo 提交 `1e65360` 更新部署为 `dpl_GWYzhLiwS2FNNQMuVjWjpyAkT8C3`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`。首页、登录、衣橱、添加、推荐、收藏、设置、日记和手工记录 9 个页面及品牌图标均返回 200，最近 30 分钟无 error 日志。
 
 ## P1 扩展 SDD
 
@@ -555,6 +556,16 @@
 - Production：`https://yipai-jihe.vercel.app`（部署 `dpl_E2tN22pa8wsEqr2GGWKuUvgs6WPm`，`READY`，`target=production`）。
 - 提交记录：`51c3bf7`（自然化排版、核心文案、静态门禁与完整 SDD）；本条发布记录由后续文档提交补充。
 
+品牌标识后续优化（2026-08-28）：
+
+- [x] 采用用户确认的抽象 v2 标志：以两片交叠衣料和一个系统蓝节点表达“衣物、组合与智能决策”，避免直接使用衣架、字母或机器人图形。
+- [x] 保留透明主标与第一版设计稿，并派生冷白底 512px App 图标；正式资产位于 `public/brand/`。
+- [x] 新增统一 `BrandMark` 组件，接入首次登录/注册入口、独立登录页、已登录顶部栏和 Next.js 站点/Apple 图标元数据。
+- [x] 品牌动效限制为轻微景深缩放，并支持 `prefers-reduced-motion`；未恢复高对比扫光或统一弹跳。
+- [x] `npm run check`、`npm run build`、`npm run verify:sdd-007`、`npm run verify:sdd-015` 和 `npm run verify:sdd-016` 全部通过；390px 已登录首页与无会话入口均无水平溢出或控制台 error。
+- [x] Production 部署 `dpl_GWYzhLiwS2FNNQMuVjWjpyAkT8C3` 为 `READY`、`target=production`，固定域名与品牌图标正常返回 200，最近 30 分钟无 error 日志。
+- 提交记录：`1e65360`（抽象品牌 Logo、App 图标、统一组件、页面接入和发布静态门禁）。
+
 ### SDD-016：首次账号入口
 
 - 状态：已完成（2026-08-27）
@@ -741,7 +752,7 @@
 - 下一步：历史账号设密仍等待用户本人集中调试；日记照片、提醒、分享、AI 长报告和偏好加权继续按独立 SDD 评估。
 - 提交记录：`9f5ebec`（穿搭日记、基础利用率报告、数据库迁移和验收门禁）。
 - Production：`https://yipai-jihe.vercel.app`（部署 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi`，`READY`，`target=production`，对应部署源提交 `9f5ebec`；9 个核心/新增页面均为 200，最近 30 分钟无 error 日志）。
-- 后续优化记录（2026-08-28）：提交 `0838ef0` 完成演示入口按体验身份、真实衣物和完整度显隐，并在 Server Action 内重新鉴权防绕过；当前仅完成本地实现和浏览器验收，Production 仍保持上述部署，待用户要求“更新部署”时发布。
+- 后续优化记录（2026-08-28）：提交 `0838ef0` 完成演示入口按体验身份、真实衣物和完整度显隐，并在 Server Action 内重新鉴权防绕过；已随品牌提交 `1e65360` 发布到 Production 部署 `dpl_GWYzhLiwS2FNNQMuVjWjpyAkT8C3`。
 
 ### SDD-010：留存与分享能力
 

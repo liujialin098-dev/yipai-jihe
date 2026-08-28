@@ -26,6 +26,12 @@
 - [x] T013 在 390px 验收核心页面的换行、溢出和层级
 - [x] T014 更新 `progress.md`、`AGENTS.md`，提交并发布 Production
 
+## Phase 5: Brand Follow-up
+
+- [x] T015 整理确认的抽象 v2 Logo、保留稿与冷白底 512px App 图标
+- [x] T016 通过统一 `BrandMark` 接入账号入口、独立登录页、顶部栏和 Next.js 图标元数据
+- [x] T017 回归静态门禁与 390px 页面，更新文档并发布 Production
+
 ## Dependencies
 
-- T004-T010 依赖 T002；T012-T013 依赖全部实现任务；T014 依赖所有验收通过。
+- T004-T010 依赖 T002；T012-T013 依赖全部实现任务；T014 依赖所有验收通过；T016 依赖 T015，T017 依赖 T016。
