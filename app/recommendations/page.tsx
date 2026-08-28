@@ -196,6 +196,7 @@ export default async function RecommendationsPage({
                   }).map((candidate) => candidate.id),
                 ]),
               )}
+              canRecordToday={targetDay === "today"}
             />
           ))}
           <div className="flex items-start gap-3 rounded-[1.35rem] bg-[var(--surface-soft)] px-4 py-3.5 text-xs leading-5 text-[var(--text-secondary)]">

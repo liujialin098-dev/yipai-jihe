@@ -10,16 +10,17 @@
 
 ## 项目速览
 
-- `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
-- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
+- `components/`：移动端应用外壳、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
 - `lib/wardrobe/`：衣物常量、校验、查询、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
 - `lib/personalization/`：账号衣着偏好、衣物归属和共享可逆过滤规则。
 - `lib/recommendations/`：账号城市与 Vercel IP 城市建议解析、账号隔离的临时城市会话、有效位置选择、真实今日/明日天气快照、四场景共享画像与异场景硬边界、雨天防水角色、严格推荐契约、OpenAI 生成、差异化规则降级、归属与搭配结构校验，以及目标日期批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-019.mjs`：双匿名会话、幂等、固定样本、每日推荐、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异、自然化排版、首次账号入口、场景一致性、雨天防水、连续入库、手动选城与确认式 IP 城市建议门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/011-global-motion/` 至 `specs/019-ip-weather-suggestion/` 为已完成并部署阶段。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
+- `lib/diary/`：日记输入校验、账号日期/月度读取、推荐/手工快照解析和 30/90/全部范围的即时利用率聚合。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-019.mjs`：双匿名会话、幂等、固定样本、每日推荐、日记与利用率、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异、自然化排版、首次账号入口、场景一致性、雨天防水、连续入库、手动选城与确认式 IP 城市建议门禁。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/019-ip-weather-suggestion/` 为已完成阶段；其中 SDD-009 尚未部署，其余所列阶段已发布。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
 - 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用 `.app-page-meta`、`.app-page-title`、`.app-page-lead`、`.app-section-title`、`.app-card-title` 和 `.app-display-number` 六级语义 token；页面标题保持中等字重和自然字距，不得恢复重复蓝色眉题、装饰性前导零、超大计数或宣传式比喻。黑色按钮不得恢复高对比白色扫光。
@@ -50,6 +51,7 @@
 - SDD-004 入库底座为 `public.wardrobe_ingestions`：每张原图使用稳定请求 id、私有路径、处理状态与最长 24 小时有效期；`wardrobe_items.source_ingestion_id` 保证确认重试只创建一件衣物。表启用四类用户所有权 RLS，`anon` 无表权限。
 - SDD-005 推荐底座为 `public.daily_recommendations`：每名用户每天最多一个批次，`outfits` 必须恰好 3 套，AI 来源必须记录模型；表启用四类用户所有权 RLS，`authenticated` 具有 CRUD，`anon` 无表权限。推荐结果 MUST 只引用当前用户活跃衣物，跨套不重复，且不得在同一套中混用连衣裙与上衣裤装。
 - SDD-006 反馈底座为 `public.wardrobe_item_favorites`、`public.outfit_favorites` 和 `public.preference_feedback_events`；收藏使用唯一键幂等，整套收藏保存不可变 JSON 快照，反馈事件通过唯一 `event_key` 去重，三表均启用当前用户所有权 RLS。`user_preferences.style_scores` 必须由事件账本重算，不得让客户端直接写任意分数。
+- SDD-009 日记底座为 `public.outfit_diary_entries`：每名用户每个自然日唯一，记录来源、场合、1～8 个当前用户活跃衣物 ID 与不可变文字快照；数据库触发器拒绝重复衣物和跨用户/已归档衣物引用，表启用四类当前用户所有权 RLS，`authenticated` 具有 CRUD，`anon` 无表权限。利用率从日记与当前可见日常衣橱即时计算，不单独持久化；未来日期不得写入，明日推荐不得提前计数。
 - SDD-012 在 `public.user_preferences` 保存账号级 `clothing_preference` 与完整城市位置五元组，在 `public.wardrobe_items.audience` 保存男装/女装/中性归属。衣着过滤 MUST 可逆且不得删除记录；衣橱、首页预览和推荐候选 MUST 使用同一共享规则。
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
@@ -62,6 +64,7 @@
 - SDD-005 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-005`；最后一项创建两组非敏感匿名测试衣橱，验证三套契约、同日三次覆盖为一行和跨用户 RLS 后自动清理。390px 浏览器必须另测至少两种场合/天气组合与规则降级。
 - SDD-006 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-006`；最后一项创建两组匿名测试衣物，验证单品/整套收藏和反馈幂等、跨用户读取/写入拒绝后自动清理。390px 浏览器必须另测合法替换持久化、无候选说明、收藏页和 3 题问卷来源说明。
 - SDD-007 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-007`；最后一项为无网络静态门禁，核对 7 个核心页面、演示/测试素材、迁移、npm 脚本、README、环境模板和客户端密钥边界。远端隔离继续复跑 SDD-001、003、005、006；真实 AI 识别仅在模型、提示词或识别代码变化时复跑以避免无意义付费。
+- SDD-009 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-009`，并回归 `npm run verify:sdd-007`、`npm run verify:sdd-012`、`npm run verify:sdd-015` 与 `npm run verify:sdd-016`；独立门禁覆盖固定利用率聚合、未来日期、同日 upsert、编辑删除、双账号 RLS、跨账号衣物拒绝和页面静态边界。390px 浏览器另验收日记、报告、手工记录与今日推荐入口无溢出、无残留遮罩和无控制台 error。
 - SDD-012 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-012`；最后一项创建武汉男装与上海女装两组隔离账号，验证字段约束、跨用户 RLS、过滤不删除和按钮扫光静态边界。浏览器另验收账号摘要、当前 24 件男装/中性演示视图及武汉实时天气。
 - SDD-013 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-013`；最后一项读取武汉真实两日天气、精确匹配明日日期，验证代码无模拟降级，并用匿名会话确认今天/明天分别保存且同日刷新不覆盖另一日期。390px 浏览器另验收日期切换、真实来源和无水平溢出。
 - SDD-014 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-014`，并回归 `npm run verify:sdd-005`、`npm run verify:sdd-012` 与 `npm run verify:sdd-013`；独立门禁覆盖四场景 12 套、两个场景信号、正式雷区、六组核心单品重合度、当前 24 件男装/中性演示候选、冷热天气和最小衣橱边界。
@@ -75,7 +78,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 已完成并部署；SDD-018 与 SDD-019 已通过本地、Supabase 隔离、真实天气与 390px Production 浏览器验收，当前 `yipai-jihe` Production 已上线至 SDD-019。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 已完成并部署；P1 的 SDD-009 穿搭日记与基础利用率报告已于 2026-08-28 完成本地、Supabase 双账号隔离和 390px 浏览器验收，但尚未部署，当前 `yipai-jihe` Production 仍停留在 SDD-019。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -83,7 +86,7 @@
 - 部署节奏 MUST 遵循 `progress.md`：基础设施阶段完成后验证 Preview，推荐阶段完成后验证核心体验，全部 P0 完成后再发布受控评审链接。
 - 阶段未通过独立验收或 `npm run check` 时，不得在 `progress.md` 中标记为“已完成”，也不得开始依赖该阶段的后续阶段。
 - 每个阶段的实现范围 MUST 以对应 SDD 为准；不得为了 P1/P2 需求提前引入当前 MVP 不需要的复杂抽象。
-- 当前 P0 使用原图卡片，不执行自动抠图和穿搭日记；自动抠图与穿搭日记均移至 P1。P1 抠图 MUST 经过服务端 `cutoutService` 调用外部 API，密钥只能通过环境变量提供，失败不得阻塞原图入库。
+- 当前仍使用原图卡片，不执行自动抠图；P1 的基础穿搭日记与利用率已由 SDD-009 完成，照片上传、提醒、分享、AI 长报告和日记偏好加权不在该阶段。P1 抠图 MUST 经过服务端 `cutoutService` 调用外部 API，密钥只能通过环境变量提供，失败不得阻塞原图入库。
 - SDD-002 已实现邮箱和密码一次提交的原地注册、直接登录、退出和跨设备恢复，但在用户完成真实账号验收前保持“验收中”，且仍不得作为 SDD-003 至 SDD-007 的依赖。匿名用户必须明确知道清除站点数据或换设备后无法恢复未注册身份；注册流程 MUST 保持同一 `auth_user_id` 和原匿名数据。登录与旧认证回调页面 MUST 跳过自动匿名初始化，只有用户主动选择时才创建新匿名身份。
 - SDD-016 起首次访问不得自动创建匿名身份。无会话首页 MUST 先展示完整账号入口；新用户可直接邮箱密码注册，已有用户可登录，体验身份只允许由明确按钮触发。无会话深链接必须返回 `/`，不得在跳转前展示顶部状态或底部导航；已有会话继续进入原应用。
 - SDD-002 不再发送注册确认或密码设置邮件。历史遗留的已绑定无密码账号只允许在本机运行 `npm run account:set-password-local`，通过 `.env.local` 的 `SECRET_KEY` 和 `auth.admin.updateUserById` 一次性设密；不得把该能力做成 Route Handler、Server Action 或 Vercel 环境能力。常规忘记密码仍不在当前范围。

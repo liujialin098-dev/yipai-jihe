@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  CalendarDays,
   Images,
   LogIn,
   Search,
@@ -10,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AuthEntryGateway } from "@/components/auth/auth-entry-gateway";
 import { getViewer } from "@/lib/auth/viewer";
+import { getTodayDiarySummary } from "@/lib/diary/data";
 import { getWardrobeCount, getWardrobePreview } from "@/lib/wardrobe/data";
 
 const entryFeedback = {
@@ -33,9 +35,10 @@ export default async function Home({
     return <AuthEntryGateway feedback={feedback} />;
   }
 
-  const [itemCount, previewItems] = await Promise.all([
+  const [itemCount, previewItems, diarySummary] = await Promise.all([
     getWardrobeCount(),
     getWardrobePreview(3),
+    getTodayDiarySummary(),
   ]);
   const hasItems = itemCount > 0;
 
@@ -109,7 +112,34 @@ export default async function Home({
         </div>
       </Link>
 
-      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
+      <Link
+        href="/diary"
+        className="surface-card pressable stagger-item mt-5 flex items-center gap-4 rounded-[1.55rem] p-4.5 [--stagger:1]"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
+          <CalendarDays
+            className="size-4.5"
+            strokeWidth={1.7}
+            aria-hidden="true"
+          />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">
+            {diarySummary?.entry ? "今天已经记录" : "记录今天的穿搭"}
+          </h2>
+          <p className="mt-1 truncate text-xs text-[var(--text-secondary)]">
+            {diarySummary?.entry
+              ? `${diarySummary.entry.title} · ${diarySummary.entry.item_ids.length} 件衣物`
+              : "从推荐一键记入，或自己选择实际穿过的衣物"}
+          </p>
+        </div>
+        <ArrowRight
+          className="size-4 shrink-0 text-[var(--text-tertiary)]"
+          aria-hidden="true"
+        />
+      </Link>
+
+      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:2]">
         <h2 className="app-section-title">登录后可跨设备使用</h2>
         <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">
           {viewer && !viewer.isAnonymous

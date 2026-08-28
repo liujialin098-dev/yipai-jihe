@@ -8,7 +8,7 @@ export type Json =
 
 export type Database = {
   __InternalSupabase: {
-    PostgrestVersion: "14.15";
+    PostgrestVersion: "14.17";
   };
   public: {
     Tables: {
@@ -51,6 +51,54 @@ export type Database = {
           updated_at?: string;
           user_id?: string;
           weather?: Json;
+        };
+        Relationships: [];
+      };
+      outfit_diary_entries: {
+        Row: {
+          created_at: string;
+          id: string;
+          item_ids: string[];
+          note: string;
+          occasion: string;
+          outfit_snapshot: Json;
+          source: string;
+          source_outfit_slot: number | null;
+          source_recommendation_id: string | null;
+          title: string;
+          updated_at: string;
+          user_id: string;
+          worn_on: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          item_ids: string[];
+          note?: string;
+          occasion: string;
+          outfit_snapshot: Json;
+          source: string;
+          source_outfit_slot?: number | null;
+          source_recommendation_id?: string | null;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+          worn_on: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          item_ids?: string[];
+          note?: string;
+          occasion?: string;
+          outfit_snapshot?: Json;
+          source?: string;
+          source_outfit_slot?: number | null;
+          source_recommendation_id?: string | null;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+          worn_on?: string;
         };
         Relationships: [];
       };

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { RecommendationDiaryButton } from "@/components/diary/recommendation-diary-button";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { ReplaceItemPanel } from "@/components/recommendations/replace-item-panel";
 import type { RecommendationOutfit } from "@/lib/recommendations/constants";
@@ -21,6 +22,7 @@ export function RecommendationCard({
   itemFavoriteIds,
   isOutfitFavorite,
   candidateItemsByCurrentId,
+  canRecordToday,
 }: {
   index: number;
   outfit: RecommendationOutfit;
@@ -30,6 +32,7 @@ export function RecommendationCard({
   itemFavoriteIds: string[];
   isOutfitFavorite: boolean;
   candidateItemsByCurrentId: Record<string, string[]>;
+  canRecordToday: boolean;
 }) {
   const itemMap = new Map(items.map((item) => [item.id, item]));
   const outfitItems = outfit.itemIds.flatMap((id) => {
@@ -107,6 +110,18 @@ export function RecommendationCard({
         <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
           {outfit.reason}
         </p>
+        <div className="mt-4 border-t border-[var(--hairline)] pt-4">
+          {canRecordToday ? (
+            <RecommendationDiaryButton
+              recommendationId={recommendationId}
+              slot={outfit.slot}
+            />
+          ) : (
+            <p className="rounded-[1rem] bg-[var(--surface-soft)] px-4 py-3 text-xs leading-5 text-[var(--text-secondary)]">
+              明日方案先作为参考，实际穿过后再记入日记和利用率。
+            </p>
+          )}
+        </div>
         <div className="mt-4 flex flex-wrap gap-2 border-t border-[var(--hairline)] pt-4">
           {outfit.styleTags.map((tag) => (
             <span

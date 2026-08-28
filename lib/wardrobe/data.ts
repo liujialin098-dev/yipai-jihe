@@ -209,3 +209,26 @@ export async function getWardrobePreview(limit = 3) {
     toWardrobeItem(item, urls.get(item.image_path) ?? null),
   );
 }
+
+export async function getWardrobeItemsByIds(ids: string[]) {
+  const uniqueIds = [...new Set(ids)];
+  if (uniqueIds.length === 0) return [] as WardrobeItem[];
+
+  const viewer = await getViewer();
+  if (!viewer) return [] as WardrobeItem[];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("wardrobe_items")
+    .select(ITEM_COLUMNS)
+    .eq("user_id", viewer.userId)
+    .in("id", uniqueIds)
+    .limit(200);
+
+  if (error || !data) return [] as WardrobeItem[];
+
+  const urls = await signedUrlMap(supabase, privateImagePaths(data));
+  return data.map((item) =>
+    toWardrobeItem(item, urls.get(item.image_path) ?? null),
+  );
+}

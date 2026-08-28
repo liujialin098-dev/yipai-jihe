@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Home, Plus, Shirt, Sparkles } from "lucide-react";
+import { CalendarDays, Home, Plus, Shirt, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,7 +14,7 @@ const items = [
     label: "推荐",
     primary: false,
   },
-  { href: "/favorites", icon: Heart, label: "收藏", primary: false },
+  { href: "/diary", icon: CalendarDays, label: "记录", primary: false },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
