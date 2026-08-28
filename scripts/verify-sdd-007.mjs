@@ -30,6 +30,9 @@ const requiredPaths = [
   "app/favorites/page.tsx",
   "app/settings/page.tsx",
   "app/settings/preferences/page.tsx",
+  "components/brand-mark.tsx",
+  "public/brand/yipai-jihe-logo-mark-v2.png",
+  "public/brand/yipai-jihe-app-icon-v1.png",
   "README.md",
   ".env.example",
   "progress.md",
@@ -109,6 +112,9 @@ const homePage = read("app/page.tsx");
 const wardrobePage = read("app/wardrobe/page.tsx");
 const wardrobeActions = read("app/wardrobe/actions.ts");
 const demoLoader = read("components/wardrobe/demo-loader.tsx");
+const layout = read("app/layout.tsx");
+const statusHeader = read("components/status-header.tsx");
+const authGateway = read("components/auth/auth-entry-gateway.tsx");
 check(
   !homePage.includes("加载 24 件") &&
     !demoLoader.includes("检查并补齐演示数据"),
@@ -129,6 +135,12 @@ check(
 check(
   demoLoader.includes("继续加载演示衣橱"),
   "演示衣橱缺少部分失败后的继续加载入口",
+);
+check(
+  layout.includes("/brand/yipai-jihe-app-icon-v1.png") &&
+    statusHeader.includes("<BrandMark") &&
+    authGateway.includes("<BrandMark"),
+  "确认的品牌标志尚未完整接入站点图标、顶部栏和账号入口",
 );
 
 const demoImages = filesUnder("public/demo-wardrobe").filter(

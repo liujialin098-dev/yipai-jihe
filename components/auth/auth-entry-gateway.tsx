@@ -7,6 +7,7 @@ import {
   AnonymousExperienceForm,
   LoginForm,
 } from "@/components/auth/login-form";
+import { BrandMark } from "@/components/brand-mark";
 
 type EntryMode = "login" | "register";
 
@@ -16,9 +17,7 @@ export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
   return (
     <div className="auth-entry-page page-enter min-h-dvh px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
       <header className="flex items-center gap-3">
-        <span className="liquid-glass-web flex size-11 items-center justify-center rounded-[1rem] text-[var(--foreground)]">
-          <Shirt className="size-5" strokeWidth={1.7} aria-hidden="true" />
-        </span>
+        <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
         <div>
           <p className="font-heading text-lg leading-none font-semibold tracking-[-0.02em]">
             衣拍即合

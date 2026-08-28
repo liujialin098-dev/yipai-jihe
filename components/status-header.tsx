@@ -3,6 +3,7 @@
 import { Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandMark } from "@/components/brand-mark";
 import type { Viewer } from "@/lib/auth/viewer";
 
 export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
@@ -11,6 +12,10 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
   return (
     <header className="sticky top-0 z-30 flex min-h-18 items-center justify-between bg-[color-mix(in_srgb,var(--background)_78%,transparent)] px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur-2xl">
       <Link href="/" className="group flex items-center gap-3">
+        <BrandMark
+          className="size-10 rounded-[0.85rem] shadow-[0_8px_22px_rgba(29,29,31,0.1)]"
+          sizes="40px"
+        />
         <span>
           <span className="block font-heading text-[1.25rem] leading-none font-semibold tracking-[-0.02em] text-[var(--foreground)]">
             衣拍即合

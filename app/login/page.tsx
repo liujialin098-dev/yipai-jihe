@@ -3,6 +3,7 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
+import { BrandMark } from "@/components/brand-mark";
 import { getViewer } from "@/lib/auth/viewer";
 
 export const metadata: Metadata = { title: "账号登录" };
@@ -37,6 +38,19 @@ export default async function LoginPage({
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
         </Link>
+      ) : null}
+      {!viewer ? (
+        <div className="mb-10 flex items-center gap-3">
+          <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
+          <div>
+            <p className="font-heading text-lg leading-none font-semibold tracking-[-0.02em]">
+              衣拍即合
+            </p>
+            <p className="mt-1.5 text-[0.68rem] font-medium text-[var(--text-tertiary)]">
+              你的私人穿搭助手
+            </p>
+          </div>
+        </div>
       ) : null}
       <h1 className={`${viewer?.isAnonymous ? "mt-5 " : ""}app-page-title`}>
         登录衣拍即合

@@ -9,6 +9,22 @@ export const metadata: Metadata = {
     template: "%s · 衣拍即合",
   },
   description: "先认识你的衣橱，再给出真正穿得上的搭配建议。",
+  icons: {
+    icon: [
+      {
+        url: "/brand/yipai-jihe-app-icon-v1.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
+    ],
+    apple: [
+      {
+        url: "/brand/yipai-jihe-app-icon-v1.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
