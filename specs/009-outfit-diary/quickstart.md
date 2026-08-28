@@ -59,4 +59,4 @@ npm run verify:sdd-009
 - `npm run verify:sdd-007`、`npm run verify:sdd-012`、`npm run verify:sdd-015` 与 `npm run verify:sdd-016` 全部回归通过。
 - 390px 本地浏览器验收日记、30 天报告、手工记录和今日推荐入口均无水平溢出、无残留加载遮罩、无控制台 error；明日推荐保持只读，不提供提前记入按钮。
 - 当前 Windows 环境缺少可用的 Supabase CLI 二进制，因此本地迁移文件由仓库维护，并通过官方 Supabase 迁移接口应用；生成类型与远端结构已复核一致。
-- 本阶段未部署；当前 Production 仍停留在 SDD-019，等待用户明确要求“更新部署”。
+- 2026-08-28 已按用户明确要求发布 Production：`https://yipai-jihe.vercel.app`，部署 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi` 为 `READY`、`target=production`，对应功能提交 `9f5ebec`。9 个核心/新增路由均返回 200，390px 日记页无水平溢出或错误覆盖层，最近 30 分钟无 error 日志。

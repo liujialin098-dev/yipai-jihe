@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 已完成并部署；P1 的 SDD-009 穿搭日记与基础利用率报告已完成本地、Supabase 和 390px 验收，尚未部署。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-019 与 P1 的 SDD-009 已完成并部署；穿搭日记与基础利用率报告已上线 `yipai-jihe` Production。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -728,15 +728,17 @@
 - [x] `npm run verify:sdd-007`、`npm run verify:sdd-012`、`npm run verify:sdd-015` 与 `npm run verify:sdd-016` 回归通过。
 - [x] 双账号真实 Supabase 验收：会话 A `DD6646A6` 同日三次保存仍为一行并通过编辑/删除；会话 B `365E40EB` 的记录和衣物对 A 均不可读写。
 - [x] 390px 本地浏览器验收 `/diary`、`/diary?view=report&range=30`、`/diary/new` 和今日推荐入口：无水平溢出、无加载遮罩残留、无控制台 error。
+- [x] 2026-08-28 Production 验收：首页、登录、衣橱、添加、推荐、收藏、设置、日记和手工记录 9 个路由均返回 200；390px 日记页内容完整、无水平溢出和错误覆盖层，最近 30 分钟无 error 日志。
 
 阶段完成记录：
 
-- 状态：已完成，尚未部署。
+- 状态：已完成并部署。
 - 完成日期：2026-08-28。
 - 验收结果：推荐与手工写入、同日覆盖、按月回顾、编辑删除、三种统计范围、双账号 RLS 和数据库衣物归属约束均通过；远端迁移版本为 `20260828022542`（`outfit_diary`）。
 - 已知限制：不记录穿搭照片，不把日记写入推荐偏好，不提供提醒、分享、成本/次或 AI 趋势解读；利用率分母以当前账号可见的日常衣橱为准。
-- 下一步：用户明确要求“更新部署”时再发布 `yipai-jihe` Production；历史账号设密仍等待用户本人集中调试。
-- 提交记录：见本阶段功能提交（穿搭日记、基础利用率报告、数据库迁移和验收门禁）。
+- 下一步：历史账号设密仍等待用户本人集中调试；日记照片、提醒、分享、AI 长报告和偏好加权继续按独立 SDD 评估。
+- 提交记录：`9f5ebec`（穿搭日记、基础利用率报告、数据库迁移和验收门禁）。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_3ctaDAjs9dqBEqAQh5LH6sxW7WRi`，`READY`，`target=production`，对应部署源提交 `9f5ebec`；9 个核心/新增页面均为 200，最近 30 分钟无 error 日志）。
 
 ### SDD-010：留存与分享能力
 
