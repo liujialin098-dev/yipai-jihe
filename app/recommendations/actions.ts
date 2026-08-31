@@ -38,6 +38,11 @@ import {
   InsufficientWardrobeError,
 } from "@/lib/recommendations/rules";
 import {
+  isRecommendationStyleFocus,
+  resolveStyleDirections,
+  styleSupportsOccasion,
+} from "@/lib/recommendations/style-direction";
+import {
   getWeatherSnapshot,
   RealWeatherUnavailableError,
 } from "@/lib/recommendations/weather";
@@ -240,13 +245,24 @@ export async function generateDailyRecommendations(
 ): Promise<RecommendationActionState> {
   const occasionValue = String(formData.get("occasion") ?? "");
   const targetDayValue = String(formData.get("targetDay") ?? "");
+  const styleFocusValue = String(formData.get("styleFocus") ?? "auto");
   if (
     !isRecommendationOccasion(occasionValue) ||
-    !isRecommendationTargetDay(targetDayValue)
+    !isRecommendationTargetDay(targetDayValue) ||
+    !isRecommendationStyleFocus(styleFocusValue)
   ) {
     return {
       status: "error",
       message: "请选择有效的日期和场合后再生成。",
+    };
+  }
+  if (
+    styleFocusValue !== "auto" &&
+    !styleSupportsOccasion(styleFocusValue, occasionValue)
+  ) {
+    return {
+      status: "error",
+      message: "这个风格与当前场景不够一致，请换一个方向。",
     };
   }
 
@@ -282,6 +298,11 @@ export async function generateDailyRecommendations(
     )
       ? preferencesResult.data.clothing_preference
       : "unrestricted";
+    const styleDirections = resolveStyleDirections({
+      focus: styleFocusValue,
+      occasion: occasionValue,
+      preferredStyles: preferencesResult.data.preferred_styles,
+    });
     const savedLocation = storedWeatherLocation(preferencesResult.data);
     const { effectiveLocation: location } = await getEffectiveWeatherLocation(
       user.id,
@@ -325,6 +346,7 @@ export async function generateDailyRecommendations(
         occasion: occasionValue,
         weather,
         preferredStyles: preferencesResult.data.preferred_styles,
+        styleDirections,
       });
     } catch (error) {
       if (error instanceof InsufficientWardrobeError) {
@@ -348,6 +370,7 @@ export async function generateDailyRecommendations(
         preferredStyles: preferencesResult.data.preferred_styles,
         preferredOccasions: preferencesResult.data.preferred_occasions,
         clothingPreference,
+        styleDirections,
       });
       outfits = aiResult.outfits;
       source = "ai";

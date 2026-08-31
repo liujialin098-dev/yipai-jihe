@@ -40,6 +40,14 @@ export const STYLE_OPTIONS = [
   { value: "elegant", label: "优雅" },
   { value: "sporty", label: "运动" },
   { value: "vintage", label: "复古" },
+  { value: "cleanfit", label: "Clean Fit" },
+  { value: "streetwear", label: "街头" },
+  { value: "cityboy", label: "City Boy" },
+  { value: "gorpcore", label: "Gorpcore" },
+  { value: "preppy", label: "学院" },
+  { value: "workwear", label: "工装" },
+  { value: "oldmoney", label: "老钱" },
+  { value: "y2k", label: "Y2K" },
 ] as const;
 
 export const SEASON_OPTIONS = [
@@ -69,6 +77,10 @@ export type WardrobeStyle = (typeof STYLE_OPTIONS)[number]["value"];
 export type Season = (typeof SEASON_OPTIONS)[number]["value"];
 export type Occasion = (typeof OCCASION_OPTIONS)[number]["value"];
 export type WardrobeStatus = (typeof STATUS_OPTIONS)[number]["value"];
+
+export function isWardrobeStyle(value: string): value is WardrobeStyle {
+  return isOptionValue(STYLE_OPTIONS, value);
+}
 
 type LabeledOption = { value: string; label: string };
 

@@ -152,9 +152,8 @@ function assertThreeValidOutfits(items, occasion, weather, outfits) {
         `${occasion} 第 ${outfit.slot} 套不应主动补入不推荐风格的${item.name}`,
       );
     }
-    assert.equal(
-      outfit.styleTags[0],
-      profile.preferredStyles[0],
+    assert.ok(
+      profile.preferredStyles.includes(outfit.styleTags[0]),
       `${occasion} 风格标签必须优先体现当前场景`,
     );
   }

@@ -33,6 +33,7 @@ export const INITIAL_ACTION_STATE: ActionState = {
 
 export type WardrobeItemInput = {
   audience: WardrobeAudience;
+  brand: string | null;
   name: string;
   category: Category;
   primary_color: WardrobeColor;
@@ -43,8 +44,10 @@ export type WardrobeItemInput = {
 };
 
 export type RecognitionConfidence = "low" | "medium" | "high";
+export type BrandConfidence = RecognitionConfidence | "unknown";
 
 export type WardrobeRecognition = WardrobeItemInput & {
+  brand_confidence: BrandConfidence;
   confidence: RecognitionConfidence;
   note: string;
 };
@@ -111,6 +114,7 @@ export function validateWardrobeItemForm(
   | { success: true; data: WardrobeItemInput }
   | { success: false; fieldErrors: Record<string, string[]> } {
   const name = stringValue(formData, "name").trim();
+  const brand = stringValue(formData, "brand").trim();
   const audience = stringValue(formData, "audience");
   const category = stringValue(formData, "category");
   const primaryColor = stringValue(formData, "primary_color");
@@ -124,6 +128,10 @@ export function validateWardrobeItemForm(
     fieldErrors.name = ["请填写衣物名称"];
   } else if (name.length > 60) {
     fieldErrors.name = ["名称最多 60 个字符"];
+  }
+
+  if (brand.length > 40) {
+    fieldErrors.brand = ["品牌最多 40 个字符"];
   }
 
   if (!isWardrobeAudience(audience)) {
@@ -163,6 +171,7 @@ export function validateWardrobeItemForm(
     success: true,
     data: {
       audience: audience as WardrobeAudience,
+      brand: brand || null,
       name,
       category: category as Category,
       primary_color: primaryColor as WardrobeColor,
@@ -186,6 +195,7 @@ export function validateWardrobeItemJson(
   const formData = new FormData();
   for (const key of [
     "name",
+    "brand",
     "audience",
     "category",
     "primary_color",
@@ -210,11 +220,16 @@ export function validateRecognitionResult(
   if (!isRecord(input)) return { success: false };
   const wardrobe = validateWardrobeItemJson(input);
   const confidence = input.confidence;
+  const brandConfidence = input.brand_confidence;
   const note = input.note;
 
   if (
     !wardrobe.success ||
     !["low", "medium", "high"].includes(String(confidence)) ||
+    !["unknown", "low", "medium", "high"].includes(String(brandConfidence)) ||
+    (brandConfidence === "unknown" &&
+      wardrobe.success &&
+      wardrobe.data.brand) ||
     typeof note !== "string" ||
     note.length > 120
   ) {
@@ -225,6 +240,7 @@ export function validateRecognitionResult(
     success: true,
     data: {
       ...wardrobe.data,
+      brand_confidence: brandConfidence as BrandConfidence,
       confidence: confidence as RecognitionConfidence,
       note,
     },

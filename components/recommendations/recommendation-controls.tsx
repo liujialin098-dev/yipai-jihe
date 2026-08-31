@@ -1,7 +1,12 @@
 "use client";
 
-import { CalendarDays, LoaderCircle, Sparkles } from "lucide-react";
-import { useActionState } from "react";
+import {
+  CalendarDays,
+  LoaderCircle,
+  Sparkles,
+  WandSparkles,
+} from "lucide-react";
+import { useActionState, useState } from "react";
 import { generateDailyRecommendations } from "@/app/recommendations/actions";
 import {
   INITIAL_RECOMMENDATION_ACTION_STATE,
@@ -9,6 +14,12 @@ import {
   type RecommendationOccasion,
   type RecommendationTargetDay,
 } from "@/lib/recommendations/constants";
+import {
+  AUTO_STYLE_FOCUS,
+  OCCASION_STYLE_OPTIONS,
+  type RecommendationStyleFocus,
+} from "@/lib/recommendations/style-direction";
+import { STYLE_OPTIONS, optionLabel } from "@/lib/wardrobe/constants";
 
 export function RecommendationControls({
   defaultOccasion,
@@ -23,6 +34,9 @@ export function RecommendationControls({
     generateDailyRecommendations,
     INITIAL_RECOMMENDATION_ACTION_STATE,
   );
+  const [occasion, setOccasion] = useState(defaultOccasion);
+  const [styleFocus, setStyleFocus] =
+    useState<RecommendationStyleFocus>(AUTO_STYLE_FOCUS);
 
   return (
     <form action={action} className="surface-card rounded-[1.65rem] p-4.5">
@@ -38,7 +52,16 @@ export function RecommendationControls({
                 type="radio"
                 name="occasion"
                 value={option.value}
-                defaultChecked={option.value === defaultOccasion}
+                checked={option.value === occasion}
+                onChange={() => {
+                  setOccasion(option.value);
+                  if (
+                    styleFocus !== AUTO_STYLE_FOCUS &&
+                    !OCCASION_STYLE_OPTIONS[option.value].includes(styleFocus)
+                  ) {
+                    setStyleFocus(AUTO_STYLE_FOCUS);
+                  }
+                }}
                 className="peer sr-only"
               />
               <span className="motion-button flex min-h-10 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-2 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[#1d1d1f] peer-checked:bg-[#1d1d1f] peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--system-blue)]">
@@ -48,6 +71,36 @@ export function RecommendationControls({
           ))}
         </div>
       </fieldset>
+
+      <label className="mt-4 grid gap-2 text-xs font-semibold text-[var(--text-secondary)]">
+        <span className="flex items-center gap-2">
+          <WandSparkles
+            className="size-4 text-[var(--system-blue)]"
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
+          想要什么风格
+        </span>
+        <select
+          name="styleFocus"
+          value={styleFocus}
+          disabled={pending}
+          onChange={(event) =>
+            setStyleFocus(event.target.value as RecommendationStyleFocus)
+          }
+          className="field-control min-h-12 rounded-[1rem]"
+        >
+          <option value={AUTO_STYLE_FOCUS}>自动搭配 · 三套尽量不同</option>
+          {OCCASION_STYLE_OPTIONS[occasion].map((style) => (
+            <option key={style} value={style}>
+              {optionLabel(STYLE_OPTIONS, style)}
+            </option>
+          ))}
+        </select>
+        <span className="font-normal leading-5 text-[var(--text-tertiary)]">
+          单次选择不会覆盖长期偏好，天气和场景边界始终优先。
+        </span>
+      </label>
 
       <div className="mt-4 flex items-center gap-2 rounded-[1.1rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 py-3 text-xs leading-5 text-[var(--text-secondary)]">
         <CalendarDays

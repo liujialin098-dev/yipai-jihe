@@ -17,6 +17,11 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
       type: "string",
       enum: ["male", "female", "unisex"],
     },
+    brand: { type: "string", maxLength: 40 },
+    brand_confidence: {
+      type: "string",
+      enum: ["unknown", "low", "medium", "high"],
+    },
     primary_color: {
       type: "string",
       enum: [
@@ -49,7 +54,22 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
     },
     style: {
       type: "string",
-      enum: ["minimal", "casual", "commute", "elegant", "sporty", "vintage"],
+      enum: [
+        "minimal",
+        "casual",
+        "commute",
+        "elegant",
+        "sporty",
+        "vintage",
+        "cleanfit",
+        "streetwear",
+        "cityboy",
+        "gorpcore",
+        "preppy",
+        "workwear",
+        "oldmoney",
+        "y2k",
+      ],
     },
     seasons: {
       type: "array",
@@ -76,6 +96,8 @@ export const WARDROBE_RECOGNITION_SCHEMA = {
     "name",
     "category",
     "audience",
+    "brand",
+    "brand_confidence",
     "primary_color",
     "material",
     "style",
@@ -115,7 +137,9 @@ const PROMPT = `识别图片中最主要的一件衣物。只按提供的枚举�
 name 使用简洁中文；无法确定材质时选最接近项并把 confidence 设为 low。
 一图多件、真人穿搭或背景复杂时只识别视觉中心的主单品，并在 note 提醒用户核对。
 颜色取面积最大的主色；seasons 和 occasions 至少各选一项。
-audience 表示衣物版型归属：明确男装选 male，明确女装选 female，无法判断或通用款选 unisex。`;
+audience 表示衣物版型归属：明确男装选 male，明确女装选 female，无法判断或通用款选 unisex。
+style 从 14 个风格中选择最主要的一项。Clean Fit 指干净利落的基础款，City Boy 指宽松城市层次，Gorpcore 指户外机能，oldmoney 指克制经典质感。
+品牌必须以图片中清晰可见的文字、商标或标志为证据；不得根据版型、配色或相似设计猜测。没有明确证据时 brand 返回空字符串，brand_confidence 返回 unknown。`;
 
 function outputText(response: OpenAIResponse) {
   if (typeof response.output_text === "string") return response.output_text;

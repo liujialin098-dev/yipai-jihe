@@ -97,6 +97,7 @@ export default async function WardrobeItemPage({
       <section className="surface-card mt-5 rounded-[1.5rem] p-5">
         <h2 className="app-section-title">衣物属性</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
+          <Attribute label="品牌" value={item.brand ?? "未填写"} />
           <Attribute
             label="主色"
             value={optionLabel(COLOR_OPTIONS, item.primary_color)}

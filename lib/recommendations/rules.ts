@@ -19,11 +19,18 @@ import {
   rainProtectionRole,
   type RainProtectionRole,
 } from "@/lib/recommendations/rain-protection";
+import { resolveStyleDirections } from "@/lib/recommendations/style-direction";
 import {
   seasonForTemperature,
   validateRecommendationOutput,
 } from "@/lib/recommendations/validation";
-import type { Category, Season, WardrobeStyle } from "@/lib/wardrobe/constants";
+import {
+  STYLE_OPTIONS,
+  optionLabel,
+  type Category,
+  type Season,
+  type WardrobeStyle,
+} from "@/lib/wardrobe/constants";
 
 export class InsufficientWardrobeError extends Error {
   constructor() {
@@ -37,6 +44,8 @@ type RuleInput = {
   occasion: RecommendationOccasion;
   weather: WeatherSnapshot;
   preferredStyles: string[];
+  styleDirections?: [WardrobeStyle, WardrobeStyle, WardrobeStyle];
+  targetStyle?: WardrobeStyle;
 };
 
 const TITLE_PREFIXES = ["清醒", "从容", "轻松"] as const;
@@ -53,10 +62,12 @@ function itemScore(
   occasion: RecommendationOccasion,
   seasons: Season[],
   preferredStyles: string[],
+  targetStyle?: WardrobeStyle,
 ) {
   let score = occasionProfileScore(item, occasion);
   if (item.seasons.some((season) => seasons.includes(season))) score += 7;
   if (preferredStyles.includes(item.style)) score += 4;
+  if (targetStyle === item.style) score += 6;
   return score;
 }
 
@@ -77,8 +88,20 @@ function sortedCandidates(
     )
     .sort((a, b) => {
       const score =
-        itemScore(b, input.occasion, seasons, input.preferredStyles) -
-        itemScore(a, input.occasion, seasons, input.preferredStyles);
+        itemScore(
+          b,
+          input.occasion,
+          seasons,
+          input.preferredStyles,
+          input.targetStyle,
+        ) -
+        itemScore(
+          a,
+          input.occasion,
+          seasons,
+          input.preferredStyles,
+          input.targetStyle,
+        );
       return score || a.id.localeCompare(b.id);
     });
 }
@@ -266,15 +289,15 @@ function styleTags(
   selected: RecommendationWardrobeItem[],
   preferredStyles: string[],
   occasion: RecommendationOccasion,
+  targetStyle: WardrobeStyle,
 ) {
   const styles = [
+    targetStyle,
     ...getOccasionProfile(occasion).preferredStyles,
     ...selected.map((item) => item.style),
     ...preferredStyles,
   ].filter((style): style is WardrobeStyle =>
-    ["minimal", "casual", "commute", "elegant", "sporty", "vintage"].includes(
-      style,
-    ),
+    STYLE_OPTIONS.some((option) => option.value === style),
   );
   return [...new Set(styles)].slice(0, 3) as WardrobeStyle[];
 }
@@ -296,6 +319,7 @@ function reasonFor(
         slot: 1,
         title: "",
         reason: "",
+        stylingPoint: "",
         styleTags: [],
         itemIds: selected.map((item) => item.id),
       },
@@ -309,6 +333,20 @@ function reasonFor(
   );
 }
 
+function stylingPointFor(
+  selected: RecommendationWardrobeItem[],
+  targetStyle: WardrobeStyle,
+) {
+  const styleLabel = optionLabel(STYLE_OPTIONS, targetStyle);
+  const hasOuterwear = selected.some((item) => item.category === "outerwear");
+  const hasAccessory = selected.some((item) => item.category === "accessories");
+  if (hasOuterwear)
+    return `用外套拉开${styleLabel}层次，内搭与下装保持一明一暗。`;
+  if (hasAccessory)
+    return `把配饰作为${styleLabel}重点，其余单品控制在相邻色。`;
+  return `保持${styleLabel}方向，用上短下长或同色深浅整理比例。`;
+}
+
 export function buildRuleRecommendations(input: RuleInput) {
   if (!enoughForThree(input.items, input)) {
     throw new InsufficientWardrobeError();
@@ -316,6 +354,13 @@ export function buildRuleRecommendations(input: RuleInput) {
 
   const used = new Set<string>();
   const raw: RecommendationOutfit[] = [];
+  const styleDirections =
+    input.styleDirections ??
+    resolveStyleDirections({
+      focus: "auto",
+      occasion: input.occasion,
+      preferredStyles: input.preferredStyles,
+    });
   const shouldBuildRainProtection =
     isRainyWeatherCode(input.weather.weatherCode) &&
     hasCompleteRainProtectionCandidate(
@@ -326,41 +371,43 @@ export function buildRuleRecommendations(input: RuleInput) {
     );
 
   for (let index = 0; index < 3; index += 1) {
+    const targetStyle = styleDirections[index];
+    const outfitInput: RuleInput = { ...input, targetStyle };
     const selected: RecommendationWardrobeItem[] = [];
     const prioritizeRainProtection = shouldBuildRainProtection && index === 0;
-    takeBase(input, used, selected, prioritizeRainProtection);
+    takeBase(outfitInput, used, selected, prioritizeRainProtection);
 
     if (
       !selected.some((item) => item.category === "shoes") &&
       !(prioritizeRainProtection
-        ? takeRainProtection(input, "shoes", used, selected)
-        : take(input, "shoes", used, selected))
+        ? takeRainProtection(outfitInput, "shoes", used, selected)
+        : take(outfitInput, "shoes", used, selected))
     ) {
       throw new InsufficientWardrobeError();
     }
     if (
       prioritizeRainProtection &&
       !selected.some((item) => item.category === "outerwear") &&
-      !takeRainProtection(input, "outerwear", used, selected)
+      !takeRainProtection(outfitInput, "outerwear", used, selected)
     ) {
       throw new InsufficientWardrobeError();
     }
     if (
       input.weather.apparentTemperatureC <= 8 &&
       !selected.some((item) => item.category === "outerwear") &&
-      !take(input, "outerwear", used, selected)
+      !take(outfitInput, "outerwear", used, selected)
     ) {
       throw new InsufficientWardrobeError();
     }
 
-    completeOccasionFit(input, used, selected);
-    completeSeasonAnchor(input, used, selected);
+    completeOccasionFit(outfitInput, used, selected);
+    completeSeasonAnchor(outfitInput, used, selected);
 
     if (
       selected.length < 5 &&
       !selected.some((item) => item.category === "accessories")
     ) {
-      take(input, "accessories", used, selected, false);
+      take(outfitInput, "accessories", used, selected, false);
     }
 
     if (
@@ -369,14 +416,20 @@ export function buildRuleRecommendations(input: RuleInput) {
       selected.length < 5 &&
       !selected.some((item) => item.category === "outerwear")
     ) {
-      take(input, "outerwear", used, selected, false);
+      take(outfitInput, "outerwear", used, selected, false);
     }
 
     raw.push({
       slot: (index + 1) as 1 | 2 | 3,
       title: `${TITLE_PREFIXES[index]}${recommendationOccasionLabel(input.occasion)}`,
       reason: reasonFor(selected, input.occasion, input.weather),
-      styleTags: styleTags(selected, input.preferredStyles, input.occasion),
+      stylingPoint: stylingPointFor(selected, targetStyle),
+      styleTags: styleTags(
+        selected,
+        input.preferredStyles,
+        input.occasion,
+        targetStyle,
+      ),
       itemIds: selected.map((item) => item.id),
     });
   }
@@ -386,6 +439,7 @@ export function buildRuleRecommendations(input: RuleInput) {
     input.items,
     input.occasion,
     input.weather,
+    styleDirections,
   );
   if (!validated) throw new InsufficientWardrobeError();
   return validated;

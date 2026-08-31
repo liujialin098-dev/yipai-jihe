@@ -60,6 +60,7 @@ const CONCURRENCY = 3;
 
 const DEFAULT_FIELDS: WardrobeItemInput = {
   audience: "unisex",
+  brand: null,
   name: "待确认衣物",
   category: "tops",
   primary_color: "black",
@@ -517,6 +518,24 @@ function IngestionCard({
               className="field-control"
             />
           </Field>
+          <Field label="品牌（可选）">
+            <input
+              aria-label="品牌"
+              value={item.fields.brand ?? ""}
+              maxLength={40}
+              placeholder="无清晰标识时留空"
+              onChange={(event) => updateField("brand", event.target.value)}
+              className="field-control"
+            />
+          </Field>
+          {item.suggestion ? (
+            <p className="mt-1 text-[11px] leading-5 text-[var(--text-tertiary)]">
+              品牌识别：
+              {item.suggestion.brand_confidence === "unknown"
+                ? "未发现清晰标识"
+                : `${item.suggestion.brand ?? "待核对"} · ${item.suggestion.brand_confidence === "high" ? "高置信" : item.suggestion.brand_confidence === "medium" ? "中置信" : "低置信"}`}
+            </p>
+          ) : null}
           <div className="mt-3 grid grid-cols-2 gap-3">
             <SelectField
               label="类别"
@@ -805,6 +824,7 @@ function isConfirmResponse(
 function toWardrobeFields(result: WardrobeRecognition): WardrobeItemInput {
   return {
     audience: result.audience,
+    brand: result.brand,
     name: result.name,
     category: result.category,
     primary_color: result.primary_color,

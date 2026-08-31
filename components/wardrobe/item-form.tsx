@@ -39,6 +39,21 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
           className="min-h-12 w-full rounded-[0.95rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 text-sm text-[var(--foreground)] outline-none focus:border-[var(--system-blue)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]"
         />
       </Field>
+      <Field
+        label="品牌（可选）"
+        htmlFor="wardrobe-brand"
+        error={state.fieldErrors?.brand?.[0]}
+      >
+        <input
+          id="wardrobe-brand"
+          name="brand"
+          defaultValue={item.brand ?? ""}
+          maxLength={40}
+          placeholder="没有清晰品牌可留空"
+          aria-invalid={Boolean(state.fieldErrors?.brand)}
+          className="min-h-12 w-full rounded-[0.95rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 text-sm text-[var(--foreground)] outline-none focus:border-[var(--system-blue)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--system-blue)_18%,transparent)]"
+        />
+      </Field>
       <div className="grid grid-cols-2 gap-3">
         <SelectField
           label="类别"

@@ -1,6 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/lib/supabase/database.types";
-import { STYLE_OPTIONS, type WardrobeStyle } from "@/lib/wardrobe/constants";
+import {
+  isWardrobeStyle,
+  STYLE_OPTIONS,
+  type WardrobeStyle,
+} from "@/lib/wardrobe/constants";
+
+export { isWardrobeStyle } from "@/lib/wardrobe/constants";
 
 export const FEEDBACK_WEIGHTS = {
   favoriteItem: 1,
@@ -16,10 +22,6 @@ export type PreferenceEventType =
   | "unfavorite_item"
   | "favorite_outfit"
   | "unfavorite_outfit";
-
-export function isWardrobeStyle(value: string): value is WardrobeStyle {
-  return STYLE_OPTIONS.some((option) => option.value === value);
-}
 
 export async function recalculatePreferenceScores(
   supabase: SupabaseClient<Database>,

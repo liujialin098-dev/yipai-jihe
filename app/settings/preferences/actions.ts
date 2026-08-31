@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import {
-  isWardrobeStyle,
   recalculatePreferenceScores,
   type PreferenceEventType,
 } from "@/lib/feedback/preferences";
@@ -18,6 +17,7 @@ import type { Json, TablesUpdate } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import {
   OCCASION_OPTIONS,
+  isWardrobeStyle,
   isOptionValue,
   type Occasion,
   type WardrobeStyle,

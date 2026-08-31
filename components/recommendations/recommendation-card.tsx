@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Lightbulb } from "lucide-react";
 import type { CSSProperties } from "react";
 import { RecommendationDiaryButton } from "@/components/diary/recommendation-diary-button";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
@@ -110,6 +111,14 @@ export function RecommendationCard({
         <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
           {outfit.reason}
         </p>
+        <div className="mt-3 flex items-start gap-2 rounded-[1rem] bg-[var(--surface-soft)] px-3.5 py-3 text-xs leading-5 text-[var(--text-secondary)]">
+          <Lightbulb
+            className="mt-0.5 size-3.5 shrink-0 text-[var(--system-blue)]"
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
+          <span>{outfit.stylingPoint}</span>
+        </div>
         <div className="mt-4 border-t border-[var(--hairline)] pt-4">
           {canRecordToday ? (
             <RecommendationDiaryButton

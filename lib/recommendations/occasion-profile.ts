@@ -7,6 +7,7 @@ import type {
   Occasion,
   WardrobeStyle,
 } from "@/lib/wardrobe/constants";
+import { styleSupportsOccasion } from "@/lib/recommendations/style-direction";
 
 export type OccasionProfile = {
   discouragedStyles: readonly WardrobeStyle[];
@@ -31,7 +32,14 @@ export const OCCASION_PROFILES: Record<
 > = {
   commute: {
     summary: "利落、克制、方便行动，适合工作与城市通勤",
-    preferredStyles: ["commute", "minimal", "elegant"],
+    preferredStyles: [
+      "commute",
+      "minimal",
+      "cleanfit",
+      "preppy",
+      "oldmoney",
+      "elegant",
+    ],
     relatedOccasions: ["formal"],
     discouragedStyles: ["sporty"],
     forbiddenForeignOccasions: [],
@@ -41,7 +49,18 @@ export const OCCASION_PROFILES: Record<
   },
   casual: {
     summary: "舒适、放松、低负担，允许更轻快的颜色和运动感",
-    preferredStyles: ["casual", "sporty", "minimal"],
+    preferredStyles: [
+      "casual",
+      "cleanfit",
+      "streetwear",
+      "cityboy",
+      "gorpcore",
+      "workwear",
+      "sporty",
+      "vintage",
+      "y2k",
+      "minimal",
+    ],
     relatedOccasions: ["sport"],
     discouragedStyles: ["commute"],
     forbiddenForeignOccasions: ["date", "formal", "commute"],
@@ -50,7 +69,14 @@ export const OCCASION_PROFILES: Record<
   },
   date: {
     summary: "精致、柔和、有视觉重点，但不限定性别或裙装",
-    preferredStyles: ["elegant", "vintage", "minimal"],
+    preferredStyles: [
+      "elegant",
+      "oldmoney",
+      "vintage",
+      "cleanfit",
+      "y2k",
+      "minimal",
+    ],
     relatedOccasions: [],
     discouragedStyles: ["sporty", "casual"],
     forbiddenForeignOccasions: ["casual"],
@@ -60,7 +86,7 @@ export const OCCASION_PROFILES: Record<
   },
   formal: {
     summary: "结构清晰、优雅、低随意度，适合正式活动",
-    preferredStyles: ["elegant", "minimal"],
+    preferredStyles: ["elegant", "oldmoney", "minimal", "cleanfit"],
     relatedOccasions: [],
     discouragedStyles: ["sporty", "casual", "commute"],
     forbiddenForeignOccasions: ["casual", "commute"],
@@ -113,7 +139,7 @@ export function itemProvidesOccasionSignal(
     item.occasions.some((itemOccasion) =>
       profile.relatedOccasions.includes(itemOccasion),
     ) ||
-    profile.preferredStyles.includes(item.style)
+    styleSupportsOccasion(item.style, occasion)
   );
 }
 
@@ -132,7 +158,7 @@ export function occasionProfileScore(
   ) {
     score += 3;
   }
-  if (profile.preferredStyles.includes(item.style)) score += 5;
+  if (styleSupportsOccasion(item.style, occasion)) score += 5;
   if (profile.discouragedStyles.includes(item.style)) score -= 5;
   return score;
 }

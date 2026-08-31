@@ -4,6 +4,7 @@ import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
 import { RecommendationViewTracker } from "@/components/recommendations/recommendation-view-tracker";
+import { TrendInspirationPanel } from "@/components/recommendations/trend-inspiration";
 import { WeatherCitySelector } from "@/components/recommendations/weather-city-selector";
 import {
   isRecommendationTargetDay,
@@ -231,6 +232,7 @@ export default async function RecommendationsPage({
           ) : null}
         </section>
       )}
+      <TrendInspirationPanel occasion={recommendation?.occasion ?? "commute"} />
     </div>
   );
 }

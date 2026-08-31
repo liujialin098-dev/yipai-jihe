@@ -6,6 +6,7 @@ import type {
   WardrobeColor,
   WardrobeStyle,
 } from "@/lib/wardrobe/constants";
+import { STYLE_OPTIONS } from "@/lib/wardrobe/constants";
 import type { WardrobeAudience } from "@/lib/personalization/constants";
 
 export const RECOMMENDATION_OCCASIONS = [
@@ -48,6 +49,7 @@ export type WeatherSnapshot = {
 
 export type RecommendationWardrobeItem = {
   audience: WardrobeAudience;
+  brand: string | null;
   id: string;
   name: string;
   category: Category;
@@ -63,6 +65,7 @@ export type RecommendationOutfit = {
   slot: 1 | 2 | 3;
   title: string;
   reason: string;
+  stylingPoint: string;
   styleTags: WardrobeStyle[];
   itemIds: string[];
 };
@@ -93,20 +96,14 @@ export const RECOMMENDATION_OUTPUT_SCHEMA = {
           slot: { type: "integer", enum: [1, 2, 3] },
           title: { type: "string", minLength: 1, maxLength: 30 },
           reason: { type: "string", minLength: 1, maxLength: 140 },
+          stylingPoint: { type: "string", minLength: 1, maxLength: 60 },
           styleTags: {
             type: "array",
             minItems: 1,
             maxItems: 3,
             items: {
               type: "string",
-              enum: [
-                "minimal",
-                "casual",
-                "commute",
-                "elegant",
-                "sporty",
-                "vintage",
-              ],
+              enum: STYLE_OPTIONS.map((option) => option.value),
             },
           },
           itemIds: {
@@ -116,7 +113,14 @@ export const RECOMMENDATION_OUTPUT_SCHEMA = {
             items: { type: "string" },
           },
         },
-        required: ["slot", "title", "reason", "styleTags", "itemIds"],
+        required: [
+          "slot",
+          "title",
+          "reason",
+          "stylingPoint",
+          "styleTags",
+          "itemIds",
+        ],
       },
     },
   },

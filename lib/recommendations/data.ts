@@ -31,13 +31,14 @@ import type {
 import { getWardrobeItems, type WardrobeItem } from "@/lib/wardrobe/data";
 
 const RECOMMENDATION_ITEM_COLUMNS =
-  "id, name, category, primary_color, material, style, seasons, occasions, audience, status";
+  "id, name, brand, category, primary_color, material, style, seasons, occasions, audience, status";
 const DEFAULT_TIMEZONE = "Asia/Shanghai";
 
 type RecommendationItemRow = Pick<
   Tables<"wardrobe_items">,
   | "id"
   | "audience"
+  | "brand"
   | "name"
   | "category"
   | "primary_color"

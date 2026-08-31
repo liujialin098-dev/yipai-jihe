@@ -28,6 +28,7 @@
     "verify:sdd-018": "node scripts/verify-sdd-018.mjs",
     "verify:sdd-019": "node --no-warnings scripts/verify-sdd-019.mjs",
     "verify:sdd-020": "node --no-warnings scripts/verify-sdd-020.mjs",
+    "verify:sdd-021": "node --env-file=.env.local --no-warnings scripts/verify-sdd-021.mjs",
     "account:set-password-local": "node --env-file=.env.local scripts/set-local-account-password.mjs",
     "prepare": "husky"
   },

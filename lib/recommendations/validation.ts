@@ -6,15 +6,13 @@ import {
   type RecommendationWardrobeItem,
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
-import {
-  evaluateOccasionFit,
-  getOccasionProfile,
-} from "@/lib/recommendations/occasion-profile";
+import { evaluateOccasionFit } from "@/lib/recommendations/occasion-profile";
 import {
   hasCompleteRainProtectionCandidate,
   isRainyWeatherCode,
   outfitHasCompleteRainProtection,
 } from "@/lib/recommendations/rain-protection";
+import { styleSupportsOccasion } from "@/lib/recommendations/style-direction";
 import {
   STYLE_OPTIONS,
   type Season,
@@ -93,6 +91,7 @@ export function validateRecommendationOutput(
   items: RecommendationWardrobeItem[],
   occasion: RecommendationOccasion,
   weather: WeatherSnapshot,
+  styleDirections?: [WardrobeStyle, WardrobeStyle, WardrobeStyle],
 ): RecommendationOutfit[] | null {
   if (!isRecord(value) || !Array.isArray(value.outfits)) return null;
   if (value.outfits.length !== 3) return null;
@@ -102,7 +101,6 @@ export function validateRecommendationOutput(
   const seenSlots = new Set<number>();
   const expectedSeasons = seasonForTemperature(weather.apparentTemperatureC);
   const styleValues = new Set(STYLE_OPTIONS.map((option) => option.value));
-  const occasionProfile = getOccasionProfile(occasion);
   const outfits: RecommendationOutfit[] = [];
   const requiresRainProtection =
     isRainyWeatherCode(weather.weatherCode) &&
@@ -115,7 +113,7 @@ export function validateRecommendationOutput(
 
   for (const candidate of value.outfits) {
     if (!isRecord(candidate)) return null;
-    const { itemIds, reason, slot, styleTags, title } = candidate;
+    const { itemIds, reason, slot, styleTags, stylingPoint, title } = candidate;
     if (
       (slot !== 1 && slot !== 2 && slot !== 3) ||
       seenSlots.has(slot) ||
@@ -132,9 +130,13 @@ export function validateRecommendationOutput(
         (tag) => typeof tag === "string" && styleValues.has(tag as never),
       ) ||
       new Set(styleTags).size !== styleTags.length ||
-      !occasionProfile.preferredStyles.includes(
-        styleTags[0] as WardrobeStyle,
-      ) ||
+      (styleDirections
+        ? styleTags[0] !== styleDirections[slot - 1]
+        : !styleSupportsOccasion(styleTags[0] as WardrobeStyle, occasion)) ||
+      (stylingPoint !== undefined &&
+        (typeof stylingPoint !== "string" ||
+          stylingPoint.trim().length < 1 ||
+          stylingPoint.trim().length > 60)) ||
       !Array.isArray(itemIds) ||
       itemIds.length < 2 ||
       itemIds.length > 5 ||
@@ -197,6 +199,10 @@ export function validateRecommendationOutput(
       slot,
       title: title.trim(),
       reason: reason.trim(),
+      stylingPoint:
+        typeof stylingPoint === "string" && stylingPoint.trim()
+          ? stylingPoint.trim()
+          : "保持配色和层次统一，按实际体感调整。",
       styleTags: styleTags as RecommendationOutfit["styleTags"],
       itemIds,
     });

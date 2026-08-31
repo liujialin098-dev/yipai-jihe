@@ -17,6 +17,7 @@ import {
   seasonForTemperature,
   validateRecommendationOutput,
 } from "@/lib/recommendations/validation";
+import type { WardrobeStyle } from "@/lib/wardrobe/constants";
 
 export type RecommendationFailureCode =
   | "not_configured"
@@ -58,6 +59,7 @@ type GenerateInput = {
   weather: WeatherSnapshot;
   preferredStyles: string[];
   preferredOccasions: string[];
+  styleDirections: [WardrobeStyle, WardrobeStyle, WardrobeStyle];
 };
 
 export async function generateAiRecommendations(input: GenerateInput): Promise<{
@@ -87,8 +89,8 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
 不要只替换标题、理由或配饰来制造差异，三套的核心单品和搭配思路都要不同。
 正式场景不得使用 occasions 只有 sport 的仅运动单品。约会场景不得强制使用裙装，要适配当前衣着偏好。
 雨天完整防水组合要求：${requiresRainProtection ? "当前衣橱存在合法且季节适配的防水外层、冲锋裤/防水下装和防水鞋，3 套中至少 1 套必须同时使用这三个角色。" : "当前输入不要求强行补齐完整防水组合；不得虚构清单外单品。"}
-styleTags 的第一个值必须来自场景画像 preferredStyles，优先表达当前场景，而不是重复账号通用偏好。
-理由使用简洁中文，说明天气、场合、颜色或材质逻辑。不要推荐清单之外的商品。
+第 1、2、3 套 styleTags 的第一个值必须依次为：${input.styleDirections.join("、")}。风格是软目标，不得为了风格突破场景、天气、归属、完整性或跨套不重复规则。
+reason 使用简洁中文说明天气、场合、颜色或材质逻辑；stylingPoint 给出一句 60 字内、用户可直接照做的层次、比例或配色动作。不要推荐清单之外的商品。
 
 场景画像：${JSON.stringify({
     summary: occasionProfile.summary,
@@ -107,6 +109,7 @@ styleTags 的第一个值必须来自场景画像 preferredStyles，优先表达
       id: item.id,
       audience: item.audience,
       name: item.name,
+      brand: item.brand,
       category: item.category,
       color: item.primary_color,
       material: item.material,
@@ -161,6 +164,7 @@ styleTags 的第一个值必须来自场景画像 preferredStyles，优先表达
       input.items,
       input.occasion,
       input.weather,
+      input.styleDirections,
     );
     if (!outfits) throw new RecommendationGenerationError("invalid_result");
     return { outfits, model };

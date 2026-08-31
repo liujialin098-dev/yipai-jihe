@@ -5,6 +5,11 @@
   "additionalProperties": false,
   "properties": {
     "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "brand": { "type": "string", "maxLength": 40 },
+    "brand_confidence": {
+      "type": "string",
+      "enum": ["unknown", "low", "medium", "high"]
+    },
     "category": {
       "type": "string",
       "enum": [
@@ -15,6 +20,10 @@
         "shoes",
         "accessories"
       ]
+    },
+    "audience": {
+      "type": "string",
+      "enum": ["male", "female", "unisex"]
     },
     "primary_color": {
       "type": "string",
@@ -48,7 +57,22 @@
     },
     "style": {
       "type": "string",
-      "enum": ["minimal", "casual", "commute", "elegant", "sporty", "vintage"]
+      "enum": [
+        "minimal",
+        "casual",
+        "commute",
+        "elegant",
+        "sporty",
+        "vintage",
+        "cleanfit",
+        "streetwear",
+        "cityboy",
+        "gorpcore",
+        "preppy",
+        "workwear",
+        "oldmoney",
+        "y2k"
+      ]
     },
     "seasons": {
       "type": "array",
@@ -73,7 +97,10 @@
   },
   "required": [
     "name",
+    "brand",
+    "brand_confidence",
     "category",
+    "audience",
     "primary_color",
     "material",
     "style",

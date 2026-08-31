@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { createClient } from "@supabase/supabase-js";
+import { requestOpenAiResponse } from "../lib/openai/responses.ts";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -388,12 +389,8 @@ async function benchmarkAi(samples) {
       const image = await readFile(
         new URL(`../${sample.file}`, import.meta.url),
       );
-      const response = await fetch("https://api.openai.com/v1/responses", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+      const response = await requestOpenAiResponse({
+        apiKey: process.env.OPENAI_API_KEY,
         body: JSON.stringify({
           model,
           store: false,
@@ -405,7 +402,7 @@ async function benchmarkAi(samples) {
               content: [
                 {
                   type: "input_text",
-                  text: "识别图片中最主要的一件衣物，严格按结构化枚举返回。",
+                  text: "识别图片中最主要的一件衣物。严格按结构化枚举返回。品牌必须有清晰文字或标志证据；不能确认时 brand 为空且 brand_confidence 为 unknown。",
                 },
                 {
                   type: "input_image",
@@ -424,7 +421,7 @@ async function benchmarkAi(samples) {
             },
           },
         }),
-        signal: AbortSignal.timeout(15_000),
+        signal: AbortSignal.timeout(20_000),
       });
       ensure(response.ok, `OpenAI ${response.status}`);
       const payload = await response.json();
@@ -436,6 +433,9 @@ async function benchmarkAi(samples) {
         expectedCategory: sample.category,
         actualCategory: actual.category,
         categoryCorrect: actual.category === sample.category,
+        brand: actual.brand,
+        brandConfidence: actual.brand_confidence,
+        brandSafe: actual.brand === "" && actual.brand_confidence === "unknown",
         durationMs: Date.now() - startedAt,
         error: null,
       });
@@ -445,6 +445,9 @@ async function benchmarkAi(samples) {
         expectedCategory: sample.category,
         actualCategory: null,
         categoryCorrect: false,
+        brand: null,
+        brandConfidence: null,
+        brandSafe: false,
         durationMs: Date.now() - startedAt,
         error: error instanceof Error ? error.message : "未知错误",
       });
@@ -452,6 +455,7 @@ async function benchmarkAi(samples) {
   }
 
   const correct = results.filter((result) => result.categoryCorrect).length;
+  const brandSafe = results.filter((result) => result.brandSafe).length;
   const durations = results
     .map((result) => result.durationMs)
     .sort((a, b) => a - b);
@@ -462,6 +466,10 @@ async function benchmarkAi(samples) {
     `真实 AI 类别准确率 ${correct}/${results.length}，中位耗时 ${durations[Math.floor(durations.length / 2)]}ms`,
   );
   ensure(correct >= 8, "真实 AI 类别准确率未达到 8/10");
+  ensure(
+    brandSafe === results.length,
+    `无品牌固定样本仍有品牌猜测（${brandSafe}/${results.length} 安全）`,
+  );
 }
 
 async function cleanup(session) {

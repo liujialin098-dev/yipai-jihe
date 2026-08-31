@@ -204,6 +204,7 @@ export type Database = {
       wardrobe_items: {
         Row: {
           audience: string;
+          brand: string | null;
           category: string;
           created_at: string;
           demo_key: string | null;
@@ -222,6 +223,7 @@ export type Database = {
         };
         Insert: {
           audience?: string;
+          brand?: string | null;
           category: string;
           created_at?: string;
           demo_key?: string | null;
@@ -240,6 +242,7 @@ export type Database = {
         };
         Update: {
           audience?: string;
+          brand?: string | null;
           category?: string;
           created_at?: string;
           demo_key?: string | null;
