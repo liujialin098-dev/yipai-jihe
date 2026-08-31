@@ -825,11 +825,11 @@
 阶段完成记录：
 
 - 完成日期：2026-08-31
-- 验收结果：分层数据契约、AI/规则推荐、按需 Image API 效果图、私有 Storage 缓存、签名读取、换件失效和移动端可信展示均已实现；独立 SDD-022 门禁、`npm run check`、`npm run build` 通过。Production 部署为 `READY`，10 个核心页面 GET 均为 200，最近 30 分钟 error 日志为空。
-- 已知限制：虚拟模特图仅表达整体比例和搭配关系，实际颜色、材质、版型以衣物实拍为准；图像服务需要服务端 `OPENAI_API_KEY` 和图像模型额度，失败时保留固定占位图。Production 未单独配置 `OPENAI_LOOKBOOK_MODEL`，当前按代码默认使用 `gpt-image-2`。SDD-005/021 联网回归仍待环境用量审批恢复后补跑。
+- 验收结果：分层数据契约、AI/规则推荐、按需 Image API 效果图、私有 Storage 缓存、签名读取、换件失效和移动端可信展示均已实现；独立 SDD-022 门禁、`npm run check`、`npm run build` 通过。修复 Production 的 Server Action 导出错误后，新部署为 `READY`，Vercel 错误日志为空。
+- 已知限制：虚拟模特图仅表达整体比例和搭配关系，实际颜色、材质、版型以衣物实拍为准；图像服务需要服务端 `OPENAI_API_KEY` 和图像模型额度，失败时保留固定占位图。Production 未单独配置 `OPENAI_LOOKBOOK_MODEL`，当前按代码默认使用 `gpt-image-2`。SDD-005/021 联网回归仍待环境用量审批恢复后补跑；本轮 Codex 网络通道无法稳定完成带查询参数页面的独立 curl/浏览器读取，需用户重新载入页面确认。
 - 下一步：由用户在本地或 Production 账号下点击单套“生成虚拟模特效果图”集中调试；随后补跑 SDD-005/021 联网回归，继续评估真实效果图质量。
-- 提交记录：`837f461`（SDD-022 分层搭配、虚拟模特效果图、私有缓存、验收门禁与进度文档）。
-- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_BaFc2pKMSN4TA4k62UrkHiysgmkz`，`READY`，`target=production`，对应部署源提交 `53a6552`；10 个核心/新增页面均为 200，最近 30 分钟无 error 日志）。
+- 提交记录：`837f461`（SDD-022 功能）、`00c1f8a`（修复 Server Action 导出错误）。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_4Ut8CTu2YSMuY416ToEeSjy8mUab`，`READY`，`target=production`，对应部署源提交 `00c1f8a`；推荐页错误日志已清理，最近 15 分钟无 error 日志）。
 
 ### SDD-008：自动抠图
 
