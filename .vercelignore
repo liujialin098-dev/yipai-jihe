@@ -3,4 +3,7 @@
 .next
 node_modules
 revise_prd_mvp.py
+scripts/build_picksee_prd.py
+拾见_PRD_v1.0.docx
+拾见_PRD_v1.1.docx
 衣拍即合_详细版PRD_已更新.docx
