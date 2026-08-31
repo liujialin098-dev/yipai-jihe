@@ -3,10 +3,13 @@
 import { LoaderCircle, Sparkles } from "lucide-react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import {
-  generateRecommendationLookbook,
-  INITIAL_LOOKBOOK_ACTION_STATE,
-} from "@/app/recommendations/actions";
+import { generateRecommendationLookbook } from "@/app/recommendations/actions";
+import type { LookbookActionState } from "@/app/recommendations/actions";
+
+const initialLookbookActionState: LookbookActionState = {
+  status: "idle",
+  message: "",
+};
 
 function GenerateButton({ hasImage }: { hasImage: boolean }) {
   const { pending } = useFormStatus();
@@ -41,7 +44,7 @@ export function LookbookGenerator({
 }) {
   const [state, formAction] = useActionState(
     generateRecommendationLookbook,
-    INITIAL_LOOKBOOK_ACTION_STATE,
+    initialLookbookActionState,
   );
 
   return (

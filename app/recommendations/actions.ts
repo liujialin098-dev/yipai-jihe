@@ -73,11 +73,6 @@ export type LookbookActionState = {
   message: string;
 };
 
-export const INITIAL_LOOKBOOK_ACTION_STATE: LookbookActionState = {
-  status: "idle",
-  message: "",
-};
-
 function revalidateWeatherCityPaths() {
   revalidatePath("/recommendations");
   revalidatePath("/settings");
