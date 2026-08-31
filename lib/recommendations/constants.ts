@@ -68,6 +68,13 @@ export type RecommendationOutfit = {
   stylingPoint: string;
   styleTags: WardrobeStyle[];
   itemIds: string[];
+  lookbookImagePath?: string | null;
+  lookbookModel?: string | null;
+  lookbookGeneratedAt?: string | null;
+};
+
+export type RecommendationOutfitView = RecommendationOutfit & {
+  lookbookImageUrl: string | null;
 };
 
 export type RecommendationActionState = {
@@ -108,8 +115,8 @@ export const RECOMMENDATION_OUTPUT_SCHEMA = {
           },
           itemIds: {
             type: "array",
-            minItems: 2,
-            maxItems: 5,
+            minItems: 3,
+            maxItems: 7,
             items: { type: "string" },
           },
         },

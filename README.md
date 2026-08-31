@@ -36,6 +36,7 @@ npm run dev
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`：Supabase publishable key，可公开。
 - `OPENAI_API_KEY`：仅服务端使用，严禁 `NEXT_PUBLIC_` 前缀或提交仓库。
 - `OPENAI_VISION_MODEL`：可选，图片识别模型，默认 `gpt-4o-mini`。
+- `OPENAI_LOOKBOOK_MODEL`：可选，单套虚拟模特效果图模型，默认 `gpt-image-2`；仅在用户点击生成效果图时调用。
 - `OPENAI_RECOMMENDATION_MODEL`：可选，推荐模型，默认 `gpt-4o-mini`。
 - `SECRET_KEY`：只保留 Supabase 服务端密钥模板；当前应用流程不需要部署它，严禁浏览器读取。
 

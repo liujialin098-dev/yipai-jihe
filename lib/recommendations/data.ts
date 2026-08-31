@@ -6,6 +6,7 @@ import {
 import type {
   RecommendationOccasion,
   RecommendationOutfit,
+  RecommendationOutfitView,
   RecommendationSource,
   RecommendationTargetDay,
   RecommendationWardrobeItem,
@@ -18,6 +19,7 @@ import {
 } from "@/lib/recommendations/validation";
 import { storedWeatherLocation } from "@/lib/recommendations/location";
 import { getWeatherLocationContext } from "@/lib/recommendations/location-context";
+import { isOwnedLookbookPath } from "@/lib/recommendations/lookbook";
 import type { Tables } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import type {
@@ -124,12 +126,45 @@ export type DailyRecommendationView = {
   recommendationDate: string;
   occasion: RecommendationOccasion;
   weather: WeatherSnapshot;
-  outfits: RecommendationOutfit[];
+  outfits: RecommendationOutfitView[];
   source: RecommendationSource;
   aiModel: string | null;
   generationMs: number;
   updatedAt: string;
 };
+
+async function withLookbookUrls(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  outfits: RecommendationOutfit[],
+): Promise<RecommendationOutfitView[]> {
+  const paths = [
+    ...new Set(
+      outfits.flatMap((outfit) => {
+        const path = outfit.lookbookImagePath;
+        return path && isOwnedLookbookPath(path, userId) ? [path] : [];
+      }),
+    ),
+  ];
+  if (paths.length === 0) {
+    return outfits.map((outfit) => ({ ...outfit, lookbookImageUrl: null }));
+  }
+
+  const signedResult = await supabase.storage
+    .from("wardrobe-images")
+    .createSignedUrls(paths, 60 * 30);
+  const urlByPath = new Map(
+    (signedResult.data ?? []).flatMap((entry) =>
+      entry.path && entry.signedUrl ? [[entry.path, entry.signedUrl]] : [],
+    ),
+  );
+  return outfits.map((outfit) => ({
+    ...outfit,
+    lookbookImageUrl: outfit.lookbookImagePath
+      ? (urlByPath.get(outfit.lookbookImagePath) ?? null)
+      : null,
+  }));
+}
 
 export type RecommendationPageData = {
   viewerId: string | null;
@@ -259,7 +294,7 @@ export async function getRecommendationPageData(
         recommendationDate: row.recommendation_date,
         occasion,
         weather,
-        outfits,
+        outfits: await withLookbookUrls(supabase, viewer.userId, outfits),
         source,
         aiModel: row.ai_model,
         generationMs: row.generation_ms,

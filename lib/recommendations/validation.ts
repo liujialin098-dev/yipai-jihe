@@ -13,6 +13,7 @@ import {
   outfitHasCompleteRainProtection,
 } from "@/lib/recommendations/rain-protection";
 import { styleSupportsOccasion } from "@/lib/recommendations/style-direction";
+import { hasValidLayerCounts } from "@/lib/recommendations/layers";
 import {
   STYLE_OPTIONS,
   type Season,
@@ -113,7 +114,21 @@ export function validateRecommendationOutput(
 
   for (const candidate of value.outfits) {
     if (!isRecord(candidate)) return null;
-    const { itemIds, reason, slot, styleTags, stylingPoint, title } = candidate;
+    const {
+      itemIds,
+      lookbookGeneratedAt,
+      lookbookImagePath,
+      lookbookModel,
+      reason,
+      slot,
+      styleTags,
+      stylingPoint,
+      title,
+    } = candidate;
+    const normalizedLookbookPath = lookbookImagePath ?? null;
+    const normalizedLookbookModel = lookbookModel ?? null;
+    const normalizedLookbookGeneratedAt = lookbookGeneratedAt ?? null;
+    const hasLookbook = normalizedLookbookPath !== null;
     if (
       (slot !== 1 && slot !== 2 && slot !== 3) ||
       seenSlots.has(slot) ||
@@ -138,10 +153,25 @@ export function validateRecommendationOutput(
           stylingPoint.trim().length < 1 ||
           stylingPoint.trim().length > 60)) ||
       !Array.isArray(itemIds) ||
-      itemIds.length < 2 ||
-      itemIds.length > 5 ||
+      itemIds.length < 3 ||
+      itemIds.length > 7 ||
       !itemIds.every((id) => typeof id === "string" && isUuid(id)) ||
-      new Set(itemIds).size !== itemIds.length
+      new Set(itemIds).size !== itemIds.length ||
+      (normalizedLookbookPath !== null &&
+        (typeof normalizedLookbookPath !== "string" ||
+          !/^[0-9a-f-]{36}\/lookbooks\/[0-9a-f-]{36}\/[123]\.png$/i.test(
+            normalizedLookbookPath,
+          ))) ||
+      (normalizedLookbookModel !== null &&
+        (typeof normalizedLookbookModel !== "string" ||
+          normalizedLookbookModel.length < 1 ||
+          normalizedLookbookModel.length > 80)) ||
+      (normalizedLookbookGeneratedAt !== null &&
+        (typeof normalizedLookbookGeneratedAt !== "string" ||
+          Number.isNaN(Date.parse(normalizedLookbookGeneratedAt)))) ||
+      hasLookbook !==
+        (normalizedLookbookModel !== null &&
+          normalizedLookbookGeneratedAt !== null)
     ) {
       return null;
     }
@@ -152,6 +182,7 @@ export function validateRecommendationOutput(
     });
     if (outfitItems.length !== itemIds.length) return null;
     if (itemIds.some((id) => used.has(id))) return null;
+    if (!hasValidLayerCounts(outfitItems)) return null;
 
     const categories = new Set(outfitItems.map((item) => item.category));
     const completeBase =
@@ -205,6 +236,9 @@ export function validateRecommendationOutput(
           : "保持配色和层次统一，按实际体感调整。",
       styleTags: styleTags as RecommendationOutfit["styleTags"],
       itemIds,
+      lookbookImagePath: normalizedLookbookPath,
+      lookbookModel: normalizedLookbookModel,
+      lookbookGeneratedAt: normalizedLookbookGeneratedAt,
     });
   }
 

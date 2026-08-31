@@ -53,12 +53,29 @@ import {
 } from "@/lib/recommendations/validation";
 import type { Json } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
+import { requestOpenAiImage } from "@/lib/openai/images";
+import {
+  buildLookbookPrompt,
+  lookbookObjectPath,
+  parseGeneratedImage,
+} from "@/lib/recommendations/lookbook";
+import { isUuid } from "@/lib/wardrobe/validation";
 
 export type WeatherCityActionState = {
   status: "idle" | "success" | "error";
   message: string;
   city?: string;
   admin1?: string;
+};
+
+export type LookbookActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export const INITIAL_LOOKBOOK_ACTION_STATE: LookbookActionState = {
+  status: "idle",
+  message: "",
 };
 
 function revalidateWeatherCityPaths() {
@@ -423,6 +440,185 @@ export async function generateDailyRecommendations(
       message: "推荐暂时无法完成，请稍后再试。",
     };
   }
+}
+
+export async function generateRecommendationLookbook(
+  _previousState: LookbookActionState,
+  formData: FormData,
+): Promise<LookbookActionState> {
+  const recommendationId = String(formData.get("recommendationId") ?? "");
+  const slotValue = Number(formData.get("slot"));
+  if (!isUuid(recommendationId) || ![1, 2, 3].includes(slotValue)) {
+    return {
+      status: "error",
+      message: "这套搭配已经变化，请刷新后重试。",
+    };
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return {
+      status: "error",
+      message: "虚拟模特效果图暂未配置，真实衣物搭配仍可正常使用。",
+    };
+  }
+
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userError ? null : userData.user;
+  if (!user) {
+    return {
+      status: "error",
+      message: "当前登录已失效，请重新进入应用。",
+    };
+  }
+
+  const [recommendationResult, preferenceResult, items] = await Promise.all([
+    supabase
+      .from("daily_recommendations")
+      .select("id, occasion, weather, outfits")
+      .eq("id", recommendationId)
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    supabase
+      .from("user_preferences")
+      .select("clothing_preference")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    getActiveRecommendationItems(supabase, user.id),
+  ]);
+  const row = recommendationResult.data;
+  const occasion = row ? parseRecommendationOccasion(row.occasion) : null;
+  const weather = row ? validateWeatherSnapshot(row.weather) : null;
+  const preferenceValue = preferenceResult.data?.clothing_preference;
+  const clothingPreference: ClothingPreference =
+    typeof preferenceValue === "string" && isClothingPreference(preferenceValue)
+      ? preferenceValue
+      : "unrestricted";
+  const outfits =
+    row && occasion && weather && items
+      ? validateRecommendationOutput(
+          { outfits: row.outfits },
+          items,
+          occasion,
+          weather,
+        )
+      : null;
+  const slot = slotValue as 1 | 2 | 3;
+  const outfit = outfits?.find((candidate) => candidate.slot === slot);
+  if (
+    recommendationResult.error ||
+    preferenceResult.error ||
+    !row ||
+    !occasion ||
+    !weather ||
+    !items ||
+    !outfits ||
+    !outfit
+  ) {
+    return {
+      status: "error",
+      message: "这套搭配已经变化，请刷新后重试。",
+    };
+  }
+
+  const model = process.env.OPENAI_LOOKBOOK_MODEL?.trim() || "gpt-image-2";
+  let image: Buffer;
+  try {
+    const response = await requestOpenAiImage({
+      apiKey,
+      body: JSON.stringify({
+        model,
+        prompt: buildLookbookPrompt({
+          clothingPreference,
+          items,
+          occasion,
+          outfit,
+          weather,
+        }),
+        quality: "medium",
+        size: "1024x1536",
+      }),
+      signal: AbortSignal.timeout(55_000),
+    });
+    if (!response.ok) {
+      if (response.status === 429) {
+        return {
+          status: "error",
+          message: "效果图请求较多，请稍后重试。",
+        };
+      }
+      if (response.status === 401 || response.status === 403) {
+        return {
+          status: "error",
+          message: "虚拟模特效果图暂未配置，真实衣物搭配仍可正常使用。",
+        };
+      }
+      return {
+        status: "error",
+        message: "效果图暂时无法生成，请稍后重试。",
+      };
+    }
+
+    const payload: unknown = await response.json();
+    const parsed = parseGeneratedImage(payload);
+    if (!parsed) {
+      return {
+        status: "error",
+        message: "效果图暂时无法生成，请稍后重试。",
+      };
+    }
+    image = parsed;
+  } catch {
+    return {
+      status: "error",
+      message: "效果图暂时无法生成，请稍后重试。",
+    };
+  }
+
+  const path = lookbookObjectPath(user.id, recommendationId, slot);
+  const uploadResult = await supabase.storage
+    .from("wardrobe-images")
+    .upload(path, image, {
+      cacheControl: "3600",
+      contentType: "image/png",
+      upsert: true,
+    });
+  if (uploadResult.error) {
+    return {
+      status: "error",
+      message: "效果图已经生成，但暂时无法保存，请重试。",
+    };
+  }
+
+  const generatedAt = new Date().toISOString();
+  const nextOutfits = outfits.map((candidate) =>
+    candidate.slot === slot
+      ? {
+          ...candidate,
+          lookbookImagePath: path,
+          lookbookModel: model,
+          lookbookGeneratedAt: generatedAt,
+        }
+      : candidate,
+  );
+  const updateResult = await supabase
+    .from("daily_recommendations")
+    .update({ outfits: nextOutfits as unknown as Json })
+    .eq("id", recommendationId)
+    .eq("user_id", user.id);
+  if (updateResult.error) {
+    return {
+      status: "error",
+      message: "效果图已经生成，但暂时无法保存，请重试。",
+    };
+  }
+
+  revalidatePath("/recommendations");
+  return {
+    status: "success",
+    message: "虚拟模特效果图已生成，实际颜色与版型请以衣物实拍为准。",
+  };
 }
 
 export async function replaceDailyRecommendationItem(

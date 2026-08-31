@@ -16,11 +16,11 @@
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
 - `lib/wardrobe/`：14 类衣物风格常量、品牌与字段校验、查询、衣橱组成判断、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
 - `lib/personalization/`：账号衣着偏好、衣物归属和共享可逆过滤规则。
-- `lib/recommendations/`：账号城市、Vercel IP 城市建议与用户触发的设备城市解析、账号隔离的临时城市会话、有效位置选择、真实今日/明日天气快照、四场景共享画像与异场景硬边界、雨天防水角色、自动/指定风格方向、严格推荐契约、OpenAI 生成、差异化规则降级、归属与搭配结构校验、来源化本季趋势快照，以及目标日期批次读取映射。
+- `lib/recommendations/`：账号城市、Vercel IP 城市建议与用户触发的设备城市解析、账号隔离的临时城市会话、有效位置选择、真实今日/明日天气快照、四场景共享画像与异场景硬边界、雨天防水角色、自动/指定风格方向、严格推荐契约、OpenAI 生成、差异化规则降级、分层角色派生、虚拟模特 Lookbook 提示与私有缓存、归属与搭配结构校验、来源化本季趋势快照，以及目标日期批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
 - `lib/diary/`：日记输入校验、账号日期/月度读取、推荐/手工快照解析和 30/90/全部范围的即时利用率聚合。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-021.mjs`：双匿名会话、幂等、固定样本、每日推荐、日记与利用率、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异、自然化排版、首次账号入口、场景一致性、雨天防水、连续入库、手动选城、确认式 IP 城市建议、显式设备定位、14 风格、品牌安全与来源化趋势门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/021-style-intelligence/` 为已完成并部署阶段。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-022.mjs`：双匿名会话、幂等、固定样本、每日推荐、日记与利用率、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异、自然化排版、首次账号入口、场景一致性、雨天防水、连续入库、手动选城、确认式 IP 城市建议、显式设备定位、14 风格、品牌安全、来源化趋势、分层搭配、虚拟模特图片所有权与 UI 门禁。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/021-style-intelligence/` 为已完成并部署阶段；`specs/022-virtual-lookbook-layers/` 已完成本地开发与独立验收，待回归补跑和用户调试后部署。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `public/brand/`：抽象品牌主标、保留设计稿和冷白底 512px App 图标；页面统一通过 `components/brand-mark.tsx` 使用正式 App 图标。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
@@ -40,6 +40,7 @@
 - 本地连接配置放在 `.env.local`，变量为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`；该文件已被 `.gitignore` 忽略。
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
 - SDD-004 的 `OPENAI_API_KEY` 必须仅配置在 `.env.local` 和 Vercel 服务端环境；可选 `OPENAI_VISION_MODEL` 默认 `gpt-4o-mini`。浏览器不得读取这两个变量，OpenAI 请求必须使用 Responses API、`store: false` 和严格 JSON Schema。Windows 本地 Node.js 直连超时时统一经过 `lib/openai/responses.ts` 使用系统网络栈，密钥不得出现在命令参数、日志或响应中。
+- SDD-022 的虚拟模特效果图必须仅通过服务端 Image API 生成；`OPENAI_LOOKBOOK_MODEL` 默认 `gpt-image-2`，浏览器不得读取模型或密钥。生成图只能写入当前用户 `<auth.uid()>/lookbooks/<recommendation-id>/<slot>.png` 私有路径，页面读取必须先做归属校验再签发短期地址；图像失败不得改变推荐，固定无身份占位图和真实衣物实拍清单必须保留。
 - SDD-005 推荐默认复用 `gpt-4o-mini`，可通过服务端 `OPENAI_RECOMMENDATION_MODEL` 单独覆盖；OpenAI 失败、超时或输出不合法时 MUST 在 15 秒目标内转为规则推荐。SDD-012 起天气位置只能来自当前账号保存的常用城市，由服务端通过 Open-Meteo 解析并获取天气；未设置时不得静默回退北京。SDD-013 起普通推荐只允许 `today | tomorrow`：今天取当前天气，明天按账号时区精确匹配日预报；天气失败 MUST 停止生成，不得返回或保存模拟天气。AI 失败仍可在真实天气成功后使用规则推荐。
 - SDD-014 起 AI、规则降级和服务端校验 MUST 复用 `lib/recommendations/occasion-profile.ts` 的四场景画像；每套至少有两个独立场景信号，正式场景不得包含仅运动单品，可选配饰/外套不得使用场景明确不推荐的风格，热天不得使用非夏季外套，首个风格标签必须来自当前场景画像。语义相邻场合只提供弱信号，不得覆盖硬冲突。天气、衣着偏好、当前用户活跃衣物、完整性和跨套不重复优先于差异度；库存充足的固定样本六组场景核心单品 Jaccard MUST 不超过 0.5，小衣橱不得为追求差异伪造或错误搭配。AI 无效时沿用单次规则降级，不追加模型调用。
 - SDD-017 起异场景标签是 AI、规则降级与最终复验共用的硬边界：衣物明确包含当前场景时可跨场景使用；否则休闲拒绝约会/正式/通勤标签，约会拒绝休闲标签，正式拒绝休闲/通勤标签，通勤不新增排斥。正式画像不得再把通勤作为弱关联或偏好风格。雨天只包含 WMO 51～67、80～82、95～99；雪天不得误判。防水能力只按明确名称语义与类别识别，普通 `synthetic` 不等于防水；若场景合法且季节适配的防水外层、下装与鞋三类候选完整，3 套中 MUST 至少 1 套使用完整组合，否则不得强行补齐。不得覆盖温度、衣着偏好、归属、完整性、跨套不重复或单次规则降级边界。
@@ -47,6 +48,7 @@
 - SDD-019 起可使用 Vercel 服务端可信请求头推导城市建议，但 IP 仍不得静默改变天气位置：仅中国大陆字段完整、坐标有效且与当前有效城市相距至少 50 公里时提示，浏览器只接收城市名，不得接收或持久化原始 IP、坐标、地区或时区。“本次使用”必须先复用城市解析，再写入绑定当前 `auth.getUser()` 账号的 HttpOnly、SameSite=Lax、无持久期限会话 Cookie；“设为常用城市”继续更新 Supabase 城市五元组并清除临时状态。推荐页日期、天气、批次校验和生成 MUST 统一使用临时城市优先、常用城市兜底的有效位置；切换或恢复后必须删除当前用户旧推荐。本地无 Vercel 请求头时安静降级到手动选城，不得设置默认武汉或北京。
 - SDD-020 起设备定位只允许由用户点击“本次使用当前位置”或“设为常用城市”触发；页面加载、刷新和 Effect MUST NOT 请求权限，也不得使用 `watchPosition`。定位使用城市级低精度、10 秒超时和最多 5 分钟浏览器位置缓存。当前坐标只能由同一设备直接调用 BigDataCloud 免费客户端 Reverse Geocode to City API，并只接受 `lookupSource=coordinates`、`countryCode=CN` 的城市结果；衣拍即合 Server Action 只接收城市名和模式，MUST 用 `auth.getUser()` 重新鉴权并通过 `resolveChineseCity` 再次规范化，严禁接收或持久化设备经纬度。临时/常用城市继续复用 SDD-019 状态模型，切换后删除当前用户旧推荐；定位失败、非中国或第三方不可用时保留原城市和手动入口，不回退 IP、默认城市或模拟天气。
 - SDD-021 起衣物风格规范固定为 `minimal/casual/commute/elegant/sporty/vintage/cleanfit/streetwear/cityboy/gorpcore/preppy/workwear/oldmoney/y2k` 14 类，入库、编辑、长期偏好、反馈账本、AI、规则降级与最终复验 MUST 共用该目录。`wardrobe_items.brand` 可空且最长 40 字符；品牌只有在图片存在清晰文字或标志证据时才能建议，否则 MUST 为 `brand=""`、`brand_confidence="unknown"`，最终值始终允许用户编辑确认。推荐页单次风格选择不写回长期偏好；自动模式在库存允许时分配三个不同兼容方向，指定模式保持同一方向，但天气、衣着归属、场景硬边界、完整性、雨天防水和跨套不重复始终优先。趋势灵感只允许使用包含来源 URL、发布日期和有效期的人工审核快照，过期条目不得继续标记为本季；不得在页面运行时抓取外站或复制外部图片。
+- SDD-022 起推荐单套允许 3～7 件，角色由 `lib/recommendations/layers.ts` 统一派生并限制为最多 2 件上装、1 件下装/连衣裙、1 件外套、1 双鞋、2 件配饰。冷天可增加内搭，热天不得为追求复杂度强行叠穿；虚拟模特仅表达比例参考，不得宣称真实试穿、体型还原或颜色版型精确一致。换件必须清空旧效果图元数据，效果图与真实衣物实拍核对必须同时存在。
 - 2026-08-27 复核 `/websites/vercel` 与项目内 Next.js 16.3.1 文档：Vercel 地理请求头只应在服务端读取；App Router 的 `headers()` 与 `cookies()` 均按异步 API 使用，Cookie 写入只发生在 Server Action/Route Handler。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - `lib/auth/viewer.ts` 的账号属性必须使用 `auth.getUser()` 获取 Auth 服务端最新记录；`getClaims()` 继续用于 Proxy 和轻量身份校验，但不得用于邮箱绑定后的即时匿名状态判断，因为当前 JWT 可能仍携带旧声明。
@@ -79,12 +81,13 @@
 - SDD-019 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-019`，并回归 `npm run verify:sdd-018`、`npm run verify:sdd-007`、`npm run verify:sdd-015`、`npm run verify:sdd-012` 与 `npm run verify:sdd-013`；独立门禁覆盖 Vercel 请求头解码、非中国与缺失字段降级、50 公里提示门槛、账号绑定 HttpOnly 会话 Cookie、跨账号拒绝、服务端城市规范化、切换后旧推荐失效和浏览器不接收坐标。390px 浏览器必须另验收无 IP 安静降级、可控异地提示、双操作、无溢出和无控制台 error。
 - SDD-020 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-020`，并回归 `npm run verify:sdd-018`、`npm run verify:sdd-019` 与 `npm run verify:sdd-013`；独立门禁覆盖非法坐标、只接受当前坐标城市、中国范围、无静默或持续定位、低精度与超时、应用服务器不接收设备经纬度、当前会话身份、城市二次规范化和旧推荐失效。390px 浏览器另验收双按钮至少 44px、高级动效延续、手动入口、无溢出和无控制台 error；真实设备权限只能由用户本人决定。
 - SDD-021 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-021`，并回归 `npm run verify:sdd-004`、`npm run verify:sdd-005`、`npm run verify:sdd-014`、`npm run verify:sdd-017` 与 `npm run verify:sdd-007`；独立门禁覆盖 14 风格、品牌长度与防猜、双账号 RLS、自动/指定风格方向和来源化趋势有效期。识别提示或 Schema 变化时 MUST 复跑 10 张真实图片，要求类别至少 8/10 且无品牌固定样本不得猜品牌；390px 浏览器另验收偏好换行、风格选择、搭配要点、趋势来源和控制台 error。
+- SDD-022 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-022`，并回归 `npm run verify:sdd-005`、`npm run verify:sdd-014`、`npm run verify:sdd-017` 与 `npm run verify:sdd-021`；独立门禁覆盖冷/温/热分层数量、角色顺序、类别上限、图像提示安全、私有 Storage 双账号隔离、占位素材和推荐卡静态边界。图像模型调用只做按需人工验收，不在自动测试中消耗额度；390px 浏览器另验收有图、无图、生成中、错误和换件失效状态。SDD-005/021 的联网回归若因环境审批未执行，必须在进度文档中保留未完成记录。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-021 与 P1 的 SDD-009 已完成并部署；设备定位天气城市、14 风格、品牌安全识别、自动/指定风格推荐和本季灵感已于 2026-08-31 上线。当前 `yipai-jihe` Production 为 `dpl_h7yBXbV5J9xsmd5XVq5Enf5MguEL`，对应部署源提交 `6d0851b`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-021 与 P1 的 SDD-009 已完成并部署；SDD-022 已完成本地开发、`check/build` 和独立门禁，SDD-005/021 联网回归因本轮 Codex 用量审批限制待补跑，尚未部署。当前 `yipai-jihe` Production 仍为 `dpl_h7yBXbV5J9xsmd5XVq5Enf5MguEL`，对应部署源提交 `6d0851b`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

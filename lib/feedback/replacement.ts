@@ -82,6 +82,9 @@ export function replaceRecommendationItem({
             id === currentItemId ? replacementItemId : id,
           ),
           reason: outfit.reason.replaceAll(current.name, replacement.name),
+          lookbookImagePath: null,
+          lookbookModel: null,
+          lookbookGeneratedAt: null,
         }
       : outfit,
   );

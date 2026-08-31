@@ -20,6 +20,7 @@ import {
   type RainProtectionRole,
 } from "@/lib/recommendations/rain-protection";
 import { resolveStyleDirections } from "@/lib/recommendations/style-direction";
+import { OUTFIT_LAYER_LIMITS } from "@/lib/recommendations/layers";
 import {
   seasonForTemperature,
   validateRecommendationOutput,
@@ -119,7 +120,12 @@ function takeMatching(
     category,
     used,
     input,
-  ).filter(predicate);
+  ).filter(
+    (candidate) =>
+      predicate(candidate) &&
+      selected.filter((item) => item.category === candidate.category).length <
+        OUTFIT_LAYER_LIMITS[candidate.category],
+  );
   const profile = getOccasionProfile(input.occasion);
   const suitableCandidates = candidates.filter(
     (candidate) => !profile.discouragedStyles.includes(candidate.style),
@@ -232,7 +238,7 @@ function completeOccasionFit(
   selected: RecommendationWardrobeItem[],
 ) {
   while (!evaluateOccasionFit(selected, input.occasion).passes) {
-    if (selected.length >= 5) throw new InsufficientWardrobeError();
+    if (selected.length >= 7) throw new InsufficientWardrobeError();
     const candidate = sortedCandidates(input.items, null, used, input).find(
       (item) =>
         itemProvidesOccasionSignal(item, input.occasion) &&
@@ -280,7 +286,7 @@ function completeSeasonAnchor(
       (item) =>
         item.category === "accessories" || item.category === "outerwear",
     ) ?? anchorCandidates[0];
-  if (!anchor || selected.length >= 5) throw new InsufficientWardrobeError();
+  if (!anchor || selected.length >= 7) throw new InsufficientWardrobeError();
   used.add(anchor.id);
   selected.push(anchor);
 }
@@ -347,6 +353,63 @@ function stylingPointFor(
   return `保持${styleLabel}方向，用上短下长或同色深浅整理比例。`;
 }
 
+function completeBasesRemaining(input: RuleInput, used: Set<string>) {
+  const eligible = input.items.filter(
+    (item) =>
+      item.status === "active" &&
+      !used.has(item.id) &&
+      !hasOccasionConflict(item, input.occasion),
+  );
+  const count = (category: Category) =>
+    eligible.filter((item) => item.category === category).length;
+  return count("dresses") + Math.min(count("tops"), count("bottoms"));
+}
+
+function addTemperatureLayer(
+  input: RuleInput,
+  used: Set<string>,
+  selected: RecommendationWardrobeItem[],
+  remainingOutfits: number,
+) {
+  if (
+    input.weather.apparentTemperatureC > 18 ||
+    selected.some((item) => item.category === "dresses") ||
+    selected.filter((item) => item.category === "tops").length !== 1 ||
+    selected.length >= 7
+  ) {
+    return;
+  }
+
+  const candidate = sortedCandidates(input.items, "tops", used, input).find(
+    (item) => {
+      const after = new Set(used);
+      after.add(item.id);
+      return completeBasesRemaining(input, after) >= remainingOutfits;
+    },
+  );
+  if (!candidate) return;
+  used.add(candidate.id);
+  selected.push(candidate);
+}
+
+function ensureMinimumLayerCount(
+  input: RuleInput,
+  used: Set<string>,
+  selected: RecommendationWardrobeItem[],
+) {
+  while (selected.length < 3) {
+    const accessory = take(input, "accessories", used, selected, false);
+    if (accessory) continue;
+    if (
+      input.weather.apparentTemperatureC < 27 &&
+      take(input, "outerwear", used, selected, false)
+    ) {
+      continue;
+    }
+    throw new InsufficientWardrobeError();
+  }
+}
+
 export function buildRuleRecommendations(input: RuleInput) {
   if (!enoughForThree(input.items, input)) {
     throw new InsufficientWardrobeError();
@@ -400,11 +463,13 @@ export function buildRuleRecommendations(input: RuleInput) {
       throw new InsufficientWardrobeError();
     }
 
+    addTemperatureLayer(outfitInput, used, selected, 2 - index);
+
     completeOccasionFit(outfitInput, used, selected);
     completeSeasonAnchor(outfitInput, used, selected);
 
     if (
-      selected.length < 5 &&
+      selected.length < 7 &&
       !selected.some((item) => item.category === "accessories")
     ) {
       take(outfitInput, "accessories", used, selected, false);
@@ -413,11 +478,21 @@ export function buildRuleRecommendations(input: RuleInput) {
     if (
       input.occasion === "formal" &&
       input.weather.apparentTemperatureC <= 26 &&
-      selected.length < 5 &&
+      selected.length < 7 &&
       !selected.some((item) => item.category === "outerwear")
     ) {
       take(outfitInput, "outerwear", used, selected, false);
     }
+
+    if (
+      input.weather.apparentTemperatureC < 27 &&
+      selected.length < 7 &&
+      selected.filter((item) => item.category === "accessories").length === 1
+    ) {
+      take(outfitInput, "accessories", used, selected, false);
+    }
+
+    ensureMinimumLayerCount(outfitInput, used, selected);
 
     raw.push({
       slot: (index + 1) as 1 | 2 | 3,
