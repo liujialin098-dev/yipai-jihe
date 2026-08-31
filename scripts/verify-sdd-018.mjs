@@ -97,17 +97,28 @@ assert.ok(
 );
 
 const locationSources = `${citySelectorSource}\n${actionSource}`;
-for (const forbidden of [
-  "x-vercel-ip-city",
-  "request.geo",
-  "geolocation.getCurrentPosition",
-]) {
+for (const forbidden of ["x-vercel-ip-city", "request.geo"]) {
   assert.equal(
     locationSources.includes(forbidden),
     false,
     `普通天气城市不得静默使用 IP 或设备定位：${forbidden}`,
   );
 }
+const locateHandlerStart = citySelectorSource.indexOf(
+  "function locateFromDevice",
+);
+const geolocationCall = citySelectorSource.indexOf(
+  "geolocation.getCurrentPosition",
+);
+assert.ok(
+  locateHandlerStart >= 0 && geolocationCall > locateHandlerStart,
+  "设备定位只能位于用户点击处理器中",
+);
+assert.equal(
+  citySelectorSource.includes("useEffect"),
+  false,
+  "天气城市不得在页面加载时静默请求设备定位",
+);
 
 console.log("SDD-018 city and batch verification passed:");
 console.log("- 10/10 入库后可安全重置本地队列并继续添加");

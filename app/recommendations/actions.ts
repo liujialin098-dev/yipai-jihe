@@ -62,6 +62,71 @@ function revalidateWeatherCityPaths() {
   revalidatePath("/settings/preferences");
 }
 
+type WeatherCityMode = "session" | "saved";
+
+async function applyWeatherLocation(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  location: Awaited<ReturnType<typeof resolveChineseCity>>,
+  mode: WeatherCityMode,
+  source: "manual" | "device",
+): Promise<WeatherCityActionState> {
+  const clearResult = await supabase
+    .from("daily_recommendations")
+    .delete()
+    .eq("user_id", userId);
+  if (clearResult.error) {
+    return { status: "error", message: "天气城市暂时无法保存。" };
+  }
+
+  if (mode === "session") {
+    try {
+      await setWeatherLocationOverride(userId, location);
+    } catch {
+      return { status: "error", message: "本次天气城市暂时无法启用。" };
+    }
+    revalidateWeatherCityPaths();
+    return {
+      status: "success",
+      message:
+        source === "device"
+          ? `已定位到${location.city}，本次天气将使用这里，常用城市没有改变。`
+          : `本次天气已切换为${location.city}，账号常用城市没有改变。`,
+      city: location.city,
+      admin1: location.admin1,
+    };
+  }
+
+  const preferenceResult = await supabase
+    .from("user_preferences")
+    .update({
+      weather_city: location.city,
+      weather_admin1: location.admin1,
+      weather_latitude: location.latitude,
+      weather_longitude: location.longitude,
+      weather_timezone: location.timezone,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId)
+    .select("user_id")
+    .maybeSingle();
+  if (preferenceResult.error || !preferenceResult.data) {
+    return { status: "error", message: "天气城市暂时无法保存。" };
+  }
+
+  await clearWeatherLocationOverride();
+  revalidateWeatherCityPaths();
+  return {
+    status: "success",
+    message:
+      source === "device"
+        ? `已把${location.city}设为常用城市，请重新生成搭配。`
+        : `常用城市已切换为${location.city}，请重新生成搭配。`,
+    city: location.city,
+    admin1: location.admin1,
+  };
+}
+
 export async function saveWeatherCity(
   _previousState: WeatherCityActionState,
   formData: FormData,
@@ -97,54 +162,41 @@ export async function saveWeatherCity(
     return { status: "error", message: "城市暂时无法确认，请稍后重试。" };
   }
 
-  const clearResult = await supabase
-    .from("daily_recommendations")
-    .delete()
-    .eq("user_id", user.id);
-  if (clearResult.error) {
-    return { status: "error", message: "天气城市暂时无法保存。" };
+  return applyWeatherLocation(supabase, user.id, location, mode, "manual");
+}
+
+export async function saveDeviceWeatherLocation(
+  _previousState: WeatherCityActionState,
+  formData: FormData,
+): Promise<WeatherCityActionState> {
+  const modeValue = formData.get("mode");
+  if (modeValue !== "session" && modeValue !== "saved") {
+    return { status: "error", message: "请选择本次使用或设为常用城市。" };
+  }
+  const mode: WeatherCityMode = modeValue;
+  const supabase = await createClient();
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const user = userError ? null : userData.user;
+  if (!user) {
+    return { status: "error", message: "当前登录已失效，请重新进入应用。" };
   }
 
-  if (mode === "session") {
-    try {
-      await setWeatherLocationOverride(user.id, location);
-    } catch {
-      return { status: "error", message: "本次天气城市暂时无法启用。" };
-    }
-    revalidateWeatherCityPaths();
+  const city = String(formData.get("city") ?? "").trim();
+  if (city.length < 2 || city.length > 80) {
+    return { status: "error", message: "定位城市无效，请重新定位。" };
+  }
+
+  let location: Awaited<ReturnType<typeof resolveChineseCity>>;
+  try {
+    location = await resolveChineseCity(city);
+  } catch {
     return {
-      status: "success",
-      message: `本次天气已切换为${location.city}，账号常用城市没有改变。`,
-      city: location.city,
-      admin1: location.admin1,
+      status: "error",
+      message: "定位城市暂时无法用于天气，请手动选择城市。",
     };
   }
 
-  const preferenceResult = await supabase
-    .from("user_preferences")
-    .update({
-      weather_city: location.city,
-      weather_admin1: location.admin1,
-      weather_latitude: location.latitude,
-      weather_longitude: location.longitude,
-      weather_timezone: location.timezone,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("user_id", user.id)
-    .select("user_id")
-    .maybeSingle();
-  if (preferenceResult.error || !preferenceResult.data) {
-    return { status: "error", message: "天气城市暂时无法保存。" };
-  }
-
-  await clearWeatherLocationOverride();
-  revalidateWeatherCityPaths();
-  return {
-    status: "success",
-    message: `常用城市已切换为${location.city}，请重新生成搭配。`,
-    city: location.city,
-    admin1: location.admin1,
-  };
+  return applyWeatherLocation(supabase, user.id, location, mode, "device");
 }
 
 export async function restoreSavedWeatherCity(

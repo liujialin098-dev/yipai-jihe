@@ -93,7 +93,7 @@ assert.equal(
 
 for (const actionBoundary of [
   'formData.get("mode") === "session"',
-  "setWeatherLocationOverride(user.id, location)",
+  "setWeatherLocationOverride(userId, location)",
   "clearWeatherLocationOverride()",
   "getEffectiveWeatherLocation",
   'from("daily_recommendations")',
@@ -105,6 +105,17 @@ for (const actionBoundary of [
     `城市动作缺少边界：${actionBoundary}`,
   );
 }
+const manualActionStart = actionSource.indexOf(
+  "export async function saveWeatherCity",
+);
+const manualActionEnd = actionSource.indexOf(
+  "export async function saveDeviceWeatherLocation",
+  manualActionStart,
+);
+const manualActionSource = actionSource.slice(
+  manualActionStart,
+  manualActionEnd,
+);
 for (const forbiddenInput of [
   'formData.get("userId")',
   'formData.get("latitude")',
@@ -112,9 +123,9 @@ for (const forbiddenInput of [
   'formData.get("timezone")',
 ]) {
   assert.equal(
-    actionSource.includes(forbiddenInput),
+    manualActionSource.includes(forbiddenInput),
     false,
-    `城市动作不得信任客户端字段：${forbiddenInput}`,
+    `手动/IP 城市动作不得信任客户端字段：${forbiddenInput}`,
   );
 }
 
