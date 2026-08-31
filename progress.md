@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-021 与 P1 的 SDD-009 已完成并部署；SDD-022 已完成本地开发与独立验收，尚未发布 Production。设备定位天气城市、14 风格、品牌安全识别、自动/指定风格推荐和本季灵感已于 2026-08-31 上线 `yipai-jihe` Production。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-022 与 P1 的 SDD-009 已完成并部署；设备定位天气城市、14 风格、品牌安全识别、自动/指定风格推荐、本季灵感、分层穿搭和虚拟模特效果图已于 2026-08-31 上线 `yipai-jihe` Production。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -790,7 +790,7 @@
 
 ### SDD-022：虚拟模特与分层穿搭
 
-- 状态：已完成本地开发与独立验收，待用户集中调试后部署
+- 状态：已完成并部署（2026-08-31）
 - SDD 目录：`specs/022-virtual-lookbook-layers/`
 - AI Coding 估算：1 段主对话，复杂度 L
 - 依赖：SDD-004、SDD-005、SDD-014、SDD-017、SDD-021
@@ -825,11 +825,11 @@
 阶段完成记录：
 
 - 完成日期：2026-08-31
-- 验收结果：分层数据契约、AI/规则推荐、按需 Image API 效果图、私有 Storage 缓存、签名读取、换件失效和移动端可信展示均已实现；独立 SDD-022 门禁、`npm run check`、`npm run build` 通过。由于 SDD-005/021 联网回归未能在本轮执行，标记为“本地完成、待回归补跑”，不作为 Production 发布依据。
-- 已知限制：虚拟模特图仅表达整体比例和搭配关系，实际颜色、材质、版型以衣物实拍为准；图像服务需要服务端 `OPENAI_API_KEY` 和图像模型额度，失败时保留固定占位图。当前没有自动部署 SDD-022，也没有对线上账号发起图像生成请求。
-- 下一步：先补跑 SDD-005/021 联网回归，再由用户在本地 390px 页面集中调试效果图；用户确认后按既有 Vercel Production 流程发布。
+- 验收结果：分层数据契约、AI/规则推荐、按需 Image API 效果图、私有 Storage 缓存、签名读取、换件失效和移动端可信展示均已实现；独立 SDD-022 门禁、`npm run check`、`npm run build` 通过。Production 部署为 `READY`，10 个核心页面 GET 均为 200，最近 30 分钟 error 日志为空。
+- 已知限制：虚拟模特图仅表达整体比例和搭配关系，实际颜色、材质、版型以衣物实拍为准；图像服务需要服务端 `OPENAI_API_KEY` 和图像模型额度，失败时保留固定占位图。Production 未单独配置 `OPENAI_LOOKBOOK_MODEL`，当前按代码默认使用 `gpt-image-2`。SDD-005/021 联网回归仍待环境用量审批恢复后补跑。
+- 下一步：由用户在本地或 Production 账号下点击单套“生成虚拟模特效果图”集中调试；随后补跑 SDD-005/021 联网回归，继续评估真实效果图质量。
 - 提交记录：`837f461`（SDD-022 分层搭配、虚拟模特效果图、私有缓存、验收门禁与进度文档）。
-- Production：尚未更新，继续使用现有 `https://yipai-jihe.vercel.app` 的 SDD-021 版本。
+- Production：`https://yipai-jihe.vercel.app`（部署 `dpl_BaFc2pKMSN4TA4k62UrkHiysgmkz`，`READY`，`target=production`，对应部署源提交 `53a6552`；10 个核心/新增页面均为 200，最近 30 分钟无 error 日志）。
 
 ### SDD-008：自动抠图
 
