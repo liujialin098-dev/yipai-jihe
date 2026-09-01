@@ -2,7 +2,7 @@
 
 ## 技术栈
 
-- Next.js 16.3.1 App Router、React 19、TypeScript。
+- Next.js 16.3.1 App Router、React 19、TypeScript；Sharp 0.34 仅用于服务端透明图验证与裁边。
 - Tailwind CSS 4、shadcn/ui（Base UI / Nova preset）、lucide-react。
 - Biome 2.4.2；Husky 提交前自动执行格式化、安全 lint 修复和 TypeScript 检查。
 - Spec Kit：`.specify/`；规范驱动开发文档以此目录为准。
@@ -35,7 +35,7 @@
 - 修改后运行 `npm run check`；提交时 hook 会再次执行同一流程。
 - 遵循 Server Component 默认边界，只有需要浏览器状态或事件时才使用 `use client`。
 - 引入新库前先查本地 skill；缺少 skill 时使用 Context7，并把关键结论与 library id 记录在本文件。
-- 当前 Context7 library id：`/biomejs/biome`、`/lucide-icons/lucide`、`/supabase/ssr`、`/supabase/supabase`、`/supabase/auth`、`/websites/developers_openai_api`、`/websites/vercel`。
+- 当前 Context7 library id：`/biomejs/biome`、`/lucide-icons/lucide`、`/supabase/ssr`、`/supabase/supabase`、`/supabase/auth`、`/websites/developers_openai_api`、`/websites/vercel`、`/websites/photoroom`、`/lovell/sharp`。
 - 2026-08-25 复核 `/supabase/supabase`：匿名账号必须先用 `updateUser({ email })` 完成邮箱身份，再在同一有效会话用 `updateUser({ password })` 添加密码；关闭 Confirm email 后第一步应立即完成而无需邮件。无会话的历史账号只能由服务端密钥通过 `auth.admin.updateUserById` 处理，且不得暴露到浏览器。
 - 2026-08-31 再次复核 `/supabase/supabase`：本次只通过可复现迁移扩展现有列与 CHECK 约束，不新增 Auth、Storage 或 RLS 模式；迁移后继续用生成类型、双账号真实写入和 Advisors 复核数据库边界。
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`，区域：`ap-southeast-1`，状态：`ACTIVE_HEALTHY`）。
@@ -43,8 +43,9 @@
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
 - SDD-004 的 `OPENAI_API_KEY` 必须仅配置在 `.env.local` 和 Vercel 服务端环境；可选 `OPENAI_VISION_MODEL` 默认 `gpt-4o-mini`。浏览器不得读取这两个变量，OpenAI 请求必须使用 Responses API、`store: false` 和严格 JSON Schema。Windows 本地 Node.js 直连超时时统一经过 `lib/openai/responses.ts` 使用系统网络栈，密钥不得出现在命令参数、日志或响应中。
 - SDD-022 的虚拟模特效果图为历史能力，当前默认 UI 已由 SDD-024 取消入口；若未来单独恢复，仍只能通过服务端 Image API 生成，密钥不得进入浏览器，生成图只能写入当前用户私有路径并先做归属校验。未经新的明确需求不得把历史 Lookbook 接回推荐页。
-- SDD-024 已覆盖 SDD-022/023 的默认展示：推荐卡和穿搭编辑主路径 MUST 只展示当前推荐的真实衣物排布，不得出现固定人物、人物轮廓、虚拟模特或 AI 效果图入口。历史 Lookbook 与人物预览代码不得重新接回默认 UI。每张画布只能保存当前账号 2～8 件活跃衣物；服务端必须重新鉴权并复验衣物与来源推荐归属。浏览器本地抠图只处理透明图或近纯色边缘连通背景，复杂背景必须保留原图；透明派生图写入 `<auth.uid()>/cutouts/<item-id>.png` 私有路径。分享图为 1080×1350 PNG，不得包含邮箱、用户 ID、私有路径或原始推荐内部字段。
+- SDD-024 已覆盖 SDD-022/023 的默认展示：推荐卡和穿搭编辑主路径 MUST 只展示当前推荐的真实衣物排布，不得出现固定人物、人物轮廓、虚拟模特或 AI 效果图入口。历史 Lookbook 与人物预览代码不得重新接回默认 UI。每张画布只能保存当前账号 2～8 件活跃衣物；服务端必须重新鉴权并复验衣物与来源推荐归属。浏览器本地抠图只作为近纯色背景备用，复杂背景必须保留原图。分享图为 1080×1350 PNG，不得包含邮箱、用户 ID、私有路径或原始推荐内部字段。
 - SDD-025 起 `profiles.avatar_path` 只允许 `<auth.uid()>/profile/avatar-<uuid>.(jpg|png|webp)`；头像必须小于等于 5MB，读取只使用短期签名地址。浏览器上传后，Server Action 必须用 `auth.getUser()` 重新鉴权、验证对象实际存在并只更新当前账号；绑定成功后清理旧头像，失败时删除未绑定新对象。个人主页统计只聚合当前账号衣物、画布和日记；不得发展为公开主页、关注、评论或用户搜索。
+- SDD-026 起专业去背采用 PhotoRoom Remove Background Basic API；用户已明确同意将当前选择的衣物原图发送给 PhotoRoom 并接受试用后的按次成本。`PHOTOROOM_API_KEY` 只能配置在 `.env.local` 和 Vercel 服务端环境，不得使用 `NEXT_PUBLIC_` 前缀。服务端请求固定使用 `format=png`、`channels=rgba`、`size=hd`、`crop=false` 与 `despill=true`，20 秒超时；同尺寸结果保存为私有精修工作图，再由 Sharp 校验透明通道并自动裁边生成展示图。新版本展示图与工作图全部写入成功后才更新 `cutout_path`，失败必须继续使用旧透明图或原图。新衣确认通过 Next.js `after()` 在响应后异步处理，不得阻塞入库。画布 MUST 保持无格子、无吸附的自由移动/旋转/缩放；分类尺寸只影响新画布初始 scale，不改写历史画布或图片像素。人工精修必须同时提供擦除和从原图恢复，取消或保存失败不得覆盖当前结果。
 - SDD-005 推荐默认复用 `gpt-4o-mini`，可通过服务端 `OPENAI_RECOMMENDATION_MODEL` 单独覆盖；OpenAI 失败、超时或输出不合法时 MUST 在 15 秒目标内转为规则推荐。SDD-012 起天气位置只能来自当前账号保存的常用城市，由服务端通过 Open-Meteo 解析并获取天气；未设置时不得静默回退北京。SDD-013 起普通推荐只允许 `today | tomorrow`：今天取当前天气，明天按账号时区精确匹配日预报；天气失败 MUST 停止生成，不得返回或保存模拟天气。AI 失败仍可在真实天气成功后使用规则推荐。
 - SDD-014 起 AI、规则降级和服务端校验 MUST 复用 `lib/recommendations/occasion-profile.ts` 的四场景画像；每套至少有两个独立场景信号，正式场景不得包含仅运动单品，可选配饰/外套不得使用场景明确不推荐的风格，热天不得使用非夏季外套，首个风格标签必须来自当前场景画像。语义相邻场合只提供弱信号，不得覆盖硬冲突。天气、衣着偏好、当前用户活跃衣物、完整性和跨套不重复优先于差异度；库存充足的固定样本六组场景核心单品 Jaccard MUST 不超过 0.5，小衣橱不得为追求差异伪造或错误搭配。AI 无效时沿用单次规则降级，不追加模型调用。
 - SDD-017 起异场景标签是 AI、规则降级与最终复验共用的硬边界：衣物明确包含当前场景时可跨场景使用；否则休闲拒绝约会/正式/通勤标签，约会拒绝休闲标签，正式拒绝休闲/通勤标签，通勤不新增排斥。正式画像不得再把通勤作为弱关联或偏好风格。雨天只包含 WMO 51～67、80～82、95～99；雪天不得误判。防水能力只按明确名称语义与类别识别，普通 `synthetic` 不等于防水；若场景合法且季节适配的防水外层、下装与鞋三类候选完整，3 套中 MUST 至少 1 套使用完整组合，否则不得强行补齐。不得覆盖温度、衣着偏好、归属、完整性、跨套不重复或单次规则降级边界。
@@ -89,12 +90,13 @@
 - SDD-023 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-023`；独立门禁覆盖真实图片地址复用、固定人物素材、角色标签、缺图占位、无模型/第三方请求、AI 可选增强边界和推荐卡实拍核对保留。390px 浏览器必须另验收精准预览的 3～7 件展示、长名称、缺图状态、无横向溢出和无控制台 error；本阶段不重复消耗图像模型额度。
 - SDD-024 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-024`；独立门禁覆盖 2～8 件布局边界、纯色/透明/复杂背景固定像素样本、无人物默认路径、保存校验、双账号画布 RLS 和私有抠图签名隔离。390px 浏览器另验收衣物可移动、工具栏、五种底色、无溢出和无控制台 error。
 - SDD-025 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-025`，并回归 SDD-024；独立门禁覆盖昵称标准化、头像 MIME/5MB/UUID 路径、四个时尚 token、当前账号统计、资料 RLS 和私有头像签名隔离。390px 浏览器另验收个人主页四项统计、头像昵称编辑、近期卡片、顶部入口、无溢出和无控制台 error。
+- SDD-026 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-026`，并回归 `npm run verify:sdd-024` 与 `npm run verify:sdd-025`；独立门禁覆盖 PhotoRoom 服务端参数、密钥边界、Sharp 透明样本裁边、六类初始尺寸、无格子画布和人工擦除/恢复静态边界。真实 10 张多背景质量与 390px 完整交互必须在配置 `PHOTOROOM_API_KEY` 后人工验收；没有密钥时只能确认安全回退，不得标记阶段完成或部署。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-024 穿搭画布与分享卡片、SDD-025 时尚个人主页与彩色视觉层已完成开发、远端迁移、双账号隔离、390px 验收和 Production 发布。当前 `yipai-jihe` Production 为 `dpl_BD1HoPqd6H9f4C8L5AK76WSwP6gS`、提交 `4768881`；固定域名已上线无人物穿搭画布、分享卡片、个人主页与时尚四色视觉。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-026 活力视觉与专业自动去背已完成代码、静态门禁、构建和 SDD-024/025 双账号回归，等待用户配置 `PHOTOROOM_API_KEY` 后完成 10 张真实质量与 390px 集中验收；在此之前保持“验收中”且不部署。当前 `yipai-jihe` Production 仍为 `dpl_BD1HoPqd6H9f4C8L5AK76WSwP6gS`、提交 `4768881`，线上仅包含已完成的 SDD-024/025。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -102,7 +104,7 @@
 - 部署节奏 MUST 遵循 `progress.md`：基础设施阶段完成后验证 Preview，推荐阶段完成后验证核心体验，全部 P0 完成后再发布受控评审链接。
 - 阶段未通过独立验收或 `npm run check` 时，不得在 `progress.md` 中标记为“已完成”，也不得开始依赖该阶段的后续阶段。
 - 每个阶段的实现范围 MUST 以对应 SDD 为准；不得为了 P1/P2 需求提前引入当前 MVP 不需要的复杂抽象。
-- 当前真实衣物原图仍是可信源；SDD-024 仅增加浏览器本地、可逆的近纯色背景抠图派生图。复杂背景或人物穿着图仍保留原图；若未来接入更强外部抠图 API，必须另立 SDD、通过服务端 `cutoutService`、密钥仅用环境变量，并在向新第三方传输用户图片前明确告知。
+- 当前真实衣物原图始终是可信源；SDD-026 已在用户明确授权后接入 PhotoRoom 服务端专业去背。第三方只接收当前用户触发处理的单件原图；无密钥、超时、限额、非法响应、私有存储失败或数据库绑定失败时必须保留当前有效透明图或原图。穿搭新闻与趋势推送仍属于后续独立 SDD-027，不得混入本阶段。
 - SDD-002 已实现邮箱和密码一次提交的原地注册、直接登录、退出和跨设备恢复，但在用户完成真实账号验收前保持“验收中”，且仍不得作为 SDD-003 至 SDD-007 的依赖。匿名用户必须明确知道清除站点数据或换设备后无法恢复未注册身份；注册流程 MUST 保持同一 `auth_user_id` 和原匿名数据。登录与旧认证回调页面 MUST 跳过自动匿名初始化，只有用户主动选择时才创建新匿名身份。
 - SDD-016 起首次访问不得自动创建匿名身份。无会话首页 MUST 先展示完整账号入口；新用户可直接邮箱密码注册，已有用户可登录，体验身份只允许由明确按钮触发。无会话深链接必须返回 `/`，不得在跳转前展示顶部状态或底部导航；已有会话继续进入原应用。
 - SDD-002 不再发送注册确认或密码设置邮件。历史遗留的已绑定无密码账号只允许在本机运行 `npm run account:set-password-local`，通过 `.env.local` 的 `SECRET_KEY` 和 `auth.admin.updateUserById` 一次性设密；不得把该能力做成 Route Handler、Server Action 或 Vercel 环境能力。常规忘记密码仍不在当前范围。

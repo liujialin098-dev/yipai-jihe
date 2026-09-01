@@ -236,7 +236,7 @@ export function IngestionWorkspace() {
     const results = await Promise.all(ready.map(confirmItem));
     const successCount = results.filter(Boolean).length;
     setNotice(
-      `已入库 ${successCount} 件，${ready.length - successCount} 件待处理`,
+      `已入库 ${successCount} 件，${ready.length - successCount} 件待处理。透明图将在后台继续优化。`,
     );
     setBusy(false);
   }

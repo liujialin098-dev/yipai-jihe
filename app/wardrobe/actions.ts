@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { professionalSourcePath } from "@/lib/outfits/professional-cutout";
 import type { TablesInsert } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import { DEMO_WARDROBE } from "@/lib/wardrobe/catalog";
@@ -303,7 +304,12 @@ export async function deleteWardrobeItem(
 
   const { error: storageError } = await context.supabase.storage
     .from("wardrobe-images")
-    .remove([item.image_path, ...(item.cutout_path ? [item.cutout_path] : [])]);
+    .remove([
+      item.image_path,
+      ...(item.cutout_path
+        ? [item.cutout_path, professionalSourcePath(item.cutout_path)]
+        : []),
+    ]);
 
   if (storageError) {
     return {

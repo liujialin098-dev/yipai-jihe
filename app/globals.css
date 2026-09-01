@@ -54,11 +54,11 @@
 }
 
 :root {
-  --background: #f5f5f7;
+  --background: #f1edff;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
   --surface-solid: #ffffff;
-  --surface-soft: #f0f1f3;
+  --surface-soft: #f1eff8;
   --surface-raised: rgb(255 255 255 / 72%);
   --text-secondary: #6e6e73;
   --text-tertiary: #86868b;
@@ -192,10 +192,19 @@
 
 .app-backdrop {
   background:
-    radial-gradient(circle at 8% -5%, rgb(216 255 82 / 24%), transparent 28%),
-    radial-gradient(circle at 96% 13%, rgb(181 164 239 / 24%), transparent 25%),
-    radial-gradient(circle at 10% 58%, rgb(121 206 245 / 12%), transparent 24%),
-    var(--background);
+    radial-gradient(circle at 4% 2%, rgb(216 255 82 / 42%), transparent 24rem),
+    radial-gradient(
+      circle at 96% 12%,
+      rgb(181 164 239 / 76%),
+      transparent 31rem
+    ),
+    radial-gradient(circle at 2% 55%, rgb(121 206 245 / 26%), transparent 27rem),
+    radial-gradient(
+      circle at 98% 82%,
+      rgb(255 139 107 / 24%),
+      transparent 24rem
+    ),
+    linear-gradient(180deg, #eee8ff 0%, #f7f5ff 42%, #f2eeff 100%);
 }
 
 .motion-stage {
@@ -296,8 +305,19 @@
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(circle at 92% 6%, rgb(210 225 243 / 52%), transparent 24rem),
-    linear-gradient(180deg, rgb(255 255 255 / 58%), transparent 24rem);
+    radial-gradient(circle at 92% 4%, rgb(216 255 82 / 68%), transparent 15rem),
+    radial-gradient(circle at 3% 38%, rgb(121 206 245 / 38%), transparent 18rem),
+    radial-gradient(
+      circle at 96% 68%,
+      rgb(255 139 107 / 32%),
+      transparent 16rem
+    ),
+    linear-gradient(
+      155deg,
+      rgb(181 164 239 / 72%),
+      rgb(246 243 255 / 76%) 52%,
+      rgb(238 232 255 / 88%)
+    );
 }
 
 .auth-entry-page::after {
@@ -309,7 +329,7 @@
   height: 10rem;
   border: 1px solid rgb(255 255 255 / 58%);
   border-radius: 999px;
-  background: rgb(255 255 255 / 22%);
+  background: color-mix(in srgb, var(--fashion-lilac) 42%, white 35%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 72%);
   content: "";
   opacity: 0.78;
@@ -649,6 +669,55 @@
   overscroll-behavior: contain;
 }
 
+.cutout-refiner-backdrop {
+  background:
+    radial-gradient(circle at 12% 12%, rgb(216 255 82 / 22%), transparent 18rem),
+    rgb(35 27 57 / 46%);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.cutout-refiner-panel {
+  border: 1px solid rgb(255 255 255 / 58%);
+}
+
+.cutout-refiner-stage {
+  background-color: #f7f5fb;
+  background-image:
+    linear-gradient(45deg, rgb(181 164 239 / 10%) 25%, transparent 25%),
+    linear-gradient(-45deg, rgb(181 164 239 / 10%) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgb(181 164 239 / 10%) 75%),
+    linear-gradient(-45deg, transparent 75%, rgb(181 164 239 / 10%) 75%);
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0;
+  background-size: 20px 20px;
+}
+
+.cutout-refiner-canvas {
+  cursor: crosshair;
+  filter: drop-shadow(0 18px 22px rgb(37 31 55 / 18%));
+}
+
+.cutout-refiner-tool,
+.cutout-brush-size {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}
+
+.cutout-refiner-tool[aria-pressed="true"] {
+  background: var(--fashion-lilac-soft);
+  box-shadow: inset 0 0 0 1px rgb(115 91 192 / 22%);
+  color: #2c2542;
+}
+
+.cutout-brush-size[aria-pressed="true"] {
+  background: var(--fashion-lime);
+  color: #202124;
+}
+
 .outfit-canvas-item {
   cursor: grab;
   touch-action: none;
@@ -768,8 +837,9 @@
 
   .app-backdrop {
     background:
-      radial-gradient(circle at 8% -8%, rgb(70 70 74 / 48%), transparent 35%),
-      radial-gradient(circle at 92% 16%, rgb(19 48 75 / 35%), transparent 28%),
+      radial-gradient(circle at 8% -8%, rgb(113 92 180 / 34%), transparent 35%),
+      radial-gradient(circle at 92% 16%, rgb(35 84 108 / 30%), transparent 28%),
+      radial-gradient(circle at 92% 84%, rgb(128 63 56 / 18%), transparent 26%),
       var(--background);
   }
 
@@ -841,6 +911,12 @@
 
   .auth-entry-page::after {
     background: var(--surface-soft);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .cutout-refiner-backdrop {
+    background: rgb(35 27 57 / 88%);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

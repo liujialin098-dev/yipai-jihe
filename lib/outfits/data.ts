@@ -91,7 +91,10 @@ export async function getNewOutfitCanvasData(
   return {
     title: outfit.title,
     backgroundTheme: "lime",
-    items: createInitialCanvasItems(orderedIds),
+    items: createInitialCanvasItems(
+      orderedIds,
+      new Map(wardrobeItems.map((item) => [item.id, item.category])),
+    ),
     sourceRecommendationId: row.id,
     sourceSlot: slot as 1 | 2 | 3,
     wardrobeItems: toEditorWardrobeItems(

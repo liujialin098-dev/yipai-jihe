@@ -15,6 +15,7 @@ import {
   RotateCw,
   Save,
   Share2,
+  Sparkles,
   Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,7 @@ import {
   useTransition,
 } from "react";
 import { saveOutfitCanvas, saveWardrobeCutout } from "@/app/outfits/actions";
+import { CutoutRefiner } from "@/components/outfits/cutout-refiner";
 import {
   CANVAS_ITEM_LIMITS,
   OUTFIT_CANVAS_THEMES,
@@ -94,6 +96,7 @@ export function OutfitCanvasEditor({
     ),
   );
   const [cutoutPendingId, setCutoutPendingId] = useState<string | null>(null);
+  const [refineItemId, setRefineItemId] = useState<string | null>(null);
   const [exportPending, setExportPending] = useState(false);
   const [message, setMessage] = useState<Message>(null);
   const [saving, startSaving] = useTransition();
@@ -331,6 +334,88 @@ export function OutfitCanvasEditor({
     }
   }
 
+  async function createProfessionalCutout() {
+    if (!selectedWardrobeItem?.imageUrl || cutoutPendingId) return;
+    const force = Boolean(cutoutUrls[selectedWardrobeItem.id]);
+    setCutoutPendingId(selectedWardrobeItem.id);
+    setMessage({
+      tone: "info",
+      text: force
+        ? "正在重新优化边缘，旧透明图会保留到新结果成功。"
+        : "正在进行专业抠图，原图会继续保留。",
+    });
+    try {
+      const response = await fetch(
+        `/api/wardrobe/items/${selectedWardrobeItem.id}/cutout`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ force }),
+        },
+      );
+      const payload = (await response.json().catch(() => null)) as {
+        cutoutUrl?: string;
+        message?: string;
+        error?: { message?: string };
+      } | null;
+      if (!response.ok || !payload?.cutoutUrl) {
+        throw new Error(
+          payload?.error?.message ?? "专业抠图暂时不可用，已保留当前图片。",
+        );
+      }
+      setCutoutUrls((current) => ({
+        ...current,
+        [selectedWardrobeItem.id]: payload.cutoutUrl as string,
+      }));
+      setMessage({
+        tone: "success",
+        text: payload.message ?? "专业抠图已完成。",
+      });
+    } catch (error) {
+      setMessage({
+        tone: "error",
+        text:
+          error instanceof Error
+            ? error.message
+            : "专业抠图暂时不可用，已保留当前图片。",
+      });
+    } finally {
+      setCutoutPendingId(null);
+    }
+  }
+
+  async function saveRefinement(blob: Blob) {
+    const wardrobeItem = refineItemId
+      ? wardrobeMap.get(refineItemId)
+      : undefined;
+    if (!wardrobeItem) throw new Error("item_missing");
+    const response = await fetch(
+      `/api/wardrobe/items/${wardrobeItem.id}/cutout/source`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "image/png" },
+        body: blob,
+      },
+    );
+    const payload = (await response.json().catch(() => null)) as {
+      cutoutUrl?: string;
+      message?: string;
+      error?: { message?: string };
+    } | null;
+    if (!response.ok || !payload?.cutoutUrl) {
+      throw new Error(payload?.error?.message ?? "精修结果暂时无法保存。");
+    }
+    setCutoutUrls((current) => ({
+      ...current,
+      [wardrobeItem.id]: payload.cutoutUrl as string,
+    }));
+    setRefineItemId(null);
+    setMessage({
+      tone: "success",
+      text: payload.message ?? "边缘精修已保存。",
+    });
+  }
+
   function handleSave() {
     startSaving(async () => {
       const result = await saveOutfitCanvas({
@@ -558,6 +643,12 @@ export function OutfitCanvasEditor({
               setItems(
                 createInitialCanvasItems(
                   items.map((item) => item.wardrobeItemId),
+                  new Map(
+                    initialData.wardrobeItems.map((item) => [
+                      item.id,
+                      item.category,
+                    ]),
+                  ),
                 ),
               )
             }
@@ -632,11 +723,9 @@ export function OutfitCanvasEditor({
         <div className="mt-2 grid grid-cols-2 gap-2">
           <button
             type="button"
-            onClick={createLocalCutout}
+            onClick={createProfessionalCutout}
             disabled={
-              !selectedWardrobeItem?.imageUrl ||
-              Boolean(cutoutPendingId) ||
-              Boolean(selectedId && cutoutUrls[selectedId])
+              !selectedWardrobeItem?.imageUrl || Boolean(cutoutPendingId)
             }
             className="motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[#202124] px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-45"
           >
@@ -646,9 +735,40 @@ export function OutfitCanvasEditor({
                 aria-hidden="true"
               />
             ) : (
+              <Sparkles className="size-4" aria-hidden="true" />
+            )}
+            {selectedId && cutoutUrls[selectedId] ? "重新专业抠图" : "专业抠图"}
+          </button>
+          <button
+            type="button"
+            onClick={() => selectedId && setRefineItemId(selectedId)}
+            disabled={
+              !selectedId || !cutoutUrls[selectedId] || Boolean(cutoutPendingId)
+            }
+            className="motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--fashion-lilac-soft)] px-3 text-xs font-semibold text-[#2c2542] disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            <Eraser className="size-4" aria-hidden="true" />
+            边缘精修
+          </button>
+          <button
+            type="button"
+            onClick={createLocalCutout}
+            disabled={
+              !selectedWardrobeItem?.imageUrl ||
+              Boolean(cutoutPendingId) ||
+              Boolean(selectedId && cutoutUrls[selectedId])
+            }
+            className="motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--surface-soft)] px-3 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            {cutoutPendingId ? (
+              <LoaderCircle
+                className="size-4 animate-spin"
+                aria-hidden="true"
+              />
+            ) : (
               <Eraser className="size-4" aria-hidden="true" />
             )}
-            {selectedId && cutoutUrls[selectedId] ? "已抠图" : "本地抠图"}
+            简单背景备用
           </button>
           <button
             type="button"
@@ -698,6 +818,15 @@ export function OutfitCanvasEditor({
           分享图片
         </button>
       </div>
+      {refineItemId ? (
+        <CutoutRefiner
+          itemId={refineItemId}
+          itemName={wardrobeMap.get(refineItemId)?.name ?? "当前衣物"}
+          originalUrl={wardrobeMap.get(refineItemId)?.imageUrl ?? ""}
+          onCancel={() => setRefineItemId(null)}
+          onSave={saveRefinement}
+        />
+      ) : null}
     </div>
   );
 }

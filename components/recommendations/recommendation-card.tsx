@@ -53,14 +53,17 @@ export function RecommendationCard({
   const canvasTheme = (["lime", "lilac", "sky"] as OutfitCanvasTheme[])[
     index % 3
   ];
-  const canvasItems = createInitialCanvasItems(outfit.itemIds);
+  const canvasItems = createInitialCanvasItems(
+    outfit.itemIds,
+    new Map(outfitItems.map((item) => [item.id, item.category])),
+  );
 
   return (
     <article
       className="surface-card stagger-item overflow-hidden rounded-[1.75rem]"
       style={{ "--stagger": index + 1 } as CSSProperties}
     >
-      <div className="bg-[#f4f6f8] p-3">
+      <div className="bg-[linear-gradient(145deg,var(--fashion-lilac-soft),var(--fashion-sky-soft)_55%,var(--fashion-lime-soft))] p-3">
         <OutfitCanvasPreview
           title={outfit.title}
           theme={canvasTheme}

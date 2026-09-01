@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
+import { processProfessionalCutout } from "@/lib/outfits/professional-cutout";
 import type { Json, TablesInsert } from "@/lib/supabase/database.types";
 import {
   getIngestionRouteContext,
@@ -98,6 +100,14 @@ export async function POST(request: Request, route: RouteContext) {
     .from("profiles")
     .update({ onboarding_state: "ready" })
     .eq("user_id", context.userId);
+
+  after(async () => {
+    await processProfessionalCutout({
+      itemId: wardrobeItem.id,
+      supabase: context.supabase,
+      userId: context.userId,
+    });
+  });
 
   return NextResponse.json({
     wardrobeItemId: wardrobeItem.id,

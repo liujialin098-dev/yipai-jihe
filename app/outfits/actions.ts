@@ -55,7 +55,7 @@ export async function saveWardrobeCutout(
   revalidatePath("/recommendations");
   return {
     status: "success",
-    message: "已在本机完成抠图，原图仍然保留。",
+    message: "透明图已保存，原图仍然保留。",
     cutoutUrl: signedResult.data.signedUrl,
   };
 }

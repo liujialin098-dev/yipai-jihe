@@ -17,6 +17,23 @@ export type OutfitCanvasItem = {
   zIndex: number;
 };
 
+export type OutfitCanvasCategory =
+  | "accessories"
+  | "bottoms"
+  | "dresses"
+  | "outerwear"
+  | "shoes"
+  | "tops";
+
+export const OUTFIT_CATEGORY_SCALE: Record<OutfitCanvasCategory, number> = {
+  tops: 1,
+  bottoms: 1.04,
+  dresses: 1.16,
+  outerwear: 1.18,
+  shoes: 0.76,
+  accessories: 0.62,
+};
+
 export const CANVAS_ITEM_LIMITS = {
   x: { min: 0.08, max: 0.92 },
   y: { min: 0.16, max: 0.9 },
@@ -115,20 +132,37 @@ export function clampCanvasItem(item: OutfitCanvasItem): OutfitCanvasItem {
 
 export function createInitialCanvasItems(
   wardrobeItemIds: string[],
+  categoryById: ReadonlyMap<string, string> = new Map(),
 ): OutfitCanvasItem[] {
   const ids = [...new Set(wardrobeItemIds)].slice(0, 8);
   const count = Math.max(2, ids.length);
   const positions = POSITIONS[count] ?? POSITIONS[8];
   const baseScale = count <= 3 ? 1.08 : count <= 5 ? 0.9 : 0.75;
 
-  return ids.map((wardrobeItemId, index) => ({
-    wardrobeItemId,
-    x: positions[index]?.[0] ?? 0.5,
-    y: positions[index]?.[1] ?? 0.5,
-    scale: baseScale,
-    rotation: ROTATIONS[index] ?? 0,
-    zIndex: index + 1,
-  }));
+  return ids.map((wardrobeItemId, index) => {
+    const category = categoryById.get(wardrobeItemId);
+    const categoryScale = isOutfitCanvasCategory(category)
+      ? OUTFIT_CATEGORY_SCALE[category]
+      : 1;
+    return {
+      wardrobeItemId,
+      x: positions[index]?.[0] ?? 0.5,
+      y: positions[index]?.[1] ?? 0.5,
+      scale: clampNumber(
+        baseScale * categoryScale,
+        CANVAS_ITEM_LIMITS.scale.min,
+        CANVAS_ITEM_LIMITS.scale.max,
+      ),
+      rotation: ROTATIONS[index] ?? 0,
+      zIndex: index + 1,
+    };
+  });
+}
+
+function isOutfitCanvasCategory(
+  value: string | undefined,
+): value is OutfitCanvasCategory {
+  return Boolean(value && value in OUTFIT_CATEGORY_SCALE);
 }
 
 export function normalizeCanvasStack(
