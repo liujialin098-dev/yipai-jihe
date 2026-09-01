@@ -10,8 +10,8 @@
 
 ## 项目速览
 
-- `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
-- `components/`：移动端应用外壳、统一品牌标志、顶部状态区、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐精准预览/换件/AI 效果图、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、自由穿搭画布、个人主页、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
+- `components/`：移动端应用外壳、统一品牌标志、顶部头像入口、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、无人物穿搭画布/推荐换件、个人资料编辑、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
 - `lib/wardrobe/`：14 类衣物风格常量、品牌与字段校验、查询、衣橱组成判断、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
@@ -19,17 +19,19 @@
 - `lib/recommendations/`：账号城市、Vercel IP 城市建议与用户触发的设备城市解析、账号隔离的临时城市会话、有效位置选择、真实今日/明日天气快照、四场景共享画像与异场景硬边界、雨天防水角色、自动/指定风格方向、严格推荐契约、OpenAI 生成、差异化规则降级、分层角色派生、虚拟模特 Lookbook 提示与私有缓存、归属与搭配结构校验、来源化本季趋势快照，以及目标日期批次读取映射。
 - `lib/feedback/`：同类合法候选、换件后完整复验、单品/整套收藏 Action、固定偏好权重、事件写入和风格分数重算。
 - `lib/diary/`：日记输入校验、账号日期/月度读取、推荐/手工快照解析和 30/90/全部范围的即时利用率聚合。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-023.mjs`：双匿名会话、幂等、固定样本、每日推荐、日记与利用率、反馈隔离、静态发布门禁、账号个性化隔离、真实两日天气日期隔离、四场景差异、自然化排版、首次账号入口、场景一致性、雨天防水、连续入库、手动选城、确认式 IP 城市建议、显式设备定位、14 风格、品牌安全、来源化趋势、分层搭配、虚拟模特图片所有权、精准原图预览与 UI 门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/023-precision-outfit-preview/` 为已完成并部署阶段。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
+- `lib/outfits/`：穿搭画布主题、2～8 件初始布局、变换校验、浏览器本地纯色背景抠图、当前用户画布读取和 1080×1350 PNG 导出。
+- `lib/profile/`：昵称、头像类型/大小/私有路径校验，以及个人主页当前账号统计与近期画布聚合。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-025.mjs`：双匿名会话、幂等、固定样本、推荐/日记/反馈隔离、天气/场景/风格、分层搭配、历史人物预览、无人物画布、本地抠图、私有头像、个人主页与 UI 门禁。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/023-precision-outfit-preview/` 为已完成并部署阶段；`specs/024-outfit-canvas-share/` 与 `specs/025-profile-fashion-color/` 已完成本地开发、远端迁移和验收，等待部署。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `public/brand/`：抽象品牌主标、保留设计稿和冷白底 512px App 图标；页面统一通过 `components/brand-mark.tsx` 使用正式 App 图标。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
-- 当前视觉基线：浅色冷白银灰画布、近黑主色、系统蓝焦点色、软圆角卡片和固定底部玻璃 Dock；正式 Logo 为两片交叠衣料与系统蓝节点组成的抽象标志，顶部栏、账号入口和站点图标 MUST 复用 `BrandMark`，不得另造衣架、机器人或渐变字母标志。`app/globals.css` 中的 Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用 `.app-page-meta`、`.app-page-title`、`.app-page-lead`、`.app-section-title`、`.app-card-title` 和 `.app-display-number` 六级语义 token；页面标题保持中等字重和自然字距，不得恢复重复蓝色眉题、装饰性前导零、超大计数或宣传式比喻。黑色按钮不得恢复高对比白色扫光。
+- 当前视觉基线：冷白画布和近黑文字为功能底层，青柠、丁香紫、珊瑚橙与天空蓝四个时尚 token 用于内容主题、导航选中态、画布与个人主页；颜色 MUST 按固定角色复用，不得随机给所有容器上色。保留软圆角、Apple 式触感和固定底部玻璃 Dock。正式 Logo 继续复用 `BrandMark`。Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用六级语义 token；黑色按钮不得恢复高对比白色扫光。
 
 ## 注意事项
 
 - 优先复用 shadcn/ui 组件和主题 token，图标统一使用 lucide-react。
-- 后续页面 MUST 延续当前视觉 token：卡片使用约 24px 软圆角，主要按钮使用胶囊或圆形，玻璃效果只用于导航和悬浮控件，不得恢复旧紫色模板风格或在所有容器滥用毛玻璃。
+- 后续页面 MUST 延续当前视觉 token：卡片使用约 24px 软圆角，主要按钮使用胶囊或圆形，玻璃效果只用于导航和悬浮控件；丁香紫只作为四色体系的一部分，不得恢复单一紫色模板或在所有容器滥用毛玻璃。
 - 修改后运行 `npm run check`；提交时 hook 会再次执行同一流程。
 - 遵循 Server Component 默认边界，只有需要浏览器状态或事件时才使用 `use client`。
 - 引入新库前先查本地 skill；缺少 skill 时使用 Context7，并把关键结论与 library id 记录在本文件。
@@ -40,8 +42,9 @@
 - 本地连接配置放在 `.env.local`，变量为 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`；该文件已被 `.gitignore` 忽略。
 - `SECRET_KEY` 仅保留模板，必须由开发者从 Supabase Dashboard > Settings > API Keys 手动填入，严禁写入浏览器代码、提交仓库或使用 `NEXT_PUBLIC_` 前缀。
 - SDD-004 的 `OPENAI_API_KEY` 必须仅配置在 `.env.local` 和 Vercel 服务端环境；可选 `OPENAI_VISION_MODEL` 默认 `gpt-4o-mini`。浏览器不得读取这两个变量，OpenAI 请求必须使用 Responses API、`store: false` 和严格 JSON Schema。Windows 本地 Node.js 直连超时时统一经过 `lib/openai/responses.ts` 使用系统网络栈，密钥不得出现在命令参数、日志或响应中。
-- SDD-022 的虚拟模特效果图必须仅通过服务端 Image API 生成；`OPENAI_LOOKBOOK_MODEL` 默认 `gpt-image-2`，浏览器不得读取模型或密钥。生成图只能写入当前用户 `<auth.uid()>/lookbooks/<recommendation-id>/<slot>.png` 私有路径，页面读取必须先做归属校验再签发短期地址；图像失败不得改变推荐，固定无身份占位图和真实衣物实拍清单必须保留。
-- SDD-023 起推荐卡默认优先展示“精准搭配预览”：固定无脸人物只作整体比例参照，衣物必须直接复用当前用户当前推荐的真实图片并按统一角色顺序排列，不得通过文生图猜测、改款或改色。该预览不得新增模型调用、第三方图片传输或数据库写入；现有 SDD-022 AI 效果图只能作为用户主动触发的可选氛围参考，且必须继续保留真实衣物核对清单。
+- SDD-022 的虚拟模特效果图为历史能力，当前默认 UI 已由 SDD-024 取消入口；若未来单独恢复，仍只能通过服务端 Image API 生成，密钥不得进入浏览器，生成图只能写入当前用户私有路径并先做归属校验。未经新的明确需求不得把历史 Lookbook 接回推荐页。
+- SDD-024 已覆盖 SDD-022/023 的默认展示：推荐卡和穿搭编辑主路径 MUST 只展示当前推荐的真实衣物排布，不得出现固定人物、人物轮廓、虚拟模特或 AI 效果图入口。历史 Lookbook 与人物预览代码不得重新接回默认 UI。每张画布只能保存当前账号 2～8 件活跃衣物；服务端必须重新鉴权并复验衣物与来源推荐归属。浏览器本地抠图只处理透明图或近纯色边缘连通背景，复杂背景必须保留原图；透明派生图写入 `<auth.uid()>/cutouts/<item-id>.png` 私有路径。分享图为 1080×1350 PNG，不得包含邮箱、用户 ID、私有路径或原始推荐内部字段。
+- SDD-025 起 `profiles.avatar_path` 只允许 `<auth.uid()>/profile/avatar-<uuid>.(jpg|png|webp)`；头像必须小于等于 5MB，读取只使用短期签名地址。浏览器上传后，Server Action 必须用 `auth.getUser()` 重新鉴权、验证对象实际存在并只更新当前账号；绑定成功后清理旧头像，失败时删除未绑定新对象。个人主页统计只聚合当前账号衣物、画布和日记；不得发展为公开主页、关注、评论或用户搜索。
 - SDD-005 推荐默认复用 `gpt-4o-mini`，可通过服务端 `OPENAI_RECOMMENDATION_MODEL` 单独覆盖；OpenAI 失败、超时或输出不合法时 MUST 在 15 秒目标内转为规则推荐。SDD-012 起天气位置只能来自当前账号保存的常用城市，由服务端通过 Open-Meteo 解析并获取天气；未设置时不得静默回退北京。SDD-013 起普通推荐只允许 `today | tomorrow`：今天取当前天气，明天按账号时区精确匹配日预报；天气失败 MUST 停止生成，不得返回或保存模拟天气。AI 失败仍可在真实天气成功后使用规则推荐。
 - SDD-014 起 AI、规则降级和服务端校验 MUST 复用 `lib/recommendations/occasion-profile.ts` 的四场景画像；每套至少有两个独立场景信号，正式场景不得包含仅运动单品，可选配饰/外套不得使用场景明确不推荐的风格，热天不得使用非夏季外套，首个风格标签必须来自当前场景画像。语义相邻场合只提供弱信号，不得覆盖硬冲突。天气、衣着偏好、当前用户活跃衣物、完整性和跨套不重复优先于差异度；库存充足的固定样本六组场景核心单品 Jaccard MUST 不超过 0.5，小衣橱不得为追求差异伪造或错误搭配。AI 无效时沿用单次规则降级，不追加模型调用。
 - SDD-017 起异场景标签是 AI、规则降级与最终复验共用的硬边界：衣物明确包含当前场景时可跨场景使用；否则休闲拒绝约会/正式/通勤标签，约会拒绝休闲标签，正式拒绝休闲/通勤标签，通勤不新增排斥。正式画像不得再把通勤作为弱关联或偏好风格。雨天只包含 WMO 51～67、80～82、95～99；雪天不得误判。防水能力只按明确名称语义与类别识别，普通 `synthetic` 不等于防水；若场景合法且季节适配的防水外层、下装与鞋三类候选完整，3 套中 MUST 至少 1 套使用完整组合，否则不得强行补齐。不得覆盖温度、衣着偏好、归属、完整性、跨套不重复或单次规则降级边界。
@@ -49,7 +52,7 @@
 - SDD-019 起可使用 Vercel 服务端可信请求头推导城市建议，但 IP 仍不得静默改变天气位置：仅中国大陆字段完整、坐标有效且与当前有效城市相距至少 50 公里时提示，浏览器只接收城市名，不得接收或持久化原始 IP、坐标、地区或时区。“本次使用”必须先复用城市解析，再写入绑定当前 `auth.getUser()` 账号的 HttpOnly、SameSite=Lax、无持久期限会话 Cookie；“设为常用城市”继续更新 Supabase 城市五元组并清除临时状态。推荐页日期、天气、批次校验和生成 MUST 统一使用临时城市优先、常用城市兜底的有效位置；切换或恢复后必须删除当前用户旧推荐。本地无 Vercel 请求头时安静降级到手动选城，不得设置默认武汉或北京。
 - SDD-020 起设备定位只允许由用户点击“本次使用当前位置”或“设为常用城市”触发；页面加载、刷新和 Effect MUST NOT 请求权限，也不得使用 `watchPosition`。定位使用城市级低精度、10 秒超时和最多 5 分钟浏览器位置缓存。当前坐标只能由同一设备直接调用 BigDataCloud 免费客户端 Reverse Geocode to City API，并只接受 `lookupSource=coordinates`、`countryCode=CN` 的城市结果；衣拍即合 Server Action 只接收城市名和模式，MUST 用 `auth.getUser()` 重新鉴权并通过 `resolveChineseCity` 再次规范化，严禁接收或持久化设备经纬度。临时/常用城市继续复用 SDD-019 状态模型，切换后删除当前用户旧推荐；定位失败、非中国或第三方不可用时保留原城市和手动入口，不回退 IP、默认城市或模拟天气。
 - SDD-021 起衣物风格规范固定为 `minimal/casual/commute/elegant/sporty/vintage/cleanfit/streetwear/cityboy/gorpcore/preppy/workwear/oldmoney/y2k` 14 类，入库、编辑、长期偏好、反馈账本、AI、规则降级与最终复验 MUST 共用该目录。`wardrobe_items.brand` 可空且最长 40 字符；品牌只有在图片存在清晰文字或标志证据时才能建议，否则 MUST 为 `brand=""`、`brand_confidence="unknown"`，最终值始终允许用户编辑确认。推荐页单次风格选择不写回长期偏好；自动模式在库存允许时分配三个不同兼容方向，指定模式保持同一方向，但天气、衣着归属、场景硬边界、完整性、雨天防水和跨套不重复始终优先。趋势灵感只允许使用包含来源 URL、发布日期和有效期的人工审核快照，过期条目不得继续标记为本季；不得在页面运行时抓取外站或复制外部图片。
-- SDD-022 起推荐单套允许 3～7 件，角色由 `lib/recommendations/layers.ts` 统一派生并限制为最多 2 件上装、1 件下装/连衣裙、1 件外套、1 双鞋、2 件配饰。冷天可增加内搭，热天不得为追求复杂度强行叠穿；虚拟模特仅表达比例参考，不得宣称真实试穿、体型还原或颜色版型精确一致。换件必须清空旧效果图元数据，效果图与真实衣物实拍核对必须同时存在。
+- SDD-022 起推荐单套允许 3～7 件，角色由 `lib/recommendations/layers.ts` 统一派生并限制为最多 2 件上装、1 件下装/连衣裙、1 件外套、1 双鞋、2 件配饰。冷天可增加内搭，热天不得为追求复杂度强行叠穿。SDD-024 起角色只服务于衣物排布和实拍核对；换件仍须清空历史效果图元数据，防止旧缓存与新衣物错配。
 - 2026-08-27 复核 `/websites/vercel` 与项目内 Next.js 16.3.1 文档：Vercel 地理请求头只应在服务端读取；App Router 的 `headers()` 与 `cookies()` 均按异步 API 使用，Cookie 写入只发生在 Server Action/Route Handler。
 - SSR 客户端遵循 Supabase 官方模式：浏览器端使用 `createBrowserClient`，服务端使用 `createServerClient` + `next/headers` cookies，Next.js 16 使用根目录 `proxy.ts` 调用 `auth.getClaims()` 刷新会话。
 - `lib/auth/viewer.ts` 的账号属性必须使用 `auth.getUser()` 获取 Auth 服务端最新记录；`getClaims()` 继续用于 Proxy 和轻量身份校验，但不得用于邮箱绑定后的即时匿名状态判断，因为当前 JWT 可能仍携带旧声明。
@@ -63,7 +66,7 @@
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
-- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-09-01 最新部署 `dpl_EZedtU6PGw4xphjzS4guTPifwwPV` 已 `READY`，对应部署源 Git 提交 `ad297b5`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`；未单独配置 `OPENAI_LOOKBOOK_MODEL`，虚拟模特效果图按代码默认使用 `gpt-image-2`。不得配置 `SECRET_KEY` 或 `VERCEL_OIDC_TOKEN`。经用户明确同意，项目级 SSO 已关闭；首页、登录、衣橱、添加、推荐、收藏、设置、偏好、日记与手工记录 10 个页面公网均返回 200，显式设备定位、14 风格、品牌安全识别、自动/指定风格推荐、来源化本季灵感、分层穿搭、虚拟模特效果图入口和精准搭配预览均已上线，最近 30 分钟无 error 日志。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
+- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-09-01 最新部署仍为 `dpl_EZedtU6PGw4xphjzS4guTPifwwPV`，对应部署源 Git 提交 `ad297b5`。SDD-024/025 尚未部署，线上仍为历史 SDD-023 人物预览版本；不得把本地完成误写成已上线。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、服务端 `OPENAI_API_KEY` 和 `OPENAI_VISION_MODEL`。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
 - Vercel Production 发布流程：先运行 `npx vercel link --yes --project yipai-jihe --scope jialin-d583`、`npx vercel project inspect yipai-jihe --scope jialin-d583` 与 `npx vercel env ls production --scope jialin-d583`，确认链接项目正确、框架预设为 Next.js 且变量名称齐全；再运行 `npm run check`、`npm run build`，最后执行 `npx vercel deploy --prod --yes --scope jialin-d583`。发布后使用 `npx vercel inspect <deployment-url> --scope jialin-d583` 核对 `target=production`、`status=Ready` 和固定别名，并检查核心页面 HTTP 状态及 `npx vercel logs <deployment-id> --level error --since 30m --scope jialin-d583`；不得把密钥放进命令参数、日志或仓库。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -84,12 +87,14 @@
 - SDD-021 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-021`，并回归 `npm run verify:sdd-004`、`npm run verify:sdd-005`、`npm run verify:sdd-014`、`npm run verify:sdd-017` 与 `npm run verify:sdd-007`；独立门禁覆盖 14 风格、品牌长度与防猜、双账号 RLS、自动/指定风格方向和来源化趋势有效期。识别提示或 Schema 变化时 MUST 复跑 10 张真实图片，要求类别至少 8/10 且无品牌固定样本不得猜品牌；390px 浏览器另验收偏好换行、风格选择、搭配要点、趋势来源和控制台 error。
 - SDD-022 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-022`，并回归 `npm run verify:sdd-005`、`npm run verify:sdd-014`、`npm run verify:sdd-017` 与 `npm run verify:sdd-021`；独立门禁覆盖冷/温/热分层数量、角色顺序、类别上限、图像提示安全、私有 Storage 双账号隔离、占位素材和推荐卡静态边界。图像模型调用只做按需人工验收，不在自动测试中消耗额度；390px 浏览器另验收有图、无图、生成中、错误和换件失效状态。SDD-005/021 的联网回归若因环境审批未执行，必须在进度文档中保留未完成记录。
 - SDD-023 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-023`；独立门禁覆盖真实图片地址复用、固定人物素材、角色标签、缺图占位、无模型/第三方请求、AI 可选增强边界和推荐卡实拍核对保留。390px 浏览器必须另验收精准预览的 3～7 件展示、长名称、缺图状态、无横向溢出和无控制台 error；本阶段不重复消耗图像模型额度。
+- SDD-024 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-024`；独立门禁覆盖 2～8 件布局边界、纯色/透明/复杂背景固定像素样本、无人物默认路径、保存校验、双账号画布 RLS 和私有抠图签名隔离。390px 浏览器另验收衣物可移动、工具栏、五种底色、无溢出和无控制台 error。
+- SDD-025 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-025`，并回归 SDD-024；独立门禁覆盖昵称标准化、头像 MIME/5MB/UUID 路径、四个时尚 token、当前账号统计、资料 RLS 和私有头像签名隔离。390px 浏览器另验收个人主页四项统计、头像昵称编辑、近期卡片、顶部入口、无溢出和无控制台 error。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：P0 的 SDD-001、SDD-003～SDD-007、SDD-011～SDD-022 与 P1 的 SDD-009 已完成并部署；SDD-023 已完成并部署，等待用户在账号推荐页集中调试；SDD-005/021 联网回归因本轮 Codex 用量审批限制待补跑。当前 `yipai-jihe` Production 为 `dpl_EZedtU6PGw4xphjzS4guTPifwwPV`，对应部署源提交 `ad297b5`。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-024 穿搭画布与分享卡片、SDD-025 时尚个人主页与彩色视觉层已完成本地开发、远端迁移、双账号隔离和 390px 验收，等待用户明确要求后再部署。当前 `yipai-jihe` Production 仍为 `dpl_EZedtU6PGw4xphjzS4guTPifwwPV`、提交 `ad297b5`，线上未包含本轮改版。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -97,7 +102,7 @@
 - 部署节奏 MUST 遵循 `progress.md`：基础设施阶段完成后验证 Preview，推荐阶段完成后验证核心体验，全部 P0 完成后再发布受控评审链接。
 - 阶段未通过独立验收或 `npm run check` 时，不得在 `progress.md` 中标记为“已完成”，也不得开始依赖该阶段的后续阶段。
 - 每个阶段的实现范围 MUST 以对应 SDD 为准；不得为了 P1/P2 需求提前引入当前 MVP 不需要的复杂抽象。
-- 当前仍使用原图卡片，不执行自动抠图；P1 的基础穿搭日记与利用率已由 SDD-009 完成，照片上传、提醒、分享、AI 长报告和日记偏好加权不在该阶段。P1 抠图 MUST 经过服务端 `cutoutService` 调用外部 API，密钥只能通过环境变量提供，失败不得阻塞原图入库。
+- 当前真实衣物原图仍是可信源；SDD-024 仅增加浏览器本地、可逆的近纯色背景抠图派生图。复杂背景或人物穿着图仍保留原图；若未来接入更强外部抠图 API，必须另立 SDD、通过服务端 `cutoutService`、密钥仅用环境变量，并在向新第三方传输用户图片前明确告知。
 - SDD-002 已实现邮箱和密码一次提交的原地注册、直接登录、退出和跨设备恢复，但在用户完成真实账号验收前保持“验收中”，且仍不得作为 SDD-003 至 SDD-007 的依赖。匿名用户必须明确知道清除站点数据或换设备后无法恢复未注册身份；注册流程 MUST 保持同一 `auth_user_id` 和原匿名数据。登录与旧认证回调页面 MUST 跳过自动匿名初始化，只有用户主动选择时才创建新匿名身份。
 - SDD-016 起首次访问不得自动创建匿名身份。无会话首页 MUST 先展示完整账号入口；新用户可直接邮箱密码注册，已有用户可登录，体验身份只允许由明确按钮触发。无会话深链接必须返回 `/`，不得在跳转前展示顶部状态或底部导航；已有会话继续进入原应用。
 - SDD-002 不再发送注册确认或密码设置邮件。历史遗留的已绑定无密码账号只允许在本机运行 `npm run account:set-password-local`，通过 `.env.local` 的 `SECRET_KEY` 和 `auth.admin.updateUserById` 一次性设密；不得把该能力做成 Route Handler、Server Action 或 Vercel 环境能力。常规忘记密码仍不在当前范围。

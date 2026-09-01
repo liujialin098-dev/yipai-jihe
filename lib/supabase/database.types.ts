@@ -54,6 +54,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      outfit_canvases: {
+        Row: {
+          background_theme: string;
+          created_at: string;
+          id: string;
+          items: Json;
+          source_recommendation_id: string | null;
+          source_slot: number | null;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          background_theme?: string;
+          created_at?: string;
+          id?: string;
+          items: Json;
+          source_recommendation_id?: string | null;
+          source_slot?: number | null;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          background_theme?: string;
+          created_at?: string;
+          id?: string;
+          items?: Json;
+          source_recommendation_id?: string | null;
+          source_slot?: number | null;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       outfit_diary_entries: {
         Row: {
           created_at: string;
@@ -179,6 +215,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          avatar_path: string | null;
           created_at: string;
           display_name: string;
           onboarding_state: string;
@@ -186,6 +223,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          avatar_path?: string | null;
           created_at?: string;
           display_name?: string;
           onboarding_state?: string;
@@ -193,6 +231,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          avatar_path?: string | null;
           created_at?: string;
           display_name?: string;
           onboarding_state?: string;
@@ -207,6 +246,7 @@ export type Database = {
           brand: string | null;
           category: string;
           created_at: string;
+          cutout_path: string | null;
           demo_key: string | null;
           id: string;
           image_path: string;
@@ -226,6 +266,7 @@ export type Database = {
           brand?: string | null;
           category: string;
           created_at?: string;
+          cutout_path?: string | null;
           demo_key?: string | null;
           id?: string;
           image_path: string;
@@ -245,6 +286,7 @@ export type Database = {
           brand?: string | null;
           category?: string;
           created_at?: string;
+          cutout_path?: string | null;
           demo_key?: string | null;
           id?: string;
           image_path?: string;

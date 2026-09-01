@@ -1,10 +1,11 @@
 "use client";
 
-import { Settings2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/brand-mark";
 import type { Viewer } from "@/lib/auth/viewer";
+import { displayNameInitial } from "@/lib/profile/validation";
 
 export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
   const pathname = usePathname();
@@ -34,15 +35,22 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
       </Link>
       {isAuthPage ? null : (
         <Link
-          href="/settings"
-          aria-label="打开设置"
-          className="liquid-glass-web pressable flex size-10 items-center justify-center rounded-full text-[var(--foreground)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
+          href="/profile"
+          aria-label="打开个人主页"
+          className="profile-header-avatar pressable relative flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#202124] text-sm font-semibold text-white shadow-[0_8px_24px_rgba(49,42,73,0.18)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6556a8]"
         >
-          <Settings2
-            className="size-[1.05rem]"
-            strokeWidth={1.8}
-            aria-hidden="true"
-          />
+          {viewer?.avatarUrl ? (
+            <Image
+              src={viewer.avatarUrl}
+              alt="个人头像"
+              fill
+              sizes="40px"
+              unoptimized
+              className="object-cover"
+            />
+          ) : (
+            <span>{displayNameInitial(viewer?.displayName ?? "衣")}</span>
+          )}
         </Link>
       )}
     </header>

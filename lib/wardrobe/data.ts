@@ -14,7 +14,11 @@ import {
 
 type WardrobeRow = Tables<"wardrobe_items">;
 
-export type WardrobeItem = Omit<WardrobeRow, "image_path" | "user_id"> & {
+export type WardrobeItem = Omit<
+  WardrobeRow,
+  "cutout_path" | "image_path" | "user_id"
+> & {
+  cutoutUrl: string | null;
   imageUrl: string | null;
 };
 
@@ -25,7 +29,7 @@ export type WardrobeComposition = {
 };
 
 const ITEM_COLUMNS =
-  "id, demo_key, name, brand, category, primary_color, material, style, seasons, occasions, audience, image_path, source_ingestion_id, status, created_at, updated_at";
+  "id, demo_key, name, brand, category, primary_color, material, style, seasons, occasions, audience, image_path, cutout_path, source_ingestion_id, status, created_at, updated_at";
 
 const SIGNED_URL_TTL_SECONDS = 60 * 30;
 const SIGNED_URL_CACHE_MS = 60 * 25 * 1000;
@@ -87,20 +91,23 @@ async function signedUrlMap(
 function toWardrobeItem(
   row: Omit<WardrobeRow, "user_id">,
   imageUrl: string | null,
+  cutoutUrl: string | null,
 ): WardrobeItem {
-  const { image_path: _imagePath, ...item } = row;
+  const { cutout_path: _cutoutPath, image_path: _imagePath, ...item } = row;
   return {
     ...item,
+    cutoutUrl,
     imageUrl: getDemoWardrobeImageUrl(item.demo_key) ?? imageUrl,
   };
 }
 
 function privateImagePaths(
-  rows: Array<Pick<WardrobeRow, "demo_key" | "image_path">>,
+  rows: Array<Pick<WardrobeRow, "cutout_path" | "demo_key" | "image_path">>,
 ) {
-  return rows.flatMap((row) =>
-    getDemoWardrobeImageUrl(row.demo_key) ? [] : [row.image_path],
-  );
+  return rows.flatMap((row) => [
+    ...(getDemoWardrobeImageUrl(row.demo_key) ? [] : [row.image_path]),
+    ...(row.cutout_path ? [row.cutout_path] : []),
+  ]);
 }
 
 export async function getWardrobeItems(filters: WardrobeFilters) {
@@ -146,7 +153,11 @@ export async function getWardrobeItems(filters: WardrobeFilters) {
 
   return {
     items: data.map((item) =>
-      toWardrobeItem(item, urls.get(item.image_path) ?? null),
+      toWardrobeItem(
+        item,
+        urls.get(item.image_path) ?? null,
+        item.cutout_path ? (urls.get(item.cutout_path) ?? null) : null,
+      ),
     ),
     error: null,
   };
@@ -167,7 +178,11 @@ export async function getWardrobeItem(id: string) {
 
   if (error || !data) return null;
   const urls = await signedUrlMap(supabase, privateImagePaths([data]));
-  return toWardrobeItem(data, urls.get(data.image_path) ?? null);
+  return toWardrobeItem(
+    data,
+    urls.get(data.image_path) ?? null,
+    data.cutout_path ? (urls.get(data.cutout_path) ?? null) : null,
+  );
 }
 
 export async function getWardrobeCount(
@@ -254,7 +269,11 @@ export async function getWardrobePreview(limit = 3) {
   const urls = await signedUrlMap(supabase, privateImagePaths(data));
 
   return data.map((item) =>
-    toWardrobeItem(item, urls.get(item.image_path) ?? null),
+    toWardrobeItem(
+      item,
+      urls.get(item.image_path) ?? null,
+      item.cutout_path ? (urls.get(item.cutout_path) ?? null) : null,
+    ),
   );
 }
 
@@ -277,6 +296,10 @@ export async function getWardrobeItemsByIds(ids: string[]) {
 
   const urls = await signedUrlMap(supabase, privateImagePaths(data));
   return data.map((item) =>
-    toWardrobeItem(item, urls.get(item.image_path) ?? null),
+    toWardrobeItem(
+      item,
+      urls.get(item.image_path) ?? null,
+      item.cutout_path ? (urls.get(item.cutout_path) ?? null) : null,
+    ),
   );
 }

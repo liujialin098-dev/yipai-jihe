@@ -55,7 +55,7 @@ export default async function Home({
 
       <Link
         href={wardrobeHref}
-        className="surface-card pressable mt-7 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
+        className="surface-card fashion-accent-card pressable mt-7 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
       >
         <div className="flex items-start justify-between gap-5">
           <div>

@@ -3,6 +3,7 @@ import { maskEmail } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/server";
 
 export type Viewer = {
+  avatarUrl: string | null;
   clothingPreference: string;
   displayName: string;
   email: string | null;
@@ -36,7 +37,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     const [profileResult, preferencesResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("display_name, onboarding_state")
+        .select("avatar_path, display_name, onboarding_state")
         .eq("user_id", userId)
         .maybeSingle(),
       supabase
@@ -57,7 +58,14 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       return null;
     }
 
+    const avatarResult = profileResult.data.avatar_path
+      ? await supabase.storage
+          .from("wardrobe-images")
+          .createSignedUrl(profileResult.data.avatar_path, 60 * 30)
+      : null;
+
     return {
+      avatarUrl: avatarResult?.data?.signedUrl ?? null,
       clothingPreference: preferencesResult.data.clothing_preference,
       displayName: profileResult.data.display_name,
       email,

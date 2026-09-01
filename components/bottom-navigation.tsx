@@ -57,7 +57,7 @@ export function BottomNavigation() {
             <span
               className={
                 primary
-                  ? "nav-icon-shell -mt-6 flex size-12 items-center justify-center rounded-[1.05rem] border-[3px] border-[var(--surface-solid)] bg-[#1d1d1f] text-white shadow-[0_10px_28px_rgba(29,29,31,0.28)]"
+                  ? "nav-icon-shell -mt-6 flex size-12 items-center justify-center rounded-[1.05rem] border-[3px] border-[var(--surface-solid)] bg-[var(--fashion-lime)] text-[#202124] shadow-[0_10px_28px_rgba(110,128,44,0.24)]"
                   : "nav-icon-shell flex h-6 items-center justify-center"
               }
             >

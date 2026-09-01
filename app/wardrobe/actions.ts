@@ -292,7 +292,7 @@ export async function deleteWardrobeItem(
 
   const { data: item, error: readError } = await context.supabase
     .from("wardrobe_items")
-    .select("id, image_path")
+    .select("id, image_path, cutout_path")
     .eq("id", itemId)
     .eq("user_id", context.userId)
     .maybeSingle();
@@ -303,7 +303,7 @@ export async function deleteWardrobeItem(
 
   const { error: storageError } = await context.supabase.storage
     .from("wardrobe-images")
-    .remove([item.image_path]);
+    .remove([item.image_path, ...(item.cutout_path ? [item.cutout_path] : [])]);
 
   if (storageError) {
     return {

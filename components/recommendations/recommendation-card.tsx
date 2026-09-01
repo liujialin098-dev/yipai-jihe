@@ -1,12 +1,16 @@
 import Image from "next/image";
-import { ImageIcon, Lightbulb } from "lucide-react";
+import { Lightbulb, MoveUpRight } from "lucide-react";
+import Link from "next/link";
 import type { CSSProperties } from "react";
 import { RecommendationDiaryButton } from "@/components/diary/recommendation-diary-button";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
-import { LookbookGenerator } from "@/components/recommendations/lookbook-generator";
-import { PrecisionOutfitPreview } from "@/components/recommendations/precision-outfit-preview";
+import { OutfitCanvasPreview } from "@/components/outfits/outfit-canvas-preview";
 import { ReplaceItemPanel } from "@/components/recommendations/replace-item-panel";
 import type { RecommendationOutfitView } from "@/lib/recommendations/constants";
+import {
+  createInitialCanvasItems,
+  type OutfitCanvasTheme,
+} from "@/lib/outfits/canvas";
 import {
   deriveOutfitLayers,
   OUTFIT_LAYER_LABELS,
@@ -46,13 +50,10 @@ export function RecommendationCard({
       (layer) => [layer.itemId, OUTFIT_LAYER_LABELS[layer.role]],
     ),
   );
-  const hasLookbook = Boolean(outfit.lookbookImageUrl);
-  const precisionItems = outfitItems.map((item) => ({
-    id: item.id,
-    name: item.name,
-    imageUrl: item.imageUrl,
-    roleLabel: roleByItemId.get(item.id) ?? "单品",
-  }));
+  const canvasTheme = (["lime", "lilac", "sky"] as OutfitCanvasTheme[])[
+    index % 3
+  ];
+  const canvasItems = createInitialCanvasItems(outfit.itemIds);
 
   return (
     <article
@@ -60,41 +61,22 @@ export function RecommendationCard({
       style={{ "--stagger": index + 1 } as CSSProperties}
     >
       <div className="bg-[#f4f6f8] p-3">
-        {hasLookbook ? (
-          <div className="relative aspect-[2/3] overflow-hidden rounded-[1.35rem] bg-[#eef1f4] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-            <Image
-              src={outfit.lookbookImageUrl as string}
-              alt={`${outfit.title}的 AI 虚拟模特搭配效果参考`}
-              fill
-              sizes="(max-width: 480px) calc(100vw - 64px), 390px"
-              unoptimized
-              className="object-cover object-top"
-              priority={index === 0}
-            />
-            <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/88 px-3 py-1.5 text-[0.68rem] font-semibold text-[#1d1d1f] shadow-[0_6px_20px_rgba(29,29,31,0.08)] backdrop-blur-md">
-              <ImageIcon
-                className="size-3.5"
-                strokeWidth={1.8}
-                aria-hidden="true"
-              />
-              AI 效果参考
-            </span>
-          </div>
-        ) : (
-          <PrecisionOutfitPreview title={outfit.title} items={precisionItems} />
-        )}
-        <div className="px-1 pt-3">
-          <LookbookGenerator
-            hasImage={hasLookbook}
-            recommendationId={recommendationId}
-            slot={outfit.slot}
-          />
-          <p className="mt-2 text-center text-[0.68rem] leading-5 text-[var(--text-tertiary)]">
-            {hasLookbook
-              ? "AI 图仅供氛围参考，衣物颜色与版型以精准预览和实拍为准"
-              : "精准预览优先使用衣物原图，AI 效果图可按需生成"}
-          </p>
-        </div>
+        <OutfitCanvasPreview
+          title={outfit.title}
+          theme={canvasTheme}
+          items={canvasItems}
+          wardrobeItems={outfitItems}
+        />
+        <Link
+          href={`/outfits/new?recommendationId=${recommendationId}&slot=${outfit.slot}`}
+          className="motion-button mt-3 flex h-11 items-center justify-center gap-2 rounded-full bg-[#202124] px-4 text-sm font-semibold text-white"
+        >
+          编辑穿搭卡片
+          <MoveUpRight className="size-4" aria-hidden="true" />
+        </Link>
+        <p className="mt-2 text-center text-[0.68rem] leading-5 text-[var(--text-tertiary)]">
+          只使用真实衣物。进入画布后可以拖动、抠图和分享。
+        </p>
       </div>
 
       <div className="border-t border-[var(--hairline)] bg-white p-3">
