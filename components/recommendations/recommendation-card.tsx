@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { RecommendationDiaryButton } from "@/components/diary/recommendation-diary-button";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { LookbookGenerator } from "@/components/recommendations/lookbook-generator";
+import { PrecisionOutfitPreview } from "@/components/recommendations/precision-outfit-preview";
 import { ReplaceItemPanel } from "@/components/recommendations/replace-item-panel";
 import type { RecommendationOutfitView } from "@/lib/recommendations/constants";
 import {
@@ -46,6 +47,12 @@ export function RecommendationCard({
     ),
   );
   const hasLookbook = Boolean(outfit.lookbookImageUrl);
+  const precisionItems = outfitItems.map((item) => ({
+    id: item.id,
+    name: item.name,
+    imageUrl: item.imageUrl,
+    roleLabel: roleByItemId.get(item.id) ?? "单品",
+  }));
 
   return (
     <article
@@ -53,43 +60,29 @@ export function RecommendationCard({
       style={{ "--stagger": index + 1 } as CSSProperties}
     >
       <div className="bg-[#f4f6f8] p-3">
-        <div className="relative aspect-[2/3] overflow-hidden rounded-[1.35rem] bg-[#eef1f4] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-          <Image
-            src={
-              outfit.lookbookImageUrl ?? "/virtual-models/neutral-studio.png"
-            }
-            alt={
-              hasLookbook
-                ? `${outfit.title}的虚拟模特搭配效果参考`
-                : "无身份虚拟模特效果图占位"
-            }
-            fill
-            sizes="(max-width: 480px) calc(100vw - 64px), 390px"
-            unoptimized={hasLookbook}
-            className={`object-cover object-top ${
-              hasLookbook ? "" : "opacity-88 saturate-50"
-            }`}
-            priority={index === 0}
-          />
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/88 px-3 py-1.5 text-[0.68rem] font-semibold text-[#1d1d1f] shadow-[0_6px_20px_rgba(29,29,31,0.08)] backdrop-blur-md">
-            <ImageIcon
-              className="size-3.5"
-              strokeWidth={1.8}
-              aria-hidden="true"
+        {hasLookbook ? (
+          <div className="relative aspect-[2/3] overflow-hidden rounded-[1.35rem] bg-[#eef1f4] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+            <Image
+              src={outfit.lookbookImageUrl as string}
+              alt={`${outfit.title}的 AI 虚拟模特搭配效果参考`}
+              fill
+              sizes="(max-width: 480px) calc(100vw - 64px), 390px"
+              unoptimized
+              className="object-cover object-top"
+              priority={index === 0}
             />
-            {hasLookbook ? "虚拟模特效果" : "虚拟模特预览"}
-          </span>
-          {!hasLookbook ? (
-            <div className="absolute inset-x-3 bottom-3 rounded-[1.15rem] border border-white/70 bg-white/82 px-4 py-3 backdrop-blur-xl">
-              <p className="text-sm font-semibold text-[#1d1d1f]">
-                先看整体比例
-              </p>
-              <p className="mt-1 text-xs leading-5 text-[#666a73]">
-                点击后按这套衣物生成，通常需要几十秒。
-              </p>
-            </div>
-          ) : null}
-        </div>
+            <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/88 px-3 py-1.5 text-[0.68rem] font-semibold text-[#1d1d1f] shadow-[0_6px_20px_rgba(29,29,31,0.08)] backdrop-blur-md">
+              <ImageIcon
+                className="size-3.5"
+                strokeWidth={1.8}
+                aria-hidden="true"
+              />
+              AI 效果参考
+            </span>
+          </div>
+        ) : (
+          <PrecisionOutfitPreview title={outfit.title} items={precisionItems} />
+        )}
         <div className="px-1 pt-3">
           <LookbookGenerator
             hasImage={hasLookbook}
@@ -97,7 +90,9 @@ export function RecommendationCard({
             slot={outfit.slot}
           />
           <p className="mt-2 text-center text-[0.68rem] leading-5 text-[var(--text-tertiary)]">
-            仅供搭配比例参考，实际颜色与版型以衣物实拍为准
+            {hasLookbook
+              ? "AI 图仅供氛围参考，衣物颜色与版型以精准预览和实拍为准"
+              : "精准预览优先使用衣物原图，AI 效果图可按需生成"}
           </p>
         </div>
       </div>
