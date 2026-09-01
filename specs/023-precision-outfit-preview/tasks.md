@@ -25,7 +25,7 @@
 - [x] T005 [P] 在 `scripts/verify-sdd-023.mjs` 增加原图复用、无模型调用、缺图、角色顺序和静态移动端门禁
 - [x] T006 在 `package.json` 增加 `verify:sdd-023` 并运行 check/build/独立验证
 - [x] T007 更新 `progress.md`、`AGENTS.md` 和 SDD 验收记录
-- [ ] T008 提交 SDD-023 代码与文档，不包含用户未追踪文件
+- [x] T008 提交 SDD-023 代码与文档，不包含用户未追踪文件
 
 ## 依赖顺序
 
