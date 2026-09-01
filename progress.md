@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：SDD-024 穿搭画布与分享卡片、SDD-025 时尚个人主页与彩色视觉层已完成本地开发、远端数据库迁移和独立验收，尚未部署；推荐默认路径已按最新要求取消人物和 AI 效果图，改为真实衣物排布。Production 仍为 SDD-023 版本。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：SDD-024 穿搭画布与分享卡片、SDD-025 时尚个人主页与彩色视觉层已完成开发、远端数据库迁移、独立验收和 Production 发布；推荐默认路径已按最新要求取消人物和 AI 效果图，改为真实衣物排布。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -323,6 +323,7 @@
 - [x] 2026-08-27 Production：将包含 SDD-017 的提交 `d6860a4` 更新部署为 `dpl_CbxB5MKuTX4FSggKiAcBfsnP1L5M`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`，七个核心页面均返回 200，最近 30 分钟无 error 日志。
 - [x] 2026-08-27 Production：将包含 SDD-018 与 SDD-019 的提交 `99cc24e` 更新部署为 `dpl_aNTXkogETtNb5wk268tzVE1ueYCD`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`。390px 体验身份、推荐页手动保存武汉和七个核心页面 200 均通过，最近 30 分钟无 error 日志。
 - [x] 2026-08-28 Production：将演示入口收敛提交 `0838ef0` 与抽象品牌 Logo 提交 `1e65360` 更新部署为 `dpl_GWYzhLiwS2FNNQMuVjWjpyAkT8C3`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`。首页、登录、衣橱、添加、推荐、收藏、设置、日记和手工记录 9 个页面及品牌图标均返回 200，最近 30 分钟无 error 日志。
+- [x] 2026-09-01 Production：将 SDD-024/025 合并提交 `4768881` 更新部署为 `dpl_BD1HoPqd6H9f4C8L5AK76WSwP6gS`；固定域名继续为 `https://yipai-jihe.vercel.app`，部署为 `READY` 且 `target=production`。首页、登录、衣橱、推荐、个人主页和新建穿搭卡片 6 个页面均返回 200；390px 体验身份、个人主页与安全兜底页无横向溢出或错误覆盖层，最近 30 分钟无 error 日志。
 
 ## P1 扩展 SDD
 
@@ -858,7 +859,7 @@
 
 ### SDD-024：穿搭画布与分享卡片
 
-- 状态：已完成，待部署（2026-09-01）
+- 状态：已完成并部署（2026-09-01）
 - SDD 目录：`specs/024-outfit-canvas-share/`
 - AI Coding 估算：1 段主对话，复杂度 L
 - 依赖：SDD-005、SDD-021、SDD-023
@@ -888,12 +889,13 @@
 - 完成日期：2026-09-01
 - 验收结果：已形成“每日推荐 → 无人物真实衣物卡片 → 自由排布 → 本地抠图 → 私有保存 → 分享 PNG”的独立闭环；远端迁移版本为 `20260901022345`（`outfit_canvas_share`）。
 - 已知限制：首版本本地抠图只承诺近纯色、边界清晰的棚拍图；复杂室内、人物穿着和纹理背景保留原图。自由变换为拖动加离散缩放/旋转，不提供双指连续手势或任意文字贴纸。
-- 下一步：与 SDD-025 一起部署后，由用户使用真实账号验证手机系统分享面板和真实衣物抠图边界。
-- 提交记录：见本轮 SDD-024/025 合并提交。
+- 下一步：由用户使用真实账号验证手机系统分享面板和真实衣物抠图边界。
+- 提交记录：`4768881`（SDD-024/025 合并实现）；Production 部署 `dpl_BD1HoPqd6H9f4C8L5AK76WSwP6gS`。
+- Production：`https://yipai-jihe.vercel.app`（`READY`，`target=production`；390px 体验身份、个人主页和无效推荐安全兜底页均无横向溢出或错误覆盖层，部署后最近 30 分钟无 error 日志）。
 
 ### SDD-025：时尚个人主页与彩色视觉层
 
-- 状态：已完成，待部署（2026-09-01）
+- 状态：已完成并部署（2026-09-01）
 - SDD 目录：`specs/025-profile-fashion-color/`
 - AI Coding 估算：1 段主对话，复杂度 M
 - 依赖：SDD-009、SDD-024
@@ -923,8 +925,9 @@
 - 完成日期：2026-09-01
 - 验收结果：个人资料、私有头像、当前账号聚合统计、近期画布和时尚四色视觉已形成完整闭环；远端迁移版本为 `20260901023555`（`profile_fashion_color`）。
 - 已知限制：个人主页仅本人可见，不含公开主页、关注、评论、用户搜索或社区动态；自动验收浏览器创建体验身份时触发 Supabase 频率限制，因此登录后视觉使用一次性真实组件预览完成，远端 RLS 已由独立双账号脚本通过。
-- 下一步：用户明确要求后再执行 Production 部署；部署前不修改当前线上版本。
-- 提交记录：见本轮 SDD-024/025 合并提交。
+- 下一步：由用户使用真实账号完成头像上传、昵称保存和近期穿搭卡片的最终体验确认。
+- 提交记录：`4768881`（SDD-024/025 合并实现）；Production 部署 `dpl_BD1HoPqd6H9f4C8L5AK76WSwP6gS`。
+- Production：`https://yipai-jihe.vercel.app`（`READY`，`target=production`；390px 个人主页头像入口、昵称编辑、统计与底部导航均正常，无横向溢出、错误覆盖层或浏览器 error）。
 
 ### SDD-008：自动抠图
 
