@@ -44,4 +44,12 @@ npm run verify:sdd-026
 npm run verify:sdd-026:live
 ```
 
-没有百度密钥时，静态门禁和失败回退仍必须通过；真实 10 张质量验收保持待配置密钥后执行，不得伪造成功结果。Vercel `Secret` 不允许通过 CLI 下载，本地 live 命令必须由开发者本人将双密钥写入被忽略的 `.env.local`；只有 Vercel 云端验收时才直接使用 Production Secret。
+没有百度密钥时，静态门禁和失败回退仍必须通过，真实样本不得伪造成功结果。Vercel `Secret` 不允许通过 CLI 下载，本地 live 命令必须由开发者本人将双密钥写入被忽略的 `.env.local`；只有 Vercel 云端验收时才直接使用 Production Secret。
+
+## 2026-09-02 Production 验收记录
+
+- 固定 10 张衣物在隔离体验身份中完成识别、私有入库和真实百度去背，数据库最终为 10/10 `cutout_path`；展示图与精修工作图路径均属于当前测试账号。
+- 首次后台并发处理为 7/10，原图安全回退正常；3 件单件顺序重试后达到 10/10。根据该证据，客户端批量确认已限制为 2 路并在每件后等待 4 秒；为避免无意义消耗额度，未重复上传第二批 10 件。
+- 390px Production 画布已验证无人物、无格子、无横向溢出；移动、旋转、专业重试、擦除/恢复、三档画笔、重置和保存入口可用，console error 为 0。
+- 自动与联网门禁 `npm run check`、`npm run build`、`npm run verify:sdd-026`、`npm run verify:sdd-024` 和 `npm run verify:sdd-025` 全部通过。
+- Production：`https://yipai-jihe.vercel.app`，部署 `dpl_Asby267EpX5q46dSJDyXgq4uMoZJ`，部署源提交 `702bc6f`。

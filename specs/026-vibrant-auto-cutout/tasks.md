@@ -62,7 +62,7 @@
 
 - [x] T019 在 `scripts/verify-sdd-026.mjs` 完成百度 Token 缓存与抠图合约、Sharp 固定透明样本、分类 scale、人工工具静态边界、无网格和服务端密钥门禁
 - [x] T020 运行 `npm run check`、`npm run build`、`npm run verify:sdd-026` 及 SDD-024/025 回归
-- [ ] T021 按 `specs/026-vibrant-auto-cutout/quickstart.md` 完成 390px 浏览器验收；无真实密钥时明确保留付费样本验收待办
+- [x] T021 按 `specs/026-vibrant-auto-cutout/quickstart.md` 完成 390px Production 浏览器验收；真实 10 张固定样本最终 10/10 获得私有透明图，画布移动/旋转与人工擦除/恢复可用且 console error 为 0
 - [x] T022 更新 `progress.md`、`AGENTS.md` 与 SDD-026 的完成状态、限制和下一步 SDD-027 边界
 - [x] T023 提交 SDD-026，不包含用户未追踪文档和脚本（实现提交 `4f0712e`）
 - [x] T024 按用户 2026-09-02 决策将 PhotoRoom 替换为百度智能云，并同步规格、环境模板、门禁与进度文档（提交 `059a0e3`）
