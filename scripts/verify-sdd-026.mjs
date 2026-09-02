@@ -6,6 +6,7 @@ import {
   OUTFIT_CATEGORY_SCALE,
   createInitialCanvasItems,
 } from "../lib/outfits/canvas.ts";
+import { requestBaiduCutout } from "../lib/outfits/baidu-cutout.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const read = (path) => readFile(`${root}/${path}`, "utf8");
@@ -19,6 +20,7 @@ await Promise.all(
     "app/api/wardrobe/items/[id]/cutout/route.ts",
     "app/api/wardrobe/items/[id]/cutout/source/route.ts",
     "components/outfits/cutout-refiner.tsx",
+    "lib/outfits/baidu-cutout.ts",
     "lib/outfits/professional-cutout.ts",
   ].map(read),
 );
@@ -85,25 +87,113 @@ assert.equal(sourceMeta.height, 100);
 assert.ok(displayMeta.width < sourceMeta.width);
 assert.ok(displayMeta.height < sourceMeta.height);
 
-const [service, cutoutRoute, confirmRoute, refiner, editor, styles, env] =
-  await Promise.all([
-    read("lib/outfits/professional-cutout.ts"),
-    read("app/api/wardrobe/items/[id]/cutout/route.ts"),
-    read("app/api/wardrobe/ingestions/[id]/confirm/route.ts"),
-    read("components/outfits/cutout-refiner.tsx"),
-    read("components/outfits/outfit-canvas-editor.tsx"),
-    read("app/globals.css"),
-    read(".env.example"),
-  ]);
-assert.match(service, /process\.env\.PHOTOROOM_API_KEY/);
-assert.match(service, /https:\/\/sdk\.photoroom\.com\/v1\/segment/);
-assert.match(service, /form\.set\("crop", "false"\)/);
-assert.match(service, /form\.set\("channels", "rgba"\)/);
-assert.match(service, /form\.set\("despill", "true"\)/);
+const baiduSource = await sharp({
+  create: {
+    width: 180,
+    height: 160,
+    channels: 3,
+    background: { r: 240, g: 238, b: 235 },
+  },
+})
+  .jpeg()
+  .toBuffer();
+const baiduCalls = [];
+const fakeBaiduFetch = async (input, init = {}) => {
+  const url = String(input);
+  baiduCalls.push({ body: init.body, url });
+  if (url === "https://aip.baidubce.com/oauth/2.0/token") {
+    assert.ok(init.body instanceof URLSearchParams);
+    assert.equal(init.body.get("grant_type"), "client_credentials");
+    assert.equal(init.body.get("client_id"), "test-api-key");
+    assert.equal(init.body.get("client_secret"), "test-secret-key");
+    return new Response(
+      JSON.stringify({
+        access_token: "test-access-token",
+        expires_in: 2592000,
+      }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  }
+  const endpoint = new URL(url);
+  assert.equal(
+    endpoint.origin + endpoint.pathname,
+    "https://aip.baidubce.com/rest/2.0/image-process/v1/segment",
+  );
+  assert.equal(endpoint.searchParams.get("access_token"), "test-access-token");
+  const payload = JSON.parse(String(init.body));
+  assert.equal(payload.method, "auto");
+  assert.equal(payload.refine_mask, "true");
+  assert.equal(payload.return_form, "rgba");
+  assert.ok(payload.image.length > 100);
+  return new Response(
+    JSON.stringify({ log_id: "test", image: transparent.toString("base64") }),
+    { status: 200, headers: { "content-type": "application/json" } },
+  );
+};
+const credentials = {
+  apiKey: "test-api-key",
+  secretKey: "test-secret-key",
+};
+const firstBaiduResult = await requestBaiduCutout(
+  new Blob([baiduSource], { type: "image/jpeg" }),
+  credentials,
+  fakeBaiduFetch,
+  () => 1_000,
+);
+const secondBaiduResult = await requestBaiduCutout(
+  new Blob([baiduSource], { type: "image/jpeg" }),
+  credentials,
+  fakeBaiduFetch,
+  () => 2_000,
+);
+assert.equal(firstBaiduResult.type, "image/png");
+assert.equal(secondBaiduResult.type, "image/png");
+assert.equal(
+  baiduCalls.filter(({ url }) => url.endsWith("/oauth/2.0/token")).length,
+  1,
+);
+assert.equal(baiduCalls.length, 3);
+
+const [
+  baiduService,
+  service,
+  cutoutRoute,
+  confirmRoute,
+  refiner,
+  editor,
+  styles,
+  env,
+] = await Promise.all([
+  read("lib/outfits/baidu-cutout.ts"),
+  read("lib/outfits/professional-cutout.ts"),
+  read("app/api/wardrobe/items/[id]/cutout/route.ts"),
+  read("app/api/wardrobe/ingestions/[id]/confirm/route.ts"),
+  read("components/outfits/cutout-refiner.tsx"),
+  read("components/outfits/outfit-canvas-editor.tsx"),
+  read("app/globals.css"),
+  read(".env.example"),
+]);
+assert.match(baiduService, /process\.env\.BAIDU_API_KEY/);
+assert.match(baiduService, /process\.env\.BAIDU_SECRET_KEY/);
+assert.match(baiduService, /https:\/\/aip\.baidubce\.com\/oauth\/2\.0\/token/);
+assert.match(
+  baiduService,
+  /https:\/\/aip\.baidubce\.com\/rest\/2\.0\/image-process\/v1\/segment/,
+);
+assert.match(baiduService, /method: "auto"/);
+assert.match(baiduService, /refine_mask: "true"/);
+assert.match(baiduService, /return_form: "rgba"/);
+assert.match(service, /requestBaiduCutout\(original\.data\)/);
 assert.match(service, /\.trim\(\{/);
 assert.match(service, /\/cutout-sources\//);
-assert.doesNotMatch(editor, /PHOTOROOM_API_KEY|sdk\.photoroom\.com/);
-assert.doesNotMatch(refiner, /PHOTOROOM_API_KEY|sdk\.photoroom\.com/);
+assert.doesNotMatch(
+  editor,
+  /BAIDU_API_KEY|BAIDU_SECRET_KEY|aip\.baidubce\.com/,
+);
+assert.doesNotMatch(
+  refiner,
+  /BAIDU_API_KEY|BAIDU_SECRET_KEY|aip\.baidubce\.com/,
+);
 assert.match(cutoutRoute, /auth\.getUser\(\)/);
 assert.match(service, /\.eq\("user_id", userId\)/);
 assert.match(confirmRoute, /after\(async \(\) =>/);
@@ -115,13 +205,15 @@ assert.match(editor, /边缘精修/);
 assert.match(styles, /--background: #f1edff/);
 assert.match(styles, /--fashion-lilac/);
 assert.match(styles, /prefers-reduced-transparency/);
-assert.match(env, /PHOTOROOM_API_KEY/);
-assert.doesNotMatch(env, /NEXT_PUBLIC_PHOTOROOM/);
+assert.match(env, /BAIDU_API_KEY/);
+assert.match(env, /BAIDU_SECRET_KEY/);
+assert.doesNotMatch(env, /NEXT_PUBLIC_BAIDU/);
+assert.doesNotMatch(env, /PHOTOROOM_API_KEY/);
 const outfitCanvasCss =
   styles.match(/\.outfit-canvas \{[\s\S]*?\n\}/)?.[0] ?? "";
 assert.ok(outfitCanvasCss);
 assert.doesNotMatch(outfitCanvasCss, /repeating-|grid|background-size/);
 
 console.log(
-  "SDD-026 verification passed: PhotoRoom contract, transparent trim, category sizing, manual erase/restore, no-grid canvas and server-only key boundary.",
+  "SDD-026 verification passed: Baidu token/cache and cutout contract, transparent trim, category sizing, manual erase/restore, no-grid canvas and server-only key boundary.",
 );

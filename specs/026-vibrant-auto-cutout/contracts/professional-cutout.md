@@ -13,7 +13,7 @@
 ```
 
 - `id` 必须是 UUID。
-- `force=false` 且已有有效 `cutout_path` 时必须复用，不调用 PhotoRoom。
+- `force=false` 且已有有效 `cutout_path` 时必须复用，不调用百度智能云。
 - `force=true` 表示用户明确要求重新处理。
 
 ### 成功响应
@@ -36,17 +36,17 @@
 - `409 image_missing`：可信原图不存在。
 - `503 cutout_unavailable`：未配置密钥、第三方超时/限额、结果无效或私有文件保存失败。
 
-失败响应只返回可理解的中文说明，不返回 PhotoRoom 响应正文、密钥或内部路径。
+失败响应只返回可理解的中文说明，不返回百度响应正文、密钥、Access Token 或内部路径。
 
-## 内部 PhotoRoom 合约
+## 内部百度智能云合约
 
-- Endpoint: `POST https://sdk.photoroom.com/v1/segment`
-- Header: `x-api-key`，仅来自服务端 `PHOTOROOM_API_KEY`
-- Multipart: `image_file`、`format=png`、`channels=rgba`、`size=hd`、`crop=false`、`despill=true`；同尺寸结果供恢复画笔使用，展示图由服务端 Sharp 自动裁透明边
-- Timeout: 20 秒
-- 输入：当前账号私有原图，最大 10MB，只接受 JPEG/PNG/WebP
-- 输出：HTTP 200、图片 MIME、有效 PNG 签名、最大 20MB
-- 日志：不得记录密钥、图片字节、签名 URL、第三方响应正文或用户原始文件名
+- Token Endpoint: `POST https://aip.baidubce.com/oauth/2.0/token`，以服务端 `BAIDU_API_KEY`、`BAIDU_SECRET_KEY` 获取 Access Token，并按 `expires_in` 提前 5 分钟失效缓存
+- Cutout Endpoint: `POST https://aip.baidubce.com/rest/2.0/image-process/v1/segment?access_token=...`
+- JSON: `image=<无 data URL 头的 Base64>`、`method=auto`、`refine_mask=true`、`return_form=rgba`
+- Timeout: Token 与抠图请求合计 20 秒；Token 失效错误只允许刷新后重试一次
+- 输入：当前账号私有原图，最大 10MB，只接受 JPEG/PNG/WebP；服务端规范化为最短边至少 128px、最长边不超过 3000px且 Base64 不超过 10MB
+- 输出：HTTP 200 JSON 中包含有效 PNG Base64；解码后最大 20MB且必须具有真实透明通道
+- 日志：不得记录 API Key、Secret Key、Access Token、图片字节、签名 URL、第三方响应正文或用户原始文件名
 
 ## 自动处理调用
 

@@ -1,11 +1,9 @@
+import { requestBaiduCutout } from "@/lib/outfits/baidu-cutout";
 import type { createClient } from "@/lib/supabase/server";
 import { WARDROBE_BUCKET } from "@/lib/wardrobe/ingestion";
 import sharp from "sharp";
 
-const PHOTOROOM_ENDPOINT = "https://sdk.photoroom.com/v1/segment";
-const INPUT_LIMIT_BYTES = 10 * 1024 * 1024;
 const OUTPUT_LIMIT_BYTES = 20 * 1024 * 1024;
-const TIMEOUT_MS = 20_000;
 const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10] as const;
 const inFlight = new Map<string, Promise<ProfessionalCutoutResult>>();
 
@@ -30,59 +28,6 @@ type ProcessInput = {
 };
 
 type RefineInput = Omit<ProcessInput, "force"> & { source: Blob };
-
-export async function requestPhotoRoomCutout(
-  source: Blob,
-  apiKey = process.env.PHOTOROOM_API_KEY?.trim(),
-  fetcher: typeof fetch = fetch,
-) {
-  if (!apiKey) throw new Error("cutout_unavailable");
-  if (
-    source.size < 1 ||
-    source.size > INPUT_LIMIT_BYTES ||
-    !["image/jpeg", "image/png", "image/webp"].includes(source.type)
-  ) {
-    throw new Error("image_invalid");
-  }
-
-  const form = new FormData();
-  form.set("image_file", source, `wardrobe.${extensionFor(source.type)}`);
-  form.set("format", "png");
-  form.set("channels", "rgba");
-  form.set("size", "hd");
-  // Keep source dimensions so the manual restore brush can map back to the
-  // original pixels. The display asset is trimmed on our server afterwards.
-  form.set("crop", "false");
-  form.set("despill", "true");
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
-  try {
-    const response = await fetcher(PHOTOROOM_ENDPOINT, {
-      method: "POST",
-      headers: { "x-api-key": apiKey },
-      body: form,
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    if (!response.ok) throw new Error("cutout_unavailable");
-    const contentType = response.headers.get("content-type")?.toLowerCase();
-    if (!contentType?.startsWith("image/")) {
-      throw new Error("cutout_unavailable");
-    }
-    const bytes = new Uint8Array(await response.arrayBuffer());
-    if (
-      bytes.byteLength < PNG_SIGNATURE.length ||
-      bytes.byteLength > OUTPUT_LIMIT_BYTES ||
-      !PNG_SIGNATURE.every((value, index) => bytes[index] === value)
-    ) {
-      throw new Error("cutout_unavailable");
-    }
-    return new Blob([bytes], { type: "image/png" });
-  } finally {
-    clearTimeout(timeout);
-  }
-}
 
 export function processProfessionalCutout(input: ProcessInput) {
   const key = `${input.userId}:${input.itemId}`;
@@ -166,7 +111,7 @@ async function processProfessionalCutoutOnce({
 
   let output: Blob;
   try {
-    output = await requestPhotoRoomCutout(original.data);
+    output = await requestBaiduCutout(original.data);
   } catch (error) {
     return {
       status: "error",
@@ -322,10 +267,4 @@ async function createCutoutSignedUrl(supabase: SupabaseClient, path: string) {
     .from(WARDROBE_BUCKET)
     .createSignedUrl(path, 60 * 30);
   return result.error ? null : result.data.signedUrl;
-}
-
-function extensionFor(mime: string) {
-  if (mime === "image/png") return "png";
-  if (mime === "image/webp") return "webp";
-  return "jpg";
 }

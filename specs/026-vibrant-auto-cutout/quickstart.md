@@ -2,7 +2,7 @@
 
 ## 准备
 
-1. 在 `.env.local` 配置服务端 `PHOTOROOM_API_KEY`，不得使用 `NEXT_PUBLIC_` 前缀。
+1. 在 `.env.local` 配置服务端 `BAIDU_API_KEY` 与 `BAIDU_SECRET_KEY`，不得使用 `NEXT_PUBLIC_` 前缀。
 2. 保持现有 Supabase URL、publishable key 和私有 `wardrobe-images` bucket 配置。
 3. 运行 `npm run dev`，使用两个隔离测试账号。
 
@@ -43,5 +43,4 @@ npm run build
 npm run verify:sdd-026
 ```
 
-没有 PhotoRoom 密钥时，静态门禁和失败回退仍必须通过；真实 10 张质量验收保持待配置密钥后执行，不得伪造成功结果。
-
+没有百度密钥时，静态门禁和失败回退仍必须通过；真实 10 张质量验收保持待配置密钥后执行，不得伪造成功结果。

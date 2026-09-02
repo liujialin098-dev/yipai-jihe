@@ -1,11 +1,11 @@
 # Research: 活力视觉与专业自动去背
 
-## Decision 1：采用 PhotoRoom Remove Background Basic API
+## Decision 1：采用百度智能云“智能抠图”API
 
-- **Decision**: 服务端调用 `POST https://sdk.photoroom.com/v1/segment`，以 multipart `image_file` 上传当前用户原图，设置 `format=png`、`channels=rgba`、`size=hd`、`crop=false` 与 `despill=true`。同尺寸结果作为私有精修工作图，再用 Sharp 对透明边进行自动裁边，生成展示图。
-- **Rationale**: 官方 Basic API 能输出透明 PNG、自动移除透明边并处理背景色溢出，适合真实衣物卡片；用户已选择方案 A 并同意第三方处理和按次成本。
-- **Alternatives considered**: 继续仅用本地边缘连通算法无法覆盖复杂背景；生成式重绘会改变真实衣物；新增 AGPL 浏览器模型会改变许可与下载体积。
-- **Documentation**: Context7 `/websites/photoroom`，PhotoRoom Remove Background Basic 官方文档，2026-09-01 复核。
+- **Decision**: 服务端使用 `BAIDU_API_KEY` 与 `BAIDU_SECRET_KEY` 调用 OAuth 2.0 Token 接口，并在实例内按有效期缓存 Access Token；随后调用 `POST https://aip.baidubce.com/rest/2.0/image-process/v1/segment`，设置 `method=auto`、`refine_mask=true` 与 `return_form=rgba`。返回的透明 PNG 作为私有精修工作图，再用 Sharp 对透明边进行自动裁边，生成展示图。
+- **Rationale**: 百度服务国内访问稳定，智能抠图支持物品主体、透明 RGBA 输出和边缘平滑，配置只需要应用 API Key 与 Secret Key；用户于 2026-09-02 明确选择该方案并覆盖此前 PhotoRoom 选择。
+- **Alternatives considered**: PhotoRoom 配置和境外调用对当前用户较繁琐；腾讯云商品抠图通常需要 COS；阿里云服饰/商品分割需要 RAM AccessKey 与更多权限配置；继续仅用本地边缘连通算法无法覆盖复杂背景。
+- **Documentation**: Context7 `/websites/ai_baidu_tech` 与百度智能云《智能抠图》《鉴权认证机制》官方文档，2026-09-02 复核。
 
 ## Decision 2：确认响应后异步处理
 
@@ -15,7 +15,7 @@
 
 ## Decision 3：结果验证后原子式绑定
 
-- **Decision**: 下载当前账号私有原图，限制输入大小与 MIME；PhotoRoom 结果必须是受限大小的 PNG 图片。每次成功处理生成带版本号的私有展示图和同版本工作图，二者均写入成功后再更新 `wardrobe_items.cutout_path`，随后清理旧版本。
+- **Decision**: 下载当前账号私有原图，限制输入大小与 MIME，并在服务端规范化至百度要求的尺寸和 Base64 上限；百度结果必须是受限大小、具有透明通道的 PNG。每次成功处理生成带版本号的私有展示图和同版本工作图，二者均写入成功后再更新 `wardrobe_items.cutout_path`，随后清理旧版本。
 - **Rationale**: 复用现有路径与 RLS，避免生成多份派生文件；失败时旧透明图或原图保持可用。
 - **Alternatives considered**: 先清空旧路径会造成失败窗口；使用公共 bucket 会破坏隐私边界。
 

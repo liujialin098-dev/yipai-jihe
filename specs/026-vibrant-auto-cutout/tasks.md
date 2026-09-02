@@ -6,15 +6,15 @@
 
 **Purpose**: 固化服务端密钥边界和独立验收门禁。
 
-- [x] T001 在 `.env.example` 增加仅服务端 `PHOTOROOM_API_KEY` 模板与隐私说明
-- [x] T002 在 `scripts/verify-sdd-026.mjs` 建立规格文件、密钥边界、PhotoRoom 合约、无网格与回退门禁
+- [x] T001 在 `.env.example` 增加仅服务端 `BAIDU_API_KEY`、`BAIDU_SECRET_KEY` 模板与隐私说明
+- [x] T002 在 `scripts/verify-sdd-026.mjs` 建立规格文件、密钥边界、百度 Token/抠图合约、无网格与回退门禁
 - [x] T003 在 `package.json` 增加 `verify:sdd-026` 命令
 
 ## Phase 2: Foundational
 
 **Purpose**: 建立可复用的专业去背服务和分类初始布局。
 
-- [x] T004 [P] 在 `lib/outfits/professional-cutout.ts` 实现 PhotoRoom multipart 传输、20 秒超时、PNG/大小验证和安全错误映射
+- [x] T004 [P] 在 `lib/outfits/baidu-cutout.ts` 实现百度 Token 缓存、智能抠图 JSON 传输、共享 20 秒超时、PNG/大小验证和安全错误映射
 - [x] T005 [P] 在 `lib/outfits/canvas.ts` 增加六类衣物初始尺寸系数并让 `createInitialCanvasItems` 接收类别映射
 - [x] T006 在 `lib/outfits/professional-cutout.ts` 实现当前用户原图下载、版本化私有展示图/工作图、成功后绑定与已有结果幂等复用
 
@@ -60,11 +60,12 @@
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [x] T019 在 `scripts/verify-sdd-026.mjs` 完成 PhotoRoom 合约、Sharp 固定透明样本、分类 scale、人工工具静态边界、无网格和服务端密钥门禁
+- [x] T019 在 `scripts/verify-sdd-026.mjs` 完成百度 Token 缓存与抠图合约、Sharp 固定透明样本、分类 scale、人工工具静态边界、无网格和服务端密钥门禁
 - [x] T020 运行 `npm run check`、`npm run build`、`npm run verify:sdd-026` 及 SDD-024/025 回归
 - [ ] T021 按 `specs/026-vibrant-auto-cutout/quickstart.md` 完成 390px 浏览器验收；无真实密钥时明确保留付费样本验收待办
 - [x] T022 更新 `progress.md`、`AGENTS.md` 与 SDD-026 的完成状态、限制和下一步 SDD-027 边界
 - [x] T023 提交 SDD-026，不包含用户未追踪文档和脚本（实现提交 `4f0712e`）
+- [x] T024 按用户 2026-09-02 决策将 PhotoRoom 替换为百度智能云，并同步规格、环境模板、门禁与进度文档
 
 ## Dependencies & Execution Order
 
@@ -81,4 +82,4 @@ Task: 在 components/outfits/cutout-refiner.tsx 实现人工擦除/恢复
 
 ## Implementation Strategy
 
-先建立服务端安全去背和失败回退，再完成视觉升级；随后把分类尺寸与人工精修接入现有自由画布。新闻和趋势推送不进入本阶段。真实 PhotoRoom 密钥缺失时允许完成静态、mock 和回退验收，但不得把付费真实样本标记为通过。
+先建立服务端安全去背和失败回退，再完成视觉升级；随后把分类尺寸与人工精修接入现有自由画布。新闻和趋势推送不进入本阶段。真实百度密钥缺失时允许完成静态、mock 和回退验收，但不得把真实样本标记为通过。

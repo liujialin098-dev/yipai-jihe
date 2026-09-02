@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：SDD-024/025 已完成并发布；SDD-026 已确认采用 PhotoRoom 服务端专业去背，正在实现活力视觉、自动裁边、分类尺寸标准化与人工擦除/恢复。推荐默认路径继续使用无人物真实衣物自由排布。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
+- 当前状态：SDD-024/025 已完成并发布；SDD-026 已于 2026-09-02 按用户决策从 PhotoRoom 切换为百度智能云服务端专业去背，活力视觉、自动裁边、分类尺寸标准化与人工擦除/恢复保持不变。推荐默认路径继续使用无人物真实衣物自由排布。SDD-002 的无邮件注册与自动回归已通过，历史账号本地设密和用户本人真实账号重登录仍等待集中验收
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -935,7 +935,7 @@
 
 ### SDD-026：活力视觉与专业自动去背
 
-- 状态：代码完成，等待 PhotoRoom 密钥与集中浏览器验收（2026-09-01）
+- 状态：百度方案代码已完成，等待密钥与集中浏览器验收（2026-09-02）
 - SDD 目录：`specs/026-vibrant-auto-cutout/`
 - AI Coding 估算：1 段主对话，复杂度 L
 - 依赖：SDD-004、SDD-024、SDD-025
@@ -954,15 +954,16 @@
 
 当前证据与限制：
 
-- [x] `npm run check`、`npm run build`、`npm run verify:sdd-026` 已通过；Sharp 固定透明样本确认同尺寸工作图与自动裁边展示图有效；联网复跑 `npm run verify:sdd-024` 与 `npm run verify:sdd-025` 均通过双账号 RLS/Storage 隔离。
+- [x] 2026-09-02 百度替换后重新运行 `npm run check`、`npm run build`、`npm run verify:sdd-026` 均通过；Token 缓存与透明 PNG mock、Sharp 固定透明样本、自动裁边展示图有效；联网复跑 `npm run verify:sdd-024` 与 `npm run verify:sdd-025` 均通过双账号 RLS/Storage 隔离。
 - [x] `http://localhost:3000/` 返回 200，新增 `/api/wardrobe/items/[id]/cutout` 与 `/cutout/source` 均进入生产构建路由表。
-- [ ] 本地尚未配置 `PHOTOROOM_API_KEY`，因此真实 PhotoRoom 10 张质量、按次计费与完整人工精修浏览器链路暂未验收；当前代码会安全回退原图。
+- [ ] 本地尚未配置 `BAIDU_API_KEY`、`BAIDU_SECRET_KEY`，因此真实百度智能抠图 10 张质量、按次计费与完整人工精修浏览器链路暂未验收；当前代码会安全回退原图。
 - [ ] 390px 自动浏览器导航受本地 Supabase Auth 网络重试影响超时，需在密钥配置后与真实账号集中验收，不得在此前标记阶段完成或部署。
 - [x] 实现已提交为 `4f0712e`（`feat: add professional wardrobe cutout workflow`），未包含用户未追踪的 PRD 文档和脚本；当前 Production 未更新。
+- [x] 2026-09-02 已按用户选择将专业服务从 PhotoRoom 替换为百度智能云；Token 获取/缓存、智能抠图、环境模板、SDD 合约和门禁已同步，等待质量命令与提交记录。
 
 关键选择：
 
-- [x] 用户确认允许服务端将当前选择的衣物原图发送给 PhotoRoom，并接受试用结束后的按次调用成本；密钥仅配置在服务端环境。
+- [x] 用户确认采用百度智能云方案，允许服务端将当前选择的衣物原图发送给百度并接受免费测试额度结束后的按次调用成本；双密钥和 Access Token 仅保留在服务端。该选择覆盖此前 PhotoRoom 方案。
 
 ### SDD-027：穿搭新闻与趋势推送
 

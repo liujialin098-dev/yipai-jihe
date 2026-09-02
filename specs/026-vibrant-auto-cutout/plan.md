@@ -4,25 +4,25 @@
 
 ## Summary
 
-本阶段把应用背景升级为丁香紫主舞台与青柠、珊瑚、天空蓝功能高光，并在现有私有衣物图片链路上接入 PhotoRoom Remove Background Basic API。衣物确认响应完成后使用 Next.js `after()` 异步生成经过边缘分割和透明裁边的 PNG；失败保留原图或旧透明图。现有无人物画布继续自由拖动、旋转、缩放和分层，不显示网格；新布局按衣物品类给出合理初始尺寸，并新增基于原图像素的人工擦除/恢复精修工具。
+本阶段把应用背景升级为丁香紫主舞台与青柠、珊瑚、天空蓝功能高光，并在现有私有衣物图片链路上接入百度智能云“智能抠图”API。衣物确认响应完成后使用 Next.js `after()` 异步生成经过边缘平滑和透明裁边的 PNG；失败保留原图或旧透明图。现有无人物画布继续自由拖动、旋转、缩放和分层，不显示网格；新布局按衣物品类给出合理初始尺寸，并新增基于原图像素的人工擦除/恢复精修工具。
 
 ## Technical Context
 
 **Language/Version**: TypeScript、React 19、Next.js 16.3.1 App Router
 
-**Primary Dependencies**: 现有 Tailwind CSS 4、shadcn/ui、lucide-react、`@supabase/ssr`、`@supabase/supabase-js`；PhotoRoom HTTPS API；新增 `sharp` 仅用于服务端透明图验证与自动裁边
+**Primary Dependencies**: 现有 Tailwind CSS 4、shadcn/ui、lucide-react、`@supabase/ssr`、`@supabase/supabase-js`；百度智能云 HTTPS API；新增 `sharp` 仅用于服务端输入规范化、透明图验证与自动裁边
 
 **Storage**: 复用 Supabase `wardrobe_items.image_path`、`cutout_path` 与私有 `wardrobe-images` bucket；不新增表和迁移
 
-**Testing**: Biome、TypeScript、Next build、`scripts/verify-sdd-026.mjs`、PhotoRoom mock/可选真实样本、390px 浏览器验收
+**Testing**: Biome、TypeScript、Next build、`scripts/verify-sdd-026.mjs`、百度 Token/抠图 mock、可选真实样本、390px 浏览器验收
 
 **Target Platform**: 移动端优先 Web，Vercel + 当前 Supabase 项目
 
 **Project Type**: Next.js 全栈 Web 应用
 
-**Performance Goals**: 衣物确认响应不等待去背；单张 PhotoRoom 调用设 20 秒超时；画布拖动维持连续反馈；人工画笔只处理当前编辑图
+**Performance Goals**: 衣物确认响应不等待去背；百度 Token 与单张抠图请求共享 20 秒超时，Access Token 在服务端实例内复用；画布拖动维持连续反馈；人工画笔只处理当前编辑图
 
-**Constraints**: PhotoRoom 密钥仅服务端；只处理当前 `auth.getUser()` 账号衣物；输入最大 10MB；原图永不覆盖；新结果成功验证并保存后才绑定；无密钥或服务失败时功能可降级
+**Constraints**: 百度 API Key、Secret Key 与 Access Token 仅服务端；只处理当前 `auth.getUser()` 账号衣物；原图最大 10MB，传输前规范化为百度要求的尺寸与 Base64 上限；原图永不覆盖；新结果成功验证并保存后才绑定；无密钥或服务失败时功能可降级
 
 **Scale/Scope**: 新衣单批最多 10 件并行入库后各自异步处理；历史衣物按需单件重做；画布 2-8 件、六种衣物品类
 
@@ -73,10 +73,10 @@ scripts/verify-sdd-026.mjs
 .env.example
 ```
 
-**Structure Decision**: PhotoRoom 传输、输入验证和 Supabase 私有文件替换集中在服务端模块与 Route Handler；交互式像素精修只在 Client Component；全局色彩延续现有 CSS token。确认入库 Route Handler 用稳定的 `after()` 延长 Vercel Function 生命周期，不阻塞响应。
+**Structure Decision**: 百度 OAuth Token、智能抠图传输、输入验证和 Supabase 私有文件替换集中在服务端模块与 Route Handler；交互式像素精修只在 Client Component；全局色彩延续现有 CSS token。确认入库 Route Handler 用稳定的 `after()` 延长 Vercel Function 生命周期，不阻塞响应。
 
 ## Complexity Tracking
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| 将单件原图发送给外部 PhotoRoom API | 复杂背景、浅色主体和细小配饰需要专业分割质量 | 现有边缘连通算法只适合纯色背景，无法达到用户要求的稳定卡片质量 |
+| 将单件原图发送给百度智能云 API | 复杂背景、浅色主体和细小配饰需要专业分割质量，且用户要求国内服务 | 现有边缘连通算法只适合纯色背景，无法达到用户要求的稳定卡片质量 |
