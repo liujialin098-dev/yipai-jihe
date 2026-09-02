@@ -959,7 +959,7 @@
 - [ ] 本地尚未配置 `BAIDU_API_KEY`、`BAIDU_SECRET_KEY`，因此真实百度智能抠图 10 张质量、按次计费与完整人工精修浏览器链路暂未验收；当前代码会安全回退原图。
 - [ ] 390px 自动浏览器导航受本地 Supabase Auth 网络重试影响超时，需在密钥配置后与真实账号集中验收，不得在此前标记阶段完成或部署。
 - [x] 实现已提交为 `4f0712e`（`feat: add professional wardrobe cutout workflow`），未包含用户未追踪的 PRD 文档和脚本；当前 Production 未更新。
-- [x] 2026-09-02 已按用户选择将专业服务从 PhotoRoom 替换为百度智能云；Token 获取/缓存、智能抠图、环境模板、SDD 合约和门禁已同步，等待质量命令与提交记录。
+- [x] 2026-09-02 已按用户选择将专业服务从 PhotoRoom 替换为百度智能云；Token 获取/缓存、智能抠图、环境模板、SDD 合约和门禁已同步，提交为 `059a0e3`（`feat: switch professional cutout to Baidu`）。
 
 关键选择：
 

@@ -65,7 +65,7 @@
 - [ ] T021 按 `specs/026-vibrant-auto-cutout/quickstart.md` 完成 390px 浏览器验收；无真实密钥时明确保留付费样本验收待办
 - [x] T022 更新 `progress.md`、`AGENTS.md` 与 SDD-026 的完成状态、限制和下一步 SDD-027 边界
 - [x] T023 提交 SDD-026，不包含用户未追踪文档和脚本（实现提交 `4f0712e`）
-- [x] T024 按用户 2026-09-02 决策将 PhotoRoom 替换为百度智能云，并同步规格、环境模板、门禁与进度文档
+- [x] T024 按用户 2026-09-02 决策将 PhotoRoom 替换为百度智能云，并同步规格、环境模板、门禁与进度文档（提交 `059a0e3`）
 
 ## Dependencies & Execution Order
 
