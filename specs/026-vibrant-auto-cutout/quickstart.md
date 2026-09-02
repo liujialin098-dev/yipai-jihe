@@ -41,6 +41,7 @@
 npm run check
 npm run build
 npm run verify:sdd-026
+npm run verify:sdd-026:live
 ```
 
-没有百度密钥时，静态门禁和失败回退仍必须通过；真实 10 张质量验收保持待配置密钥后执行，不得伪造成功结果。
+没有百度密钥时，静态门禁和失败回退仍必须通过；真实 10 张质量验收保持待配置密钥后执行，不得伪造成功结果。Vercel `Secret` 不允许通过 CLI 下载，本地 live 命令必须由开发者本人将双密钥写入被忽略的 `.env.local`；只有 Vercel 云端验收时才直接使用 Production Secret。
