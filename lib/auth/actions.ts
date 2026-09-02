@@ -17,22 +17,45 @@ async function initializeAccountRecords(
   supabase: ServerSupabaseClient,
   userId: string,
 ) {
-  const [profileResult, preferencesResult] = await Promise.all([
-    supabase
-      .from("profiles")
-      .upsert(
-        { user_id: userId },
-        { ignoreDuplicates: true, onConflict: "user_id" },
-      ),
-    supabase
-      .from("user_preferences")
-      .upsert(
-        { user_id: userId },
-        { ignoreDuplicates: true, onConflict: "user_id" },
-      ),
-  ]);
+  const profileReady = await runInitializationWrite(
+    supabase,
+    userId,
+    async () =>
+      await supabase
+        .from("profiles")
+        .upsert(
+          { user_id: userId },
+          { ignoreDuplicates: true, onConflict: "user_id" },
+        ),
+  );
+  if (!profileReady) return false;
 
-  return !profileResult.error && !preferencesResult.error;
+  return runInitializationWrite(
+    supabase,
+    userId,
+    async () =>
+      await supabase
+        .from("user_preferences")
+        .upsert(
+          { user_id: userId },
+          { ignoreDuplicates: true, onConflict: "user_id" },
+        ),
+  );
+}
+
+async function runInitializationWrite(
+  supabase: ServerSupabaseClient,
+  userId: string,
+  write: () => PromiseLike<{ error: unknown | null }>,
+) {
+  const firstAttempt = await write();
+  if (!firstAttempt.error) return true;
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || data.user?.id !== userId) return false;
+
+  const retry = await write();
+  return !retry.error;
 }
 
 function errorState(
