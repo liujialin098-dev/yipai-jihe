@@ -57,6 +57,8 @@ type QueueItem = {
 const MAX_FILES = 10;
 const MAX_BYTES = 10 * 1024 * 1024;
 const CONCURRENCY = 3;
+const CONFIRM_CONCURRENCY = 2;
+const CONFIRM_PACING_MS = 4_000;
 
 const DEFAULT_FIELDS: WardrobeItemInput = {
   audience: "unisex",
@@ -233,7 +235,11 @@ export function IngestionWorkspace() {
       return;
     }
     setBusy(true);
-    const results = await Promise.all(ready.map(confirmItem));
+    const results: boolean[] = [];
+    await runPool(ready, CONFIRM_CONCURRENCY, async (item) => {
+      results.push(await confirmItem(item));
+      await pause(CONFIRM_PACING_MS);
+    });
     const successCount = results.filter(Boolean).length;
     setNotice(
       `已入库 ${successCount} 件，${ready.length - successCount} 件待处理。透明图将在后台继续优化。`,
@@ -772,6 +778,10 @@ async function runPool<T>(
     },
   );
   await Promise.all(runners);
+}
+
+function pause(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 async function readJson(response: Response): Promise<unknown> {

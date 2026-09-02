@@ -158,18 +158,22 @@ const [
   baiduService,
   service,
   cutoutRoute,
+  cutoutSourceRoute,
   confirmRoute,
   refiner,
   editor,
+  ingestionWorkspace,
   styles,
   env,
 ] = await Promise.all([
   read("lib/outfits/baidu-cutout.ts"),
   read("lib/outfits/professional-cutout.ts"),
   read("app/api/wardrobe/items/[id]/cutout/route.ts"),
+  read("app/api/wardrobe/items/[id]/cutout/source/route.ts"),
   read("app/api/wardrobe/ingestions/[id]/confirm/route.ts"),
   read("components/outfits/cutout-refiner.tsx"),
   read("components/outfits/outfit-canvas-editor.tsx"),
+  read("components/wardrobe/ingestion-workspace.tsx"),
   read("app/globals.css"),
   read(".env.example"),
 ]);
@@ -197,6 +201,12 @@ assert.doesNotMatch(
 assert.match(cutoutRoute, /auth\.getUser\(\)/);
 assert.match(service, /\.eq\("user_id", userId\)/);
 assert.match(confirmRoute, /after\(async \(\) =>/);
+assert.match(ingestionWorkspace, /CONFIRM_CONCURRENCY = 2/);
+assert.match(ingestionWorkspace, /CONFIRM_PACING_MS = 4_000/);
+assert.match(refiner, /cutout\/source\?asset=original/);
+assert.doesNotMatch(refiner, /originalUrl/);
+assert.match(cutoutSourceRoute, /\.select\("id, image_path, cutout_path"\)/);
+assert.match(cutoutSourceRoute, /asset === "original"/);
 assert.match(refiner, /"erase" \| "restore"/);
 assert.match(refiner, /globalCompositeOperation = "destination-out"/);
 assert.match(refiner, /context\.drawImage\(original, 0, 0\)/);

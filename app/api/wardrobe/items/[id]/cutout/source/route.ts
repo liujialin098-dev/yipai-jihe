@@ -10,10 +10,25 @@ import { isUuid } from "@/lib/wardrobe/validation";
 type RouteContext = { params: Promise<{ id: string }> };
 const MAX_REFINEMENT_BYTES = 20 * 1024 * 1024;
 
-export async function GET(_request: Request, route: RouteContext) {
+export async function GET(request: Request, route: RouteContext) {
   const context = await getOwnedItem(route);
   if (context instanceof Response) return context;
   const { item, supabase } = context;
+  const asset = new URL(request.url).searchParams.get("asset");
+  if (asset === "original") {
+    const original = await supabase.storage
+      .from(WARDROBE_BUCKET)
+      .download(item.image_path);
+    if (original.error || !original.data) {
+      return jsonError("image_missing", "衣物原图暂时无法读取。", 404);
+    }
+    return new NextResponse(original.data, {
+      headers: {
+        "Cache-Control": "private, no-store",
+        "Content-Type": original.data.type || "application/octet-stream",
+      },
+    });
+  }
   if (!item.cutout_path) {
     return jsonError(
       "source_missing",
@@ -81,7 +96,7 @@ async function getOwnedItem(route: RouteContext) {
   }
   const itemResult = await supabase
     .from("wardrobe_items")
-    .select("id, cutout_path")
+    .select("id, image_path, cutout_path")
     .eq("id", id)
     .eq("user_id", user.id)
     .eq("status", "active")

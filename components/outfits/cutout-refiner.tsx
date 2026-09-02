@@ -22,7 +22,6 @@ type RefinerProps = {
   itemName: string;
   onCancel: () => void;
   onSave: (blob: Blob) => Promise<void>;
-  originalUrl: string;
 };
 
 type BrushMode = "erase" | "restore";
@@ -33,7 +32,6 @@ export function CutoutRefiner({
   itemName,
   onCancel,
   onSave,
-  originalUrl,
 }: RefinerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const originalRef = useRef<HTMLCanvasElement | null>(null);
@@ -51,7 +49,9 @@ export function CutoutRefiner({
     setError(null);
     try {
       const [originalResponse, sourceResponse] = await Promise.all([
-        fetch(originalUrl, { cache: "no-store" }),
+        fetch(`/api/wardrobe/items/${itemId}/cutout/source?asset=original`, {
+          cache: "no-store",
+        }),
         fetch(`/api/wardrobe/items/${itemId}/cutout/source`, {
           cache: "no-store",
         }),
@@ -93,7 +93,7 @@ export function CutoutRefiner({
     } finally {
       setLoading(false);
     }
-  }, [itemId, originalUrl]);
+  }, [itemId]);
 
   useEffect(() => {
     void loadImages();

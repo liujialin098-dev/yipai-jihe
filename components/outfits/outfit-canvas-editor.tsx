@@ -822,7 +822,6 @@ export function OutfitCanvasEditor({
         <CutoutRefiner
           itemId={refineItemId}
           itemName={wardrobeMap.get(refineItemId)?.name ?? "当前衣物"}
-          originalUrl={wardrobeMap.get(refineItemId)?.imageUrl ?? ""}
           onCancel={() => setRefineItemId(null)}
           onSave={saveRefinement}
         />
