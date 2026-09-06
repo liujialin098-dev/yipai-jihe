@@ -12,9 +12,9 @@ const playful = localFont({
   preload: false,
 });
 
-const editorial = localFont({
-  src: "../public/fonts/CormorantGaramond-Variable.ttf",
-  variable: "--font-editorial",
+const roundedBrand = localFont({
+  src: "../public/fonts/Fredoka-Variable.ttf",
+  variable: "--font-brand-rounded",
   weight: "300 700",
   style: "normal",
   display: "swap",
@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="zh-CN"
-      className={`light h-full antialiased ${playful.variable} ${editorial.variable}`}
+      className={`light h-full antialiased ${playful.variable} ${roundedBrand.variable}`}
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full bg-background">

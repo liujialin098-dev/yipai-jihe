@@ -221,11 +221,11 @@
 }
 
 .brand-name-english {
-  font-family: var(--font-editorial), "Iowan Old Style", Baskerville, serif;
-  font-size: 1.62rem;
-  font-weight: 600;
-  line-height: 0.82;
-  letter-spacing: -0.025em;
+  font-family: var(--font-brand-rounded), "Arial Rounded MT Bold", sans-serif;
+  font-size: 1.48rem;
+  font-weight: 640;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
 }
 
 .brand-name-chinese {
@@ -239,7 +239,7 @@
 }
 
 .auth-brand-name .brand-name-english {
-  font-size: 1.82rem;
+  font-size: 1.68rem;
 }
 
 .auth-brand-name .brand-name-chinese {
