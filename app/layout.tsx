@@ -30,16 +30,16 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/brand/yipai-jihe-app-icon-v1.png",
+        url: "/brand/ensemble-icon-a-folded-e.png",
         type: "image/png",
-        sizes: "512x512",
+        sizes: "1024x1024",
       },
     ],
     apple: [
       {
-        url: "/brand/yipai-jihe-app-icon-v1.png",
+        url: "/brand/ensemble-icon-a-folded-e.png",
         type: "image/png",
-        sizes: "512x512",
+        sizes: "1024x1024",
       },
     ],
   },

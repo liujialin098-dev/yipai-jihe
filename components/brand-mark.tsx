@@ -17,11 +17,11 @@ export function BrandMark({
       )}
     >
       <Image
-        src="/brand/yipai-jihe-app-icon-v1.png"
+        src="/brand/ensemble-icon-a-folded-e.png"
         alt=""
         fill
         sizes={sizes}
-        className="object-cover"
+        className="object-contain"
       />
     </span>
   );
