@@ -200,15 +200,28 @@
   isolation: isolate;
 }
 
-/* SDD-030：品牌双排导航；雾丁香只用于克制的选中与操作反馈。 */
+/* SDD-030：青柠悬浮品牌导航；雾丁香只用于克制的操作反馈。 */
 .editorial-header {
-  background: rgb(247 243 250 / 88%);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgb(91 70 112 / 8%);
+  background: transparent;
+}
+
+.editorial-header-shell {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fashion-lime-soft) 92%, white),
+    color-mix(in srgb, var(--fashion-lime) 52%, white)
+  );
+  border: 1px solid rgb(255 255 255 / 68%);
+  box-shadow:
+    0 14px 38px rgb(81 91 45 / 13%),
+    inset 0 1px 0 rgb(255 255 255 / 58%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
+  backdrop-filter: blur(18px) saturate(118%);
 }
 
 .brand-lockup {
-  color: #4d4158;
+  color: #303326;
 }
 
 .brand-name-lockup {
@@ -230,7 +243,7 @@
 
 .brand-name-chinese {
   padding-left: 0.08rem;
-  color: #796d82;
+  color: #656b4e;
   font-family: var(--font-heading);
   font-size: 0.5rem;
   font-weight: 600;
@@ -256,23 +269,33 @@
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  border-radius: 14px 14px 0 0;
+  border-radius: 999px;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
-  color: #796d82;
+  color: #596044;
+  transition:
+    color var(--motion-fast) var(--motion-swift),
+    background-color var(--motion-fast) var(--motion-swift),
+    transform var(--motion-fast) var(--motion-swift);
 }
 
 .editorial-nav a[aria-current="page"] {
-  color: var(--action-purple);
-  box-shadow: inset 0 -1.5px
-    color-mix(in srgb, var(--action-purple) 72%, transparent);
+  color: #292d20;
+  background: rgb(255 255 255 / 72%);
+  box-shadow: 0 5px 14px rgb(70 76 42 / 10%);
 }
 
 @media (hover: hover) {
   .editorial-nav a:hover {
-    background: rgb(255 255 255 / 54%);
-    color: var(--action-purple);
+    background: rgb(255 255 255 / 58%);
+    color: #292d20;
+    transform: translateY(-1px);
   }
+}
+
+.editorial-nav a:active {
+  background: rgb(255 255 255 / 76%);
+  transform: scale(0.98);
 }
 
 .app-page-title + .app-page-lead {
@@ -1210,7 +1233,8 @@
   .outfit-canvas-item,
   .outfit-color-chip,
   .profile-avatar,
-  .profile-header-avatar {
+  .profile-header-avatar,
+  .editorial-nav a {
     transition: none;
   }
 
@@ -1231,6 +1255,12 @@
 }
 
 @media (prefers-reduced-transparency: reduce) {
+  .editorial-header-shell {
+    background: var(--fashion-lime-soft);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .liquid-glass-web {
     background: var(--surface-solid);
     -webkit-backdrop-filter: none;

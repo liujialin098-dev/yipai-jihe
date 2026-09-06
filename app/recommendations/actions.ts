@@ -44,6 +44,10 @@ import {
   InsufficientWardrobeError,
 } from "@/lib/recommendations/rules";
 import {
+  buildRecommendationPreferenceProfile,
+  getDailyRecommendationTrendSignals,
+} from "@/lib/recommendations/personalization-context";
+import {
   isRecommendationStyleFocus,
   resolveStyleDirections,
   styleSupportsOccasion,
@@ -300,7 +304,7 @@ export async function generateDailyRecommendations(
     const preferencesResult = await supabase
       .from("user_preferences")
       .select(
-        "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone",
+        "preferred_styles, preferred_occasions, style_scores, clothing_preference, weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone, fashion_topics, fashion_personalized",
       )
       .eq("user_id", user.id)
       .maybeSingle();
@@ -317,10 +321,20 @@ export async function generateDailyRecommendations(
     )
       ? preferencesResult.data.clothing_preference
       : "unrestricted";
+    const preferenceProfile = buildRecommendationPreferenceProfile({
+      personalized: preferencesResult.data.fashion_personalized,
+      preferredStyles: preferencesResult.data.preferred_styles,
+      preferredOccasions: preferencesResult.data.preferred_occasions,
+      styleScores: preferencesResult.data.style_scores,
+    });
+    const personalizedStyleOrder = [
+      ...preferenceProfile.learnedStyles.map(({ style }) => style),
+      ...preferenceProfile.explicitStyles,
+    ];
     const styleDirections = resolveStyleDirections({
       focus: styleFocusValue,
       occasion: occasionValue,
-      preferredStyles: preferencesResult.data.preferred_styles,
+      preferredStyles: personalizedStyleOrder,
     });
     const savedLocation = storedWeatherLocation(preferencesResult.data);
     const { effectiveLocation: location } = await getEffectiveWeatherLocation(
@@ -374,13 +388,21 @@ export async function generateDailyRecommendations(
       };
     }
 
+    const trendSignals = await getDailyRecommendationTrendSignals({
+      occasion: occasionValue,
+      styleDirections,
+      preferredStyles: preferenceProfile.explicitStyles,
+      topics: preferencesResult.data.fashion_topics,
+      now: requestedAt,
+    });
+
     let ruleOutfits: RecommendationOutfit[];
     try {
       ruleOutfits = buildRuleRecommendations({
         items,
         occasion: occasionValue,
         weather,
-        preferredStyles: preferencesResult.data.preferred_styles,
+        preferredStyles: personalizedStyleOrder,
         styleDirections,
       });
     } catch (error) {
@@ -403,10 +425,12 @@ export async function generateDailyRecommendations(
         items,
         occasion: occasionValue,
         weather,
-        preferredStyles: preferencesResult.data.preferred_styles,
-        preferredOccasions: preferencesResult.data.preferred_occasions,
+        preferredStyles: preferenceProfile.explicitStyles,
+        preferredOccasions: preferenceProfile.preferredOccasions,
         clothingPreference,
         styleDirections,
+        preferenceProfile,
+        trendSignals,
       });
       outfits = aiResult.outfits;
       source = "ai";

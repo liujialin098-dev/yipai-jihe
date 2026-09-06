@@ -13,6 +13,11 @@ import {
 } from "@/lib/recommendations/qwen";
 export { RecommendationGenerationError } from "@/lib/recommendations/qwen";
 import { getOccasionProfile } from "@/lib/recommendations/occasion-profile";
+import { OUTFIT_TITLE_PROMPT_RULES } from "@/lib/recommendations/outfit-title";
+import type {
+  RecommendationPreferenceProfile,
+  RecommendationTrendSignal,
+} from "@/lib/recommendations/personalization-context";
 import {
   hasCompleteRainProtectionCandidate,
   isRainyWeatherCode,
@@ -31,6 +36,8 @@ type GenerateInput = {
   preferredStyles: string[];
   preferredOccasions: string[];
   styleDirections: [WardrobeStyle, WardrobeStyle, WardrobeStyle];
+  preferenceProfile: RecommendationPreferenceProfile;
+  trendSignals: RecommendationTrendSignal[];
 };
 
 export async function generateAiRecommendations(input: GenerateInput): Promise<{
@@ -52,9 +59,12 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
 三套之间不能重复任何衣物 ID。每套至少要有两件不同衣物提供当前场景信号：衣物的 occasions 包含当前场景或场景允许的邻近场合，或 style 属于场景偏好风格。
 场景边界是硬约束：若衣物没有当前场景标签，却带有场景画像 forbiddenForeignOccasions 中任一标签，不得使用。若衣物明确包含当前场景，即使同时包含其他场景，仍可使用。
 不要只替换标题、理由或配饰来制造差异，三套的核心单品和搭配思路都要不同。
+${OUTFIT_TITLE_PROMPT_RULES}
 正式场景不得使用 occasions 只有 sport 的仅运动单品。约会场景不得强制使用裙装，要适配当前衣着偏好。
 雨天完整防水组合要求：${requiresRainProtection ? "当前衣橱存在合法且季节适配的防水外层、冲锋裤/防水下装和防水鞋，3 套中至少 1 套必须同时使用这三个角色。" : "当前输入不要求强行补齐完整防水组合；不得虚构清单外单品。"}
 第 1、2、3 套 styleTags 的第一个值必须依次为：${input.styleDirections.join("、")}。风格是软目标，不得为了风格突破场景、天气、归属、完整性或跨套不重复规则。
+个性化优先级：当前请求明确选择 > 用户偏好画像 > 当日趋势。学习风格只能影响合法候选的排序、名称和搭配表达，不得突破任何硬约束。若学习信号与明确选择冲突，以明确选择为准。
+趋势只是一组有来源且仍有效的灵感，不是必须照搬的规则；仅在与当前库存、场景、天气和用户偏好一致时使用。趋势数组为空时，不得声称参考“今日流行”或“最新趋势”。
 配饰用于完成比例与重点，不得为了凑数量加入与场景冲突的单品。reason 使用简洁中文说明天气、场合、颜色或材质逻辑；stylingPoint 给出一句 60 字内、用户可直接照做的层次、比例或配色动作。不要推荐清单之外的商品。
 
 场景画像：${JSON.stringify({
@@ -69,6 +79,8 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
 温度字段解释：${input.weather.temperatureBasis === "air_minimum" ? "这是明日预报，apparentTemperatureC 仅为历史兼容字段，实际代表最低气温，不是体感。描述必须写最低气温，并结合 temperatureMaxC 提醒白天增减；禁止编造体感温度。" : "apparentTemperatureC 为真实体感温度。"}
 偏好风格：${JSON.stringify(input.preferredStyles)}
 偏好场合：${JSON.stringify(input.preferredOccasions)}
+用户偏好画像：${JSON.stringify(input.preferenceProfile)}
+今日可信趋势：${JSON.stringify(input.trendSignals)}
 衣着偏好：${input.clothingPreference}
 衣物清单：${JSON.stringify(
     input.items.slice(0, 80).map((item) => ({

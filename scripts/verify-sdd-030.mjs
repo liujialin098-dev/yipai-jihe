@@ -15,6 +15,8 @@ assert.deepEqual(links, [
 const header = await read("components/status-header.tsx");
 for (const label of ["首页", "穿搭日记", "个人主页"])
   assert.ok(header.includes(label));
+assert.match(header, /editorial-header-shell/);
+assert.match(await read("components/app-shell.tsx"), /overflow-x-clip/);
 const brandName = await read("components/brand-name.tsx");
 assert.match(brandName, /Ensemble/);
 assert.match(brandName, /衣拍即合/);
@@ -61,6 +63,8 @@ assert.match(css, /\.motion-button\.interaction-preserve::after/);
 assert.match(css, /var\(--font-playful\)/);
 assert.match(css, /var\(--font-brand-rounded\)/);
 assert.match(css, /prefers-reduced-motion/);
+assert.match(css, /\.editorial-header-shell/);
+assert.match(css, /var\(--fashion-lime-soft\)/);
 console.log("SDD-030：导航、退役入口、原图与隐私边界通过。");
 
 registerHooks({
@@ -80,6 +84,101 @@ const {
   requestQwenRecommendations,
   recommendationFailureMessage,
 } = await import("../lib/recommendations/qwen.ts");
+const { buildRuleOutfitTitle, hasValidOutfitTitles, titleMatchesStyle } =
+  await import("../lib/recommendations/outfit-title.ts");
+const { buildRecommendationPreferenceProfile, selectDailyTrendSignals } =
+  await import("../lib/recommendations/personalization-context.ts");
+
+const titleSamples = [
+  { slot: 1, title: "黑色松弛日常", styleTags: ["casual"] },
+  { slot: 2, title: "米白自在层次", styleTags: ["casual"] },
+  { slot: 3, title: "海军蓝轻松线条", styleTags: ["casual"] },
+];
+assert.equal(hasValidOutfitTitles(titleSamples), true);
+assert.equal(
+  hasValidOutfitTitles([
+    ...titleSamples.slice(0, 2),
+    { ...titleSamples[2], title: "休闲搭配" },
+  ]),
+  false,
+);
+assert.equal(titleMatchesStyle("雨幕机能层次", "gorpcore"), true);
+assert.equal(titleMatchesStyle("温柔约会搭配", "gorpcore"), false);
+const titled = [1, 2, 3].map((slot) =>
+  buildRuleOutfitTitle({
+    items: [
+      {
+        primary_color: slot === 1 ? "black" : slot === 2 ? "beige" : "navy",
+      },
+    ],
+    style: "casual",
+    slot,
+    weatherCode: 1,
+  }),
+);
+assert.equal(new Set(titled).size, 3);
+assert.ok(titled.every((title) => titleMatchesStyle(title, "casual")));
+
+const personalizedProfile = buildRecommendationPreferenceProfile({
+  personalized: true,
+  preferredStyles: ["minimal", "casual", "unknown"],
+  preferredOccasions: ["commute"],
+  styleScores: { casual: 3.5, minimal: 1, y2k: 0, invalid: 99 },
+});
+assert.deepEqual(personalizedProfile.explicitStyles, ["minimal", "casual"]);
+assert.deepEqual(personalizedProfile.learnedStyles, [
+  { style: "casual", score: 3.5 },
+  { style: "minimal", score: 1 },
+]);
+assert.deepEqual(
+  buildRecommendationPreferenceProfile({
+    personalized: false,
+    preferredStyles: ["minimal"],
+    preferredOccasions: [],
+    styleScores: { casual: 8 },
+  }).learnedStyles,
+  [],
+);
+const trendNow = new Date("2026-09-06T12:00:00Z");
+const trends = selectDailyTrendSignals(
+  [
+    {
+      id: "fresh-cleanfit",
+      title: "Fresh clean fit layering",
+      summary: "",
+      topic: "trend",
+      styles: ["cleanfit"],
+      occasions: ["casual"],
+      publishedAt: "2026-09-06T08:00:00Z",
+      validUntil: "2026-09-20T00:00:00Z",
+      sourceName: "Trusted Source",
+      sourceUrl: "https://example.com/fresh",
+      topicFingerprint: "fresh-cleanfit",
+    },
+    {
+      id: "expired",
+      title: "Expired trend",
+      summary: "",
+      topic: "trend",
+      styles: ["casual"],
+      occasions: ["casual"],
+      publishedAt: "2026-08-01T00:00:00Z",
+      validUntil: "2026-09-01T00:00:00Z",
+      sourceName: "Trusted Source",
+      sourceUrl: "https://example.com/expired",
+      topicFingerprint: "expired",
+    },
+  ],
+  {
+    now: trendNow,
+    occasion: "casual",
+    styleDirections: ["cleanfit", "casual", "streetwear"],
+    preferredStyles: ["cleanfit"],
+    topics: ["trend"],
+  },
+);
+assert.equal(trends.length, 1);
+assert.equal(trends[0].id, "fresh-cleanfit");
 const env = {
   DASHSCOPE_API_KEY: "synthetic-test-key",
   DASHSCOPE_API_HOST: "synthetic.cn-beijing.maas.aliyuncs.com",
@@ -247,7 +346,7 @@ const items = Array.from({ length: 9 }, (_, i) => ({
 }));
 const outfits = [0, 1, 2].map((i) => ({
   slot: i + 1,
-  title: "休闲搭配",
+  title: ["黑色松弛日常", "米白自在层次", "海军蓝轻松线条"][i],
   reason: "轻松出门",
   stylingPoint: "黑色基础款",
   styleTags: ["casual"],
@@ -260,6 +359,8 @@ const input = {
   preferredStyles: [],
   preferredOccasions: [],
   styleDirections: ["casual", "casual", "casual"],
+  preferenceProfile: personalizedProfile,
+  trendSignals: trends,
   weather: {
     city: "固定测试城市",
     temperatureC: 28,
@@ -280,14 +381,23 @@ const oldEnv = Object.fromEntries(
   Object.keys(env).map((key) => [key, process.env[key]]),
 );
 const logs = [];
+let generatedPrompt = "";
 try {
   Object.assign(process.env, env);
   console.info = (...args) => logs.push(args);
   console.warn = (...args) => logs.push(args);
-  globalThis.fetch = async () => response(JSON.stringify({ outfits }));
+  globalThis.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    generatedPrompt = request.messages[0].content;
+    return response(JSON.stringify({ outfits }));
+  };
   const generated = await generateAiRecommendations(input);
   assert.equal(generated.outfits.length, 3);
   assert.equal(generated.model, "qwen3.8-max");
+  assert.match(generatedPrompt, /用户偏好画像/);
+  assert.match(generatedPrompt, /fresh-cleanfit/);
+  assert.match(generatedPrompt, /"learnedStyles"/);
+  assert.doesNotMatch(generatedPrompt, /invalid|Expired trend|用户 ID|邮箱/);
   globalThis.fetch = async () =>
     response(
       JSON.stringify({

@@ -33,7 +33,13 @@
 - [x] T017 [US1] 清除全局一刀切紫色填充，按中性/彩色/危险/大面积四类保留交互语义，并在 390px 复验青柠卡、黑色按钮、白色整行入口、统计区及浏览器错误。
 - [x] T018 [US1] 确定英文名 Ensemble，接入自托管双语字标与 Metadata，并在首次入口、登录后 Header 和 390px 浏览器验证字体加载及无重叠。
 - [x] T019 [US1] 按反馈移除偏细 Cormorant Garamond，替换为 Fredoka Variable 圆润粗体，收紧字号与字距并复验 640 字重、390px 间距和浏览器错误。
+- [x] T020 [P] [US4] 在 scripts/verify-sdd-030.mjs 增加动态标题、画像开关、可信趋势有效期与最小上下文固定测试，并确认旧实现未满足。
+- [x] T021 [US4] 新建 lib/recommendations/outfit-title.ts，统一三套标题的风格语义、模板词拒绝、唯一性和规则降级命名。
+- [x] T022 [US4] 新建 lib/recommendations/personalization-context.ts，规范化 style_scores，按个性化开关派生最多 5 个学习信号，并从 SDD-027 每日可信内容派生最多 4 条有效趋势。
+- [x] T023 [US4] 修改 app/recommendations/actions.ts 与 lib/recommendations/generator.ts，把当前账号最小偏好画像和当日趋势传给千问，并保持场景、天气、库存与业务复验优先。
+- [x] T024 [US1] 修改 components/status-header.tsx 与 app/globals.css，将顶部品牌与三项导航收进青柠悬浮壳层，复验 320px/390px 的滚动可达、焦点、无覆盖和减少透明度降级。
+- [x] T025 [US4] 运行 npm run check、npm run build、verify:sdd-030 及推荐/资讯回归，更新 quickstart.md、progress.md、AGENTS.md 和本清单后提交；真实千问联调仍以 T013 独立追踪。
 
 ## 依赖与独立验收
 
-T001 → T002 → T003；US1/US2/US3 可独立推进，T007 与 T008、T004 与 T005 可并行。每个故事按 spec.md 的独立路径验证。T014 依赖实现任务；T013 依赖外部凭据，不能勾选替代为模拟结果。先交付本地功能，真实模型与发布各自记录，不擅自扩大范围。
+T001 → T002 → T003；US1/US2/US3 可独立推进，T007 与 T008、T004 与 T005 可并行。增量任务中 T020 可先行，T021 与 T022 可并行，T023 依赖两者，T024 可与推荐链路并行，T025 依赖 T020～T024。每个故事按 spec.md 的独立路径验证。T013 依赖外部凭据，不能勾选替代为模拟结果。先交付本地功能，真实模型与发布各自记录，不擅自扩大范围。

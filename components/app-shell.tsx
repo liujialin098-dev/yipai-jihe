@@ -12,7 +12,7 @@ export function AppShell({
   viewer: Viewer | null;
 }) {
   return (
-    <div className="app-backdrop relative mx-auto flex min-h-dvh w-full max-w-[30rem] flex-col overflow-x-hidden border-x border-[var(--hairline)] shadow-[0_0_90px_rgba(48,52,61,0.12)]">
+    <div className="app-backdrop relative mx-auto flex min-h-dvh w-full max-w-[30rem] flex-col overflow-x-clip border-x border-[var(--hairline)] shadow-[0_0_90px_rgba(48,52,61,0.12)]">
       <a
         href="#main-content"
         className="sr-only z-50 rounded-full bg-[var(--surface-solid)] px-4 py-2 text-[var(--foreground)] shadow-lg focus:not-sr-only focus:absolute focus:top-2 focus:left-2"

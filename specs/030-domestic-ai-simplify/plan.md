@@ -4,7 +4,7 @@
 
 ## 概要
 
-先重排导航与视觉，再退役画布/抠图，最后切换每日推荐并增加诊断。沿用图片识别、天气、收藏和日记，保留历史资产。
+先重排导航与视觉，再退役画布/抠图，最后切换每日推荐并增加诊断。增量范围继续完善推荐个性化：把反馈账本形成的风格分数和每日可信时尚资讯转换成最小模型上下文，并对模型与规则降级统一执行动态命名。沿用图片识别、天气、收藏和日记，保留历史资产。
 
 ## 技术上下文
 
@@ -13,6 +13,9 @@
 - 测试：Node 固定响应、静态门禁、check/build、390px 浏览器。
 - OFL 许可 ZCOOL KuaiLe 自托管，next/font/local，仅标题与品牌使用，正文沿用系统字体。
 - 中心添加按钮至少 56px，其他触点至少 44px，无水平溢出。
+- 顶部导航使用青柠色浮动圆角壳层，四周留出背景呼吸区；滚动时保持可达，不遮挡标题、头像或主要内容。
+- 个性化不训练独立模型：只从当前账号 `preferred_styles`、`style_scores`、场合偏好和个性化开关派生简洁权重；关闭个性化后不向模型传递反馈分数。
+- 每日趋势复用 SDD-027 的可信 RSS 白名单与 24 小时服务端缓存；只传来源、日期、主题和风格标签，不传全文、外部图片或用户身份。
 
 ## 章程门禁
 
@@ -29,8 +32,10 @@
 - app/profile/page.tsx、lib/profile/data.ts：资料编辑与三项统计。
 - app/outfits/、app/api/wardrobe/items/[id]/cutout/、入库 confirm route：停止处理。
 - lib/recommendations/qwen.ts、generator.ts、app/recommendations/actions.ts：国内模型与诊断。
+- lib/recommendations/personalization-context.ts、outfit-title.ts：最小用户画像、每日趋势上下文和动态标题复验。
+- lib/inspiration/content.ts、ranking.ts：复用每日可信资讯及有效期，不新增抓取器。
 - scripts/verify-sdd-030.mjs：免费固定门禁。
 
 ## 取舍
 
-一段 AI Coding 对话 M/L，凭据联调可追加短对话。generation_ms 暂保持现有 15000 上限兼容；真实模型耗时写安全日志，不新增迁移。
+一段 AI Coding 对话 M/L，凭据联调可追加短对话。generation_ms 暂保持现有 15000 上限兼容；真实模型耗时写安全日志，不新增迁移。趋势只作为风格软信号，排序优先级固定为场景/天气/衣物归属与完整性 > 用户偏好 > 当日趋势，避免追逐趋势破坏可穿性。

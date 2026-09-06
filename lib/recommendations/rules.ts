@@ -21,6 +21,7 @@ import {
 } from "@/lib/recommendations/rain-protection";
 import { resolveStyleDirections } from "@/lib/recommendations/style-direction";
 import { OUTFIT_LAYER_LIMITS } from "@/lib/recommendations/layers";
+import { buildRuleOutfitTitle } from "@/lib/recommendations/outfit-title";
 import {
   seasonForTemperature,
   validateRecommendationOutput,
@@ -48,8 +49,6 @@ type RuleInput = {
   styleDirections?: [WardrobeStyle, WardrobeStyle, WardrobeStyle];
   targetStyle?: WardrobeStyle;
 };
-
-const TITLE_PREFIXES = ["清醒", "从容", "轻松"] as const;
 
 function expectedSeasons(apparentTemperatureC: number): Season[] {
   if (apparentTemperatureC <= 8) return ["winter", "autumn"];
@@ -496,7 +495,12 @@ export function buildRuleRecommendations(input: RuleInput) {
 
     raw.push({
       slot: (index + 1) as 1 | 2 | 3,
-      title: `${TITLE_PREFIXES[index]}${recommendationOccasionLabel(input.occasion)}`,
+      title: buildRuleOutfitTitle({
+        items: selected,
+        slot: index + 1,
+        style: targetStyle,
+        weatherCode: input.weather.weatherCode,
+      }),
       reason: reasonFor(selected, input.occasion, input.weather),
       stylingPoint: stylingPointFor(selected, targetStyle),
       styleTags: styleTags(

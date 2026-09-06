@@ -110,7 +110,7 @@ export const RECOMMENDATION_OUTPUT_SCHEMA = {
         additionalProperties: false,
         properties: {
           slot: { type: "integer", enum: [1, 2, 3] },
-          title: { type: "string", minLength: 1, maxLength: 30 },
+          title: { type: "string", minLength: 4, maxLength: 16 },
           reason: { type: "string", minLength: 1, maxLength: 140 },
           stylingPoint: { type: "string", minLength: 1, maxLength: 60 },
           styleTags: {

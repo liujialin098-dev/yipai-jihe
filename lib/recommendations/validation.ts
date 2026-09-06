@@ -15,6 +15,7 @@ import {
 } from "@/lib/recommendations/rain-protection";
 import { styleSupportsOccasion } from "@/lib/recommendations/style-direction";
 import { hasValidLayerCounts } from "@/lib/recommendations/layers";
+import { hasValidOutfitTitles } from "@/lib/recommendations/outfit-title";
 import {
   STYLE_OPTIONS,
   type Season,
@@ -185,8 +186,8 @@ export function validateRecommendationOutput(
       (slot !== 1 && slot !== 2 && slot !== 3) ||
       seenSlots.has(slot) ||
       typeof title !== "string" ||
-      title.trim().length < 1 ||
-      title.trim().length > 30 ||
+      title.trim().length < 4 ||
+      title.trim().length > 16 ||
       typeof reason !== "string" ||
       reason.trim().length < 1 ||
       reason.trim().length > 140 ||
@@ -295,6 +296,7 @@ export function validateRecommendationOutput(
   }
 
   const sortedOutfits = outfits.sort((a, b) => a.slot - b.slot);
+  if (!hasValidOutfitTitles(sortedOutfits)) return null;
   if (
     requiresRainProtection &&
     !sortedOutfits.some((outfit) =>
