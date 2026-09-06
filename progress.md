@@ -33,13 +33,13 @@
 
 ## 当前总览
 
-- **当前开发 SDD-030（2026-09-06）**：本地导航/紫色视觉、停用卡片和抠图、千问每日推荐适配已实现并通过核心验收。尚缺百炼 API Key/API Host 的真实模型联调，阶段整体为“部分完成”，本轮没有部署。下文最新线上版本仍是 SDD-027/028/029。
+- **当前开发 SDD-030（2026-09-06）**：导航/紫色视觉、停用卡片和抠图、千问每日推荐适配与新版 `Ensemble` 折叠 `E` 主标已实现、通过核心验收并发布 Production。尚缺百炼 API Key/API Host 的真实模型联调，阶段整体仍为“部分完成”；线上缺凭据时继续使用真实天气规则后备。
 
-- **最新线上版本（2026-09-06）**：SDD-027/028/029 已发布到 `https://yipai-jihe.vercel.app`；部署 `dpl_95cQdxJFKMcr2SVMF8QmDJiuzEqj`，源提交 `e369ea8`，Production / Ready。该记录覆盖下文历史“027/028/029 未部署”状态；手机网络、本人定位与历史账号登录验收仍待完成。
+- **最新线上版本（2026-09-06）**：SDD-027/028/029 与 SDD-030 当前代码、新版品牌主标已发布到 `https://yipai-jihe.vercel.app`；部署 `dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU`，源提交 `1e17950`，Production / Ready。首页、登录页及 `/brand/ensemble-icon-a-folded-e.png` 均为 HTTP 200，最近 30 分钟 error 日志无记录。百炼真实模型、手机网络、本人定位与历史账号登录验收仍待完成。
 
 - 发布验收：九个核心路由 HTTP 200（未登录业务路由仍执行正常身份入口跳转）；隔离体验身份进入成功，390px 个人主页浅紫渐变与新作品区生效，无水平溢出和浏览器运行错误。上海今日 28°C / 体感29°C（17:54）、09-07 预报24～30°C（17:56），浏览器直连和风 current/daily 成功，生产密钥签发与城市解析正常；天气仅为测试时刻证据，不作为默认城市。最近30分钟 error 日志查询无结果。
 - 本次未改本人账号、衣橱和公开访问策略，未调用付费抠图或识别测试；保留一组空衣橱隔离体验身份。百度线上双密钥仍在，本机缺失仍未解决；Vercel Secret 导出为 `[SENSITIVE]`，不可当作实际密钥。旧导出准备文件被 Git 与部署排除，未写入有效本地配置。国内手机开关代理和真实定位仍需本人验收；桌面成功不替代这些结论。
-- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583`；核对命令：`npx vercel inspect https://yipai-jihe-8nqcftvjb-jialin-d583.vercel.app --scope jialin-d583`；错误日志：`npx vercel logs dpl_95cQdxJFKMcr2SVMF8QmDJiuzEqj --level error --since 30m --scope jialin-d583`。侧边栏正式站点打开请求已提交。
+- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583`；核对命令：`npx vercel inspect https://yipai-jihe-l7ablvm07-jialin-d583.vercel.app --scope jialin-d583`；错误日志：`npx vercel logs dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU --level error --since 30m --scope jialin-d583`。
 
 - 2026-09-06 发布准备：用户明确要求部署最新版。和风五项服务端配置已通过 stdin 保存到 `yipai-jihe` Production Secret，未覆盖原有变量；新增 `scripts/configure-qweather-production.mjs`（默认只校验，显式 `--apply` 才写入且不覆盖已有变量）。check/build、007/026/028/029 和 027 离线门禁通过；026 背景断言已跟随 029 的用户决定更新。上线状态以本次发布验收记录为准。
 
@@ -1144,6 +1144,7 @@
 - [x] 浅雾丁香渐变、自托管圆润艺术标题、标题缩小居中、按钮克制紫色 hover/active/focus；减少动态保留。2026-09-06 按最新反馈进一步降低背景饱和度，并将底部 Dock 从通用按钮变色规则中拆出。
 - [x] 交互色按原有语义分层：黑白紧凑控件可转紫，彩色控件保持自身色相，危险操作保持红色；大面积卡片、统计区和整行入口只做极浅叠层、边框或景深反馈，不再被全局规则整块染紫。
 - [x] 英文品牌名确定为 `Ensemble`，含义为彼此协调的一整套搭配；顶部、首次身份入口、登录页和浏览器标题统一使用 `Ensemble / 衣拍即合` 双语标识。首版 Cormorant Garamond 因偏细且与圆角 UI 不搭已移除，最终改为自托管 Fredoka Variable，字重 640、紧凑字距；许可证随仓库保存，中文与正文字体不变。
+- [x] 用户从四版圆润丝带图标中选定 A 版折叠 `E`：青柠与丁香双色、无圆点、透明底 1024px；统一 `BrandMark`、浏览器图标和 Apple 图标均已替换，旧主标保留以便回退。
 - [x] 停用穿搭卡片编辑、分享及所有抠图入口；旧链接跳转、抠图 410，取消确认后的后台处理与 4 秒等待；历史资产零删除。
 - [x] 个人主页保留头像昵称编辑、三项当前账号统计，移除画布查询与作品区。
 - [x] 每日推荐接入百炼千问代码，25 秒截止、严格结构化输出、一次规则后备与受控失败日志。图片识别/资讯摘要不在本轮迁移范围。
@@ -1154,9 +1155,9 @@
 - [x] 隔离身份合成昵称“紫色测试”保存并刷新成功，头像选择/昵称输入仍可展开；旧 `/outfits/new` 跳转 `/recommendations`，抠图 POST 和精修 GET 均返回 410/no-store。浏览器运行错误为空，无框架错误层；410 为特意验证的预期响应，不是页面故障。
 - [x] 千问模拟接口验证成功、401/403、429、5xx、非法 JSON、截断、网络错误、超时（包括不响应 abort）、域名限制、无重试、三套实际业务复验和日志不泄密。模拟样本不写入线上推荐，不冒充真实天气/AI 验收。
 - [ ] 用户配置北京百炼 `DASHSCOPE_API_KEY` 与 `DASHSCOPE_API_HOST` 后，真实隔离衣橱生成三套合法千问搭配并复核模型来源；不要求用户把密钥发到聊天。
-- [ ] 用户要求发布后，再配置 Production 并部署验收；本轮线上完全未变。
+- [x] 2026-09-06 按用户明确要求部署 Production：`dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU` / 源提交 `1e17950` / Ready；固定域名、首页、登录页与新版 Logo 资源均为 HTTP 200，最近 30 分钟 error 日志无记录。Production 仍未配置百炼凭据，本项只代表代码与品牌发布，不代表真实千问验收完成。
 - 已知限制：缺千问凭据时每日推荐明确显示“千问搭配尚未配置”并使用真实天气规则后备；不能证明新模型实际质量/耗时或断言旧错误根因。`generation_ms` 保留旧表上限，真实耗时看安全日志。完整头像上传流程由 025 隔离测试覆盖，本轮浏览器仅复核入口和昵称保存；未对本人账号、密码或真实衣橱进行操作。
-- 提交记录：`a883763`（`feat: simplify outfit experience and add domestic Qwen recommendations`）；`892b9c9`（`style: soften lavender palette and dock states`）；`0569302`（`style: preserve semantic colors in interactions`）；`2b0eabe`（`style: introduce Ensemble bilingual wordmark`）；`5bb80e6`（`style: switch Ensemble wordmark to Fredoka`）。仅包含本阶段代码、授权字体和文档，无关 PRD 与脚本保持未暂存。本轮另通过 027 离线资讯回归。
+- 提交记录：`a883763`（`feat: simplify outfit experience and add domestic Qwen recommendations`）；`892b9c9`（`style: soften lavender palette and dock states`）；`0569302`（`style: preserve semantic colors in interactions`）；`2b0eabe`（`style: introduce Ensemble bilingual wordmark`）；`5bb80e6`（`style: switch Ensemble wordmark to Fredoka`）；`1e17950`（`feat: adopt folded Ensemble brand mark`）。无关 PRD 与脚本保持未暂存。本轮另通过 027 离线资讯回归。
 
 完成任一阶段后，在对应阶段的“阶段完成记录”中填写：
 
