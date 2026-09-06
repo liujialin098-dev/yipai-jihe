@@ -121,14 +121,14 @@ export function WeatherPanel({
         </div>
         <div aria-live="polite" className="mt-3">
           {state.status === "loading" ? (
-            <p className="app-page-lead">正在获取真实天气…</p>
+            <p className="app-page-lead">正在获取天气…</p>
           ) : null}
           {state.status === "missing" ? (
-            <p className="app-page-lead">先在下方选择城市，再看天气与搭配。</p>
+            <p className="app-page-lead">请选择城市</p>
           ) : null}
           {state.status === "error" ? (
             <p className="text-sm leading-6 text-[#b42318]">
-              天气暂时未取到，请检查连接后刷新。此次不会用估算天气生成搭配。
+              天气获取失败，请刷新重试。
             </p>
           ) : null}
           {weather ? (
@@ -146,7 +146,7 @@ export function WeatherPanel({
               </p>
               {targetDay === "tomorrow" ? (
                 <p className="mt-1 text-xs leading-5 text-[var(--text-tertiary)]">
-                  全天最低 / 最高气温，搭配以最低气温为参考。
+                  最低 / 最高气温
                 </p>
               ) : null}
               <p className="mt-3 text-xs leading-5 text-[var(--text-tertiary)]">

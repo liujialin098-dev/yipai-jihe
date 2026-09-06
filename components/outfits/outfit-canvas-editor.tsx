@@ -271,7 +271,7 @@ export function OutfitCanvasEditor({
   async function createLocalCutout() {
     if (!selectedWardrobeItem?.imageUrl || cutoutPendingId) return;
     setCutoutPendingId(selectedWardrobeItem.id);
-    setMessage({ tone: "info", text: "正在本机整理背景，原图不会被覆盖。" });
+    setMessage({ tone: "info", text: "正在抠图…" });
     try {
       const response = await fetch(selectedWardrobeItem.imageUrl, {
         cache: "no-store",
@@ -293,7 +293,7 @@ export function OutfitCanvasEditor({
       if (result.status === "unsupported-background") {
         setMessage({
           tone: "error",
-          text: "这张图的背景较复杂，已保留原图。纯色背景照片会更容易抠干净。",
+          text: "背景较复杂，请使用手动精修。",
         });
         return;
       }
@@ -328,7 +328,7 @@ export function OutfitCanvasEditor({
       }));
       setMessage({ tone: "success", text: saveResult.message });
     } catch {
-      setMessage({ tone: "error", text: "本地抠图暂时失败，已继续使用原图。" });
+      setMessage({ tone: "error", text: "抠图失败，请重试。" });
     } finally {
       setCutoutPendingId(null);
     }
@@ -340,9 +340,7 @@ export function OutfitCanvasEditor({
     setCutoutPendingId(selectedWardrobeItem.id);
     setMessage({
       tone: "info",
-      text: force
-        ? "正在重新优化边缘，旧透明图会保留到新结果成功。"
-        : "正在进行专业抠图，原图会继续保留。",
+      text: "正在抠图…",
     });
     try {
       const response = await fetch(
@@ -359,9 +357,7 @@ export function OutfitCanvasEditor({
         error?: { message?: string };
       } | null;
       if (!response.ok || !payload?.cutoutUrl) {
-        throw new Error(
-          payload?.error?.message ?? "专业抠图暂时不可用，已保留当前图片。",
-        );
+        throw new Error(payload?.error?.message ?? "抠图失败，请重试。");
       }
       setCutoutUrls((current) => ({
         ...current,
@@ -374,10 +370,7 @@ export function OutfitCanvasEditor({
     } catch (error) {
       setMessage({
         tone: "error",
-        text:
-          error instanceof Error
-            ? error.message
-            : "专业抠图暂时不可用，已保留当前图片。",
+        text: error instanceof Error ? error.message : "抠图失败，请重试。",
       });
     } finally {
       setCutoutPendingId(null);
@@ -498,9 +491,7 @@ export function OutfitCanvasEditor({
       <header className="px-1">
         <p className="app-page-meta">穿搭画布</p>
         <h1 className="app-page-title mt-1">把衣服摆成你的样子</h1>
-        <p className="app-page-lead mt-3">
-          拖动真实衣物，调整大小和层次。没有模特，也不会重新画衣服。
-        </p>
+        <p className="app-page-lead mt-3">拖动衣物，自由排布。</p>
       </header>
 
       <div className="mt-5 grid gap-4">

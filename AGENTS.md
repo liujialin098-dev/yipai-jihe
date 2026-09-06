@@ -31,7 +31,7 @@
 
 ## 注意事项
 
-- SDD-029（2026-09-06）个人主页采用纯色丁香封面、突出头像昵称、横排真实统计与近期穿搭作品区；App 底板统一冷白，不得恢复大面积四色渐变。四色仍按固定角色用于内容与操作，正式 Logo、底部 Dock、原路由和私密边界不变。资料编辑默认为收起，原生 details 支持键盘；仅个人主页的 `OutfitCanvasPreview` 使用 `hideHeading` 将标题放到图外，不改原画布变换或分享图。保留根节点既有固定浅色策略。验收为 `npm run verify:sdd-029`、check/build 和 390px/桌面浏览器；本阶段未部署，027/028 也仍未发布。
+- SDD-029（2026-09-06）个人主页采用纯色丁香封面、突出头像昵称、横排真实统计与近期穿搭作品区；用户随后要求 App 底板采用浅紫到冷白的低对比渐变（#f0eaff → #f8f5ff → #fff），覆盖首版纯白决定，不恢复高饱和四色渐变。四色仍按固定角色用于内容与操作，正式 Logo、底部 Dock、原路由和私密边界不变。资料编辑默认为收起，原生 details 支持键盘；仅个人主页的 `OutfitCanvasPreview` 使用 `hideHeading` 将标题放到图外，不改原画布变换或分享图。减少常驻解释文案，生成快照在“生成信息”内按需展开，保留天气来源、权限隐私及真实错误。抠图失败提示简写，不代表专业服务已恢复。保留根节点既有固定浅色策略。验收为 `npm run verify:sdd-029`、check/build 和 390px/桌面浏览器；本阶段未部署，027/028 也仍未发布。
 
 - SDD-028 和风天气（2026-09-06）：本地接入已实现，覆盖 SDD-012/013/018/020 中 Open-Meteo/BigDataCloud 供应商约定；位置主动确认、账号隔离和禁止模拟原则不变。服务端 QWEATHER_API_HOST、QWEATHER_DEVELOPER_ID、QWEATHER_PROJECT_ID、QWEATHER_CREDENTIAL_ID、QWEATHER_PRIVATE_KEY 签发 5 分钟 JWT；仅同源且 auth.getUser() 有效的 POST /api/weather/session 可取，返回 private,no-store，每账号每分钟 12 次进程级限频。浏览器天气和设备城市解析直连和风，私钥不得进入浏览器。推荐与灵感使用服务端独立真实天气，不能信任客户端温度。lib/weather/parse.ts 统一现象映射与日期解析，未知代码/异常单位/缺预报失败；明日最低气温必须注明 air_minimum，不得称体感。历史 Open-Meteo 快照保留原来源，不标为实时。
 - 和风本机配置：setup-qweather-keys.mjs 必须复用 Git 忽略的 .env.qweather-private.pem，不轮换；准备文件 .env.qweather.local 不自动加载，configure-qweather-local.mjs 安全生成 .env.development.local，仅用于 dev，不覆盖 .env.local、不打印密钥。生产构建不加载 development 配置；Vercel 尚未配置和风五项环境或部署 SDD-027/028。生产前须复核供应商额度、浏览器凭据限制与国内手机无代理网络。验证：verify:sdd-028 固定解析/短 JWT，verify:sdd-013 真实和风两日与日期隔离；另回归 007/012/014/015/017/018/019/020，浏览器查真实直连、失败重试、跨城市与 390px。

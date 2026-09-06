@@ -137,12 +137,16 @@ for (const text of [
   "IP 定位可能受 VPN、运营商或网络出口影响",
   "IP 只提供待确认建议，不按 IP 自动切换或覆盖",
 ]) {
-  assert.ok(selectorSource.includes(text), `城市选择器缺少文案：${text}`);
+  assert.ok(
+    selectorSource.replace(/\s+/g, "").includes(text.replace(/\s+/g, "")),
+    `城市选择器缺少文案：${text}`,
+  );
 }
 assert.ok(pageSource.includes("ipSuggestion={ipCitySuggestion}"));
 assert.ok(
-  controlsSource.includes("仅使用当前选择城市的"),
-  "推荐控件仍把临时城市误称为账号城市",
+  controlsSource.includes("useRecommendationWeather") &&
+    controlsSource.includes('weather.status !== "ready"'),
+  "推荐控件必须依赖当前有效城市天气就绪状态",
 );
 
 const combinedSource = `${ipSource}\n${contextSource}\n${overrideSource}\n${dataSource}\n${actionSource}`;

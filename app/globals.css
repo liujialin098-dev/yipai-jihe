@@ -191,7 +191,7 @@
 }
 
 .app-backdrop {
-  background: var(--surface-solid);
+  background: linear-gradient(165deg, #f0eaff 0%, #f8f5ff 38%, #fff 82%);
 }
 
 .motion-stage {
@@ -948,7 +948,7 @@
     --shadow-float: 0 20px 60px rgb(0 0 0 / 42%);
   }
 
-  .app-backdrop {
+  :root:not(.light) .app-backdrop {
     background: var(--surface-solid);
   }
 

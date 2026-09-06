@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Info, Shirt } from "lucide-react";
+import { Shirt } from "lucide-react";
 import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
@@ -65,11 +65,6 @@ export default async function RecommendationsPage({
         <h1 className="app-page-title mt-2">
           {targetDay === "tomorrow" ? "明天穿什么" : "今天穿什么"}
         </h1>
-        <p className="app-page-lead mt-3">
-          从现有衣物中，按
-          {targetDay === "tomorrow" ? "明日预报" : "当前天气"}
-          和场合生成 3 套搭配。
-        </p>
       </header>
 
       <nav
@@ -136,26 +131,28 @@ export default async function RecommendationsPage({
           <div className="flex items-end justify-between gap-4">
             <div>
               <h2 className="app-section-title">搭配结果</h2>
-              <p className="app-page-meta mt-1">全部来自当前衣橱</p>
-              <p className="mt-2 text-xs leading-5 text-[var(--text-tertiary)]">
-                {recommendationOccasionLabel(recommendation.occasion)} ·{" "}
-                {recommendation.source === "ai" ? "AI 生成" : "基础生成"}。
-                生成时天气：{recommendation.weather.city}，
-                {recommendation.weather.summary}，
-                {recommendation.weather.temperatureBasis === "air_minimum"
-                  ? "最低气温"
-                  : "体感"}{" "}
-                {recommendation.weather.apparentTemperatureC}°C （
-                {recommendation.weather.provider === "qweather"
-                  ? "和风天气"
-                  : "Open-Meteo 历史快照"}
-                ，
-                {new Date(recommendation.weather.observedAt).toLocaleString(
-                  "zh-CN",
-                  { timeZone: "Asia/Shanghai" },
-                )}
-                ）。 天气变化后可重新生成。
-              </p>
+              <details className="mt-2 text-xs text-[var(--text-secondary)]">
+                <summary className="cursor-pointer py-2">生成信息</summary>
+                <p className="mt-2 text-xs leading-5 text-[var(--text-tertiary)]">
+                  {recommendationOccasionLabel(recommendation.occasion)} ·{" "}
+                  {recommendation.source === "ai" ? "AI 生成" : "基础生成"}。
+                  生成时天气：{recommendation.weather.city}，
+                  {recommendation.weather.summary}，
+                  {recommendation.weather.temperatureBasis === "air_minimum"
+                    ? "最低气温"
+                    : "体感"}{" "}
+                  {recommendation.weather.apparentTemperatureC}°C （
+                  {recommendation.weather.provider === "qweather"
+                    ? "和风天气"
+                    : "Open-Meteo 历史快照"}
+                  ，
+                  {new Date(recommendation.weather.observedAt).toLocaleString(
+                    "zh-CN",
+                    { timeZone: "Asia/Shanghai" },
+                  )}
+                  ）。
+                </p>
+              </details>
             </div>
             <span className="pb-1 text-xs text-[var(--text-tertiary)]">
               3 套
@@ -188,14 +185,6 @@ export default async function RecommendationsPage({
               canRecordToday={targetDay === "today"}
             />
           ))}
-          <div className="flex items-start gap-3 rounded-[1.35rem] bg-[var(--surface-soft)] px-4 py-3.5 text-xs leading-5 text-[var(--text-secondary)]">
-            <Info
-              className="mt-0.5 size-4 shrink-0 text-[var(--system-blue)]"
-              strokeWidth={1.8}
-              aria-hidden="true"
-            />
-            推荐会参考衣物标签。出门前请按实际体感和活动强度调整增减。
-          </div>
         </section>
       ) : (
         <section className="mt-6 rounded-[1.75rem] border border-dashed border-[var(--hairline-strong)] px-5 py-8 text-center">
@@ -207,8 +196,8 @@ export default async function RecommendationsPage({
           </h2>
           <p className="mx-auto mt-2 max-w-[17rem] text-sm leading-6 text-[var(--text-secondary)]">
             {items.length > 0
-              ? `当前有 ${items.length} 件活跃衣物，生成后这里会出现三套真实搭配。`
-              : "加载演示衣橱或添加自己的衣物，推荐才会引用真实单品。"}
+              ? `${items.length} 件衣物待搭配`
+              : "添加衣物，开始搭配。"}
           </p>
           {items.length === 0 ? (
             <Link

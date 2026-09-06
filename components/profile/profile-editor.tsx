@@ -139,7 +139,6 @@ export function ProfileEditor({
             编辑资料
           </span>
           <h1 className="profile-display-name">{initialDisplayName}</h1>
-          <span className="profile-display-caption">我的衣服，我的搭配。</span>
         </summary>
         <form
           onSubmit={handleSubmit}

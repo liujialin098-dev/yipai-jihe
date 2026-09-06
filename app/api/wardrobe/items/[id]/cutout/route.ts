@@ -43,11 +43,7 @@ export async function POST(request: Request, route: RouteContext) {
     if (result.code === "image_missing") {
       return jsonError("image_missing", "衣物原图暂时无法读取。", 409);
     }
-    return jsonError(
-      "cutout_unavailable",
-      "专业抠图暂时不可用，已继续保留当前图片。",
-      503,
-    );
+    return jsonError("cutout_unavailable", "抠图失败，请重试。", 503);
   }
 
   return NextResponse.json({

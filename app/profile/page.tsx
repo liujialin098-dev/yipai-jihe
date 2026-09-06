@@ -50,7 +50,7 @@ export default async function ProfilePage() {
           />
           {viewer.isAnonymous
             ? "仅自己可见。体验身份，注册后可跨设备恢复。"
-            : "仅自己可见，衣橱与穿搭由你保管。"}
+            : "仅自己可见"}
         </p>
       </section>
 
@@ -85,9 +85,7 @@ export default async function ProfilePage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="app-section-title">我的穿搭卡片</h2>
-            <p className="profile-privacy mt-1 text-xs">
-              最近编辑的作品，最多展示 4 张
-            </p>
+            <p className="profile-privacy mt-1 text-xs">最近 4 张</p>
           </div>
           <Link
             href="/recommendations"
@@ -139,7 +137,7 @@ export default async function ProfilePage() {
             />
             <h3 className="text-base font-medium">这里，留给你的第一套搭配</h3>
             <p className="profile-privacy mx-auto mt-2 max-w-60 text-sm leading-6">
-              从每日推荐进入画布，摆好衣服，保存成自己的穿搭卡片。
+              去搭配，保存第一张卡片。
             </p>
           </div>
         )}

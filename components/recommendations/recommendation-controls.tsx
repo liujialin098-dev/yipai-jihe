@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  CalendarDays,
-  LoaderCircle,
-  Sparkles,
-  WandSparkles,
-} from "lucide-react";
+import { LoaderCircle, Sparkles, WandSparkles } from "lucide-react";
 import { useActionState, useState } from "react";
 import { generateDailyRecommendations } from "@/app/recommendations/actions";
 import { useRecommendationWeather } from "./weather-panel";
@@ -109,20 +104,7 @@ export function RecommendationControls({
             </option>
           ))}
         </select>
-        <span className="font-normal leading-5 text-[var(--text-tertiary)]">
-          单次选择不会覆盖长期偏好，天气和场景边界始终优先。
-        </span>
       </label>
-
-      <div className="mt-4 flex items-center gap-2 rounded-[1.1rem] border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 py-3 text-xs leading-5 text-[var(--text-secondary)]">
-        <CalendarDays
-          className="size-4 shrink-0 text-[var(--system-blue)]"
-          strokeWidth={1.8}
-          aria-hidden="true"
-        />
-        仅使用当前选择城市的
-        {targetDay === "tomorrow" ? "真实明日预报" : "真实当前天气"}
-      </div>
 
       <button
         type="submit"

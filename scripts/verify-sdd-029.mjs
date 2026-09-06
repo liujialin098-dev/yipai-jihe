@@ -27,10 +27,26 @@ assert.match(editor, /maxLength=\{20\}/);
 assert.match(preview, /hideHeading = false/);
 assert.match(preview, /cutoutUrl \?\? wardrobeItem.imageUrl/);
 assert.match(preview, /layoutItem.rotation/);
-assert.match(css, /\.app-backdrop\s*\{\s*background: var\(--surface-solid\)/);
+assert.match(
+  css,
+  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #f0eaff 0%, #f8f5ff 38%, #fff 82%\)/,
+);
 assert.match(css, /\.profile-collection/);
 assert.match(css, /prefers-reduced-motion/);
 assert.doesNotMatch(page + editor, /app\.whering|Request to follow|虚拟模特/);
+const [recommendations, controls, canvasEditor, cutoutRoute] =
+  await Promise.all([
+    read("app/recommendations/page.tsx"),
+    read("components/recommendations/recommendation-controls.tsx"),
+    read("components/outfits/outfit-canvas-editor.tsx"),
+    read("app/api/wardrobe/items/[id]/cutout/route.ts"),
+  ]);
+assert.match(recommendations, /<details/);
+assert.match(recommendations, /生成信息/);
+assert.doesNotMatch(controls, /单次选择不会覆盖/);
+assert.doesNotMatch(canvasEditor, /没有模特，也不会重新画衣服/);
+assert.match(cutoutRoute, /抠图失败，请重试。/);
+assert.match(cutoutRoute, /503/);
 // 无网络渲染真实 TSX 组件，校验画廊和默认预览的差异。
 const require = createRequire(import.meta.url);
 const compiled = ts.transpileModule(preview, {
@@ -110,5 +126,5 @@ if (process.argv.includes("--fixture")) {
   );
 }
 console.log(
-  "SDD-029：真实统计、收起编辑、原图画布、纯色底板及无社交复制边界通过。",
+  "SDD-029：真实统计、收起编辑、原图画布、浅紫渐变和简洁文案边界通过。",
 );

@@ -249,12 +249,12 @@ export function WeatherCitySelector({
         </div>
       ) : null}
 
-      <p className="border-t border-[var(--hairline)] px-4 py-3 text-xs leading-5 text-[var(--text-tertiary)]">
-        IP 只提供待确认建议，不按 IP 自动切换或覆盖。你也可以手动修改常用城市。
-      </p>
-
       {expanded ? (
         <div id="weather-city-panel">
+          <p className="border-t border-[var(--hairline)] px-4 py-3 text-xs leading-5 text-[var(--text-tertiary)]">
+            IP 只提供待确认建议，不按 IP
+            自动切换或覆盖。你也可以手动修改常用城市。
+          </p>
           <div className="grid gap-3 border-t border-[var(--hairline)] bg-[var(--surface-soft)] p-4">
             <div className="flex items-start gap-3">
               <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
