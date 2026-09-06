@@ -1152,7 +1152,7 @@
 - [ ] 用户配置北京百炼 `DASHSCOPE_API_KEY` 与 `DASHSCOPE_API_HOST` 后，真实隔离衣橱生成三套合法千问搭配并复核模型来源；不要求用户把密钥发到聊天。
 - [ ] 用户要求发布后，再配置 Production 并部署验收；本轮线上完全未变。
 - 已知限制：缺千问凭据时每日推荐明确显示“千问搭配尚未配置”并使用真实天气规则后备；不能证明新模型实际质量/耗时或断言旧错误根因。`generation_ms` 保留旧表上限，真实耗时看安全日志。完整头像上传流程由 025 隔离测试覆盖，本轮浏览器仅复核入口和昵称保存；未对本人账号、密码或真实衣橱进行操作。
-- 提交记录：本阶段实现提交说明 `feat: simplify outfit experience and add domestic Qwen recommendations`，准确提交号在完成保存后补录。
+- 提交记录：`a883763`（`feat: simplify outfit experience and add domestic Qwen recommendations`）；仅包含本阶段代码、授权字体和文档，无关 PRD 与脚本保持未暂存。本轮另通过 027 离线资讯回归。
 
 完成任一阶段后，在对应阶段的“阶段完成记录”中填写：
 
