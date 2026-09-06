@@ -34,7 +34,7 @@
 ## 当前总览
 
 - 项目：衣拍即合（AI 穿搭助手）
-- 当前状态：SDD-026 已发布；SDD-027 核心开发、两项数据库迁移与 MVP 本地复验通过，正在保存提交；Production 与跨日运行验收尚未执行。SDD-002 的历史账号设密及本人真实账号重登录仍等待集中验收。
+- 当前状态：SDD-026 已发布；SDD-027 核心开发、两项数据库迁移与 MVP 本地复验通过，已保存实现提交 `c5ca213`；Production 与跨日运行验收尚未执行。SDD-002 的历史账号设密及本人真实账号重登录仍等待集中验收。
 - P0 目标：发布可访问、可复现的受控评审版
 - 技术基线：Next.js 16.3.1、React 19、TypeScript、Tailwind CSS 4、shadcn/ui、Supabase
 - Supabase 项目：`next-app-supabase`（project ref：`gmjtzmxuveoaqcdmuifr`）
@@ -976,7 +976,7 @@
 
 ### SDD-027：穿搭新闻与趋势推送
 
-- 状态：MVP 本地验收通过，待提交与部署（2026-09-06）
+- 状态：MVP 本地验收通过并已提交，待部署（2026-09-06）
 - SDD 目录：`specs/027-fashion-news-feed/`
 - AI Coding 估算：1 段主开发对话 + 收尾验收续轮，复杂度 L；不按真实生产工期估算
 - 依赖：SDD-026
@@ -1002,7 +1002,7 @@
 - [x] `npm run check`、`npm run build`、联网 `npm run verify:sdd-027` 通过。
 - [x] SDD-007、015、017、018 回归通过；SDD-027 固定样本补充真实业务断言。
 - [x] 390×844 隔离体验账号验收：7 条真实来源内容、关闭设置刷新保持、空主题校验、详情已读刷新保持、页面宽度 390、无横向溢出、最终 0 浏览器 error。
-- [ ] 保存阶段实现提交并补录提交 ID。
+- [x] 保存阶段实现提交并补录提交 ID：`c5ca213`。
 - [ ] 根据用户明确部署指令发布 Production，并复核固定域名页面与真实来源可达性。
 
 交付记录：
@@ -1014,7 +1014,7 @@
 - 未完成的运行验收：Production 部署、跨日真实来源故障恢复、长期去重观察和外链持续可达性；不把这些记为已验证。
 - 当前线上仍为 SDD-026：`dpl_Asby267EpX5q46dSJDyXgq4uMoZJ`，源提交 `702bc6f`。
 - 具体证据与手工步骤见 `specs/027-fashion-news-feed/quickstart.md`。
-- 实现提交：待本次保存后补录。
+- 实现提交：`c5ca213`（`feat: add SDD-027 personalized fashion inspiration feed`）；本次交付记录随后单独提交。不包含无关 PRD/Word 文档。
 
 ### SDD-009：穿搭日记与利用率报告
 

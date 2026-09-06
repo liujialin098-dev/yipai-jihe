@@ -30,7 +30,7 @@
 - [x] T017 更新 `package.json`、README、`progress.md` 与 `AGENTS.md`
 - [x] T018 运行 `npm run check`、`npm run build`、`npm run verify:sdd-027` 和相关回归
 - [x] T019 完成 390px 浏览器验收并记录限制
-- [ ] T020 提交 SDD-027 实现与文档
+- [x] T020 提交 SDD-027 实现与文档（实现提交 `c5ca213`）
 
 ## 收尾补齐（2026-09-06，仍属于本阶段）
 
