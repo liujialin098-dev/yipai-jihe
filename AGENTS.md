@@ -2,7 +2,7 @@
 
 ## 当前有效决策：SDD-030（2026-09-06）
 
-- SDD-030 上一版代码与品牌视觉已发布 Production；动态标题、反馈画像、每日可信趋势和青柠悬浮顶栏提交为 `8a58da9`，当前尚未部署。真实千问联调仍因未配置百炼凭据而未完成。圆润粗体字标提交为 `5bb80e6`，用户选定的青柠/丁香折叠 `E` 主标提交为 `1e17950`。以 `progress.md` 的 SDD-030 清单为准。以下历史 SDD-024/026/029 中“画布、卡片分享、自动/专业/人工抠图及近期作品展示”约定已被本次用户决定覆盖，不得恢复默认入口。
+- SDD-030 代码、品牌视觉、动态标题、反馈画像、每日可信趋势和青柠悬浮顶栏均已发布 Production；动态推荐增量实现提交为 `8a58da9`，部署记录提交前的文档基线为 `ddbbc6e`。真实千问联调仍因未配置百炼凭据而未完成。圆润粗体字标提交为 `5bb80e6`，用户选定的青柠/丁香折叠 `E` 主标提交为 `1e17950`。以 `progress.md` 的 SDD-030 清单为准。以下历史 SDD-024/026/029 中“画布、卡片分享、自动/专业/人工抠图及近期作品展示”约定已被本次用户决定覆盖，不得恢复默认入口。
 - 底部固定为 **衣橱 / 推荐 / 添加衣物 / 时尚资讯 / 收藏**，添加衣物在正中央且最突出（56px）；顶部为自己品牌居中、首页/穿搭日记/个人主页与头像入口，不复制 Whering 标志。顶部品牌与导航 MUST 位于青柠软渐变浮动圆角壳层，四周保留背景间距，当前项使用半透明浅色胶囊；滚动时保持 sticky 完整可达，不得被正文、头像或标题覆盖。应用外壳使用 `overflow-x-clip`，不得恢复会破坏 sticky 的 `overflow-x-hidden`。
 - 当前底色使用灰调浅雾丁香 `#eee6f5 → #f5eff9 → #fcfafe`，中性交互紫为低饱和 `#745c8f`。页面主标题使用自托管 OFL 站酷快乐体，字号缩小居中；正文沿用系统字体。交互反馈 MUST 保留语义色：原本黑色或白色的紧凑控件可转为克制紫色；青柠、丁香、珊瑚、天空蓝、成功绿和危险红控件只能在自身色相上做明暗/饱和度变化，不得统一染紫。卡片、统计区、整行入口等大面积 UI 只允许极浅叠层、边框或景深变化，不得整块换色。底部 Dock 必须脱离通用按钮填充规则：导航项本体始终透明，普通项仅用浅紫气泡和轻微位移反馈，中央 56px 添加按钮单独使用灰调薰衣草色；不得整块反白、闪成深紫或恢复五项随机变色。禁用、键盘焦点和减少动态规则继续保留。
 - 英文品牌名固定为 **Ensemble**，中文“衣拍即合”作为辅助签名，不改产品中文名称。顶部 Header、首次登录/注册入口、登录页和浏览器 Metadata 使用同一双语标识；英文只使用自托管圆润粗体 `Fredoka-Variable.ttf`，当前字重 640、紧凑负字距，中文与正文不得套用该拉丁展示字体。字体来自 Google Fonts 官方仓库并随 `OFL-Fredoka.txt` 保存 SIL OFL 1.1 许可证，运行时不得请求第三方字体 CDN。此前 Cormorant Garamond 已按用户反馈移除，不得恢复偏细的时装衬线字标。
@@ -14,7 +14,7 @@
 - 动态趋势复用 SDD-027 的 Vogue/GQ 可信 RSS、24 小时服务端缓存、发布日期和有效期，只向模型传最多 4 条标题级元数据及来源 URL；未来、过期或非 HTTPS 来源不得进入。上游失败时使用空趋势上下文且不得声称参考了最新流行。排序优先级固定为场景/天气/衣物归属与完整性 > 用户明确选择与偏好 > 当日趋势。
 - 失败分为配置缺失/配置无效/鉴权/限流/超时/供应商故障/响应截断/搭配校验不合格；日志只含受控类别、状态码、provider/model（成功时）和真实模型耗时。仅真实天气成功后允许一次规则后备。数据库 `generation_ms` 暂保留原表 15000 上限，不可当作完整请求耗时；25 秒模型预算覆盖旧推荐 15 秒目标，不影响天气失败必须停止的规则。
 - 百炼凭据尚未配置，不得宣称真实模型已验收。Context7 已查询 `/dashscope/dashscope-sdk-python`，并核对百炼官方 `https://help.aliyun.com/zh/model-studio/qwen-structured-output`；本地 Next.js 字体指南确认 next/font/local 无浏览器 Google 请求。
-- 验收命令 `npm run check`、`npm run build`、`npm run verify:sdd-030`；推荐个性化增量另回归 014、017、027。兼容门禁 007/024/025/026/029 已更新为新用户决定，同时保留历史算法与数据隔离检查。2026-09-06 用户明确要求后，上一版代码与新版 Logo 已部署；动态标题、偏好/趋势上下文与青柠浮层当前仅本地完成，未收到新的部署要求前不得写成已上线。Production 未配置 `DASHSCOPE_*`，因此每日推荐继续以真实天气规则后备运行，不得把本次发布写成千问真实联调完成。
+- 验收命令 `npm run check`、`npm run build`、`npm run verify:sdd-030`；推荐个性化增量另回归 014、017、027。兼容门禁 007/024/025/026/029 已更新为新用户决定，同时保留历史算法与数据隔离检查。2026-09-06 用户明确要求后，动态标题、偏好/趋势上下文与青柠浮层已部署 Production。Production 未配置 `DASHSCOPE_*`，因此每日推荐继续以真实天气规则后备运行，不得把本次发布写成千问真实联调完成。
 
 ## 技术栈
 
@@ -48,7 +48,7 @@
 
 ## 注意事项
 
-- **当前 Production（2026-09-06）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU`，源提交 `1e17950`，Ready / production。SDD-027/028/029 与 SDD-030 当前代码、新版 `Ensemble` 折叠 `E` 主标均已上线；百炼凭据仍未配置，所以 SDD-030 继续为“部分完成”。首页、登录页及新版 Logo 资源均返回 HTTP 200，最近 30 分钟 error 日志无记录；手机无代理/有代理、本人定位、真实千问和历史账号登录仍待集中验收。详见 progress.md。
+- **当前 Production（2026-09-06）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3`，源提交 `ddbbc6e`，Ready / production。SDD-027/028/029 与 SDD-030 当前代码、新版 `Ensemble` 折叠 `E` 主标、动态标题、偏好/趋势上下文和青柠悬浮顶栏均已上线；百炼凭据仍未配置，所以 SDD-030 继续为“部分完成”。首页、登录页和推荐页返回 HTTP 200，最近 30 分钟 error 日志无记录；资讯页与个人主页的部署后命令行复核受本机到 Vercel 瞬时连接超时影响，未观察到应用 5xx。手机无代理/有代理、本人定位、真实千问和历史账号登录仍待集中验收。详见 progress.md。
 - 本次发布：`npx vercel deploy --prod --yes --scope jialin-d583`；检视 `npx vercel inspect https://yipai-jihe-l7ablvm07-jialin-d583.vercel.app --scope jialin-d583`。后续发布继续核对同项目、11 项生产配置名称及 Ready/production/固定域名，不得使用旧 ai-coding 项目。`vercel link --yes` 当前会刷新本地 OIDC；本次已核对既有 Supabase/OpenAI/百度/和风配置仍在，后续先保护本地配置，不得以完整 env pull 覆盖。
 
 - 2026-09-06 发布配置：和风五项 `QWEATHER_*` 已安全保存为 `yipai-jihe` Production Secret，覆盖下文旧的“线上尚未配置”记录。`scripts/configure-qweather-production.mjs` 校验项目/团队与本机既有 Ed25519 密钥，默认 dry run，只有 `--apply` 经 stdin 写入、不覆盖已有变量、不输出私钥。Vercel Secret 导出只得到 `[SENSITIVE]`，不得作为有效本地凭据；部署与本机百度配置是不同任务，当前本机百度密钥仍缺失。
@@ -95,7 +95,7 @@
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
-- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-09-06 最新部署为 `dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU`，对应部署源 Git 提交 `1e17950`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、OpenAI、百度及和风所需服务端变量；尚未配置百炼 `DASHSCOPE_*`。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
+- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-09-06 最新部署为 `dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3`，对应部署源 Git 提交 `ddbbc6e`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、OpenAI、百度及和风所需服务端变量；尚未配置百炼 `DASHSCOPE_*`。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
 - Vercel Production 发布流程：先运行 `npx vercel link --yes --project yipai-jihe --scope jialin-d583`、`npx vercel project inspect yipai-jihe --scope jialin-d583` 与 `npx vercel env ls production --scope jialin-d583`，确认链接项目正确、框架预设为 Next.js 且变量名称齐全；再运行 `npm run check`、`npm run build`，最后执行 `npx vercel deploy --prod --yes --scope jialin-d583`。发布后使用 `npx vercel inspect <deployment-url> --scope jialin-d583` 核对 `target=production`、`status=Ready` 和固定别名，并检查核心页面 HTTP 状态及 `npx vercel logs <deployment-id> --level error --since 30m --scope jialin-d583`；不得把密钥放进命令参数、日志或仓库。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -127,7 +127,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-030 上一版代码、固定门禁和品牌视觉已发布（`dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU`，源提交 `1e17950`）；动态标题、反馈画像、每日可信趋势和青柠悬浮顶栏增量已在本地通过固定/浏览器核心验收但尚未部署。真实百炼北京凭据联调仍未完成，因此状态保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
+- 当前阶段：SDD-030 代码、固定门禁、品牌视觉、动态标题、反馈画像、每日可信趋势和青柠悬浮顶栏均已发布（`dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3`，源提交 `ddbbc6e`）。真实百炼北京凭据联调仍未完成，因此状态保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

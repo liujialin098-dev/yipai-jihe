@@ -35,13 +35,13 @@
 
 - **当前开发 SDD-030（2026-09-06）**：导航/紫色视觉、停用卡片和抠图、千问每日推荐适配与新版 `Ensemble` 折叠 `E` 主标已实现、通过核心验收并发布 Production。尚缺百炼 API Key/API Host 的真实模型联调，阶段整体仍为“部分完成”；线上缺凭据时继续使用真实天气规则后备。
 
-- **本地增量（尚未部署）**：三套标题改为 4～16 字、互不重复且必须匹配首个风格标签，规则后备也按主色与风格生成动态名称；推荐请求复用当前账号 `style_scores` 与 SDD-027 每日可信资讯，在用户关闭个性化时不传反馈分数。顶部品牌/导航已收进青柠悬浮壳层，滚动后持续可达；Production 仍是上一条部署，不得把本地增量写成已上线。
+- **已上线增量**：三套标题改为 4～16 字、互不重复且必须匹配首个风格标签，规则后备也按主色与风格生成动态名称；推荐请求复用当前账号 `style_scores` 与 SDD-027 每日可信资讯，在用户关闭个性化时不传反馈分数。顶部品牌/导航已收进青柠悬浮壳层，滚动后持续可达；已随 `dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3` 发布 Production。
 
-- **最新线上版本（2026-09-06）**：SDD-027/028/029 与 SDD-030 当前代码、新版品牌主标已发布到 `https://yipai-jihe.vercel.app`；部署 `dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU`，源提交 `1e17950`，Production / Ready。首页、登录页及 `/brand/ensemble-icon-a-folded-e.png` 均为 HTTP 200，最近 30 分钟 error 日志无记录。百炼真实模型、手机网络、本人定位与历史账号登录验收仍待完成。
+- **最新线上版本（2026-09-06）**：SDD-027/028/029 与 SDD-030 当前代码、新版品牌主标、动态标题、偏好/趋势上下文和青柠悬浮顶栏已发布到 `https://yipai-jihe.vercel.app`；部署 `dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3`，源提交 `ddbbc6e`，Production / Ready。首页、登录页和推荐页为 HTTP 200，最近 30 分钟 error 日志无记录；资讯页与个人主页的部署后命令行复核受本机到 Vercel 瞬时连接超时影响，未观察到应用 5xx。百炼真实模型、手机网络、本人定位与历史账号登录验收仍待完成。
 
 - 发布验收：九个核心路由 HTTP 200（未登录业务路由仍执行正常身份入口跳转）；隔离体验身份进入成功，390px 个人主页浅紫渐变与新作品区生效，无水平溢出和浏览器运行错误。上海今日 28°C / 体感29°C（17:54）、09-07 预报24～30°C（17:56），浏览器直连和风 current/daily 成功，生产密钥签发与城市解析正常；天气仅为测试时刻证据，不作为默认城市。最近30分钟 error 日志查询无结果。
 - 本次未改本人账号、衣橱和公开访问策略，未调用付费抠图或识别测试；保留一组空衣橱隔离体验身份。百度线上双密钥仍在，本机缺失仍未解决；Vercel Secret 导出为 `[SENSITIVE]`，不可当作实际密钥。旧导出准备文件被 Git 与部署排除，未写入有效本地配置。国内手机开关代理和真实定位仍需本人验收；桌面成功不替代这些结论。
-- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583`；核对命令：`npx vercel inspect https://yipai-jihe-l7ablvm07-jialin-d583.vercel.app --scope jialin-d583`；错误日志：`npx vercel logs dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU --level error --since 30m --scope jialin-d583`。
+- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583`；核对命令：`npx vercel inspect https://yipai-jihe-d113bqt3v-jialin-d583.vercel.app --scope jialin-d583`；错误日志：`npx vercel logs dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3 --level error --since 30m --scope jialin-d583`。
 
 - 2026-09-06 发布准备：用户明确要求部署最新版。和风五项服务端配置已通过 stdin 保存到 `yipai-jihe` Production Secret，未覆盖原有变量；新增 `scripts/configure-qweather-production.mjs`（默认只校验，显式 `--apply` 才写入且不覆盖已有变量）。check/build、007/026/028/029 和 027 离线门禁通过；026 背景断言已跟随 029 的用户决定更新。上线状态以本次发布验收记录为准。
 
@@ -1017,7 +1017,7 @@
 - [x] SDD-007、015、017、018 回归通过；SDD-027 固定样本补充真实业务断言。
 - [x] 390×844 隔离体验账号验收：7 条真实来源内容、关闭设置刷新保持、空主题校验、详情已读刷新保持、页面宽度 390、无横向溢出、最终 0 浏览器 error。
 - [x] 保存阶段实现提交并补录提交 ID：`c5ca213`。
-- [ ] 根据用户明确部署指令发布 Production，并复核固定域名页面与真实来源可达性。
+- [x] 根据用户明确部署指令发布 Production；固定域名首页、登录页和推荐页为 HTTP 200，部署为 Ready，最近 30 分钟 error 日志为空。真实来源跨日恢复与外链持续可达性仍保留为长期观察项。
 
 交付记录：
 
@@ -1139,7 +1139,7 @@
 
 ## SDD-030：国内搭配 AI 与轻量紫色界面
 
-- 状态：部分完成；本地功能与核心验收通过，真实模型联调等待凭据；未部署。
+- 状态：部分完成；功能、核心验收与 Production 发布完成，真实模型联调等待百炼凭据。
 - 日期：2026-09-06；复杂度 M/L，1 段 AI Coding 主对话 + 凭据联调短对话。
 - SDD：`specs/030-domestic-ai-simplify/`，每次继续前阅读任务清单，阶段完成后立即更新本节。
 - [x] 五项底栏：衣橱、推荐、中央添加衣物、时尚资讯、收藏；顶部品牌/首页/日记/个人主页与头像。
@@ -1163,7 +1163,8 @@
 - [x] 本地增量固定门禁覆盖动态标题、个性化开关、分数清洗、趋势发布日期/有效期/来源、提示词最小化及青柠浮层；`npm run check`、`npm run build`、030、014、017 通过，027 首次在沙箱内仅联网段失败，获准联网复跑后离线与双账号 RLS 全部通过。浏览器首页与推荐页有内容、无错误覆盖层；滚动后悬浮顶栏保持完整。
 - [ ] 用户配置北京百炼 `DASHSCOPE_API_KEY` 与 `DASHSCOPE_API_HOST` 后，真实隔离衣橱生成三套合法千问搭配并复核模型来源；不要求用户把密钥发到聊天。
 - [x] 2026-09-06 按用户明确要求部署 Production：`dpl_CMqFCjAnUzWVkYUXbjJ5deKjxhiU` / 源提交 `1e17950` / Ready；固定域名、首页、登录页与新版 Logo 资源均为 HTTP 200，最近 30 分钟 error 日志无记录。Production 仍未配置百炼凭据，本项只代表代码与品牌发布，不代表真实千问验收完成。
-- 已知限制：缺千问凭据时每日推荐明确显示“千问搭配尚未配置”并使用真实天气规则后备；不能证明新模型实际质量/耗时或断言旧错误根因。趋势质量受 Vogue/GQ 白名单标题和标签识别覆盖度限制，不等同于抓取全网或训练个人模型；上游不可用时本次趋势为空。`generation_ms` 保留旧表上限，真实耗时看安全日志。完整头像上传流程由 025 隔离测试覆盖，本轮浏览器仅复核入口和昵称保存；未对本人账号、密码或真实衣橱进行操作。本地动态命名、偏好趋势与青柠浮层尚未部署。
+- [x] 2026-09-06 重新部署动态标题、反馈画像、每日可信趋势和青柠悬浮顶栏：`dpl_8F4H53QwBdMJoYmgfHgPqS6bNHb3` / 源提交 `ddbbc6e` / Ready / production，固定别名为 `https://yipai-jihe.vercel.app`。发布前 check/build 通过；首页、登录页和推荐页返回 200，最近 30 分钟 error 日志为空。资讯页与个人主页复核时本机到 Vercel 连接超时，未记录应用 5xx，后续手机集中验收时补看。
+- 已知限制：缺千问凭据时每日推荐明确显示“千问搭配尚未配置”并使用真实天气规则后备；不能证明新模型实际质量/耗时或断言旧错误根因。趋势质量受 Vogue/GQ 白名单标题和标签识别覆盖度限制，不等同于抓取全网或训练个人模型；上游不可用时本次趋势为空。`generation_ms` 保留旧表上限，真实耗时看安全日志。完整头像上传流程由 025 隔离测试覆盖，本轮浏览器仅复核入口和昵称保存；未对本人账号、密码或真实衣橱进行操作。部署后资讯页与个人主页仍需在稳定网络下补一次可达性复核。
 - 提交记录：`a883763`（`feat: simplify outfit experience and add domestic Qwen recommendations`）；`892b9c9`（`style: soften lavender palette and dock states`）；`0569302`（`style: preserve semantic colors in interactions`）；`2b0eabe`（`style: introduce Ensemble bilingual wordmark`）；`5bb80e6`（`style: switch Ensemble wordmark to Fredoka`）；`1e17950`（`feat: adopt folded Ensemble brand mark`）；`8a58da9`（`feat: personalize outfit naming and trend context`）。无关 Logo 备选、PRD 与脚本保持未暂存。
 
 完成任一阶段后，在对应阶段的“阶段完成记录”中填写：
