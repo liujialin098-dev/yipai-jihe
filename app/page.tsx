@@ -5,13 +5,16 @@ import {
   LogIn,
   Search,
   ShieldCheck,
+  Sparkles,
   UserPlus,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { AuthEntryGateway } from "@/components/auth/auth-entry-gateway";
 import { getViewer } from "@/lib/auth/viewer";
 import { getTodayDiarySummary } from "@/lib/diary/data";
+import { FashionUnreadBadge } from "@/components/inspiration/unread-badge";
 import { getWardrobeCount, getWardrobePreview } from "@/lib/wardrobe/data";
 
 const entryFeedback = {
@@ -121,8 +124,29 @@ export default async function Home({
       </Link>
 
       <Link
+        href="/inspiration"
+        className="pressable stagger-item mt-5 block overflow-hidden rounded-[1.65rem] bg-[var(--fashion-lime-soft)] p-5 shadow-[0_16px_42px_rgba(82,96,33,0.1)] [--stagger:1]"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold text-[#566326]">DAILY EDIT</p>
+            <h2 className="app-section-title mt-2">今天的时尚灵感</h2>
+            <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
+              可信来源，结合你的衣橱重新讲清楚。
+            </p>
+          </div>
+          <span className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1d1d1f] text-white">
+            <Sparkles className="size-4.5" aria-hidden="true" />
+            <Suspense fallback={null}>
+              <FashionUnreadBadge />
+            </Suspense>
+          </span>
+        </div>
+      </Link>
+
+      <Link
         href="/diary"
-        className="surface-card pressable stagger-item mt-5 flex items-center gap-4 rounded-[1.55rem] p-4.5 [--stagger:1]"
+        className="surface-card pressable stagger-item mt-5 flex items-center gap-4 rounded-[1.55rem] p-4.5 [--stagger:2]"
       >
         <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
           <CalendarDays
@@ -147,7 +171,7 @@ export default async function Home({
         />
       </Link>
 
-      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:2]">
+      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:3]">
         <h2 className="app-section-title">登录后可跨设备使用</h2>
         <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">
           {viewer && !viewer.isAnonymous

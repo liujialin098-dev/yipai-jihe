@@ -8,6 +8,9 @@ export type Viewer = {
   displayName: string;
   email: string | null;
   emailMasked: string | null;
+  fashionPersonalized: boolean;
+  fashionTopics: string[];
+  fashionUnreadEnabled: boolean;
   isAnonymous: boolean;
   onboardingState: string;
   passwordConfigured: boolean;
@@ -43,7 +46,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       supabase
         .from("user_preferences")
         .select(
-          "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone",
+          "preferred_styles, preferred_occasions, clothing_preference, weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone, fashion_topics, fashion_personalized, fashion_unread_enabled",
         )
         .eq("user_id", userId)
         .maybeSingle(),
@@ -70,6 +73,9 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       displayName: profileResult.data.display_name,
       email,
       emailMasked: maskEmail(email),
+      fashionPersonalized: preferencesResult.data.fashion_personalized,
+      fashionTopics: preferencesResult.data.fashion_topics,
+      fashionUnreadEnabled: preferencesResult.data.fashion_unread_enabled,
       isAnonymous: user.is_anonymous === true,
       onboardingState: profileResult.data.onboarding_state,
       passwordConfigured:

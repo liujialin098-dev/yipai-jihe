@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Sparkles } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import type { Viewer } from "@/lib/auth/viewer";
 import { displayNameInitial } from "@/lib/profile/validation";
@@ -34,24 +35,33 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
         </span>
       </Link>
       {isAuthPage ? null : (
-        <Link
-          href="/profile"
-          aria-label="打开个人主页"
-          className="profile-header-avatar pressable relative flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#202124] text-sm font-semibold text-white shadow-[0_8px_24px_rgba(49,42,73,0.18)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6556a8]"
-        >
-          {viewer?.avatarUrl ? (
-            <Image
-              src={viewer.avatarUrl}
-              alt="个人头像"
-              fill
-              sizes="40px"
-              unoptimized
-              className="object-cover"
-            />
-          ) : (
-            <span>{displayNameInitial(viewer?.displayName ?? "衣")}</span>
-          )}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/inspiration"
+            aria-label="打开时尚灵感"
+            className="pressable relative flex size-10 items-center justify-center rounded-full bg-[var(--fashion-lime)] text-[#1d1d1f] shadow-[0_8px_22px_rgba(82,96,33,0.16)]"
+          >
+            <Sparkles className="size-4" strokeWidth={1.8} aria-hidden="true" />
+          </Link>
+          <Link
+            href="/profile"
+            aria-label="打开个人主页"
+            className="profile-header-avatar pressable relative flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#202124] text-sm font-semibold text-white shadow-[0_8px_24px_rgba(49,42,73,0.18)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6556a8]"
+          >
+            {viewer?.avatarUrl ? (
+              <Image
+                src={viewer.avatarUrl}
+                alt="个人头像"
+                fill
+                sizes="40px"
+                unoptimized
+                className="object-cover"
+              />
+            ) : (
+              <span>{displayNameInitial(viewer?.displayName ?? "衣")}</span>
+            )}
+          </Link>
+        </div>
       )}
     </header>
   );

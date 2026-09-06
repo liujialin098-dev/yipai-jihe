@@ -10,7 +10,7 @@
 
 ## 项目速览
 
-- `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、自由穿搭画布、个人主页、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
+- `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、时尚灵感、自由穿搭画布、个人主页、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
 - `components/`：移动端应用外壳、统一品牌标志、顶部头像入口、底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、无人物穿搭画布/推荐换件、个人资料编辑、日记记录、收藏、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
@@ -21,8 +21,9 @@
 - `lib/diary/`：日记输入校验、账号日期/月度读取、推荐/手工快照解析和 30/90/全部范围的即时利用率聚合。
 - `lib/outfits/`：穿搭画布主题、2～8 件初始布局、变换校验、浏览器本地纯色背景抠图、当前用户画布读取和 1080×1350 PNG 导出。
 - `lib/profile/`：昵称、头像类型/大小/私有路径校验，以及个人主页当前账号统计与近期画布聚合。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-026.mjs`：双匿名会话、幂等、固定样本、推荐/日记/反馈隔离、天气/场景/风格、分层搭配、无人物画布、本地/百度专业抠图、私有头像、个人主页与 UI 门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/026-vibrant-auto-cutout/` 为已完成并部署阶段。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
+- `lib/inspiration/`：Vogue/GQ 官方 RSS 白名单、每日来源/中文标题缓存、纯函数过滤与排序、稳定 URL ID 和 30 天账号主题展示记录；个性化复用临时城市优先、真实天气、近期场景和当前衣橱。未核实日期的编辑后备不得展示。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-027.mjs`：双匿名会话、幂等、固定样本、推荐/日记/反馈隔离、天气/场景/风格、分层搭配、无人物画布、本地/百度专业抠图、私有头像、个人主页、内容阅读状态与 UI 门禁。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/027-fashion-news-feed/` 为已完成阶段；SDD-027 尚待 Production 部署。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `public/brand/`：抽象品牌主标、保留设计稿和冷白底 512px App 图标；页面统一通过 `components/brand-mark.tsx` 使用正式 App 图标。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
@@ -92,11 +93,14 @@
 - SDD-025 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-025`，并回归 SDD-024；独立门禁覆盖昵称标准化、头像 MIME/5MB/UUID 路径、四个时尚 token、当前账号统计、资料 RLS 和私有头像签名隔离。390px 浏览器另验收个人主页四项统计、头像昵称编辑、近期卡片、顶部入口、无溢出和无控制台 error。
 - SDD-026 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-026`，并回归 `npm run verify:sdd-024` 与 `npm run verify:sdd-025`；独立门禁覆盖百度 OAuth Token 缓存、智能抠图参数、双密钥边界、Sharp 透明样本裁边、六类初始尺寸、无格子画布和人工擦除/恢复静态边界。2026-09-02 Production 隔离体验身份完成 10 张真实固定样本：首次后台并发 7/10，安全回退后单件顺序重试达到 10/10；所有透明图和工作图均位于当前账号私有路径。390px 已验证移动、旋转、专业重试、擦除/恢复和 0 console error。
 - 开启匿名登录后，Supabase 安全顾问会对允许匿名身份使用的 `authenticated` 策略给出提醒；只有策略同时使用 `auth.uid()` 所有权或对象路径约束时才可接受。SDD-002 已启用邮箱密码能力并关闭 Confirm email，完成真实登录验收时必须同步复核泄露密码保护提示。
+- SDD-027：只展示白名单 RSS 的标题级中文简述，不下载外图、全文或绕过付费墙。AI 仅接收公开标题和稳定 ID，复用服务端 Responses、`store:false` 与严格 JSON Schema，默认 `gpt-4o-mini`，可复用 `OPENAI_RECOMMENDATION_MODEL`。失败保留原题并标为阅读提示，不假装生成新闻事实。`unstable_cache` 只缓存公开内容，不能在缓存中读取用户 cookies/位置/衣橱；个人排序在缓存之外。
+- SDD-027 数据：`fashion_content_reads` 和 `fashion_topic_impressions` 均启用当前账号四类所有权 RLS；`record_fashion_impression` 为 security invoker，仅当前用户、同主题 30 天内保留首次内容与时间，不得在普通已读操作中写提醒时间。关闭个性化不查询衣橱、日记或天气；关闭提示不显示徽标，也不删除历史记录。
+- SDD-027 验证：`npm run check`、`npm run build`、`npm run verify:sdd-027`；离线运行可加 `node --no-warnings scripts/verify-sdd-027.mjs --offline`。脚本覆盖纯规则、SQL 幂等与双账号隔离；390px 另测全空主题、设置持久化、详情已读与无溢出。未知同义主题、真实跨日来源恢复与 Production 验收不得自动宣称完成。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-026 已完成并部署；百度双密钥、10 件隔离样本最终 10/10 透明图、私有工作图、390px 无格子画布与人工擦除/恢复均已验收。当前 `yipai-jihe` Production 为 `dpl_Asby267EpX5q46dSJDyXgq4uMoZJ`、部署源提交 `702bc6f`。下一阶段 SDD-027 为穿搭新闻与趋势推送，进入规格前必须由用户确认内容来源/版权、推送载体和更新频率。SDD-002 的合成账号无邮件注册和重新登录已通过，下一步仍须由用户本人完成历史账号密码和真实账号重登录集中验收。不得建议更换邮箱，不得替用户输入、保存或记录密码，也不得在未获明确同意时修改公开访问策略、设置自定义域名或创建保护绕过链接。证据和限制以 [`progress.md`](progress.md) 为准。
+- 当前阶段：SDD-027 穿搭新闻与趋势推送已完成 MVP 本地复验（2026-09-06），待保存与用户另行部署指令；SDD-026 仍是线上版本，Production 为 `dpl_Asby267EpX5q46dSJDyXgq4uMoZJ`，源提交 `702bc6f`。027 已确认可信来源、App 内提醒与每日更新，不得重新询问这些已决策项。标题级简述、有限主题规则、跨日及部署验收限制见 `progress.md`。SDD-002 本人历史账号设密和重登录仍待集中调试；不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
@@ -104,7 +108,7 @@
 - 部署节奏 MUST 遵循 `progress.md`：基础设施阶段完成后验证 Preview，推荐阶段完成后验证核心体验，全部 P0 完成后再发布受控评审链接。
 - 阶段未通过独立验收或 `npm run check` 时，不得在 `progress.md` 中标记为“已完成”，也不得开始依赖该阶段的后续阶段。
 - 每个阶段的实现范围 MUST 以对应 SDD 为准；不得为了 P1/P2 需求提前引入当前 MVP 不需要的复杂抽象。
-- 当前真实衣物原图始终是可信源；SDD-026 已在用户明确授权后接入百度智能云服务端专业去背。第三方只接收当前用户触发处理的单件原图；无密钥、超时、限额、非法响应、私有存储失败或数据库绑定失败时必须保留当前有效透明图或原图。穿搭新闻与趋势推送仍属于后续独立 SDD-027，不得混入本阶段。
+- 当前真实衣物原图始终是可信源；SDD-026 已在用户明确授权后接入百度智能云服务端专业去背。第三方只接收当前用户触发处理的单件原图；无密钥、超时、限额、非法响应、私有存储失败或数据库绑定失败时必须保留当前有效透明图或原图。穿搭新闻属于独立 SDD-027，不改动衣物去背或推荐生成主链路。
 - SDD-002 已实现邮箱和密码一次提交的原地注册、直接登录、退出和跨设备恢复，但在用户完成真实账号验收前保持“验收中”，且仍不得作为 SDD-003 至 SDD-007 的依赖。匿名用户必须明确知道清除站点数据或换设备后无法恢复未注册身份；注册流程 MUST 保持同一 `auth_user_id` 和原匿名数据。登录与旧认证回调页面 MUST 跳过自动匿名初始化，只有用户主动选择时才创建新匿名身份。
 - SDD-016 起首次访问不得自动创建匿名身份。无会话首页 MUST 先展示完整账号入口；新用户可直接邮箱密码注册，已有用户可登录，体验身份只允许由明确按钮触发。无会话深链接必须返回 `/`，不得在跳转前展示顶部状态或底部导航；已有会话继续进入原应用。
 - SDD-002 不再发送注册确认或密码设置邮件。历史遗留的已绑定无密码账号只允许在本机运行 `npm run account:set-password-local`，通过 `.env.local` 的 `SECRET_KEY` 和 `auth.admin.updateUserById` 一次性设密；不得把该能力做成 Route Handler、Server Action 或 Vercel 环境能力。常规忘记密码仍不在当前范围。

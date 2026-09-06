@@ -12,6 +12,27 @@ export type Database = {
   };
   public: {
     Tables: {
+      fashion_topic_impressions: {
+        Row: {
+          user_id: string;
+          topic_key: string;
+          content_id: string;
+          first_seen_at: string;
+        };
+        Insert: {
+          user_id: string;
+          topic_key: string;
+          content_id: string;
+          first_seen_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          topic_key?: string;
+          content_id?: string;
+          first_seen_at?: string;
+        };
+        Relationships: [];
+      };
       daily_recommendations: {
         Row: {
           ai_model: string | null;
@@ -213,6 +234,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      fashion_content_reads: {
+        Row: {
+          content_id: string;
+          created_at: string;
+          read_at: string;
+          user_id: string;
+        };
+        Insert: {
+          content_id: string;
+          created_at?: string;
+          read_at?: string;
+          user_id: string;
+        };
+        Update: {
+          content_id?: string;
+          created_at?: string;
+          read_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           avatar_path: string | null;
@@ -307,6 +349,10 @@ export type Database = {
         Row: {
           clothing_preference: string;
           created_at: string;
+          fashion_last_prompted_at: string | null;
+          fashion_personalized: boolean;
+          fashion_topics: string[];
+          fashion_unread_enabled: boolean;
           preference_focus: string;
           preference_state: string;
           preferred_occasions: string[];
@@ -323,6 +369,10 @@ export type Database = {
         Insert: {
           clothing_preference?: string;
           created_at?: string;
+          fashion_last_prompted_at?: string | null;
+          fashion_personalized?: boolean;
+          fashion_topics?: string[];
+          fashion_unread_enabled?: boolean;
           preference_focus?: string;
           preference_state?: string;
           preferred_occasions?: string[];
@@ -339,6 +389,10 @@ export type Database = {
         Update: {
           clothing_preference?: string;
           created_at?: string;
+          fashion_last_prompted_at?: string | null;
+          fashion_personalized?: boolean;
+          fashion_topics?: string[];
+          fashion_unread_enabled?: boolean;
           preference_focus?: string;
           preference_state?: string;
           preferred_occasions?: string[];
@@ -445,7 +499,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      record_fashion_impression: {
+        Args: { p_topic_key: string; p_content_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;
