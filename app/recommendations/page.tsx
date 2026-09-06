@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { CloudRain, CloudSun, Info, Shirt } from "lucide-react";
+import { Info, Shirt } from "lucide-react";
 import Link from "next/link";
 import { RecommendationCard } from "@/components/recommendations/recommendation-card";
 import { RecommendationControls } from "@/components/recommendations/recommendation-controls";
 import { RecommendationViewTracker } from "@/components/recommendations/recommendation-view-tracker";
 import { TrendInspirationPanel } from "@/components/recommendations/trend-inspiration";
 import { WeatherCitySelector } from "@/components/recommendations/weather-city-selector";
+import { WeatherPanel } from "@/components/recommendations/weather-panel";
 import {
   isRecommendationTargetDay,
   recommendationOccasionLabel,
@@ -52,11 +53,8 @@ export default async function RecommendationsPage({
     weatherCity,
     weatherSavedCity,
     targetDate,
+    viewerId,
   } = await getRecommendationPageData(targetDay);
-  const WeatherIcon =
-    recommendation && recommendation.weather.weatherCode >= 51
-      ? CloudRain
-      : CloudSun;
 
   return (
     <div className="page-enter px-5 pt-4">
@@ -97,57 +95,28 @@ export default async function RecommendationsPage({
         })}
       </nav>
 
-      {recommendation ? (
-        <section className="bubble-enter mt-6 overflow-hidden rounded-[1.65rem] bg-[#1d1d1f] p-4.5 text-white shadow-[0_18px_50px_rgba(29,29,31,0.2)]">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-full bg-white/12">
-                <WeatherIcon
-                  className="size-5"
-                  strokeWidth={1.7}
-                  aria-hidden="true"
-                />
-              </span>
-              <div>
-                <p className="text-xs text-white/62">
-                  {recommendation.weather.city}，
-                  {targetDay === "tomorrow"
-                    ? "Open-Meteo 明日预报"
-                    : "Open-Meteo 实时天气"}
-                </p>
-                <p className="mt-0.5 text-sm font-semibold">
-                  {recommendation.weather.summary}，
-                  {targetDay === "tomorrow" ? "最低体感" : "体感"}{" "}
-                  {recommendation.weather.apparentTemperatureC}°C
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/12 pt-3 text-xs text-white/62">
-            <span>{recommendationOccasionLabel(recommendation.occasion)}</span>
-            <span>
-              {recommendation.source === "ai" ? "AI 生成" : "基础生成"}，
-              {(recommendation.generationMs / 1000).toFixed(1)} 秒
-            </span>
-          </div>
-        </section>
-      ) : null}
-
-      <WeatherCitySelector
-        currentCity={weatherCity}
-        savedCity={weatherSavedCity}
-        ipSuggestion={ipCitySuggestion}
-        usingSessionOverride={usingWeatherCityOverride}
-      />
-
-      <section className="mt-5">
-        <RecommendationControls
-          key={`${targetDay}-${recommendation?.id ?? "new"}-${recommendation?.occasion ?? "commute"}`}
-          defaultOccasion={recommendation?.occasion ?? "commute"}
-          hasRecommendation={Boolean(recommendation)}
-          targetDay={targetDay}
+      <WeatherPanel
+        key={`${viewerId}-${weatherCity}-${targetDate}-${usingWeatherCityOverride}`}
+        city={weatherCity}
+        targetDay={targetDay}
+        targetDate={targetDate}
+      >
+        <WeatherCitySelector
+          currentCity={weatherCity}
+          savedCity={weatherSavedCity}
+          ipSuggestion={ipCitySuggestion}
+          usingSessionOverride={usingWeatherCityOverride}
         />
-      </section>
+
+        <section className="mt-5">
+          <RecommendationControls
+            key={`${targetDay}-${recommendation?.id ?? "new"}-${recommendation?.occasion ?? "commute"}`}
+            defaultOccasion={recommendation?.occasion ?? "commute"}
+            hasRecommendation={Boolean(recommendation)}
+            targetDay={targetDay}
+          />
+        </section>
+      </WeatherPanel>
 
       {error ? (
         <p className="motion-status mt-4 rounded-[1.1rem] bg-[#ff453a]/8 px-4 py-3 text-sm leading-6 text-[#b42318]">
@@ -168,6 +137,25 @@ export default async function RecommendationsPage({
             <div>
               <h2 className="app-section-title">搭配结果</h2>
               <p className="app-page-meta mt-1">全部来自当前衣橱</p>
+              <p className="mt-2 text-xs leading-5 text-[var(--text-tertiary)]">
+                {recommendationOccasionLabel(recommendation.occasion)} ·{" "}
+                {recommendation.source === "ai" ? "AI 生成" : "基础生成"}。
+                生成时天气：{recommendation.weather.city}，
+                {recommendation.weather.summary}，
+                {recommendation.weather.temperatureBasis === "air_minimum"
+                  ? "最低气温"
+                  : "体感"}{" "}
+                {recommendation.weather.apparentTemperatureC}°C （
+                {recommendation.weather.provider === "qweather"
+                  ? "和风天气"
+                  : "Open-Meteo 历史快照"}
+                ，
+                {new Date(recommendation.weather.observedAt).toLocaleString(
+                  "zh-CN",
+                  { timeZone: "Asia/Shanghai" },
+                )}
+                ）。 天气变化后可重新生成。
+              </p>
             </div>
             <span className="pb-1 text-xs text-[var(--text-tertiary)]">
               3 套

@@ -45,6 +45,15 @@ export type WeatherSnapshot = {
   source: "live" | "simulated";
   observedAt: string;
   preset: WeatherPreset;
+  provider?: "qweather";
+  targetDate?: string;
+  temperatureBasis?: "feels_like" | "air_minimum";
+  temperatureMaxC?: number;
+  providerCode?: string;
+  daySummary?: string;
+  nightSummary?: string;
+  attributions?: string[];
+  locationKey?: string;
 };
 
 export type RecommendationWardrobeItem = {

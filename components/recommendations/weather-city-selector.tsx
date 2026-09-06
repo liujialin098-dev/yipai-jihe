@@ -301,12 +301,12 @@ export function WeatherCitySelector({
             <p className="text-[0.6875rem] leading-5 text-[var(--text-tertiary)]">
               定位城市由{" "}
               <a
-                href="https://www.bigdatacloud.com/geocoding-apis/free-reverse-geocode-to-city-api"
+                href="https://dev.qweather.com/docs/api/geoapi/city-lookup/"
                 target="_blank"
                 rel="noreferrer"
                 className="underline decoration-[var(--hairline-strong)] underline-offset-2"
               >
-                BigDataCloud
+                和风天气
               </a>{" "}
               处理；衣拍即合只接收城市名
             </p>

@@ -1,4 +1,5 @@
 "use server";
+import { locationKey } from "@/lib/weather/parse";
 
 import { revalidatePath } from "next/cache";
 import {
@@ -74,6 +75,7 @@ export type LookbookActionState = {
 };
 
 function revalidateWeatherCityPaths() {
+  revalidatePath("/inspiration");
   revalidatePath("/recommendations");
   revalidatePath("/settings");
   revalidatePath("/settings/preferences");
@@ -328,6 +330,22 @@ export async function generateDailyRecommendations(
     }
 
     const requestedAt = new Date();
+    const expectedWeatherLocation = String(
+      formData.get("expectedWeatherLocation") ?? "",
+    );
+    const expectedWeatherDate = String(
+      formData.get("expectedWeatherDate") ?? "",
+    );
+    if (
+      expectedWeatherLocation !== locationKey(location) ||
+      expectedWeatherDate !==
+        recommendationDate(requestedAt, location.timezone, targetDayValue)
+    ) {
+      return {
+        status: "error",
+        message: "城市或日期已变化，请刷新天气后再生成。",
+      };
+    }
     let items: Awaited<ReturnType<typeof getActiveRecommendationItems>>;
     let weather: Awaited<ReturnType<typeof getWeatherSnapshot>>;
     try {
@@ -392,6 +410,36 @@ export async function generateDailyRecommendations(
       aiModel = null;
     }
 
+    const latestPreferences = await supabase
+      .from("user_preferences")
+      .select(
+        "weather_city, weather_admin1, weather_latitude, weather_longitude, weather_timezone",
+      )
+      .eq("user_id", user.id)
+      .maybeSingle();
+    const latestLocation = latestPreferences.data
+      ? (
+          await getEffectiveWeatherLocation(
+            user.id,
+            storedWeatherLocation(latestPreferences.data),
+          )
+        ).effectiveLocation
+      : null;
+    if (
+      latestPreferences.error ||
+      !latestLocation ||
+      locationKey(latestLocation) !== expectedWeatherLocation ||
+      recommendationDate(
+        new Date(),
+        latestLocation.timezone,
+        targetDayValue,
+      ) !== expectedWeatherDate
+    ) {
+      return {
+        status: "error",
+        message: "生成期间城市或日期已变化，请刷新后重新生成。",
+      };
+    }
     const generationMs = Math.min(Date.now() - startedAt, 15_000);
     const { error: saveError } = await supabase
       .from("daily_recommendations")

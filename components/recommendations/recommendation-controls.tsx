@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useActionState, useState } from "react";
 import { generateDailyRecommendations } from "@/app/recommendations/actions";
+import { useRecommendationWeather } from "./weather-panel";
 import {
   INITIAL_RECOMMENDATION_ACTION_STATE,
   RECOMMENDATION_OCCASIONS,
@@ -35,12 +36,23 @@ export function RecommendationControls({
     INITIAL_RECOMMENDATION_ACTION_STATE,
   );
   const [occasion, setOccasion] = useState(defaultOccasion);
+  const weather = useRecommendationWeather();
   const [styleFocus, setStyleFocus] =
     useState<RecommendationStyleFocus>(AUTO_STYLE_FOCUS);
 
   return (
     <form action={action} className="surface-card rounded-[1.65rem] p-4.5">
       <input type="hidden" name="targetDay" value={targetDay} />
+      <input
+        type="hidden"
+        name="expectedWeatherLocation"
+        value={weather.snapshot?.locationKey ?? ""}
+      />
+      <input
+        type="hidden"
+        name="expectedWeatherDate"
+        value={weather.snapshot?.targetDate ?? ""}
+      />
       <fieldset disabled={pending}>
         <legend className="text-xs font-semibold text-[var(--text-secondary)]">
           {targetDay === "tomorrow" ? "明天" : "今天"}要去哪里
@@ -114,7 +126,7 @@ export function RecommendationControls({
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || weather.status !== "ready"}
         className="motion-button mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white disabled:opacity-55"
       >
         {pending ? (

@@ -1,4 +1,28 @@
 import { readFile } from "node:fs/promises";
+import { readFileSync, existsSync } from "node:fs";
+import { registerHooks } from "node:module";
+import { parseEnv } from "node:util";
+registerHooks({
+  resolve(specifier, context, next) {
+    if (specifier === "server-only")
+      return { shortCircuit: true, url: "data:text/javascript,export {}" };
+    if (specifier.startsWith("@/"))
+      return {
+        shortCircuit: true,
+        url: new URL(`../${specifier.slice(2)}.ts`, import.meta.url).href,
+      };
+    if (specifier.startsWith(".") && !/\.[a-z]+$/.test(specifier))
+      return next(`${specifier}.ts`, context);
+    return next(specifier, context);
+  },
+});
+const developmentEnv = new URL("../.env.development.local", import.meta.url);
+if (existsSync(developmentEnv)) {
+  const config = parseEnv(readFileSync(developmentEnv, "utf8"));
+  for (const [key, value] of Object.entries(config))
+    if (key.startsWith("QWEATHER_")) process.env[key] = value;
+}
+
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -34,47 +58,26 @@ function localDate(date, offsetDays = 0) {
 }
 
 async function fetchRealWuhanForecast() {
-  const query = new URLSearchParams({
-    latitude: "30.5928",
-    longitude: "114.3055",
-    current: "temperature_2m,apparent_temperature,weather_code",
-    daily:
-      "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max",
+  const { getWeatherSnapshot } = await import(
+    "../lib/recommendations/weather.ts"
+  );
+  const now = new Date();
+  const location = {
+    city: "武汉",
+    admin1: "湖北",
+    latitude: 30.59,
+    longitude: 114.3,
     timezone: "Asia/Shanghai",
-    forecast_days: "2",
-  });
-  const response = await fetch(
-    `https://api.open-meteo.com/v1/forecast?${query}`,
-    {
-      signal: AbortSignal.timeout(8_000),
-      cache: "no-store",
-    },
-  );
-  ensure(response.ok, `Open-Meteo 返回 ${response.status}`);
-  const payload = await response.json();
-  const tomorrow = localDate(new Date(), 1);
-  const index = payload.daily?.time?.indexOf(tomorrow) ?? -1;
-  ensure(index >= 0, "真实响应没有精确匹配的明日日期");
-  ensure(
-    Number.isFinite(payload.current?.temperature_2m) &&
-      Number.isFinite(payload.current?.apparent_temperature) &&
-      Number.isFinite(payload.current?.weather_code),
-    "真实响应缺少今日当前天气字段",
-  );
-  ensure(
-    Number.isFinite(payload.daily?.temperature_2m_min?.[index]) &&
-      Number.isFinite(payload.daily?.apparent_temperature_min?.[index]) &&
-      Number.isFinite(payload.daily?.weather_code?.[index]),
-    "真实响应缺少明日预报字段",
-  );
-  return {
-    tomorrow,
-    temperatureC: Math.round(payload.daily.temperature_2m_min[index]),
-    apparentTemperatureC: Math.round(
-      payload.daily.apparent_temperature_min[index],
-    ),
-    weatherCode: Math.round(payload.daily.weather_code[index]),
   };
+  const current = await getWeatherSnapshot("today", location, now);
+  const tomorrow = await getWeatherSnapshot("tomorrow", location, now);
+  ensure(
+    current.provider === "qweather" && current.source === "live",
+    "今日必须为和风真实天气",
+  );
+  ensure(tomorrow.targetDate === localDate(now, 1), "明日必须精确匹配日期");
+  ensure(tomorrow.temperatureBasis === "air_minimum", "不得编造明日体感");
+  return { ...tomorrow, tomorrow: tomorrow.targetDate };
 }
 
 async function verifyStaticBoundaries() {
@@ -191,7 +194,7 @@ async function main() {
     verifyDateIsolation(realForecast),
   ]);
   console.log(
-    `武汉真实明日预报 ${realForecast.tomorrow}：最低 ${realForecast.temperatureC}°C，最低体感 ${realForecast.apparentTemperatureC}°C`,
+    `武汉真实明日预报 ${realForecast.tomorrow}：最低 ${realForecast.temperatureC}°C，最高 ${realForecast.temperatureMaxC}°C（和风天气，非体感）`,
   );
   console.log("SDD-013 真实两日天气、禁止模拟与日期隔离验证通过");
 }

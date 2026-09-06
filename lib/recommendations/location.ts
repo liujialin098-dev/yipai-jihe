@@ -15,17 +15,6 @@ export class LocationResolutionError extends Error {
   }
 }
 
-type GeocodingResult = {
-  name?: unknown;
-  latitude?: unknown;
-  longitude?: unknown;
-  timezone?: unknown;
-  country_code?: unknown;
-  admin1?: unknown;
-};
-
-type GeocodingResponse = { results?: GeocodingResult[] };
-
 function finiteNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
@@ -61,53 +50,23 @@ export async function resolveChineseCity(
   input: string,
 ): Promise<WeatherLocation> {
   const city = input.trim().replace(/\s+/g, " ");
-  if (city.length < 2 || city.length > 40) {
+  if (city.length < 2 || city.length > 40)
     throw new LocationResolutionError("invalid");
-  }
-
-  const query = new URLSearchParams({
-    name: city,
-    count: "5",
-    language: "zh",
-    countryCode: "CN",
-    format: "json",
-  });
-
-  let response: Response;
   try {
-    response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?${query}`,
-      { cache: "no-store", signal: AbortSignal.timeout(3_500) },
-    );
-  } catch {
+    const { requestWeatherJson } = await import("@/lib/weather/server");
+    const { parseQWeatherCity } = await import("@/lib/weather/parse");
+    const query = new URLSearchParams({
+      location: city,
+      range: "cn",
+      lang: "zh",
+      number: "1",
+    });
+    const payload = await requestWeatherJson(`/geo/v2/city/lookup?${query}`);
+    if ((payload as { code?: string })?.code === "404")
+      throw new LocationResolutionError("not_found");
+    return parseQWeatherCity(payload);
+  } catch (error) {
+    if (error instanceof LocationResolutionError) throw error;
     throw new LocationResolutionError("unavailable");
   }
-  if (!response.ok) throw new LocationResolutionError("unavailable");
-
-  const payload = (await response.json()) as GeocodingResponse;
-  const match = (payload.results ?? []).find(
-    (result) => result.country_code === "CN",
-  );
-  const latitude = finiteNumber(match?.latitude);
-  const longitude = finiteNumber(match?.longitude);
-  if (
-    !match ||
-    typeof match.name !== "string" ||
-    typeof match.timezone !== "string" ||
-    latitude === null ||
-    longitude === null
-  ) {
-    throw new LocationResolutionError("not_found");
-  }
-
-  return {
-    city: match.name.slice(0, 80),
-    admin1:
-      typeof match.admin1 === "string" && match.admin1.trim()
-        ? match.admin1.trim().slice(0, 80)
-        : "中国",
-    latitude,
-    longitude,
-    timezone: match.timezone.slice(0, 80),
-  };
 }

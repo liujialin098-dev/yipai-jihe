@@ -7,6 +7,7 @@ import {
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
 import { evaluateOccasionFit } from "@/lib/recommendations/occasion-profile";
+import { qweatherCodeToWmo, safeAttributions } from "@/lib/weather/parse";
 import {
   hasCompleteRainProtectionCandidate,
   isRainyWeatherCode,
@@ -64,18 +65,69 @@ export function validateWeatherSnapshot(
     typeof preset !== "string" ||
     !isWeatherPreset(preset) ||
     typeof temperatureC !== "number" ||
+    !Number.isFinite(temperatureC) ||
     temperatureC < -60 ||
     temperatureC > 60 ||
     typeof apparentTemperatureC !== "number" ||
+    !Number.isFinite(apparentTemperatureC) ||
     apparentTemperatureC < -60 ||
     apparentTemperatureC > 60 ||
     typeof weatherCode !== "number" ||
+    !Number.isFinite(weatherCode) ||
     weatherCode < 0 ||
     weatherCode > 99
   ) {
     return null;
   }
+  let extras: Partial<WeatherSnapshot> = {};
+  if (value.provider !== undefined) {
+    if (
+      value.provider !== "qweather" ||
+      source !== "live" ||
+      preset !== "live" ||
+      typeof value.targetDate !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(value.targetDate) ||
+      (value.temperatureBasis !== "feels_like" &&
+        value.temperatureBasis !== "air_minimum") ||
+      typeof value.locationKey !== "string" ||
+      value.locationKey.length > 300
+    )
+      return null;
+    try {
+      if (qweatherCodeToWmo(value.providerCode) !== weatherCode) return null;
+    } catch {
+      return null;
+    }
+    if (
+      value.temperatureBasis === "air_minimum" &&
+      (typeof value.temperatureMaxC !== "number" ||
+        !Number.isFinite(value.temperatureMaxC) ||
+        value.temperatureMaxC < temperatureC ||
+        value.temperatureMaxC > 60 ||
+        apparentTemperatureC !== temperatureC)
+    )
+      return null;
+    for (const key of ["nightSummary", "daySummary"] as const) {
+      if (
+        value[key] !== undefined &&
+        (typeof value[key] !== "string" || value[key].length > 20)
+      )
+        return null;
+    }
+    extras = {
+      provider: "qweather",
+      targetDate: value.targetDate,
+      temperatureBasis: value.temperatureBasis,
+      providerCode: value.providerCode as string,
+      locationKey: value.locationKey,
+      temperatureMaxC: value.temperatureMaxC as number | undefined,
+      daySummary: value.daySummary as string | undefined,
+      nightSummary: value.nightSummary as string | undefined,
+      attributions: safeAttributions(value.attributions),
+    };
+  }
   return {
+    ...extras,
     city,
     temperatureC,
     apparentTemperatureC,

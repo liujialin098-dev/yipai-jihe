@@ -333,7 +333,7 @@ function reasonFor(
     )
       ? "，并用完整防水组合应对降雨"
       : "";
-  return `${weather.summary}，体感 ${weather.apparentTemperatureC}°C。用${names}完成${recommendationOccasionLabel(occasion)}层次${rainNote}，颜色和材质保持轻重平衡。`.slice(
+  return `${weather.summary}，${weather.temperatureBasis === "air_minimum" ? "最低气温" : "体感"} ${weather.apparentTemperatureC}°C。用${names}完成${recommendationOccasionLabel(occasion)}层次${rainNote}，颜色和材质保持轻重平衡。`.slice(
     0,
     140,
   );

@@ -75,11 +75,11 @@ assert.throws(
 );
 
 for (const boundary of [
-  "https://api.bigdatacloud.net/data/reverse-geocode-client",
-  'localityLanguage: "zh"',
-  'response.lookupSource !== "coordinates"',
-  "new AbortController()",
-  "controller.abort(), 8_000",
+  "/geo/v2/city/lookup?",
+  'lang: "zh"',
+  'country !== "中国"',
+  "parseDeviceCoordinates(input)",
+  "requestBrowserWeather",
 ]) {
   assert.ok(deviceSource.includes(boundary), `城市确认缺少边界：${boundary}`);
 }
@@ -108,7 +108,7 @@ for (const boundary of [
   "本次使用当前位置",
   "设为常用城市",
   "精确位置不会保存",
-  "BigDataCloud",
+  "和风天气",
   "衣拍即合只接收城市名",
   "定位权限被拒绝",
   "定位超时",

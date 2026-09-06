@@ -1,4 +1,6 @@
 import { getViewer } from "@/lib/auth/viewer";
+import { recommendationDate } from "@/lib/recommendations/date";
+import { locationKey } from "@/lib/weather/parse";
 import {
   allowedWardrobeAudiences,
   type ClothingPreference,
@@ -66,29 +68,7 @@ export function toRecommendationItem(
   };
 }
 
-export function recommendationDate(
-  date = new Date(),
-  timeZone = DEFAULT_TIMEZONE,
-  targetDay: RecommendationTargetDay = "today",
-) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const value = Object.fromEntries(
-    parts.map((part) => [part.type, part.value]),
-  );
-  const targetDate = new Date(
-    Date.UTC(
-      Number(value.year),
-      Number(value.month) - 1,
-      Number(value.day) + (targetDay === "tomorrow" ? 1 : 0),
-    ),
-  );
-  return targetDate.toISOString().slice(0, 10);
-}
+export { recommendationDate } from "@/lib/recommendations/date";
 
 export async function getActiveRecommendationItems(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -286,6 +266,10 @@ export async function getRecommendationPageData(
       occasion &&
       weather?.source === "live" &&
       weather.city === effectiveLocation?.city &&
+      (weather.provider !== "qweather" ||
+        (effectiveLocation &&
+          weather.locationKey === locationKey(effectiveLocation) &&
+          weather.targetDate === date)) &&
       outfits &&
       source
     ) {

@@ -42,7 +42,13 @@ npm run dev
 
 `.env.local` 已被 Git 忽略。Vercel 只配置实际需要的服务端变量和两个 Supabase 公开变量。
 
-天气位置由登录账号在“设置 → 个人偏好”保存常用城市，系统只保存城市级坐标并使用 Open-Meteo 获取当地天气；未设置时不会静默回退到其他城市。推荐页可选择今天或明天：今天使用当前天气，明天使用精确日期的真实预报；天气获取失败会停止生成，不会使用模拟天气冒充。
+SDD-028 本地已接入和风天气：浏览器直接获取天气，服务端只签发最长 5 分钟的短 JWT；生成搭配时服务端独立读取同一供应商的真实天气，不相信浏览器传入的温度。Production 尚未配置或部署此版本。
+
+服务端配置：`QWEATHER_API_HOST`、`QWEATHER_DEVELOPER_ID`、`QWEATHER_PROJECT_ID`、`QWEATHER_CREDENTIAL_ID`、`QWEATHER_PRIVATE_KEY`（Ed25519 PEM，支持实际换行或转义换行）。这些变量均不能加 `NEXT_PUBLIC_`。已有本机准备文件时运行 `node scripts/configure-qweather-local.mjs`，将它们安全转入被忽略的 `.env.development.local`；脚本不会覆盖不同的已有文件，也不打印私钥。该文件仅用于 `npm run dev`，不会被 production build/start 加载；未来部署时须单独安全配置 Vercel 的五项服务端变量，不能直接拿未配置的构建发布。
+
+天气城市由当前账号手动选择或点击定位后确认：本次城市优先、常用城市兜底，IP 只给建议；没有城市不默认武汉/北京。设备坐标只由浏览器发和风 GeoAPI，应用只接收城市名。今日显示实际气温与体感；明日精确匹配下一自然日，显示最低/最高气温，最低气温作为保守穿衣参考，不假称最低体感。快照标明获取时间，旧推荐另标生成时来源。天气请求失败或超过 5 分钟时暂停生成并允许刷新。
+
+签发接口要求当前会话与同源 POST；每账号每分钟 12 次的进程级限频不替代分布式防滥用或平台配额。生产前须复核和风配额、域名/凭据限制以及国内手机网络。和风接口国内可达不等于整个 Vercel/Supabase 应用都已完成国内可用性验证。
 
 ## 数据库与 Storage
 
@@ -74,6 +80,7 @@ npm run verify:sdd-014
 npm run verify:sdd-015
 npm run verify:sdd-016
 npm run verify:sdd-027
+npm run verify:sdd-028
 ```
 
 `verify:sdd-004` 会在配置 OpenAI Key 后执行 10 张真实识别并产生少量 API 费用，只在模型、提示词或识别代码变化后运行。当前真实结果和全部阶段证据见 `specs/*/quickstart.md` 与 `progress.md`。

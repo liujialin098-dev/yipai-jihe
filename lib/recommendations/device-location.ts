@@ -1,6 +1,3 @@
-const DEVICE_CITY_ENDPOINT =
-  "https://api.bigdatacloud.net/data/reverse-geocode-client";
-
 export type DeviceCoordinates = {
   latitude: number;
   longitude: number;
@@ -78,27 +75,27 @@ export async function reverseGeocodeDeviceCity(input: {
   longitude: unknown;
 }) {
   const coordinates = parseDeviceCoordinates(input);
-  const query = new URLSearchParams({
-    latitude: String(coordinates.latitude),
-    longitude: String(coordinates.longitude),
-    localityLanguage: "zh",
-  });
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8_000);
-  let response: Response;
   try {
-    response = await fetch(`${DEVICE_CITY_ENDPOINT}?${query}`, {
-      cache: "no-store",
-      signal: controller.signal,
+    const { getWeatherSession, requestBrowserWeather } = await import(
+      "@/lib/weather/client"
+    );
+    const { parseQWeatherCity } = await import("@/lib/weather/parse");
+    const session = await getWeatherSession("today");
+    // Device coordinates go only to QWeather, never to the application server.
+    const query = new URLSearchParams({
+      location: `${coordinates.longitude.toFixed(2)},${coordinates.latitude.toFixed(2)}`,
+      lang: "zh",
+      number: "1",
     });
-  } catch {
-    throw new DeviceLocationError("unavailable");
-  } finally {
-    clearTimeout(timeoutId);
-  }
-  if (!response.ok) throw new DeviceLocationError("unavailable");
-  try {
-    return parseDeviceChineseCity(await response.json());
+    const payload = await requestBrowserWeather(
+      session,
+      `/geo/v2/city/lookup?${query}`,
+    );
+    const country = (payload as { location?: { country?: string }[] })
+      ?.location?.[0]?.country;
+    if (country && country !== "中国")
+      throw new DeviceLocationError("outside_china");
+    return parseQWeatherCity(payload).city;
   } catch (error) {
     if (error instanceof DeviceLocationError) throw error;
     throw new DeviceLocationError("unavailable");

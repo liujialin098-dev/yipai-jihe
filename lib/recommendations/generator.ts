@@ -102,6 +102,7 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
     selectionGuidance: occasionProfile.selectionGuidance,
   })}
 天气：${JSON.stringify(input.weather)}
+温度字段解释：${input.weather.temperatureBasis === "air_minimum" ? "这是明日预报，apparentTemperatureC 仅为历史兼容字段，实际代表最低气温，不是体感。描述必须写最低气温，并结合 temperatureMaxC 提醒白天增减；禁止编造体感温度。" : "apparentTemperatureC 为真实体感温度。"}
 偏好风格：${JSON.stringify(input.preferredStyles)}
 偏好场合：${JSON.stringify(input.preferredOccasions)}
 衣着偏好：${input.clothingPreference}

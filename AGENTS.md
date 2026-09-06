@@ -31,6 +31,9 @@
 
 ## 注意事项
 
+- SDD-028 和风天气（2026-09-06）：本地接入已实现，覆盖 SDD-012/013/018/020 中 Open-Meteo/BigDataCloud 供应商约定；位置主动确认、账号隔离和禁止模拟原则不变。服务端 QWEATHER_API_HOST、QWEATHER_DEVELOPER_ID、QWEATHER_PROJECT_ID、QWEATHER_CREDENTIAL_ID、QWEATHER_PRIVATE_KEY 签发 5 分钟 JWT；仅同源且 auth.getUser() 有效的 POST /api/weather/session 可取，返回 private,no-store，每账号每分钟 12 次进程级限频。浏览器天气和设备城市解析直连和风，私钥不得进入浏览器。推荐与灵感使用服务端独立真实天气，不能信任客户端温度。lib/weather/parse.ts 统一现象映射与日期解析，未知代码/异常单位/缺预报失败；明日最低气温必须注明 air_minimum，不得称体感。历史 Open-Meteo 快照保留原来源，不标为实时。
+- 和风本机配置：setup-qweather-keys.mjs 必须复用 Git 忽略的 .env.qweather-private.pem，不轮换；准备文件 .env.qweather.local 不自动加载，configure-qweather-local.mjs 安全生成 .env.development.local，仅用于 dev，不覆盖 .env.local、不打印密钥。生产构建不加载 development 配置；Vercel 尚未配置和风五项环境或部署 SDD-027/028。生产前须复核供应商额度、浏览器凭据限制与国内手机无代理网络。验证：verify:sdd-028 固定解析/短 JWT，verify:sdd-013 真实和风两日与日期隔离；另回归 007/012/014/015/017/018/019/020，浏览器查真实直连、失败重试、跨城市与 390px。
+- 2026-09-06 文档复核：Context7 `/websites/dev_qweather_en` 部分认证示例仍为旧版；以和风天气当前官方 `https://dev.qweather.com/docs/configuration/authentication/` 为准，JWT Header 为 `alg=EdDSA` 与 `kid`，Payload 同时包含 `iss`（开发者 ID）、`sub`（项目 ID）、`iat` 与 `exp`。测试使用 `/weather/v1/current/{latitude}/{longitude}` 与 `/weather/v1/daily/{latitude}/{longitude}` 新版接口，天气现象代码不能直接作为现有 WMO 代码使用。
 - 优先复用 shadcn/ui 组件和主题 token，图标统一使用 lucide-react。
 - 后续页面 MUST 延续当前视觉 token：卡片使用约 24px 软圆角，主要按钮使用胶囊或圆形，玻璃效果只用于导航和悬浮控件；丁香紫只作为四色体系的一部分，不得恢复单一紫色模板或在所有容器滥用毛玻璃。
 - 修改后运行 `npm run check`；提交时 hook 会再次执行同一流程。
@@ -100,7 +103,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-027 穿搭新闻与趋势推送已完成 MVP 本地复验（2026-09-06），实现提交 `c5ca213` 已保存，等待用户另行部署指令；SDD-026 仍是线上版本，Production 为 `dpl_Asby267EpX5q46dSJDyXgq4uMoZJ`，源提交 `702bc6f`。027 已确认可信来源、App 内提醒与每日更新，不得重新询问这些已决策项。标题级简述、有限主题规则、跨日及部署验收限制见 `progress.md`。SDD-002 本人历史账号设密和重登录仍待集中调试；不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。
+- 当前阶段：SDD-028 国内和风天气前端直连本地 MVP 已实现并通过核心验收（2026-09-06），详细证据以 progress.md 为准；SDD-027 MVP 本地复验通过（实现 c5ca213）。SDD-026 仍是线上版本，Production 为 dpl_Asby267EpX5q46dSJDyXgq4uMoZJ、源提交 702bc6f；未经用户新部署指令不得发布 027/028。027 已确认可信来源、App 内提醒与每日更新，028 已选和风，无需重问。SDD-002 本人历史账号设密和重登录仍待集中调试；不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
