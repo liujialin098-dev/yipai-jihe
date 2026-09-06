@@ -59,14 +59,14 @@ const [
   read("app/globals.css"),
   read("supabase/migrations/20260901023555_profile_fashion_color.sql"),
 ]);
-for (const boundary of ["衣橱单品", "穿搭卡片", "日记记录", "30 天利用率"]) {
+for (const boundary of ["衣橱单品", "日记记录", "30 天利用率"]) {
   assert.match(profilePage, new RegExp(boundary));
 }
-assert.match(profilePage, /OutfitCanvasPreview/);
+assert.doesNotMatch(profilePage, /OutfitCanvasPreview/);
 assert.match(profileEditor, /image\/jpeg,image\/png,image\/webp/);
 assert.match(profileEditor, /crypto\.randomUUID/);
 assert.match(profileValidation, /5MB/);
-assert.match(profileData, /\.from\("outfit_canvases"\)/);
+assert.doesNotMatch(profileData, /\.from\("outfit_canvases"\)/);
 assert.match(profileData, /\.from\("outfit_diary_entries"\)/);
 assert.match(profileData, /buildDiaryUtilizationReport/);
 assert.match(header, /href="\/profile"/);

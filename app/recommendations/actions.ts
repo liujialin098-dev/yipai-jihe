@@ -25,6 +25,11 @@ import {
 } from "@/lib/recommendations/data";
 import { generateAiRecommendations } from "@/lib/recommendations/generator";
 import {
+  RecommendationGenerationError,
+  recommendationFailureMessage,
+  type RecommendationFailureCode,
+} from "@/lib/recommendations/qwen";
+import {
   LocationResolutionError,
   resolveChineseCity,
   storedWeatherLocation,
@@ -392,6 +397,7 @@ export async function generateDailyRecommendations(
     let outfits = ruleOutfits;
     let source: "ai" | "rules" = "rules";
     let aiModel: string | null = null;
+    let failureCode: RecommendationFailureCode = "provider_error";
     try {
       const aiResult = await generateAiRecommendations({
         items,
@@ -405,7 +411,11 @@ export async function generateDailyRecommendations(
       outfits = aiResult.outfits;
       source = "ai";
       aiModel = aiResult.model;
-    } catch {
+    } catch (error) {
+      failureCode =
+        error instanceof RecommendationGenerationError
+          ? error.code
+          : "provider_error";
       source = "rules";
       aiModel = null;
     }
@@ -475,7 +485,7 @@ export async function generateDailyRecommendations(
       message:
         source === "ai"
           ? `${recommendationTargetDayLabel(targetDayValue)} 3 套 AI 穿搭已更新。`
-          : `AI 暂时不可用，已按真实${recommendationTargetDayLabel(targetDayValue)}天气用稳定规则生成 3 套方案。`,
+          : `${recommendationFailureMessage(failureCode)}，已按真实${recommendationTargetDayLabel(targetDayValue)}天气用规则生成 3 套方案。`,
     };
   } catch {
     return {

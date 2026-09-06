@@ -73,12 +73,14 @@ for (const key of [
   "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   "OPENAI_API_KEY",
   "OPENAI_VISION_MODEL",
-  "OPENAI_RECOMMENDATION_MODEL",
+  "DASHSCOPE_API_KEY",
+  "DASHSCOPE_API_HOST",
+  "QWEN_RECOMMENDATION_MODEL",
 ]) {
   check(new RegExp(`^${key}=`, "m").test(envExample), `环境模板缺少：${key}`);
 }
 check(
-  !/^NEXT_PUBLIC_(?:OPENAI|SECRET|SUPABASE_SECRET|SERVICE_ROLE)[^=]*=/m.test(
+  !/^NEXT_PUBLIC_(?:OPENAI|DASHSCOPE|QWEN|SECRET|SUPABASE_SECRET|SERVICE_ROLE)[^=]*=/m.test(
     envExample,
   ),
   "环境模板把服务端秘密暴露为 NEXT_PUBLIC_ 变量",
@@ -91,7 +93,9 @@ for (const path of sourceFiles) {
   const source = read(path);
   if (/^[\s\r\n]*["']use client["'];/m.test(source)) {
     check(
-      !/(?:OPENAI_API_KEY|SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY)/.test(source),
+      !/(?:OPENAI_API_KEY|DASHSCOPE_API_KEY|SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY)/.test(
+        source,
+      ),
       `客户端模块引用服务端秘密：${path}`,
     );
   }

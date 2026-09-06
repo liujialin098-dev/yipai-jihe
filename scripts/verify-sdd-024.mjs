@@ -86,8 +86,8 @@ assert.equal(
 const recommendationCard = await read(
   "components/recommendations/recommendation-card.tsx",
 );
-assert.match(recommendationCard, /OutfitCanvasPreview/);
-assert.match(recommendationCard, /编辑穿搭卡片/);
+// SDD-030 停用默认画布，历史纯函数和数据隔离测试继续保留。
+assert.doesNotMatch(recommendationCard, /OutfitCanvasPreview|编辑穿搭卡片/);
 assert.doesNotMatch(recommendationCard, /PrecisionOutfitPreview/);
 assert.doesNotMatch(recommendationCard, /LookbookGenerator/);
 assert.doesNotMatch(recommendationCard, /虚拟模特/);
@@ -97,7 +97,11 @@ assert.match(editor, /setPointerCapture/);
 assert.match(editor, /navigator\.canShare/);
 assert.match(editor, /removeConnectedPlainBackground/);
 assert.match(editor, /upsert: true/);
-assert.match(editor, /原图不会被覆盖/);
+// 停用后的安全边界由无存储写入的旧 action 保证，不依赖已移除的提示文案。
+assert.doesNotMatch(
+  await read("app/outfits/actions.ts"),
+  /\.storage|\.update\(|\.upsert\(/,
+);
 
 const migration = await read(
   "supabase/migrations/20260901022345_outfit_canvas_share.sql",

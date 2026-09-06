@@ -1,16 +1,10 @@
 import Image from "next/image";
-import { Lightbulb, MoveUpRight } from "lucide-react";
-import Link from "next/link";
+import { Lightbulb } from "lucide-react";
 import type { CSSProperties } from "react";
 import { RecommendationDiaryButton } from "@/components/diary/recommendation-diary-button";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
-import { OutfitCanvasPreview } from "@/components/outfits/outfit-canvas-preview";
 import { ReplaceItemPanel } from "@/components/recommendations/replace-item-panel";
 import type { RecommendationOutfitView } from "@/lib/recommendations/constants";
-import {
-  createInitialCanvasItems,
-  type OutfitCanvasTheme,
-} from "@/lib/outfits/canvas";
 import {
   deriveOutfitLayers,
   OUTFIT_LAYER_LABELS,
@@ -50,42 +44,16 @@ export function RecommendationCard({
       (layer) => [layer.itemId, OUTFIT_LAYER_LABELS[layer.role]],
     ),
   );
-  const canvasTheme = (["lime", "lilac", "sky"] as OutfitCanvasTheme[])[
-    index % 3
-  ];
-  const canvasItems = createInitialCanvasItems(
-    outfit.itemIds,
-    new Map(outfitItems.map((item) => [item.id, item.category])),
-  );
 
   return (
     <article
       className="surface-card stagger-item overflow-hidden rounded-[1.75rem]"
       style={{ "--stagger": index + 1 } as CSSProperties}
     >
-      <div className="bg-[linear-gradient(145deg,var(--fashion-lilac-soft),var(--fashion-sky-soft)_55%,var(--fashion-lime-soft))] p-3">
-        <OutfitCanvasPreview
-          title={outfit.title}
-          theme={canvasTheme}
-          items={canvasItems}
-          wardrobeItems={outfitItems}
-        />
-        <Link
-          href={`/outfits/new?recommendationId=${recommendationId}&slot=${outfit.slot}`}
-          className="motion-button mt-3 flex h-11 items-center justify-center gap-2 rounded-full bg-[#202124] px-4 text-sm font-semibold text-white"
-        >
-          编辑穿搭卡片
-          <MoveUpRight className="size-4" aria-hidden="true" />
-        </Link>
-        <p className="mt-2 text-center text-[0.68rem] leading-5 text-[var(--text-tertiary)]">
-          只使用真实衣物。进入画布后可以拖动、抠图和分享。
-        </p>
-      </div>
-
       <div className="border-t border-[var(--hairline)] bg-white p-3">
         <div className="mb-3 flex items-center justify-between px-1">
           <p className="text-xs font-semibold text-[var(--text-secondary)]">
-            衣物实拍核对
+            搭配单品
           </p>
           <span className="text-[0.68rem] text-[var(--text-tertiary)]">
             {outfitItems.length} 件

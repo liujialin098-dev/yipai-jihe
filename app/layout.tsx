@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { AppShell } from "@/components/app-shell";
 import { getViewer } from "@/lib/auth/viewer";
 import "./globals.css";
+
+const playful = localFont({
+  src: "../public/fonts/ZCOOLKuaiLe-Regular.ttf",
+  variable: "--font-playful",
+  weight: "400",
+  display: "swap",
+  preload: false,
+});
 
 export const metadata: Metadata = {
   title: {
@@ -33,7 +42,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="zh-CN"
-      className="light h-full antialiased"
+      className={`light h-full antialiased ${playful.variable}`}
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full bg-background">

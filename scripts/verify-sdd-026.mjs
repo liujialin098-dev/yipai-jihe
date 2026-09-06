@@ -198,29 +198,28 @@ assert.doesNotMatch(
   refiner,
   /BAIDU_API_KEY|BAIDU_SECRET_KEY|aip\.baidubce\.com/,
 );
-assert.match(cutoutRoute, /auth\.getUser\(\)/);
+assert.match(cutoutRoute, /410/);
 assert.match(service, /\.eq\("user_id", userId\)/);
-assert.match(confirmRoute, /after\(async \(\) =>/);
+assert.doesNotMatch(confirmRoute, /processProfessionalCutout|after\(/);
 assert.match(ingestionWorkspace, /CONFIRM_CONCURRENCY = 2/);
-assert.match(ingestionWorkspace, /CONFIRM_PACING_MS = 4_000/);
+assert.doesNotMatch(ingestionWorkspace, /CONFIRM_PACING_MS|透明图将在后台/);
 assert.match(refiner, /cutout\/source\?asset=original/);
 assert.doesNotMatch(refiner, /originalUrl/);
-assert.match(cutoutSourceRoute, /\.select\("id, image_path, cutout_path"\)/);
-assert.match(cutoutSourceRoute, /asset === "original"/);
+assert.match(cutoutSourceRoute, /410/);
+assert.doesNotMatch(cutoutSourceRoute, /storage|createClient/);
 assert.match(refiner, /"erase" \| "restore"/);
 assert.match(refiner, /globalCompositeOperation = "destination-out"/);
 assert.match(refiner, /context\.drawImage\(original, 0, 0\)/);
 assert.match(editor, /重新专业抠图/);
 assert.match(editor, /边缘精修/);
-// SDD-029 用户确认的浅紫渐变覆盖 SDD-026 旧版背景色。
+// SDD-030 用户确认加深紫色；保留历史算法测试，不恢复功能入口。
 assert.match(
   styles,
-  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #f0eaff 0%, #f8f5ff 38%, #fff 82%\)/,
+  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #dfcef8 0%, #eee3fb 42%, #faf7ff 88%\)/,
 );
 assert.match(styles, /--fashion-lilac/);
 assert.match(styles, /prefers-reduced-transparency/);
-assert.match(env, /BAIDU_API_KEY/);
-assert.match(env, /BAIDU_SECRET_KEY/);
+assert.doesNotMatch(env, /^BAIDU_(API|SECRET)_KEY=/m);
 assert.doesNotMatch(env, /NEXT_PUBLIC_BAIDU/);
 assert.doesNotMatch(env, /PHOTOROOM_API_KEY/);
 const outfitCanvasCss =
@@ -229,5 +228,5 @@ assert.ok(outfitCanvasCss);
 assert.doesNotMatch(outfitCanvasCss, /repeating-|grid|background-size/);
 
 console.log(
-  "SDD-026 verification passed: Baidu token/cache and cutout contract, transparent trim, category sizing, manual erase/restore, no-grid canvas and server-only key boundary.",
+  "SDD-026 历史算法与密钥边界回归通过；当前入口按 SDD-030 停用，未调用真实百度接口。",
 );

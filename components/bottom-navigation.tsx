@@ -1,20 +1,20 @@
 "use client";
 
-import { CalendarDays, Home, Plus, Shirt, Sparkles } from "lucide-react";
+import { Heart, Newspaper, Plus, Shirt, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/", icon: Home, label: "首页", primary: false },
   { href: "/wardrobe", icon: Shirt, label: "衣橱", primary: false },
-  { href: "/wardrobe/new", icon: Plus, label: "添加", primary: true },
   {
     href: "/recommendations",
     icon: Sparkles,
     label: "推荐",
     primary: false,
   },
-  { href: "/diary", icon: CalendarDays, label: "记录", primary: false },
+  { href: "/wardrobe/new", icon: Plus, label: "添加衣物", primary: true },
+  { href: "/inspiration", icon: Newspaper, label: "时尚资讯", primary: false },
+  { href: "/favorites", icon: Heart, label: "收藏", primary: false },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
@@ -57,12 +57,12 @@ export function BottomNavigation() {
             <span
               className={
                 primary
-                  ? "nav-icon-shell -mt-6 flex size-12 items-center justify-center rounded-[1.05rem] border-[3px] border-[var(--surface-solid)] bg-[var(--fashion-lime)] text-[#202124] shadow-[0_10px_28px_rgba(110,128,44,0.24)]"
+                  ? "nav-icon-shell -mt-7 flex size-14 items-center justify-center rounded-[1.25rem] border-[3px] border-[var(--surface-solid)] bg-[var(--fashion-lime)] text-[#202124] shadow-[0_8px_24px_rgba(96,62,143,0.22)]"
                   : "nav-icon-shell flex h-6 items-center justify-center"
               }
             >
               <Icon
-                className={primary ? "size-5" : "size-[1.1rem]"}
+                className={primary ? "size-7" : "size-[1.1rem]"}
                 strokeWidth={current ? 2.2 : 1.7}
                 aria-hidden="true"
               />

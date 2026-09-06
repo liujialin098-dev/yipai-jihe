@@ -7,7 +7,11 @@ import {
   type WeatherSnapshot,
 } from "@/lib/recommendations/constants";
 import type { ClothingPreference } from "@/lib/personalization/constants";
-import { requestOpenAiResponse } from "@/lib/openai/responses";
+import {
+  RecommendationGenerationError,
+  requestQwenRecommendations,
+} from "@/lib/recommendations/qwen";
+export { RecommendationGenerationError } from "@/lib/recommendations/qwen";
 import { getOccasionProfile } from "@/lib/recommendations/occasion-profile";
 import {
   hasCompleteRainProtectionCandidate,
@@ -18,39 +22,6 @@ import {
   validateRecommendationOutput,
 } from "@/lib/recommendations/validation";
 import type { WardrobeStyle } from "@/lib/wardrobe/constants";
-
-export type RecommendationFailureCode =
-  | "not_configured"
-  | "timeout"
-  | "rate_limited"
-  | "provider_error"
-  | "invalid_result";
-
-export class RecommendationGenerationError extends Error {
-  constructor(public readonly code: RecommendationFailureCode) {
-    super(code);
-    this.name = "RecommendationGenerationError";
-  }
-}
-
-type OpenAIResponse = {
-  output_text?: unknown;
-  output?: Array<{
-    content?: Array<{ type?: unknown; text?: unknown }>;
-  }>;
-};
-
-function outputText(response: OpenAIResponse) {
-  if (typeof response.output_text === "string") return response.output_text;
-  for (const item of response.output ?? []) {
-    for (const content of item.content ?? []) {
-      if (content.type === "output_text" && typeof content.text === "string") {
-        return content.text;
-      }
-    }
-  }
-  return null;
-}
 
 type GenerateInput = {
   clothingPreference: ClothingPreference;
@@ -66,13 +37,6 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
   outfits: RecommendationOutfit[];
   model: string;
 }> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new RecommendationGenerationError("not_configured");
-
-  const model =
-    process.env.OPENAI_RECOMMENDATION_MODEL?.trim() ||
-    process.env.OPENAI_VISION_MODEL?.trim() ||
-    "gpt-4o-mini";
   const occasionProfile = getOccasionProfile(input.occasion);
   const requiresRainProtection =
     isRainyWeatherCode(input.weather.weatherCode) &&
@@ -121,46 +85,12 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
     })),
   )}`;
 
+  const startedAt = Date.now();
   try {
-    const response = await requestOpenAiResponse({
-      apiKey,
-      body: JSON.stringify({
-        model,
-        store: false,
-        temperature: 0.2,
-        max_output_tokens: 1_200,
-        input: [
-          { role: "user", content: [{ type: "input_text", text: prompt }] },
-        ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "daily_wardrobe_recommendations",
-            strict: true,
-            schema: RECOMMENDATION_OUTPUT_SCHEMA,
-          },
-        },
-      }),
-      signal: AbortSignal.timeout(10_000),
-    });
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        throw new RecommendationGenerationError("rate_limited");
-      }
-      throw new RecommendationGenerationError("provider_error");
-    }
-
-    const payload = (await response.json()) as OpenAIResponse;
-    const text = outputText(payload);
-    if (!text) throw new RecommendationGenerationError("invalid_result");
-
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      throw new RecommendationGenerationError("invalid_result");
-    }
+    const { parsed, model } = await requestQwenRecommendations(
+      prompt,
+      RECOMMENDATION_OUTPUT_SCHEMA,
+    );
     const outfits = validateRecommendationOutput(
       parsed,
       input.items,
@@ -169,12 +99,26 @@ export async function generateAiRecommendations(input: GenerateInput): Promise<{
       input.styleDirections,
     );
     if (!outfits) throw new RecommendationGenerationError("invalid_result");
+    console.info("recommendation_ai", {
+      provider: "qwen",
+      model,
+      outcome: "success",
+      elapsed_ms: Date.now() - startedAt,
+    });
     return { outfits, model };
   } catch (error) {
-    if (error instanceof RecommendationGenerationError) throw error;
-    if (error instanceof Error && error.name === "TimeoutError") {
-      throw new RecommendationGenerationError("timeout");
-    }
-    throw new RecommendationGenerationError("provider_error");
+    const failure =
+      error instanceof RecommendationGenerationError
+        ? error
+        : new RecommendationGenerationError("provider_error");
+    // 仅受控元数据，不记录密钥、用户资料、衣物清单、提示词或供应商响应。
+    console.warn("recommendation_ai", {
+      provider: "qwen",
+      outcome: "fallback",
+      code: failure.code,
+      status: failure.status,
+      elapsed_ms: Date.now() - startedAt,
+    });
+    throw failure;
   }
 }

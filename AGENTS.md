@@ -1,5 +1,17 @@
 # 项目开发说明
 
+## 当前有效决策：SDD-030（2026-09-06）
+
+- 本地实现已完成，真实千问联调与发布未完成；以 `progress.md` 的 SDD-030 清单为准。以下历史 SDD-024/026/029 中“画布、卡片分享、自动/专业/人工抠图及近期作品展示”约定已被本次用户决定覆盖，不得恢复默认入口。
+- 底部固定为 **衣橱 / 推荐 / 添加衣物 / 时尚资讯 / 收藏**，添加衣物在正中央且最突出（56px）；顶部为自己品牌居中、首页/穿搭日记/个人主页与头像入口，不复制 Whering 标志。
+- 当前底色 `#dfcef8 → #eee3fb → #faf7ff`，统一交互紫 `#7043ac`。页面主标题使用自托管 OFL 站酷快乐体，字号缩小居中；正文沿用系统字体。按钮及选择胶囊 hover/active/focus 使用紫色，禁用与减少动态规则保留。该决定覆盖旧版“紫色不得主导背景/四色导航状态”限制；内容主题仍按固定角色使用，不随机上色。
+- 推荐仅显示原图单品、换件、收藏、日记，不显示卡片编辑。`/outfits/new` 和 `/outfits/[id]` 跳转推荐；旧保存 actions 返回错误；抠图及精修 routes 返回 410/no-store；入库确认不再执行 `after()` 抠图，批量确认仍 2 路但取消抠图专用 4 秒等待。不删除任何历史数据库或 Storage 资产。
+- 个人主页保留头像昵称编辑及衣物数、日记数、30 天利用率三项统计；`lib/profile/data.ts` 不再查询或签名画布。沿用当前账号 getUser 与 RLS，不增加公开主页或社交能力。
+- 每日推荐改用 `lib/recommendations/qwen.ts` 北京百炼 Chat Completions，默认 `qwen3.8-max`。配置 `DASHSCOPE_API_KEY`、`DASHSCOPE_API_HOST`（仅北京工作空间域名）及可选 `QWEN_RECOMMENDATION_MODEL`，全部服务端变量，禁止 NEXT_PUBLIC_ 或日志泄露。严格 JSON Schema、非思考、4096 输出 token、25 秒整体请求截止、不自动重试；仍做天气/归属/场景/分层/不重复复验。旧 OpenAI 每日推荐调用不再使用；图片识别与资讯摘要仍沿用原有 OpenAI，不误报为全部 AI 已迁移。
+- 失败分为配置缺失/配置无效/鉴权/限流/超时/供应商故障/响应截断/搭配校验不合格；日志只含受控类别、状态码、provider/model（成功时）和真实模型耗时。仅真实天气成功后允许一次规则后备。数据库 `generation_ms` 暂保留原表 15000 上限，不可当作完整请求耗时；25 秒模型预算覆盖旧推荐 15 秒目标，不影响天气失败必须停止的规则。
+- 百炼凭据尚未配置，不得宣称真实模型已验收。Context7 已查询 `/dashscope/dashscope-sdk-python`，并核对百炼官方 `https://help.aliyun.com/zh/model-studio/qwen-structured-output`；本地 Next.js 字体指南确认 next/font/local 无浏览器 Google 请求。
+- 验收命令 `npm run check`、`npm run build`、`npm run verify:sdd-030`；兼容门禁 007/024/025/026/029 已更新为新用户决定，同时保留历史算法与数据隔离检查。Production 仍是下文 027/028/029 已发布版本，本阶段未经用户明确要求不部署。
+
 ## 技术栈
 
 - Next.js 16.3.1 App Router、React 19、TypeScript；Sharp 0.34 仅用于服务端透明图验证与裁边。
@@ -110,7 +122,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-028 国内和风天气前端直连本地 MVP 已实现并通过核心验收（2026-09-06），详细证据以 progress.md 为准；SDD-027 MVP 本地复验通过（实现 c5ca213）。SDD-026 仍是线上版本，Production 为 dpl_Asby267EpX5q46dSJDyXgq4uMoZJ、源提交 702bc6f；未经用户新部署指令不得发布 027/028。027 已确认可信来源、App 内提醒与每日更新，028 已选和风，无需重问。SDD-002 本人历史账号设密和重登录仍待集中调试；不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。
+- 当前阶段：SDD-030 本地功能与固定门禁已通过，待百炼北京凭据真实联调及单独部署；线上仍为已发布的 SDD-027/028/029（dpl_95cQdxJFKMcr2SVMF8QmDJiuzEqj，源提交 e369ea8）。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试或本地成功标记为真实接口/线上已完成。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

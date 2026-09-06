@@ -13,7 +13,7 @@
 - Next.js 16.3.1 App Router、React 19、TypeScript
 - Tailwind CSS 4、shadcn/ui、lucide-react
 - Supabase Auth、Postgres、Storage 与 RLS
-- OpenAI Responses API（服务端结构化图片识别与穿搭推荐）
+- 百炼千问 Chat Completions（服务端每日搭配；SDD-030 待真实凭据联调）；OpenAI Responses API 继续用于图片识别与既有资讯摘要。
 - Vercel Preview
 
 ## 本地启动
@@ -37,7 +37,10 @@ npm run dev
 - `OPENAI_API_KEY`：仅服务端使用，严禁 `NEXT_PUBLIC_` 前缀或提交仓库。
 - `OPENAI_VISION_MODEL`：可选，图片识别模型，默认 `gpt-4o-mini`。
 - `OPENAI_LOOKBOOK_MODEL`：可选，单套虚拟模特效果图模型，默认 `gpt-image-2`；仅在用户点击生成效果图时调用。
-- `OPENAI_RECOMMENDATION_MODEL`：可选，推荐模型，默认 `gpt-4o-mini`。
+- `DASHSCOPE_API_KEY`：北京百炼工作空间的服务端密钥。
+- `DASHSCOPE_API_HOST`：百炼控制台提供的北京域名，形如 `<workspace>.cn-beijing.maas.aliyuncs.com`；只填域名，不加协议或路径。
+- `QWEN_RECOMMENDATION_MODEL`：每日推荐默认 `qwen3.8-max`，覆盖模型必须支持严格 JSON Schema。旧 `OPENAI_RECOMMENDATION_MODEL` 不再用于每日推荐。
+- 千问请求最多 25 秒、4096 输出 token，不自动重试；错误按配置/鉴权/限流/超时/截断/搭配不合法区分。缺凭据时仅在真实天气成功后规则降级，不宣称 AI 成功。用户自行写入忽略的 `.env.local`，不得把密钥发到聊天；配置后重启开发服务。Production 需另行配置、部署和联调。
 - `SECRET_KEY`：只保留 Supabase 服务端密钥模板；当前应用流程不需要部署它，严禁浏览器读取。
 
 `.env.local` 已被 Git 忽略。Vercel 只配置实际需要的服务端变量和两个 Supabase 公开变量。
@@ -115,7 +118,7 @@ npx vercel deploy --prod --yes --scope jialin-d583
 
 - 直接注册、退出和密码重新登录已通过合成账号自动验收；历史遗留的已绑定无密码账号仍需用户本人在本机设密并完成人工重登录。
 - Windows 本地通过系统网络栈访问 OpenAI；识别超时仍可手工填写，推荐超过时限会自动使用规则降级。
-- 当前主路径使用真实衣物自由排布、百度服务端去背和可分享穿搭卡片，不展示虚拟人物；尚不包含社交、电商或真人虚拟试穿。
+- SDD-030 主路径仅保留真实衣物原图搭配、换件、收藏、日记及个人主页；画布、分享卡片和全部抠图入口已停用，历史记录与图片仍保留。旧画布链接跳转推荐，抠图接口返回 410，入库确认不再启动后台去背。
 - SDD-027 时尚灵感只提供 App 内入口与可关闭未读提示。来源为 Vogue/GQ 官方 RSS，24 小时访问触发更新；中文简述仅根据来源标题，不代表阅读全文；失败使用明确标记的阅读提示或空状态，不填充未经核实的新闻。
 - SDD-027 两个迁移均已应用到现有 Supabase 项目；个性化沿用临时城市优先、真实天气和当前账号衣橱，主题展示记录按账号持久去重。Production 尚待用户发出部署指令。
 - 常规忘记密码与第三方登录尚未实现；Production 固定域名已公开，历史 Preview 不再作为默认访问入口。

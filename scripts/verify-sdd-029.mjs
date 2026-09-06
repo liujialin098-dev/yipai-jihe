@@ -13,11 +13,10 @@ const [page, editor, preview, css] = await Promise.all([
   read("components/outfits/outfit-canvas-preview.tsx"),
   read("app/globals.css"),
 ]);
-for (const label of ["衣橱单品", "穿搭卡片", "日记记录", "30 天利用率"])
+for (const label of ["衣橱单品", "日记记录", "30 天利用率"])
   assert.ok(page.includes(label));
-assert.match(page, /最近.*4/);
-assert.match(page, /hideHeading/);
-assert.match(page, /aria-current="page"/);
+assert.doesNotMatch(page, /OutfitCanvasPreview|穿搭卡片/);
+assert.match(page, /我的收藏/);
 assert.match(editor, /<details/);
 assert.match(editor, /<summary/);
 assert.match(editor, /编辑资料/);
@@ -29,7 +28,7 @@ assert.match(preview, /cutoutUrl \?\? wardrobeItem.imageUrl/);
 assert.match(preview, /layoutItem.rotation/);
 assert.match(
   css,
-  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #f0eaff 0%, #f8f5ff 38%, #fff 82%\)/,
+  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #dfcef8 0%, #eee3fb 42%, #faf7ff 88%\)/,
 );
 assert.match(css, /\.profile-collection/);
 assert.match(css, /prefers-reduced-motion/);
@@ -45,8 +44,8 @@ assert.match(recommendations, /<details/);
 assert.match(recommendations, /生成信息/);
 assert.doesNotMatch(controls, /单次选择不会覆盖/);
 assert.doesNotMatch(canvasEditor, /没有模特，也不会重新画衣服/);
-assert.match(cutoutRoute, /抠图失败，请重试。/);
-assert.match(cutoutRoute, /503/);
+assert.match(cutoutRoute, /feature_retired/);
+assert.match(cutoutRoute, /410/);
 // 无网络渲染真实 TSX 组件，校验画廊和默认预览的差异。
 const require = createRequire(import.meta.url);
 const compiled = ts.transpileModule(preview, {
@@ -126,5 +125,5 @@ if (process.argv.includes("--fixture")) {
   );
 }
 console.log(
-  "SDD-029：真实统计、收起编辑、原图画布、浅紫渐变和简洁文案边界通过。",
+  "SDD-029 历史预览渲染回归通过；当前个人主页、深浅紫渐变与退役入口按 SDD-030 验收。",
 );

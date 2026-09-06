@@ -54,7 +54,7 @@
 }
 
 :root {
-  --background: #f2f1f5;
+  --background: #ede5f7;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
   --surface-solid: #ffffff;
@@ -63,8 +63,9 @@
   --text-secondary: #6e6e73;
   --text-tertiary: #86868b;
   --hairline: rgb(29 29 31 / 9%);
-  --system-blue: #0066cc;
-  --system-blue-soft: #eaf3ff;
+  --action-purple: #7043ac;
+  --system-blue: #7043ac;
+  --system-blue-soft: #efe5ff;
   --fashion-lime: #d8ff52;
   --fashion-lime-soft: #efffc0;
   --fashion-lilac: #b5a4ef;
@@ -191,12 +192,139 @@
 }
 
 .app-backdrop {
-  background: linear-gradient(165deg, #f0eaff 0%, #f8f5ff 38%, #fff 82%);
+  background: linear-gradient(165deg, #dfcef8 0%, #eee3fb 42%, #faf7ff 88%);
 }
 
 .motion-stage {
   position: relative;
   isolation: isolate;
+}
+
+/* SDD-030：品牌双排导航；紫色交互覆盖旧四色按钮状态。 */
+.editorial-header {
+  background: rgb(236 224 251 / 90%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgb(88 51 129 / 10%);
+}
+
+.brand-wordmark {
+  font-family: var(--font-playful), var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  color: #38254d;
+}
+
+.editorial-header .profile-header-avatar {
+  position: absolute;
+  right: 0;
+}
+
+.editorial-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 14px 14px 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: #675575;
+}
+
+.editorial-nav a[aria-current="page"] {
+  color: var(--action-purple);
+  box-shadow: inset 0 -2px var(--action-purple);
+}
+
+.app-page-title + .app-page-lead {
+  margin-inline: auto;
+  text-align: center;
+}
+
+:root .nav-item[data-current="true"] .nav-bubble {
+  background: #e3d4f8;
+}
+
+:root .nav-item[data-current="true"] {
+  color: var(--action-purple);
+}
+
+:root label input:enabled:is(:checked, :focus-visible) + .motion-button,
+:root label:has(input:enabled):active > .motion-button {
+  background: var(--action-purple);
+  border-color: var(--action-purple);
+  color: white;
+}
+
+@media (hover: hover) {
+  :root label:has(input:enabled):hover > .motion-button {
+    background: var(--action-purple);
+    border-color: var(--action-purple);
+    color: white;
+  }
+}
+
+:root .nav-item[data-primary="true"] .nav-icon-shell {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+:root
+  :is(
+    button,
+    a.motion-button,
+    a.pressable,
+    [data-slot="button"],
+    .nav-item,
+    .editorial-nav a,
+    .profile-stat-link,
+    .profile-round-link,
+    summary:not(.profile-summary)
+  ):not(:disabled, [aria-disabled="true"], [data-disabled]):is(
+    :active,
+    :focus-visible
+  ) {
+  background: var(--action-purple);
+  color: white;
+  border-color: var(--action-purple);
+}
+
+:root :is(button, a, summary):focus-visible {
+  outline: 2px solid var(--action-purple);
+  outline-offset: 3px;
+}
+
+:root
+  .nav-item[data-primary="true"]:is(:active, :focus-visible)
+  .nav-icon-shell {
+  background: var(--action-purple);
+  color: white;
+}
+
+@media (hover: hover) {
+  :root
+    :is(
+      button,
+      a.motion-button,
+      a.pressable,
+      [data-slot="button"],
+      .nav-item,
+      .editorial-nav a,
+      .profile-stat-link,
+      .profile-round-link,
+      summary:not(.profile-summary)
+    ):not(:disabled, [aria-disabled="true"], [data-disabled]):hover {
+    background: var(--action-purple);
+    color: white;
+    border-color: var(--action-purple);
+  }
+
+  :root .nav-item[data-primary="true"]:hover .nav-icon-shell {
+    background: var(--action-purple);
+    color: white;
+  }
 }
 
 .surface-card {
@@ -319,8 +447,20 @@
 }
 
 .profile-edit[open] .profile-edit-label {
-  background: var(--fashion-lime);
-  color: #202124;
+  background: var(--action-purple);
+  color: white;
+}
+
+.profile-summary:is(:active, :focus-visible) .profile-edit-label {
+  background: var(--action-purple);
+  color: white;
+}
+
+@media (hover: hover) {
+  .profile-summary:hover .profile-edit-label {
+    background: var(--action-purple);
+    color: white;
+  }
 }
 
 .profile-edit-form,
@@ -475,18 +615,20 @@
 .app-page-title {
   max-width: 23rem;
   color: var(--foreground);
-  font-family: var(--font-heading);
-  font-size: clamp(2rem, 8.5vw, 2.4rem);
-  font-weight: 600;
-  letter-spacing: -0.028em;
-  line-height: 1.1;
+  margin-inline: auto;
+  font-family: var(--font-playful), var(--font-heading);
+  font-size: clamp(1.5rem, 6.4vw, 1.85rem);
+  font-weight: 400;
+  letter-spacing: 0.035em;
+  line-height: 1.3;
+  text-align: center;
   text-wrap: balance;
 }
 
 .app-page-title-home {
-  font-size: clamp(2.35rem, 10.5vw, 2.75rem);
-  letter-spacing: -0.032em;
-  line-height: 1.06;
+  font-size: clamp(1.75rem, 7.5vw, 2rem);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
 }
 
 .app-page-lead {

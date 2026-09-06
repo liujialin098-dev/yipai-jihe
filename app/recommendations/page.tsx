@@ -58,7 +58,7 @@ export default async function RecommendationsPage({
 
   return (
     <div className="page-enter px-5 pt-4">
-      <header>
+      <header className="text-center">
         <p className="app-page-meta">
           {dateLabel(targetDate)}，{targetLabel}穿搭
         </p>
