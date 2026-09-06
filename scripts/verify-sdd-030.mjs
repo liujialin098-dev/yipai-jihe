@@ -6,16 +6,25 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const nav = await read("components/bottom-navigation.tsx");
 const links = [...nav.matchAll(/href: "([^"]+)"/g)].map((m) => m[1]);
 assert.deepEqual(links, [
+  "/",
   "/wardrobe",
-  "/recommendations",
   "/wardrobe/new",
   "/inspiration",
-  "/favorites",
+  "/diary",
 ]);
 const header = await read("components/status-header.tsx");
-for (const label of ["首页", "穿搭日记", "个人主页"])
-  assert.ok(header.includes(label));
+assert.match(header, /href="\/profile"/);
+assert.match(header, /aria-label="打开个人主页"/);
+assert.doesNotMatch(header, /editorial-nav|顶部导航/);
 assert.match(header, /editorial-header-shell/);
+const diary = await read("app/diary/page.tsx");
+for (const label of ["日记", "收藏", "利用率"])
+  assert.ok(diary.includes(label));
+assert.match(diary, /FavoritesPanel/);
+assert.match(
+  await read("app/favorites/page.tsx"),
+  /redirect\("\/diary\?view=favorites"\)/,
+);
 assert.match(await read("components/app-shell.tsx"), /overflow-x-clip/);
 const brandName = await read("components/brand-name.tsx");
 assert.match(brandName, /Ensemble/);
@@ -65,6 +74,8 @@ assert.match(css, /var\(--font-brand-rounded\)/);
 assert.match(css, /prefers-reduced-motion/);
 assert.match(css, /\.editorial-header-shell/);
 assert.match(css, /var\(--fashion-lime-soft\)/);
+assert.match(css, /\.bottom-navigation-shell/);
+assert.match(css, /var\(--fashion-lilac\) 68%/);
 console.log("SDD-030：导航、退役入口、原图与隐私边界通过。");
 
 registerHooks({

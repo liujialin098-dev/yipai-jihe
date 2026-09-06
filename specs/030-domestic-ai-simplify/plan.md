@@ -4,7 +4,7 @@
 
 ## 概要
 
-先重排导航与视觉，再退役画布/抠图，最后切换每日推荐并增加诊断。增量范围继续完善推荐个性化：把反馈账本形成的风格分数和每日可信时尚资讯转换成最小模型上下文，并对模型与规则降级统一执行动态命名。沿用图片识别、天气、收藏和日记，保留历史资产。
+先重排导航与视觉，再退役画布/抠图，最后切换每日推荐并增加诊断。增量范围继续完善推荐个性化：把反馈账本形成的风格分数和每日可信时尚资讯转换成最小模型上下文，并对模型与规则降级统一执行动态命名。最新导航增量将首页与日记收进五项底栏，顶部只保留品牌和头像，并把收藏作为日记内分页。沿用图片识别、天气、收藏和日记数据，保留历史资产与旧路由兼容。
 
 ## 技术上下文
 
@@ -13,7 +13,7 @@
 - 测试：Node 固定响应、静态门禁、check/build、390px 浏览器。
 - OFL 许可 ZCOOL KuaiLe 自托管，next/font/local，仅标题与品牌使用，正文沿用系统字体。
 - 中心添加按钮至少 56px，其他触点至少 44px，无水平溢出。
-- 顶部导航使用青柠色浮动圆角壳层，四周留出背景呼吸区；滚动时保持可达，不遮挡标题、头像或主要内容。
+- 顶部使用青柠色浮动圆角壳层且只保留品牌和头像；底部使用浅紫浮动壳层，两者目标高度约 64-72px。底部维持五项以保证 390px 触点宽度，推荐通过首页主操作进入。
 - 个性化不训练独立模型：只从当前账号 `preferred_styles`、`style_scores`、场合偏好和个性化开关派生简洁权重；关闭个性化后不向模型传递反馈分数。
 - 每日趋势复用 SDD-027 的可信 RSS 白名单与 24 小时服务端缓存；只传来源、日期、主题和风格标签，不传全文、外部图片或用户身份。
 
@@ -26,7 +26,9 @@
 
 ## 代码结构
 
-- components/bottom-navigation.tsx、status-header.tsx：五项 Dock 和双排顶栏。
+- components/bottom-navigation.tsx、status-header.tsx：首页/衣橱/中央添加/资讯/日记五项 Dock，以及品牌/头像单排顶栏。
+- app/diary/page.tsx、components/diary/favorites-panel.tsx、app/favorites/page.tsx：日记/收藏/利用率三栏和旧收藏地址兼容。
+- app/page.tsx：首页推荐主操作，承接从底栏收起的独立推荐入口。
 - app/globals.css、layout.tsx、public/fonts/：渐变、字体与紫色交互。
 - components/recommendations/recommendation-card.tsx：原图搭配与反馈。
 - app/profile/page.tsx、lib/profile/data.ts：资料编辑与三项统计。

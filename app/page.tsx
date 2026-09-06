@@ -57,8 +57,16 @@ export default async function Home({
       </section>
 
       <Link
+        href="/recommendations"
+        className="motion-button mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+      >
+        <Sparkles className="size-4" aria-hidden="true" />
+        生成今日搭配
+      </Link>
+
+      <Link
         href={wardrobeHref}
-        className="surface-card fashion-accent-card pressable mt-7 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
+        className="surface-card fashion-accent-card pressable mt-5 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
       >
         <div className="flex items-start justify-between gap-5">
           <div>

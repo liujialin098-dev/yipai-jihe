@@ -8,7 +8,7 @@ const corePages = [
   "app/wardrobe/page.tsx",
   "app/wardrobe/new/page.tsx",
   "app/recommendations/page.tsx",
-  "app/favorites/page.tsx",
+  "app/diary/page.tsx",
   "app/settings/page.tsx",
   "app/settings/preferences/page.tsx",
   "app/login/page.tsx",

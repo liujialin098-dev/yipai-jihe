@@ -141,7 +141,7 @@ check(
   "演示衣橱缺少部分失败后的继续加载入口",
 );
 check(
-  layout.includes("/brand/yipai-jihe-app-icon-v1.png") &&
+  layout.includes("/brand/ensemble-icon-a-folded-e.png") &&
     statusHeader.includes("<BrandMark") &&
     authGateway.includes("<BrandMark"),
   "确认的品牌标志尚未完整接入站点图标、顶部栏和账号入口",

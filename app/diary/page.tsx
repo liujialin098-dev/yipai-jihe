@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   ArrowRight,
   CalendarDays,
-  Heart,
   ImageOff,
   PenLine,
   Plus,
@@ -14,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DiaryDeleteButton } from "@/components/diary/diary-delete-button";
+import { FavoritesPanel } from "@/components/diary/favorites-panel";
 import {
   getDiaryMonthData,
   getDiaryReportData,
@@ -33,7 +33,7 @@ import {
 
 export const metadata: Metadata = { title: "穿搭记录" };
 
-type DiaryView = "diary" | "report";
+type DiaryView = "diary" | "favorites" | "report";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("zh-CN", {
@@ -71,7 +71,12 @@ export default async function DiaryPage({
   }>;
 }) {
   const params = await searchParams;
-  const view: DiaryView = params.view === "report" ? "report" : "diary";
+  const view: DiaryView =
+    params.view === "report"
+      ? "report"
+      : params.view === "favorites"
+        ? "favorites"
+        : "diary";
   const range = parseDiaryRange(params.range);
   const monthData =
     view === "diary" ? await getDiaryMonthData(params.month) : null;
@@ -83,30 +88,24 @@ export default async function DiaryPage({
   return (
     <div className="page-enter px-5 pt-4">
       <header>
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="app-page-meta">真实穿着记录</p>
-            <h1 className="app-page-title mt-2">穿搭日记</h1>
-          </div>
-          <Link
-            href="/favorites"
-            className="pressable inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-3 text-xs font-semibold text-[var(--foreground)]"
-          >
-            <Heart className="size-3.5" aria-hidden="true" />
-            收藏
-          </Link>
-        </div>
+        <p className="app-page-meta">我的穿搭档案</p>
+        <h1 className="app-page-title mt-2">日记与收藏</h1>
         <p className="app-page-lead mt-3">
-          记下真正穿过的衣服，再看哪些单品最常陪你出门。
+          {view === "favorites"
+            ? "把喜欢的单品和整套搭配收在一起。"
+            : "记下真正穿过的衣服，再看哪些单品最常陪你出门。"}
         </p>
       </header>
 
       <nav
         aria-label="穿搭记录视图"
-        className="mt-6 grid grid-cols-2 gap-1 rounded-full bg-[var(--surface-soft)] p-1"
+        className="mt-6 grid grid-cols-3 gap-1 rounded-full bg-[var(--surface-soft)] p-1"
       >
         <ViewLink href="/diary?view=diary" active={view === "diary"}>
           日记
+        </ViewLink>
+        <ViewLink href="/diary?view=favorites" active={view === "favorites"}>
+          收藏
         </ViewLink>
         <ViewLink href={reportHref(range)} active={view === "report"}>
           利用率
@@ -120,6 +119,8 @@ export default async function DiaryPage({
           month={monthData.month}
           today={monthData.today}
         />
+      ) : view === "favorites" ? (
+        <FavoritesPanel />
       ) : reportData ? (
         <UtilizationReport
           error={reportData.error}

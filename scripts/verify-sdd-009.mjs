@@ -269,7 +269,7 @@ async function verifyStaticBoundaries() {
     "日记页缺少基础报告",
   );
   ensure(
-    nav.includes('href: "/diary"') && nav.includes('label: "记录"'),
+    nav.includes('href: "/diary"') && nav.includes('label: "日记"'),
     "主导航缺少记录入口",
   );
   ensure(

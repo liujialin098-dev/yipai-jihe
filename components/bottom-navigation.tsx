@@ -1,20 +1,15 @@
 "use client";
 
-import { Heart, Newspaper, Plus, Shirt, Sparkles } from "lucide-react";
+import { BookHeart, Home, Newspaper, Plus, Shirt } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
+  { href: "/", icon: Home, label: "首页", primary: false },
   { href: "/wardrobe", icon: Shirt, label: "衣橱", primary: false },
-  {
-    href: "/recommendations",
-    icon: Sparkles,
-    label: "推荐",
-    primary: false,
-  },
   { href: "/wardrobe/new", icon: Plus, label: "添加衣物", primary: true },
   { href: "/inspiration", icon: Newspaper, label: "时尚资讯", primary: false },
-  { href: "/favorites", icon: Heart, label: "收藏", primary: false },
+  { href: "/diary", icon: BookHeart, label: "日记", primary: false },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
@@ -23,6 +18,9 @@ function isCurrent(pathname: string, href: string) {
     return (
       pathname.startsWith("/wardrobe") && !pathname.startsWith("/wardrobe/new")
     );
+  }
+  if (href === "/diary") {
+    return pathname.startsWith("/diary") || pathname.startsWith("/favorites");
   }
   return pathname.startsWith(href);
 }
@@ -35,7 +33,7 @@ export function BottomNavigation() {
   return (
     <nav
       aria-label="主导航"
-      className="liquid-glass-web fixed bottom-3 left-1/2 z-30 grid w-[calc(100%-1.5rem)] max-w-[28.5rem] -translate-x-1/2 grid-cols-5 rounded-[1.65rem] px-1.5 py-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))]"
+      className="bottom-navigation-shell fixed bottom-3 left-1/2 z-30 grid min-h-16 w-[calc(100%-1.5rem)] max-w-[28.5rem] -translate-x-1/2 grid-cols-5 rounded-[1.65rem] px-1.5 py-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))]"
     >
       {items.map(({ href, icon: Icon, label, primary }) => {
         const current = isCurrent(pathname, href);
@@ -57,12 +55,12 @@ export function BottomNavigation() {
             <span
               className={
                 primary
-                  ? "nav-icon-shell -mt-7 flex size-14 items-center justify-center rounded-[1.25rem] border-[3px] border-[var(--surface-solid)] bg-[#b9a2cf] text-[#3c3146] shadow-[0_8px_24px_rgba(90,69,110,0.17)]"
+                  ? "nav-icon-shell -mt-2 flex size-12 items-center justify-center rounded-full border-2 border-white/72 bg-[#6f5687] text-white shadow-[0_8px_22px_rgba(80,59,101,0.2)]"
                   : "nav-icon-shell flex h-6 items-center justify-center"
               }
             >
               <Icon
-                className={primary ? "size-7" : "size-[1.1rem]"}
+                className={primary ? "size-6" : "size-[1.1rem]"}
                 strokeWidth={current ? 2.2 : 1.7}
                 aria-hidden="true"
               />
