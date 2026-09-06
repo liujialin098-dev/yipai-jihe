@@ -12,7 +12,9 @@ assert.deepEqual(links, [
   "/recommendations",
   "/inspiration",
 ]);
-assert.match(nav, /label: "推荐穿搭"/);
+for (const label of ["首页", "衣橱", "添加", "推荐", "资讯"])
+  assert.match(nav, new RegExp(`label: "${label}"`));
+assert.doesNotMatch(nav, /label: "(?:添加衣物|推荐穿搭|时尚资讯)"/);
 assert.match(nav, /nav-primary-bevel/);
 const header = await read("components/status-header.tsx");
 assert.match(header, /href="\/profile"/);

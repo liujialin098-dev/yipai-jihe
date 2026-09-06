@@ -7,14 +7,14 @@ import { usePathname } from "next/navigation";
 const items = [
   { href: "/", icon: Home, label: "首页", primary: false },
   { href: "/wardrobe", icon: Shirt, label: "衣橱", primary: false },
-  { href: "/wardrobe/new", icon: Plus, label: "添加衣物", primary: true },
+  { href: "/wardrobe/new", icon: Plus, label: "添加", primary: true },
   {
     href: "/recommendations",
     icon: Sparkles,
-    label: "推荐穿搭",
+    label: "推荐",
     primary: false,
   },
-  { href: "/inspiration", icon: Newspaper, label: "时尚资讯", primary: false },
+  { href: "/inspiration", icon: Newspaper, label: "资讯", primary: false },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
