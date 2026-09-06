@@ -25,7 +25,7 @@ export function DiaryDeleteButton({ entryId }: { entryId: string }) {
         <button
           type="submit"
           disabled={pending}
-          className="motion-button inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold text-[#c9342f] disabled:opacity-60"
+          className="interaction-danger interaction-preserve motion-button inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold text-[#c9342f] disabled:opacity-60"
         >
           {pending ? (
             <LoaderCircle

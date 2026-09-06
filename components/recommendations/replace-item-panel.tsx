@@ -49,7 +49,7 @@ export function ReplaceItemPanel({
                 name="replacementItemId"
                 value={candidate.id}
                 disabled={pending}
-                className="motion-button overflow-hidden rounded-[0.85rem] border border-[var(--hairline)] bg-[var(--surface-solid)] text-left"
+                className="interaction-preserve motion-button overflow-hidden rounded-[0.85rem] border border-[var(--hairline)] bg-[var(--surface-solid)] text-left"
               >
                 <span className="relative block aspect-square bg-[var(--surface-soft)]">
                   {candidate.imageUrl ? (

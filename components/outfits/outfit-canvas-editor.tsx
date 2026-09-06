@@ -736,7 +736,7 @@ export function OutfitCanvasEditor({
             disabled={
               !selectedId || !cutoutUrls[selectedId] || Boolean(cutoutPendingId)
             }
-            className="motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--fashion-lilac-soft)] px-3 text-xs font-semibold text-[#2c2542] disabled:cursor-not-allowed disabled:opacity-45"
+            className="interaction-preserve motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--fashion-lilac-soft)] px-3 text-xs font-semibold text-[#2c2542] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Eraser className="size-4" aria-hidden="true" />
             边缘精修

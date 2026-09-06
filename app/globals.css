@@ -280,42 +280,51 @@
 }
 
 :root
-  :is(
-    button,
-    a.motion-button,
-    a.pressable,
-    [data-slot="button"],
-    .profile-stat-link,
-    .profile-round-link,
-    summary:not(.profile-summary)
-  ):not(:disabled, [aria-disabled="true"], [data-disabled]):is(
-    :active,
-    :focus-visible
-  ) {
+  .motion-button:not(.interaction-preserve):not(
+    :disabled,
+    [aria-disabled="true"],
+    [data-disabled]
+  ):is(:active, :focus-visible) {
   background: var(--action-purple);
   color: white;
   border-color: var(--action-purple);
 }
 
 :root :is(button, a, summary):focus-visible {
-  outline: 2px solid var(--action-purple);
+  outline: 2px solid var(--interaction-focus, var(--action-purple));
   outline-offset: 3px;
+}
+
+.interaction-preserve {
+  --interaction-focus: currentColor;
+}
+
+.interaction-danger {
+  --interaction-focus: #c9342f;
+}
+
+.interaction-danger:is(:active, :focus-visible) {
+  background: color-mix(in srgb, #ff453a 14%, white);
+  border-color: color-mix(in srgb, #ff453a 32%, transparent);
+  color: #b42318;
 }
 
 @media (hover: hover) {
   :root
-    :is(
-      button,
-      a.motion-button,
-      a.pressable,
-      [data-slot="button"],
-      .profile-stat-link,
-      .profile-round-link,
-      summary:not(.profile-summary)
-    ):not(:disabled, [aria-disabled="true"], [data-disabled]):hover {
+    .motion-button:not(.interaction-preserve):not(
+      :disabled,
+      [aria-disabled="true"],
+      [data-disabled]
+    ):hover {
     background: var(--action-purple);
     color: white;
     border-color: var(--action-purple);
+  }
+
+  .interaction-danger:hover {
+    background: color-mix(in srgb, #ff453a 14%, white);
+    border-color: color-mix(in srgb, #ff453a 32%, transparent);
+    color: #b42318;
   }
 }
 
@@ -470,6 +479,26 @@
 
 .profile-stat-link + .profile-stat-link {
   border-left: 1px solid var(--hairline);
+}
+
+.profile-stat-link,
+.profile-round-link {
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+}
+
+@media (hover: hover) {
+  .profile-stat-link:hover {
+    background: rgb(255 255 255 / 34%);
+    color: #594b63;
+  }
+
+  .profile-round-link:hover {
+    border-color: rgb(40 35 51 / 28%);
+    background: rgb(255 255 255 / 28%);
+  }
 }
 
 .profile-tabs {
@@ -768,11 +797,6 @@
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(
-    circle at 50% 80%,
-    color-mix(in srgb, var(--system-blue) 16%, transparent),
-    transparent 68%
-  );
   content: "";
   opacity: 0;
   pointer-events: none;
@@ -782,8 +806,32 @@
     opacity var(--motion-fast) ease;
 }
 
+.pressable::after {
+  background: radial-gradient(
+    circle at 50% 80%,
+    rgb(29 29 31 / 6%),
+    transparent 68%
+  );
+}
+
+.motion-button::after {
+  background: radial-gradient(
+    circle at 50% 80%,
+    color-mix(in srgb, var(--action-purple) 14%, transparent),
+    transparent 68%
+  );
+}
+
+.motion-button.interaction-preserve::after {
+  background: radial-gradient(
+    circle at 50% 80%,
+    color-mix(in srgb, currentColor 10%, transparent),
+    transparent 68%
+  );
+}
+
 .pressable:hover {
-  border-color: color-mix(in srgb, var(--system-blue) 18%, var(--hairline));
+  border-color: color-mix(in srgb, currentColor 12%, var(--hairline));
   box-shadow: 0 20px 52px rgb(42 50 65 / 15%);
   transform: scale(1.012);
 }
