@@ -9,12 +9,17 @@ assert.deepEqual(links, [
   "/",
   "/wardrobe",
   "/wardrobe/new",
+  "/recommendations",
   "/inspiration",
-  "/diary",
 ]);
+assert.match(nav, /label: "推荐穿搭"/);
+assert.match(nav, /nav-primary-bevel/);
 const header = await read("components/status-header.tsx");
 assert.match(header, /href="\/profile"/);
 assert.match(header, /aria-label="打开个人主页"/);
+assert.match(header, /href="\/diary"/);
+assert.match(header, /aria-label="打开穿搭日记"/);
+assert.match(header, /diary-header-button/);
 assert.doesNotMatch(header, /editorial-nav|顶部导航/);
 assert.match(header, /editorial-header-shell/);
 const diary = await read("app/diary/page.tsx");
@@ -76,6 +81,7 @@ assert.match(css, /\.editorial-header-shell/);
 assert.match(css, /var\(--fashion-lime-soft\)/);
 assert.match(css, /\.bottom-navigation-shell/);
 assert.match(css, /var\(--fashion-lilac\) 68%/);
+assert.match(css, /\.nav-primary-bevel/);
 console.log("SDD-030：导航、退役入口、原图与隐私边界通过。");
 
 registerHooks({

@@ -226,7 +226,7 @@ async function verifyStaticBoundaries() {
     diaryPage,
     composer,
     recommendationButton,
-    nav,
+    header,
     report,
   ] = await Promise.all([
     readFile("supabase/migrations/20260828102413_outfit_diary.sql", "utf8"),
@@ -234,7 +234,7 @@ async function verifyStaticBoundaries() {
     readFile("app/diary/page.tsx", "utf8"),
     readFile("components/diary/diary-composer.tsx", "utf8"),
     readFile("components/diary/recommendation-diary-button.tsx", "utf8"),
-    readFile("components/bottom-navigation.tsx", "utf8"),
+    readFile("components/status-header.tsx", "utf8"),
     readFile("lib/diary/report.ts", "utf8"),
   ]);
 
@@ -269,8 +269,9 @@ async function verifyStaticBoundaries() {
     "日记页缺少基础报告",
   );
   ensure(
-    nav.includes('href: "/diary"') && nav.includes('label: "日记"'),
-    "主导航缺少记录入口",
+    header.includes('href="/diary"') &&
+      header.includes('aria-label="打开穿搭日记"'),
+    "顶部导航缺少穿搭日记入口",
   );
   ensure(
     report.includes("Math.round") && !report.toLowerCase().includes("openai"),

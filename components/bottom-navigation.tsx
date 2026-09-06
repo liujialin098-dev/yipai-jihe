@@ -1,6 +1,6 @@
 "use client";
 
-import { BookHeart, Home, Newspaper, Plus, Shirt } from "lucide-react";
+import { Home, Newspaper, Plus, Shirt, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,8 +8,13 @@ const items = [
   { href: "/", icon: Home, label: "首页", primary: false },
   { href: "/wardrobe", icon: Shirt, label: "衣橱", primary: false },
   { href: "/wardrobe/new", icon: Plus, label: "添加衣物", primary: true },
+  {
+    href: "/recommendations",
+    icon: Sparkles,
+    label: "推荐穿搭",
+    primary: false,
+  },
   { href: "/inspiration", icon: Newspaper, label: "时尚资讯", primary: false },
-  { href: "/diary", icon: BookHeart, label: "日记", primary: false },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
@@ -18,9 +23,6 @@ function isCurrent(pathname: string, href: string) {
     return (
       pathname.startsWith("/wardrobe") && !pathname.startsWith("/wardrobe/new")
     );
-  }
-  if (href === "/diary") {
-    return pathname.startsWith("/diary") || pathname.startsWith("/favorites");
   }
   return pathname.startsWith(href);
 }
@@ -55,7 +57,7 @@ export function BottomNavigation() {
             <span
               className={
                 primary
-                  ? "nav-icon-shell -mt-2 flex size-12 items-center justify-center rounded-full border-2 border-white/72 bg-[#6f5687] text-white shadow-[0_8px_22px_rgba(80,59,101,0.2)]"
+                  ? "nav-icon-shell nav-primary-bevel -mt-2 flex h-11 w-14 items-center justify-center rounded-[0.95rem] border-2 border-white/72 bg-[#6f5687] text-white shadow-[0_8px_22px_rgba(80,59,101,0.2)]"
                   : "nav-icon-shell flex h-6 items-center justify-center"
               }
             >

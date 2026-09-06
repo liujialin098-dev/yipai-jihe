@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BookHeart } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { BrandName } from "@/components/brand-name";
 import type { Viewer } from "@/lib/auth/viewer";
@@ -16,6 +17,23 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
     <header className="editorial-header pointer-events-none sticky top-0 z-30 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
       <div className="editorial-header-shell pointer-events-auto min-h-16 overflow-hidden rounded-[1.65rem] p-2">
         <div className="relative flex min-h-12 items-center justify-center px-1">
+          <Link
+            href="/diary"
+            aria-label="打开穿搭日记"
+            title="穿搭日记"
+            aria-current={
+              pathname.startsWith("/diary") || pathname.startsWith("/favorites")
+                ? "page"
+                : undefined
+            }
+            className="diary-header-button pressable absolute left-0 flex size-10 items-center justify-center rounded-full border-2 border-white/70 bg-white/52 text-[#4a5133] shadow-sm"
+          >
+            <BookHeart
+              className="size-[1.15rem]"
+              strokeWidth={1.9}
+              aria-hidden="true"
+            />
+          </Link>
           <Link
             href="/"
             aria-label="Ensemble 衣拍即合首页"
