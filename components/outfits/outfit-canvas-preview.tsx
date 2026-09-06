@@ -13,6 +13,7 @@ export function OutfitCanvasPreview({
   wardrobeItems,
   className = "",
   compact = false,
+  hideHeading = false,
 }: {
   title: string;
   theme: OutfitCanvasTheme;
@@ -20,6 +21,7 @@ export function OutfitCanvasPreview({
   wardrobeItems: OutfitCanvasWardrobeItem[];
   className?: string;
   compact?: boolean;
+  hideHeading?: boolean;
 }) {
   const palette = outfitCanvasTheme(theme);
   const wardrobeMap = new Map(wardrobeItems.map((item) => [item.id, item]));
@@ -35,20 +37,22 @@ export function OutfitCanvasPreview({
         } as CSSProperties
       }
     >
-      <div
-        className={`absolute z-20 max-w-[70%] ${compact ? "top-3 left-3" : "top-5 left-5"}`}
-      >
-        <p
-          className={`font-heading leading-tight font-semibold tracking-[-0.025em] text-[var(--canvas-ink)] ${compact ? "text-[0.72rem]" : "text-[1.2rem]"}`}
+      {!hideHeading ? (
+        <div
+          className={`absolute z-20 max-w-[70%] ${compact ? "top-3 left-3" : "top-5 left-5"}`}
         >
-          {title}
-        </p>
-        <p
-          className={`${compact ? "mt-0.5 text-[0.45rem]" : "mt-1 text-[0.62rem]"} font-semibold text-[color-mix(in_srgb,var(--canvas-ink)_62%,transparent)]`}
-        >
-          衣拍即合
-        </p>
-      </div>
+          <p
+            className={`font-heading leading-tight font-semibold tracking-[-0.025em] text-[var(--canvas-ink)] ${compact ? "text-[0.72rem]" : "text-[1.2rem]"}`}
+          >
+            {title}
+          </p>
+          <p
+            className={`${compact ? "mt-0.5 text-[0.45rem]" : "mt-1 text-[0.62rem]"} font-semibold text-[color-mix(in_srgb,var(--canvas-ink)_62%,transparent)]`}
+          >
+            衣拍即合
+          </p>
+        </div>
+      ) : null}
 
       {[...items]
         .sort((a, b) => a.zIndex - b.zIndex)

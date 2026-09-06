@@ -54,7 +54,7 @@
 }
 
 :root {
-  --background: #f1edff;
+  --background: #f2f1f5;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
   --surface-solid: #ffffff;
@@ -191,20 +191,7 @@
 }
 
 .app-backdrop {
-  background:
-    radial-gradient(circle at 4% 2%, rgb(216 255 82 / 42%), transparent 24rem),
-    radial-gradient(
-      circle at 96% 12%,
-      rgb(181 164 239 / 76%),
-      transparent 31rem
-    ),
-    radial-gradient(circle at 2% 55%, rgb(121 206 245 / 26%), transparent 27rem),
-    radial-gradient(
-      circle at 98% 82%,
-      rgb(255 139 107 / 24%),
-      transparent 24rem
-    ),
-    linear-gradient(180deg, #eee8ff 0%, #f7f5ff 42%, #f2eeff 100%);
+  background: var(--surface-solid);
 }
 
 .motion-stage {
@@ -226,58 +213,184 @@
     rgb(255 255 255 / 91%);
 }
 
-.profile-hero {
-  position: relative;
-  isolation: isolate;
-  border: 1px solid rgb(82 67 132 / 10%);
-  background:
-    radial-gradient(circle at 98% 0%, rgb(216 255 82 / 82%), transparent 34%),
-    radial-gradient(circle at 4% 96%, rgb(121 206 245 / 42%), transparent 34%),
-    var(--fashion-lilac-soft);
-  box-shadow: 0 24px 60px rgb(74 62 117 / 16%);
-}
-
-.profile-hero::after {
-  position: absolute;
-  top: 4.8rem;
-  right: -2.5rem;
-  z-index: -1;
-  width: 7rem;
-  height: 7rem;
-  border: 1px solid rgb(255 255 255 / 48%);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 20%);
-  content: "";
-  pointer-events: none;
-  transform: rotate(-9deg);
-}
-
-.profile-stat {
-  border: 1px solid rgb(32 33 36 / 6%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 58%);
-}
-
-.profile-stat[data-tone="lime"] {
-  background: var(--fashion-lime-soft);
-}
-
-.profile-stat[data-tone="lilac"] {
-  background: var(--fashion-lilac-soft);
-}
-
-.profile-stat[data-tone="coral"] {
-  background: var(--fashion-coral-soft);
-}
-
-.profile-stat[data-tone="sky"] {
-  background: var(--fashion-sky-soft);
-}
-
 .profile-avatar,
 .profile-header-avatar {
   transition:
     transform var(--motion-medium) var(--motion-spring),
     box-shadow var(--motion-medium) var(--motion-spring);
+}
+
+/* SDD-029: 身份与作品优先；色块用于封面，非整页渐变。 */
+.profile-collection {
+  color: var(--foreground);
+}
+
+.profile-cover {
+  position: relative;
+  height: 7.5rem;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: var(--fashion-lilac);
+  color: #282333;
+}
+
+.profile-cover::after {
+  position: absolute;
+  right: 4rem;
+  bottom: -1.2rem;
+  width: 3.5rem;
+  height: 4.6rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--fashion-lime);
+  content: "";
+  transform: rotate(18deg);
+  pointer-events: none;
+}
+
+.profile-round-link {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid rgb(40 35 51 / 18%);
+  border-radius: 50%;
+}
+
+.profile-identity {
+  position: relative;
+  margin-top: -2.25rem;
+}
+
+.profile-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  list-style: none;
+  cursor: pointer;
+  border-radius: 1rem;
+}
+
+.profile-summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-display-avatar {
+  display: flex;
+  width: 5.5rem;
+  height: 5.5rem;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.75rem;
+  border: 5px solid var(--surface-solid);
+  border-radius: 50%;
+  background: #282333;
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 500;
+}
+
+.profile-edit-label {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.profile-display-name {
+  grid-column: 1 / -1;
+  margin-top: 0.75rem;
+  overflow-wrap: anywhere;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.profile-display-caption {
+  grid-column: 1 / -1;
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.profile-edit[open] .profile-edit-label {
+  background: var(--fashion-lime);
+  color: #202124;
+}
+
+.profile-edit-form,
+.profile-empty {
+  background: var(--surface-soft);
+}
+
+.profile-privacy {
+  color: var(--text-secondary);
+}
+
+.profile-stats {
+  border-block: 1px solid var(--hairline);
+}
+
+.profile-stat-link + .profile-stat-link {
+  border-left: 1px solid var(--hairline);
+}
+
+.profile-tabs {
+  gap: 1.6rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.profile-tabs a {
+  display: flex;
+  min-height: 2.9rem;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.profile-tabs a[aria-current="page"] {
+  border-bottom-color: var(--foreground);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.profile-create {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.9rem;
+  border-radius: 999px;
+  background: var(--fashion-lime);
+  color: #202124;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.profile-collection a:focus-visible,
+.profile-summary:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
+.profile-outfit-link .outfit-canvas {
+  border-radius: 1.25rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .profile-outfit-link .outfit-canvas {
+    transition: transform var(--motion-medium) var(--motion-gentle);
+  }
+  .profile-outfit-link:hover .outfit-canvas {
+    transform: translateY(-3px);
+  }
 }
 
 .profile-avatar:hover,
@@ -836,11 +949,7 @@
   }
 
   .app-backdrop {
-    background:
-      radial-gradient(circle at 8% -8%, rgb(113 92 180 / 34%), transparent 35%),
-      radial-gradient(circle at 92% 16%, rgb(35 84 108 / 30%), transparent 28%),
-      radial-gradient(circle at 92% 84%, rgb(128 63 56 / 18%), transparent 26%),
-      var(--background);
+    background: var(--surface-solid);
   }
 
   .liquid-glass-web {
@@ -919,9 +1028,5 @@
     background: rgb(35 27 57 / 88%);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-  }
-
-  .profile-hero::after {
-    display: none;
   }
 }
