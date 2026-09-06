@@ -45,6 +45,8 @@ for (const path of ["app/outfits/new/page.tsx", "app/outfits/[id]/page.tsx"])
   assert.match(await read(path), /redirect\("\/recommendations"\)/);
 const css = await read("app/globals.css");
 assert.match(css, /--action-purple/);
+assert.match(css, /#eee6f5 0%, #f5eff9 44%, #fcfafe 88%/);
+assert.doesNotMatch(css, /\.nav-item,\s*\.editorial-nav a/);
 assert.match(css, /var\(--font-playful\)/);
 assert.match(css, /prefers-reduced-motion/);
 console.log("SDD-030：导航、退役入口、原图与隐私边界通过。");

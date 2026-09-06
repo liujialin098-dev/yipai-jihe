@@ -212,10 +212,10 @@ assert.match(refiner, /globalCompositeOperation = "destination-out"/);
 assert.match(refiner, /context\.drawImage\(original, 0, 0\)/);
 assert.match(editor, /重新专业抠图/);
 assert.match(editor, /边缘精修/);
-// SDD-030 用户确认加深紫色；保留历史算法测试，不恢复功能入口。
+// SDD-030 最新视觉校正为浅雾丁香；保留历史算法测试，不恢复功能入口。
 assert.match(
   styles,
-  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #dfcef8 0%, #eee3fb 42%, #faf7ff 88%\)/,
+  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #eee6f5 0%, #f5eff9 44%, #fcfafe 88%\)/,
 );
 assert.match(styles, /--fashion-lilac/);
 assert.match(styles, /prefers-reduced-transparency/);

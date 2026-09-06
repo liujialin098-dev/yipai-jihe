@@ -31,7 +31,7 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
         <Link
           href="/profile"
           aria-label="打开个人主页"
-          className="profile-header-avatar pressable absolute right-0 flex size-11 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#38254d] text-sm font-semibold text-white"
+          className="profile-header-avatar pressable absolute right-0 flex size-11 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-[#8c75a3] text-sm font-semibold text-white"
         >
           {viewer?.avatarUrl ? (
             <Image

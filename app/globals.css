@@ -54,22 +54,22 @@
 }
 
 :root {
-  --background: #ede5f7;
+  --background: #f5f1f8;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
   --surface-solid: #ffffff;
-  --surface-soft: #f1eff8;
+  --surface-soft: #f5f1f7;
   --surface-raised: rgb(255 255 255 / 72%);
   --text-secondary: #6e6e73;
   --text-tertiary: #86868b;
   --hairline: rgb(29 29 31 / 9%);
-  --action-purple: #7043ac;
-  --system-blue: #7043ac;
-  --system-blue-soft: #efe5ff;
+  --action-purple: #745c8f;
+  --system-blue: #745c8f;
+  --system-blue-soft: #f1eaf6;
   --fashion-lime: #d8ff52;
   --fashion-lime-soft: #efffc0;
-  --fashion-lilac: #b5a4ef;
-  --fashion-lilac-soft: #eee9ff;
+  --fashion-lilac: #c4b2da;
+  --fashion-lilac-soft: #f2ecf7;
   --fashion-coral: #ff8b6b;
   --fashion-coral-soft: #ffe4dc;
   --fashion-sky: #79cef5;
@@ -86,14 +86,14 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #0066cc;
+  --primary: #745c8f;
   --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: #eaf3ff;
-  --accent-foreground: #004f9e;
+  --accent: #f1eaf6;
+  --accent-foreground: #5f4977;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -192,7 +192,7 @@
 }
 
 .app-backdrop {
-  background: linear-gradient(165deg, #dfcef8 0%, #eee3fb 42%, #faf7ff 88%);
+  background: linear-gradient(165deg, #eee6f5 0%, #f5eff9 44%, #fcfafe 88%);
 }
 
 .motion-stage {
@@ -200,11 +200,11 @@
   isolation: isolate;
 }
 
-/* SDD-030：品牌双排导航；紫色交互覆盖旧四色按钮状态。 */
+/* SDD-030：品牌双排导航；雾丁香只用于克制的选中与操作反馈。 */
 .editorial-header {
-  background: rgb(236 224 251 / 90%);
+  background: rgb(247 243 250 / 88%);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgb(88 51 129 / 10%);
+  border-bottom: 1px solid rgb(91 70 112 / 8%);
 }
 
 .brand-wordmark {
@@ -212,7 +212,7 @@
   font-size: 1.85rem;
   font-weight: 400;
   letter-spacing: 0.045em;
-  color: #38254d;
+  color: #4d4158;
 }
 
 .editorial-header .profile-header-avatar {
@@ -228,12 +228,20 @@
   border-radius: 14px 14px 0 0;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
-  color: #675575;
+  color: #796d82;
 }
 
 .editorial-nav a[aria-current="page"] {
   color: var(--action-purple);
-  box-shadow: inset 0 -2px var(--action-purple);
+  box-shadow: inset 0 -1.5px
+    color-mix(in srgb, var(--action-purple) 72%, transparent);
+}
+
+@media (hover: hover) {
+  .editorial-nav a:hover {
+    background: rgb(255 255 255 / 54%);
+    color: var(--action-purple);
+  }
 }
 
 .app-page-title + .app-page-lead {
@@ -242,11 +250,11 @@
 }
 
 :root .nav-item[data-current="true"] .nav-bubble {
-  background: #e3d4f8;
+  background: rgb(238 230 245 / 86%);
 }
 
 :root .nav-item[data-current="true"] {
-  color: var(--action-purple);
+  color: #665474;
 }
 
 :root label input:enabled:is(:checked, :focus-visible) + .motion-button,
@@ -277,8 +285,6 @@
     a.motion-button,
     a.pressable,
     [data-slot="button"],
-    .nav-item,
-    .editorial-nav a,
     .profile-stat-link,
     .profile-round-link,
     summary:not(.profile-summary)
@@ -296,13 +302,6 @@
   outline-offset: 3px;
 }
 
-:root
-  .nav-item[data-primary="true"]:is(:active, :focus-visible)
-  .nav-icon-shell {
-  background: var(--action-purple);
-  color: white;
-}
-
 @media (hover: hover) {
   :root
     :is(
@@ -310,8 +309,6 @@
       a.motion-button,
       a.pressable,
       [data-slot="button"],
-      .nav-item,
-      .editorial-nav a,
       .profile-stat-link,
       .profile-round-link,
       summary:not(.profile-summary)
@@ -319,11 +316,6 @@
     background: var(--action-purple);
     color: white;
     border-color: var(--action-purple);
-  }
-
-  :root .nav-item[data-primary="true"]:hover .nav-icon-shell {
-    background: var(--action-purple);
-    color: white;
   }
 }
 
@@ -834,31 +826,15 @@
   position: absolute;
   inset: 0.2rem 0.35rem 0.15rem;
   z-index: -1;
-  border: 1px solid color-mix(in srgb, var(--fashion-lilac) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fashion-lilac) 26%, transparent);
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--fashion-lilac-soft) 88%, transparent);
+  background: rgb(243 238 247 / 82%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 68%);
   opacity: 0;
   transform: scale(0.42);
   transition:
     transform 520ms var(--motion-spring),
     opacity var(--motion-fast) ease;
-}
-
-.nav-item:nth-child(1) .nav-bubble {
-  background: color-mix(in srgb, var(--fashion-lime-soft) 90%, transparent);
-}
-
-.nav-item:nth-child(2) .nav-bubble {
-  background: color-mix(in srgb, var(--fashion-sky-soft) 90%, transparent);
-}
-
-.nav-item:nth-child(4) .nav-bubble {
-  background: color-mix(in srgb, var(--fashion-lilac-soft) 90%, transparent);
-}
-
-.nav-item:nth-child(5) .nav-bubble {
-  background: color-mix(in srgb, var(--fashion-coral-soft) 90%, transparent);
 }
 
 .nav-item[data-current="true"] .nav-bubble,
@@ -870,7 +846,8 @@
 
 .nav-item[data-primary="true"] .nav-bubble {
   inset: -0.3rem 0.12rem 0.1rem;
-  background: radial-gradient(circle, rgb(0 102 204 / 13%), transparent 72%);
+  border: 0;
+  background: radial-gradient(circle, rgb(185 162 207 / 18%), transparent 72%);
 }
 
 .nav-icon-shell {
@@ -882,7 +859,28 @@
 }
 
 .nav-item:active .nav-icon-shell {
-  transform: scale(0.92);
+  transform: translateY(1px) scale(0.95);
+}
+
+.nav-item[data-primary="true"]:is(:active, :focus-visible) .nav-icon-shell {
+  background: #9679b2;
+  color: white;
+}
+
+@media (hover: hover) {
+  .nav-item:hover {
+    color: #665474;
+  }
+
+  .nav-item:not([data-primary="true"]):hover .nav-icon-shell {
+    transform: translateY(-1px);
+  }
+
+  .nav-item[data-primary="true"]:hover .nav-icon-shell {
+    background: #9d81b8;
+    color: white;
+    transform: translateY(-1px);
+  }
 }
 
 .connection-dot {

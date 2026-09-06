@@ -28,7 +28,7 @@ assert.match(preview, /cutoutUrl \?\? wardrobeItem.imageUrl/);
 assert.match(preview, /layoutItem.rotation/);
 assert.match(
   css,
-  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #dfcef8 0%, #eee3fb 42%, #faf7ff 88%\)/,
+  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #eee6f5 0%, #f5eff9 44%, #fcfafe 88%\)/,
 );
 assert.match(css, /\.profile-collection/);
 assert.match(css, /prefers-reduced-motion/);
@@ -125,5 +125,5 @@ if (process.argv.includes("--fixture")) {
   );
 }
 console.log(
-  "SDD-029 历史预览渲染回归通过；当前个人主页、深浅紫渐变与退役入口按 SDD-030 验收。",
+  "SDD-029 历史预览渲染回归通过；当前个人主页、浅雾丁香渐变与退役入口按 SDD-030 验收。",
 );
