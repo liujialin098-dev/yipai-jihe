@@ -212,7 +212,11 @@ assert.match(refiner, /globalCompositeOperation = "destination-out"/);
 assert.match(refiner, /context\.drawImage\(original, 0, 0\)/);
 assert.match(editor, /重新专业抠图/);
 assert.match(editor, /边缘精修/);
-assert.match(styles, /--background: #f1edff/);
+// SDD-029 用户确认的浅紫渐变覆盖 SDD-026 旧版背景色。
+assert.match(
+  styles,
+  /\.app-backdrop\s*\{\s*background: linear-gradient\(165deg, #f0eaff 0%, #f8f5ff 38%, #fff 82%\)/,
+);
 assert.match(styles, /--fashion-lilac/);
 assert.match(styles, /prefers-reduced-transparency/);
 assert.match(env, /BAIDU_API_KEY/);
