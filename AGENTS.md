@@ -31,6 +31,9 @@
 
 ## 注意事项
 
+- **当前 Production（2026-09-06）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_95cQdxJFKMcr2SVMF8QmDJiuzEqj`，源提交 `e369ea8`，Ready。SDD-027/028/029 已上线，此条覆盖下文旧的“未发布”与 SDD-026 线上基线；手机无代理/有代理、本人定位和历史账号登录仍待集中验收。九路由 HTTP 200、隔离体验进入、390px 新个人主页、和风上海今日/明日直连通过，部署后 error 日志查询无结果；未重新执行真实抠图/图片识别。详见 progress.md。
+- 本次发布：`npx vercel deploy --prod --yes --scope jialin-d583`；检视 `npx vercel inspect https://yipai-jihe-8nqcftvjb-jialin-d583.vercel.app --scope jialin-d583`。后续发布继续核对同项目、11 项生产配置名称及 Ready/production/固定域名，不得使用旧 ai-coding 项目。`vercel link --yes` 当前会刷新本地 OIDC；本次已核对既有 Supabase/OpenAI 配置仍在，后续先保护本地配置，不得以完整 env pull 覆盖。
+
 - 2026-09-06 发布配置：和风五项 `QWEATHER_*` 已安全保存为 `yipai-jihe` Production Secret，覆盖下文旧的“线上尚未配置”记录。`scripts/configure-qweather-production.mjs` 校验项目/团队与本机既有 Ed25519 密钥，默认 dry run，只有 `--apply` 经 stdin 写入、不覆盖已有变量、不输出私钥。Vercel Secret 导出只得到 `[SENSITIVE]`，不得作为有效本地凭据；部署与本机百度配置是不同任务，当前本机百度密钥仍缺失。
 
 - SDD-029（2026-09-06）个人主页采用纯色丁香封面、突出头像昵称、横排真实统计与近期穿搭作品区；用户随后要求 App 底板采用浅紫到冷白的低对比渐变（#f0eaff → #f8f5ff → #fff），覆盖首版纯白决定，不恢复高饱和四色渐变。四色仍按固定角色用于内容与操作，正式 Logo、底部 Dock、原路由和私密边界不变。资料编辑默认为收起，原生 details 支持键盘；仅个人主页的 `OutfitCanvasPreview` 使用 `hideHeading` 将标题放到图外，不改原画布变换或分享图。减少常驻解释文案，生成快照在“生成信息”内按需展开，保留天气来源、权限隐私及真实错误。抠图失败提示简写，不代表专业服务已恢复。保留根节点既有固定浅色策略。验收为 `npm run verify:sdd-029`、check/build 和 390px/桌面浏览器；本阶段未部署，027/028 也仍未发布。

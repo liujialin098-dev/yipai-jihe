@@ -33,6 +33,12 @@
 
 ## 当前总览
 
+- **最新线上版本（2026-09-06）**：SDD-027/028/029 已发布到 `https://yipai-jihe.vercel.app`；部署 `dpl_95cQdxJFKMcr2SVMF8QmDJiuzEqj`，源提交 `e369ea8`，Production / Ready。该记录覆盖下文历史“027/028/029 未部署”状态；手机网络、本人定位与历史账号登录验收仍待完成。
+
+- 发布验收：九个核心路由 HTTP 200（未登录业务路由仍执行正常身份入口跳转）；隔离体验身份进入成功，390px 个人主页浅紫渐变与新作品区生效，无水平溢出和浏览器运行错误。上海今日 28°C / 体感29°C（17:54）、09-07 预报24～30°C（17:56），浏览器直连和风 current/daily 成功，生产密钥签发与城市解析正常；天气仅为测试时刻证据，不作为默认城市。最近30分钟 error 日志查询无结果。
+- 本次未改本人账号、衣橱和公开访问策略，未调用付费抠图或识别测试；保留一组空衣橱隔离体验身份。百度线上双密钥仍在，本机缺失仍未解决；Vercel Secret 导出为 `[SENSITIVE]`，不可当作实际密钥。旧导出准备文件被 Git 与部署排除，未写入有效本地配置。国内手机开关代理和真实定位仍需本人验收；桌面成功不替代这些结论。
+- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583`；核对命令：`npx vercel inspect https://yipai-jihe-8nqcftvjb-jialin-d583.vercel.app --scope jialin-d583`；错误日志：`npx vercel logs dpl_95cQdxJFKMcr2SVMF8QmDJiuzEqj --level error --since 30m --scope jialin-d583`。侧边栏正式站点打开请求已提交。
+
 - 2026-09-06 发布准备：用户明确要求部署最新版。和风五项服务端配置已通过 stdin 保存到 `yipai-jihe` Production Secret，未覆盖原有变量；新增 `scripts/configure-qweather-production.mjs`（默认只校验，显式 `--apply` 才写入且不覆盖已有变量）。check/build、007/026/028/029 和 027 离线门禁通过；026 背景断言已跟随 029 的用户决定更新。上线状态以本次发布验收记录为准。
 
 - SDD-029 于 2026-09-06 完成本地视觉与核心验收，未部署；详见本文末尾记录和 `specs/029-profile-style-refresh/`。本阶段独立于 SDD-028 待完成的手机联网与线上配置验收。
