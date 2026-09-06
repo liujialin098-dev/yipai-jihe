@@ -207,12 +207,43 @@
   border-bottom: 1px solid rgb(91 70 112 / 8%);
 }
 
-.brand-wordmark {
-  font-family: var(--font-playful), var(--font-heading);
-  font-size: 1.85rem;
-  font-weight: 400;
-  letter-spacing: 0.045em;
+.brand-lockup {
   color: #4d4158;
+}
+
+.brand-name-lockup {
+  display: inline-flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.08rem;
+}
+
+.brand-name-english {
+  font-family: var(--font-editorial), "Iowan Old Style", Baskerville, serif;
+  font-size: 1.62rem;
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: -0.025em;
+}
+
+.brand-name-chinese {
+  padding-left: 0.08rem;
+  color: #796d82;
+  font-family: var(--font-heading);
+  font-size: 0.5rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.24em;
+}
+
+.auth-brand-name .brand-name-english {
+  font-size: 1.82rem;
+}
+
+.auth-brand-name .brand-name-chinese {
+  font-size: 0.54rem;
 }
 
 .editorial-header .profile-header-avatar {

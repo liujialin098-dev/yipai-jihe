@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/brand-mark";
+import { BrandName } from "@/components/brand-name";
 import type { Viewer } from "@/lib/auth/viewer";
 import { displayNameInitial } from "@/lib/profile/validation";
 
@@ -22,11 +23,11 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
       <div className="relative flex min-h-12 items-center justify-center">
         <Link
           href="/"
-          aria-label="衣拍即合首页"
-          className="brand-wordmark flex min-h-11 items-center gap-2"
+          aria-label="Ensemble 衣拍即合首页"
+          className="brand-lockup flex min-h-11 items-center gap-2"
         >
           <BrandMark className="size-8 rounded-xl" sizes="32px" />
-          <span>衣拍即合</span>
+          <BrandName />
         </Link>
         <Link
           href="/profile"

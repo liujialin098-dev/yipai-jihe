@@ -12,10 +12,19 @@ const playful = localFont({
   preload: false,
 });
 
+const editorial = localFont({
+  src: "../public/fonts/CormorantGaramond-Variable.ttf",
+  variable: "--font-editorial",
+  weight: "300 700",
+  style: "normal",
+  display: "swap",
+  preload: false,
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "衣拍即合",
-    template: "%s · 衣拍即合",
+    default: "Ensemble · 衣拍即合",
+    template: "%s · Ensemble",
   },
   description: "先认识你的衣橱，再给出真正穿得上的搭配建议。",
   icons: {
@@ -42,7 +51,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="zh-CN"
-      className={`light h-full antialiased ${playful.variable}`}
+      className={`light h-full antialiased ${playful.variable} ${editorial.variable}`}
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full bg-background">

@@ -8,6 +8,7 @@ import {
   LoginForm,
 } from "@/components/auth/login-form";
 import { BrandMark } from "@/components/brand-mark";
+import { BrandName } from "@/components/brand-name";
 
 type EntryMode = "login" | "register";
 
@@ -19,9 +20,7 @@ export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
       <header className="flex items-center gap-3">
         <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
         <div>
-          <p className="font-heading text-lg leading-none font-semibold tracking-[-0.02em]">
-            衣拍即合
-          </p>
+          <BrandName className="auth-brand-name" />
           <p className="mt-1.5 text-[0.68rem] font-medium text-[var(--text-tertiary)]">
             你的私人穿搭助手
           </p>

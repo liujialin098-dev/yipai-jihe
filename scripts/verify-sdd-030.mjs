@@ -15,6 +15,13 @@ assert.deepEqual(links, [
 const header = await read("components/status-header.tsx");
 for (const label of ["首页", "穿搭日记", "个人主页"])
   assert.ok(header.includes(label));
+const brandName = await read("components/brand-name.tsx");
+assert.match(brandName, /Ensemble/);
+assert.match(brandName, /衣拍即合/);
+const layout = await read("app/layout.tsx");
+assert.match(layout, /CormorantGaramond-Variable\.ttf/);
+assert.match(layout, /--font-editorial/);
+assert.match(layout, /Ensemble · 衣拍即合/);
 const card = await read("components/recommendations/recommendation-card.tsx");
 assert.doesNotMatch(card, /OutfitCanvasPreview|\/outfits\/|抠图/);
 for (const label of [
@@ -52,6 +59,7 @@ assert.match(css, /\.motion-button:not\(\.interaction-preserve\)/);
 assert.match(css, /\.interaction-danger/);
 assert.match(css, /\.motion-button\.interaction-preserve::after/);
 assert.match(css, /var\(--font-playful\)/);
+assert.match(css, /var\(--font-editorial\)/);
 assert.match(css, /prefers-reduced-motion/);
 console.log("SDD-030：导航、退役入口、原图与隐私边界通过。");
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
 import { BrandMark } from "@/components/brand-mark";
+import { BrandName } from "@/components/brand-name";
 import { getViewer } from "@/lib/auth/viewer";
 
 export const metadata: Metadata = { title: "账号登录" };
@@ -43,9 +44,7 @@ export default async function LoginPage({
         <div className="mb-10 flex items-center gap-3">
           <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
           <div>
-            <p className="font-heading text-lg leading-none font-semibold tracking-[-0.02em]">
-              衣拍即合
-            </p>
+            <BrandName className="auth-brand-name" />
             <p className="mt-1.5 text-[0.68rem] font-medium text-[var(--text-tertiary)]">
               你的私人穿搭助手
             </p>
@@ -53,7 +52,7 @@ export default async function LoginPage({
         </div>
       ) : null}
       <h1 className={`${viewer?.isAnonymous ? "mt-5 " : ""}app-page-title`}>
-        登录衣拍即合
+        登录 Ensemble
       </h1>
       <p className="app-page-lead mt-4">
         使用已绑定的邮箱和密码直接登录，不会发送验证邮件。
