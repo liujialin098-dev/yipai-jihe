@@ -2,6 +2,7 @@ import {
   ArrowRight,
   CalendarDays,
   Images,
+  Layers3,
   LogIn,
   Search,
   ShieldCheck,
@@ -178,7 +179,28 @@ export default async function Home({
         />
       </Link>
 
-      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:3]">
+      <Link
+        href="/stickers"
+        className="pressable stagger-item mt-5 flex items-center gap-4 rounded-[1.55rem] bg-[var(--fashion-lilac-soft)] p-4.5 shadow-[0_14px_34px_rgba(81,59,104,0.1)] [--stagger:3]"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--fashion-lime)] text-[#1d1d1f]">
+          <Layers3 className="size-4.5" strokeWidth={1.7} aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">
+            衣物贴纸册
+          </h2>
+          <p className="mt-1 truncate text-xs text-[var(--text-secondary)]">
+            挑出今天想穿的衣物，做成白边贴纸
+          </p>
+        </div>
+        <ArrowRight
+          className="size-4 shrink-0 text-[var(--text-tertiary)]"
+          aria-hidden="true"
+        />
+      </Link>
+
+      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:4]">
         <h2 className="app-section-title">登录后可跨设备使用</h2>
         <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">
           {viewer && !viewer.isAnonymous

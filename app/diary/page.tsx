@@ -4,6 +4,7 @@ import {
   ArrowRight,
   CalendarDays,
   ImageOff,
+  Layers3,
   PenLine,
   Plus,
   Shirt,
@@ -206,6 +207,14 @@ function DiaryHistory({
       >
         <Plus className="size-4" aria-hidden="true" />
         手工记录穿搭
+      </Link>
+
+      <Link
+        href="/stickers"
+        className="pressable mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--fashion-lilac-soft)] px-5 text-sm font-semibold text-[var(--foreground)]"
+      >
+        <Layers3 className="size-4" aria-hidden="true" />
+        制作今日贴纸
       </Link>
 
       {error ? (

@@ -9,6 +9,7 @@ type GarmentStickerProps = {
   eager?: boolean;
   className?: string;
   imageClassName?: string;
+  surface?: "card" | "loose";
 };
 
 export function GarmentSticker({
@@ -19,6 +20,7 @@ export function GarmentSticker({
   eager = false,
   className,
   imageClassName,
+  surface = "card",
 }: GarmentStickerProps) {
   const source = cutoutUrl ?? imageUrl;
   if (!source) return null;
@@ -27,7 +29,11 @@ export function GarmentSticker({
   const fitClassName = mode === "cutout" ? "object-contain" : "object-cover";
 
   return (
-    <span className={cn("garment-sticker", className)} data-sticker-mode={mode}>
+    <span
+      className={cn("garment-sticker", className)}
+      data-sticker-mode={mode}
+      data-sticker-surface={surface}
+    >
       {mode === "cutout" ? (
         <Image
           src={source}
