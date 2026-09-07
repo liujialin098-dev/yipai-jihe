@@ -1296,7 +1296,7 @@
 
 下一步：收到用户明确“更新部署”后发布 Production，并用已有透明贴纸复验下载文件尺寸、系统分享/下载降级与本人真实日记月历；SDD-030 百炼真实模型和 SDD-002 历史账号验收仍独立保留。
 
-提交记录：`73d650f`（`feat: add free sticker canvas and monthly calendar`）；包含 SDD-034 全套规格、无格自由画板、高清导出、贴纸月历、独立门禁和进度文档，未包含用户未追踪的 Logo 备选、PRD 文档或辅助脚本。
+提交记录：`73d650f`（`feat: add free sticker canvas and monthly calendar`）完成 SDD-034 主功能；`500ce60`（`feat: add light and dark sticker canvas themes`）补充 5 种浅色、4 种深色及屏幕/导出统一渐变。均未包含用户未追踪的 Logo 备选、PRD 文档或辅助脚本。
 
 完成任一阶段后，在对应阶段的“阶段完成记录”中填写：
 
