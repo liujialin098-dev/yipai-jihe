@@ -46,6 +46,9 @@ for (const contract of [
   "navigator.share",
   "navigator.canShare",
   "localStorage",
+  '"浅色"',
+  '"深色"',
+  "data-tone={palette.tone}",
   'surface={wardrobeItem.cutoutUrl ? "loose" : "card"}',
 ]) {
   assert.ok(canvas.includes(contract), `自由画板缺少合同：${contract}`);
@@ -60,6 +63,13 @@ for (const boundary of [
   "parseStoredStickerCanvas",
   "normalizeStickerStack",
   "value.version !== 1",
+  'value: "plum"',
+  'value: "midnight"',
+  'value: "forest"',
+  'value: "espresso"',
+  'tone: "dark"',
+  "endColor",
+  "accentColor",
   "1: [[0.5, 0.55]]",
   "slice(0, 8)",
 ]) {
@@ -76,6 +86,8 @@ for (const contract of [
   "zIndex",
   "rotation",
   "brightness(0)",
+  "palette.endColor",
+  "palette.accentColor",
 ]) {
   assert.ok(exporter.includes(contract), `图片导出缺少合同：${contract}`);
 }
@@ -103,6 +115,7 @@ for (const style of [
   ".sticker-tool-range",
   ".sticker-month-card",
   ".sticker-calendar-day",
+  '.sticker-free-canvas[data-tone="dark"]',
   "prefers-reduced-motion",
 ]) {
   assert.ok(css.includes(style), `贴纸视觉缺少合同：${style}`);

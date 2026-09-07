@@ -361,15 +361,40 @@
     radial-gradient(circle at 86% 10%, rgb(255 255 255 / 46%), transparent 28%),
     radial-gradient(
       circle at 12% 88%,
-      color-mix(in srgb, var(--fashion-lime) 16%, transparent),
+      color-mix(in srgb, var(--sticker-canvas-accent) 30%, transparent),
       transparent 32%
     ),
-    var(--sticker-canvas-bg);
+    linear-gradient(
+      145deg,
+      var(--sticker-canvas-bg),
+      var(--sticker-canvas-end) 74%,
+      var(--sticker-canvas-accent)
+    );
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 66%),
     inset 0 0 0 1px rgb(50 39 61 / 7%),
     0 22px 58px rgb(73 54 88 / 14%);
   overscroll-behavior: contain;
+}
+
+.sticker-free-canvas[data-tone="dark"] {
+  background:
+    radial-gradient(circle at 86% 10%, rgb(255 255 255 / 12%), transparent 28%),
+    radial-gradient(
+      circle at 12% 88%,
+      color-mix(in srgb, var(--sticker-canvas-accent) 44%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      var(--sticker-canvas-bg),
+      var(--sticker-canvas-end) 74%,
+      var(--sticker-canvas-accent)
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 18%),
+    inset 0 0 0 1px rgb(255 255 255 / 8%),
+    0 24px 62px rgb(38 28 46 / 24%);
 }
 
 .sticker-free-canvas::after {
@@ -400,6 +425,13 @@
     0 0 0 2px rgb(45 37 52 / 72%),
     0 0 0 6px rgb(255 255 255 / 58%);
   filter: saturate(1.04);
+}
+
+.sticker-free-canvas[data-tone="dark"]
+  .sticker-free-canvas-item[data-selected="true"] {
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 88%),
+    0 0 0 6px rgb(255 255 255 / 18%);
 }
 
 .sticker-free-canvas-item[data-ready="false"][data-selected="true"] {

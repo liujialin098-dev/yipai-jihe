@@ -81,7 +81,8 @@ export async function exportStickerBoard({
   const palette = stickerCanvasTheme(theme);
   const gradient = context.createLinearGradient(0, 0, width, height);
   gradient.addColorStop(0, palette.color);
-  gradient.addColorStop(1, "#ffffff");
+  gradient.addColorStop(0.74, palette.endColor);
+  gradient.addColorStop(1, palette.accentColor);
   context.fillStyle = gradient;
   context.fillRect(0, 0, width, height);
 

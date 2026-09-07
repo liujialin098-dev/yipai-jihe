@@ -20,7 +20,7 @@
 - [x] T006 [US1] 实现 Pointer Events 拖动、键盘方向键和本地布局恢复于 `components/stickers/sticker-canvas.tsx`
 - [x] T007 [US1] 实现缩放、旋转、四向微调、置顶置底和恢复排布于 `components/stickers/sticker-canvas.tsx`
 - [x] T008 [US1] 将贴纸选择与专业生成结果接入自由画板于 `components/stickers/sticker-studio.tsx`
-- [x] T009 [US1] 增加无格子画板、选中态和减少动态样式于 `app/globals.css`
+- [x] T009 [US1] 增加无格子画板、浅色/深色主题、对应选中态和减少动态样式于 `app/globals.css`
 
 ## Phase 4: User Story 2 - 下载或分享贴纸成品
 

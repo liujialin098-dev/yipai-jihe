@@ -375,40 +375,63 @@ export function StickerCanvas({
     <>
       <fieldset className="mt-5">
         <legend className="sr-only">画板底色</legend>
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-semibold text-[var(--text-secondary)]">
-            画板底色
-          </p>
-          <div className="flex gap-2">
-            {STICKER_CANVAS_THEMES.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setTheme(option.value)}
-                aria-pressed={theme === option.value}
-                aria-label={`选择${option.label}底色`}
-                className="outfit-color-chip relative size-11 rounded-full border-2 border-white shadow-[0_5px_16px_rgba(32,33,36,0.1)]"
-                style={{ backgroundColor: option.color }}
-              >
-                {theme === option.value ? (
-                  <Check
-                    className="absolute inset-0 m-auto size-4"
-                    strokeWidth={2.4}
-                    aria-hidden="true"
-                  />
-                ) : null}
-              </button>
-            ))}
-          </div>
+        <p className="text-xs font-semibold text-[var(--text-secondary)]">
+          画板底色
+        </p>
+        <div className="mt-3 space-y-2.5">
+          {(
+            [
+              ["light", "浅色"],
+              ["dark", "深色"],
+            ] as const
+          ).map(([tone, label]) => (
+            <div
+              key={tone}
+              className="grid grid-cols-[2.5rem_1fr] items-center gap-3"
+            >
+              <span className="text-[0.68rem] font-semibold text-[var(--text-tertiary)]">
+                {label}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {STICKER_CANVAS_THEMES.filter(
+                  (option) => option.tone === tone,
+                ).map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setTheme(option.value)}
+                    aria-pressed={theme === option.value}
+                    aria-label={`选择${label}${option.label}底色`}
+                    className="outfit-color-chip relative size-11 rounded-full border-2 border-white shadow-[0_5px_16px_rgba(32,33,36,0.13)]"
+                    style={{
+                      background: `linear-gradient(145deg, ${option.color}, ${option.endColor})`,
+                      color: option.text,
+                    }}
+                  >
+                    {theme === option.value ? (
+                      <Check
+                        className="absolute inset-0 m-auto size-4"
+                        strokeWidth={2.4}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </fieldset>
 
       <div
         ref={canvasRef}
         className="sticker-free-canvas relative mt-4 aspect-[4/5] overflow-hidden rounded-[2rem]"
+        data-tone={palette.tone}
         style={
           {
             "--sticker-canvas-bg": palette.color,
+            "--sticker-canvas-end": palette.endColor,
+            "--sticker-canvas-accent": palette.accentColor,
             "--sticker-canvas-ink": palette.text,
           } as CSSProperties
         }
