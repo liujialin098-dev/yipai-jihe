@@ -1,9 +1,9 @@
 "use client";
 
 import { Check, LoaderCircle, RefreshCw } from "lucide-react";
-import Image from "next/image";
 import { useActionState } from "react";
 import { replaceDailyRecommendationItem } from "@/app/recommendations/actions";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import { INITIAL_RECOMMENDATION_ACTION_STATE } from "@/lib/recommendations/constants";
 import type { WardrobeItem } from "@/lib/wardrobe/data";
 
@@ -52,14 +52,13 @@ export function ReplaceItemPanel({
                 className="interaction-preserve motion-button overflow-hidden rounded-[0.85rem] border border-[var(--hairline)] bg-[var(--surface-solid)] text-left"
               >
                 <span className="relative block aspect-square bg-[var(--surface-soft)]">
-                  {candidate.imageUrl ? (
-                    <Image
-                      src={candidate.imageUrl}
+                  {candidate.cutoutUrl || candidate.imageUrl ? (
+                    <GarmentSticker
+                      imageUrl={candidate.imageUrl}
+                      cutoutUrl={candidate.cutoutUrl}
                       alt={candidate.name}
-                      fill
                       sizes="150px"
-                      unoptimized
-                      className="object-cover"
+                      className="size-full rounded-[0.8rem]"
                     />
                   ) : null}
                 </span>

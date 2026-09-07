@@ -1,6 +1,8 @@
 # 项目开发说明
 
-## 当前有效决策：SDD-030（2026-09-06）
+## 当前有效决策：SDD-030 + SDD-031（2026-09-07）
+
+- SDD-031 在不恢复抠图操作入口的前提下，为衣橱、推荐单品和换件候选统一增加衣物纸贴材质：已有 `cutoutUrl` 时优先显示透明图，并以独立白色轮廓层、丁香调轻阴影和底层纸纹增强层次；只有 `imageUrl` 时使用完整圆角纸卡，严禁给矩形原图伪造衣物外轮廓。材质不得改变衣物颜色或像素，不得新增网络请求、图片写入、数据库变更或账号权限。减少动态必须取消抬升/缩放，减少透明度必须关闭纸纹。当前仅本地完成，Production 仍为下述 SDD-030 部署。
 
 - SDD-030 代码、品牌视觉、动态标题、反馈画像、每日可信趋势和最新导航均已发布 Production；当前部署源提交为 `275ef04`。真实千问联调仍因未配置百炼凭据而未完成。圆润粗体字标提交为 `5bb80e6`，用户选定的青柠/丁香折叠 `E` 主标提交为 `1e17950`。以 `progress.md` 的 SDD-030 清单为准。以下历史 SDD-024/026/029 中“画布、卡片分享、自动/专业/人工抠图及近期作品展示”约定已被本次用户决定覆盖，不得恢复默认入口。
 - SDD-030 最新线上导航：顶部青柠栏为左侧圆形日记、居中品牌、右侧圆形头像，个人主页仍只通过头像进入；底部使用浅紫材质并固定为首页、衣橱、中央添加、推荐、资讯五项，所有可见标签统一两个汉字。日记页继续合并日记、收藏、利用率，旧 `/favorites` 重定向到收藏栏。
@@ -28,7 +30,7 @@
 ## 项目速览
 
 - `app/`：首页、衣橱列表与单品详情/编辑、AI 添加衣物工作区、推荐、时尚灵感、自由穿搭画布、个人主页、穿搭日记/利用率、收藏、设置路由，以及匿名会话与衣物入库 Route Handlers。
-- `components/`：移动端应用外壳、统一品牌标志、青柠日记/品牌/头像顶栏、浅紫五项底部导航、会话启动、衣橱筛选/卡片/表单、入库工作区、推荐换件、个人资料编辑、日记/收藏合并视图、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
+- `components/`：移动端应用外壳、统一品牌标志、青柠日记/品牌/头像顶栏、浅紫五项底部导航、会话启动、衣橱筛选/纸贴卡片/表单、入库工作区、推荐换件、个人资料编辑、日记/收藏合并视图、偏好问卷和通用状态；`components/ui/` 保留 shadcn/ui 基础组件。
 - `lib/auth/viewer.ts`：服务端当前用户最小读取；`lib/supabase/`：browser/server/proxy 客户端、公开配置检查和生成的数据库类型。
 - `lib/openai/responses.ts`：Responses API 服务端传输；非 Windows 使用标准 `fetch`，Windows 本地使用 PowerShell 网络栈与 Base64 请求体，密钥只通过子进程环境传递。
 - `lib/wardrobe/`：14 类衣物风格常量、品牌与字段校验、查询、衣橱组成判断、OpenAI 结构化识别和入库生命周期辅助；私有图片签名地址在服务端短期缓存并限制条目数。
@@ -40,12 +42,12 @@
 - `lib/outfits/`：穿搭画布主题、2～8 件初始布局、变换校验、浏览器本地纯色背景抠图、当前用户画布读取和 1080×1350 PNG 导出。
 - `lib/profile/`：昵称、头像类型/大小/私有路径校验，以及个人主页当前账号统计与近期画布聚合。
 - `lib/inspiration/`：Vogue/GQ 官方 RSS 白名单、每日来源/中文标题缓存、纯函数过滤与排序、稳定 URL ID 和 30 天账号主题展示记录；个性化复用临时城市优先、真实天气、近期场景和当前衣橱。未核实日期的编辑后备不得展示。
-- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-027.mjs`：双匿名会话、幂等、固定样本、推荐/日记/反馈隔离、天气/场景/风格、分层搭配、无人物画布、本地/百度专业抠图、私有头像、个人主页、内容阅读状态与 UI 门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/029-profile-style-refresh/` 已完成并发布；SDD-030 代码已发布但真实千问凭据联调仍未完成。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
+- `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-031.mjs`：双匿名会话、幂等、固定样本、推荐/日记/反馈隔离、天气/场景/风格、分层搭配、私有图片、个人主页、内容阅读状态与 UI 门禁。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/029-profile-style-refresh/` 已完成并发布；SDD-030 代码已发布但真实千问凭据联调仍未完成；SDD-031 衣物纸贴质感已本地完成但未部署。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `public/brand/`：正式主标为 1024px 透明底青柠/丁香折叠 `E`（`ensemble-icon-a-folded-e.png`），旧主标与未选设计稿继续保留；页面统一通过 `components/brand-mark.tsx` 使用正式主标。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
-- 当前视觉基线：冷白画布和近黑文字为功能底层，青柠、丁香紫、珊瑚橙与天空蓝四个时尚 token 用于内容主题、导航选中态、画布与个人主页；颜色 MUST 按固定角色复用，不得随机给所有容器上色。保留软圆角、Apple 式触感和固定底部玻璃 Dock。正式 Logo 继续复用 `BrandMark`。Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用六级语义 token；黑色按钮不得恢复高对比白色扫光。
+- 当前视觉基线：冷白画布和近黑文字为功能底层，青柠、丁香紫、珊瑚橙与天空蓝四个时尚 token 用于内容主题、导航选中态与个人主页；颜色 MUST 按固定角色复用，不得随机给所有容器上色。衣物图片按 SDD-031 使用纸贴规则：透明图为白色轮廓与丁香调轻阴影，原图为圆角纸卡，低对比纸纹只能位于衣物下方。保留软圆角、Apple 式触感和固定底部玻璃 Dock。正式 Logo 继续复用 `BrandMark`。Liquid Glass 仅为 Web 材质近似，并提供减少动态与减少透明度降级。排版 MUST 复用六级语义 token；黑色按钮不得恢复高对比白色扫光。
 
 ## 注意事项
 
@@ -124,11 +126,12 @@
 - SDD-027：只展示白名单 RSS 的标题级中文简述，不下载外图、全文或绕过付费墙。AI 仅接收公开标题和稳定 ID，复用服务端 Responses、`store:false` 与严格 JSON Schema，默认 `gpt-4o-mini`，可复用 `OPENAI_RECOMMENDATION_MODEL`。失败保留原题并标为阅读提示，不假装生成新闻事实。`unstable_cache` 只缓存公开内容，不能在缓存中读取用户 cookies/位置/衣橱；个人排序在缓存之外。
 - SDD-027 数据：`fashion_content_reads` 和 `fashion_topic_impressions` 均启用当前账号四类所有权 RLS；`record_fashion_impression` 为 security invoker，仅当前用户、同主题 30 天内保留首次内容与时间，不得在普通已读操作中写提醒时间。关闭个性化不查询衣橱、日记或天气；关闭提示不显示徽标，也不删除历史记录。
 - SDD-027 验证：`npm run check`、`npm run build`、`npm run verify:sdd-027`；离线运行可加 `node --no-warnings scripts/verify-sdd-027.mjs --offline`。脚本覆盖纯规则、SQL 幂等与双账号隔离；390px 另测全空主题、设置持久化、详情已读与无溢出。未知同义主题、真实跨日来源恢复与 Production 验收不得自动宣称完成。
+- SDD-031 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-031`；独立门禁覆盖共享贴纸组件、透明/原图/缺图三态、衣橱与推荐入口、收藏/换件保留、无数据写入和减少动态/透明度边界。Production 部署前必须用有效会话复核推荐页实际数据态，不得只凭静态脚本宣称完整视觉验收。
 - 本文件是后续开发的文档起点，必须根据实际开发进度实时更新，保持技术栈、目录和约定准确。
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-030 最新 Production 为 `dpl_7rExx8heDCu5k8EogqsLRsiprDfG` / `275ef04`；顶部圆形日记/品牌/头像、浅紫五项双字底栏、底部推荐、倒角矩形添加及日记/收藏合并均已上线并通过 390px 验收。真实百炼北京凭据联调仍未完成，因此状态保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
+- 当前阶段：SDD-031 衣物纸贴质感已完成本地实现与核心验收，尚未部署；SDD-030 最新 Production 仍为 `dpl_7rExx8heDCu5k8EogqsLRsiprDfG` / `275ef04`，真实百炼北京凭据联调仍未完成，因此状态保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。

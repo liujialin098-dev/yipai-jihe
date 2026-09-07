@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { Lightbulb } from "lucide-react";
 import type { CSSProperties } from "react";
 import { RecommendationDiaryButton } from "@/components/diary/recommendation-diary-button";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { ReplaceItemPanel } from "@/components/recommendations/replace-item-panel";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import type { RecommendationOutfitView } from "@/lib/recommendations/constants";
 import {
   deriveOutfitLayers,
@@ -65,21 +65,20 @@ export function RecommendationCard({
               key={item.id}
               className="relative aspect-square overflow-hidden rounded-[1.05rem] bg-[var(--surface-soft)] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
             >
-              {item.imageUrl ? (
-                <Image
-                  src={item.imageUrl}
+              {item.cutoutUrl || item.imageUrl ? (
+                <GarmentSticker
+                  imageUrl={item.imageUrl}
+                  cutoutUrl={item.cutoutUrl}
                   alt={`${outfit.title}中的${item.name}`}
-                  fill
                   sizes="(max-width: 480px) 28vw, 120px"
-                  unoptimized
-                  className="object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
+                  className="size-full rounded-[1.05rem]"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center px-3 text-center text-xs text-[var(--text-tertiary)]">
                   {item.name}
                 </div>
               )}
-              <div className="absolute top-2 right-2">
+              <div className="absolute top-2 right-2 z-10">
                 <FavoriteButton
                   kind="item"
                   itemId={item.id}
@@ -87,7 +86,7 @@ export function RecommendationCard({
                   compact
                 />
               </div>
-              <span className="absolute bottom-1.5 left-1.5 rounded-full bg-white/90 px-2 py-1 text-[0.6rem] font-semibold text-[#3a3d43] shadow-sm backdrop-blur-md">
+              <span className="absolute bottom-1.5 left-1.5 z-10 rounded-full bg-white/90 px-2 py-1 text-[0.6rem] font-semibold text-[#3a3d43] shadow-sm backdrop-blur-md">
                 {roleByItemId.get(item.id) ?? "单品"}
               </span>
             </div>

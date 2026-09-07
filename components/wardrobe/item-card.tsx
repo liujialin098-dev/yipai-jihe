@@ -1,6 +1,6 @@
 import { Archive, ImageOff } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import {
   CATEGORY_OPTIONS,
   COLOR_OPTIONS,
@@ -25,15 +25,14 @@ export function WardrobeItemCard({
       style={{ "--stagger": Math.min(index, 8) } as React.CSSProperties}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-[1.05rem] bg-[var(--surface-soft)]">
-        {item.imageUrl ? (
-          <Image
-            src={item.imageUrl}
+        {item.cutoutUrl || item.imageUrl ? (
+          <GarmentSticker
+            imageUrl={item.imageUrl}
+            cutoutUrl={item.cutoutUrl}
             alt={`${item.name}${item.demo_key ? "的演示棚拍图" : "的原图"}`}
-            fill
             sizes="(max-width: 480px) 44vw, 210px"
-            loading={eager ? "eager" : "lazy"}
-            unoptimized
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
+            eager={eager}
+            className="size-full rounded-[1.05rem]"
           />
         ) : (
           <span className="flex size-full items-center justify-center text-[var(--text-tertiary)]">
