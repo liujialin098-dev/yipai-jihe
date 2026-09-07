@@ -2,7 +2,7 @@
 
 ## 当前有效决策：SDD-030 + SDD-031 + SDD-032 + SDD-033（2026-09-07）
 
-- SDD-033 根据用户新决定新增独立 `/stickers` 衣物贴纸册，这是 SDD-030“停用默认抠图入口”的唯一当前例外。用户可从当前账号活跃衣物或单品收藏选择当天 1～8 件；当天 ID 只按日期和当前身份短标识保存在本设备，并在恢复时与服务端可见衣物取交集。已有 `cutoutUrl` 直接使用 loose 白边纸贴，不得重复请求；只有原图时必须显示完整纸卡和“待生成”。专业去背只能由用户点击“生成贴纸”触发，专用 `POST /api/stickers/items/[id]` 只接受 UUID，必须同源、`auth.getUser()` 鉴权并复验当前用户活跃衣物归属，再复用 SDD-026 百度去背、Sharp 裁边与私有 Storage。503 后停止继续排队并保留原图。旧画布抠图 route 继续为 410；不得恢复自由拖拽、分享卡片、人工擦除/恢复、虚拟人物、Reel、转盘或贴纸统计。本阶段仅本地完成，本机无百度双密钥，真实去背未验收；Production 仍为 SDD-030 部署。
+- SDD-033 根据用户新决定新增独立 `/stickers` 衣物贴纸册，这是 SDD-030“停用默认抠图入口”的唯一当前例外。用户可从当前账号活跃衣物或单品收藏选择当天 1～8 件；当天 ID 只按日期和当前身份短标识保存在本设备，并在恢复时与服务端可见衣物取交集。已有 `cutoutUrl` 直接使用 loose 白边纸贴，不得重复请求；只有原图时必须显示完整纸卡和“待生成”。专业去背只能由用户点击“生成贴纸”触发，专用 `POST /api/stickers/items/[id]` 只接受 UUID，必须同源、`auth.getUser()` 鉴权并复验当前用户活跃衣物归属，再复用 SDD-026 百度去背、Sharp 裁边与私有 Storage。503 后停止继续排队并保留原图。旧画布抠图 route 继续为 410；不得恢复自由拖拽、分享卡片、人工擦除/恢复、虚拟人物、Reel、转盘或贴纸统计。本机无百度双密钥，只能验证安全失败；Production 已完成 1 件隔离样本真实去背并部署。
 
 - SDD-032 将 SDD-031 的衣物纸贴展示合同扩展至首页衣橱预览、衣物详情主图、日记选择与记录、收藏和利用率；各入口必须同时传入既有 `cutoutUrl` 与原图，透明图优先、普通照片完整降级、缺图保持原占位。图片层和装饰层必须 `pointer-events: none`，不得遮挡链接、收藏、复选框或保存操作。添加衣物/AI 识别工作区 MUST 保留原始照片核对，不得套用贴纸装饰。本阶段仅消费历史透明图，不新增网络请求、图片写入、数据库、Storage 或账号变更，也不得恢复 SDD-030 已停用的抠图、画布、分享或人物入口。当前仅本地完成，Production 仍为下述 SDD-030 部署。
 
@@ -55,8 +55,8 @@
 
 ## 注意事项
 
-- **当前 Production（2026-09-06）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_7rExx8heDCu5k8EogqsLRsiprDfG`，源提交 `275ef04`，Ready / production。SDD-027/028/029 与 SDD-030 当前代码、新版 `Ensemble` 主标、动态标题、偏好/趋势上下文、顶部圆形日记及双字底栏均已上线；百炼凭据仍未配置，所以 SDD-030 继续为“部分完成”。首页、登录、衣橱、推荐、资讯、日记和个人主页均返回 HTTP 200；390px Production 体验身份显示首页/衣橱/添加/推荐/资讯五项，顶部日记可达，无水平溢出或错误覆盖层，最近 30 分钟无 error 日志。手机无代理/有代理、本人定位、真实千问和历史账号登录仍待集中验收。详见 progress.md。
-- 本次发布：`npx vercel deploy --prod --yes --scope jialin-d583`；检视 `npx vercel inspect https://yipai-jihe-l7ablvm07-jialin-d583.vercel.app --scope jialin-d583`。后续发布继续核对同项目、11 项生产配置名称及 Ready/production/固定域名，不得使用旧 ai-coding 项目。`vercel link --yes` 当前会刷新本地 OIDC；本次已核对既有 Supabase/OpenAI/百度/和风配置仍在，后续先保护本地配置，不得以完整 env pull 覆盖。
+- **当前 Production（2026-09-07）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_CPgDvrXG75npJiQ63Nm1PeTsov3i`，源提交 `15bcc45`，Ready / production。SDD-027 至 SDD-033 当前代码、新版 `Ensemble` 主标、动态标题、偏好/趋势上下文、最新导航和衣物贴纸册均已上线；百炼凭据仍未配置，所以 SDD-030 继续为“部分完成”。首页、登录、贴纸册、衣橱、推荐、资讯、日记和个人主页均返回 HTTP 200；390px Production 隔离体验身份真实生成 1 件百度贴纸并回显就绪，`scrollWidth=390`，无错误覆盖层或浏览器 error，最近 30 分钟无 error 日志。手机无代理/有代理、本人定位、真实千问和历史账号登录仍待集中验收。详见 progress.md。
+- 本次发布：`npx vercel deploy --prod --yes --scope jialin-d583`；检视 `npx vercel inspect https://yipai-jihe-kth958wca-jialin-d583.vercel.app --scope jialin-d583`。后续发布继续核对同项目、11 项生产配置名称及 Ready/production/固定域名，不得使用旧 ai-coding 项目。`vercel link --yes` 当前会刷新本地 OIDC；本次已核对既有 Supabase/OpenAI/百度/和风配置仍在，后续先保护本地配置，不得以完整 env pull 覆盖。
 
 - 2026-09-06 发布配置：和风五项 `QWEATHER_*` 已安全保存为 `yipai-jihe` Production Secret，覆盖下文旧的“线上尚未配置”记录。`scripts/configure-qweather-production.mjs` 校验项目/团队与本机既有 Ed25519 密钥，默认 dry run，只有 `--apply` 经 stdin 写入、不覆盖已有变量、不输出私钥。Vercel Secret 导出只得到 `[SENSITIVE]`，不得作为有效本地凭据；部署与本机百度配置是不同任务，当前本机百度密钥仍缺失。
 
@@ -137,7 +137,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-033 衣物贴纸册已完成本地实现、390px 与现有 28 件演示衣橱核心验收，提交为 `b1f135a`，尚未部署；本机缺百度双密钥，因此真实去背未验收。SDD-030 最新 Production 仍为 `dpl_7rExx8heDCu5k8EogqsLRsiprDfG` / `275ef04`，真实百炼北京凭据联调仍未完成，因此状态保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
+- 当前阶段：SDD-033 衣物贴纸册已完成并发布 Production；当前部署为 `dpl_CPgDvrXG75npJiQ63Nm1PeTsov3i` / `15bcc45`，390px 隔离体验身份已完成 1 件真实百度贴纸生成。本机仍缺百度双密钥。SDD-030 真实百炼北京凭据联调仍未完成，因此该阶段保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
