@@ -19,7 +19,6 @@ for (const contract of [
   "待生成",
   "贴纸就绪",
   "正在生成",
-  'surface={item.cutoutUrl ? "loose" : "card"}',
   "/api/stickers/items/",
   'method: "POST"',
   'credentials: "same-origin"',
@@ -27,7 +26,10 @@ for (const contract of [
   assert.ok(studio.includes(contract), `缺少贴纸册合同：${contract}`);
 }
 assert.doesNotMatch(studio, /userId|cutout_path|image_path|watchPosition/);
-assert.doesNotMatch(studio, /draggable|onPointerMove|canvas|MP4|Live|转盘/);
+assert.doesNotMatch(studio, /MP4|Live|转盘/);
+
+const canvas = await read("components/stickers/sticker-canvas.tsx");
+assert.match(canvas, /surface=\{wardrobeItem\.cutoutUrl \? "loose" : "card"\}/);
 
 const route = await read("app/api/stickers/items/[id]/route.ts");
 for (const boundary of [
@@ -75,4 +77,4 @@ assert.equal(
   "node --no-warnings scripts/verify-sdd-033.mjs",
 );
 
-console.log("SDD-033：衣物贴纸册选择、专业生成、账号隔离与退役功能边界通过。");
+console.log("SDD-033：衣物贴纸册选择、专业生成与账号隔离边界通过。");
