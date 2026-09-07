@@ -2,7 +2,7 @@
 
 ## 当前有效决策：SDD-030 + SDD-031 + SDD-032 + SDD-033 + SDD-034（2026-09-07）
 
-- SDD-034 覆盖 SDD-033 的固定自动排布限制，在独立 `/stickers` 页面恢复且仅恢复衣物贴纸创作：提供无格子、无吸附的 4:5 自由画板，当前账号当天选择的 1～8 张贴纸可用 Pointer Events 拖动、键盘或按钮微调、滑杆缩放/旋转、置顶置底并自由重叠。画板背景分为 5 个浅色与 4 个深色，深色必须使用高对比文字和亮色选中轮廓；屏幕与 PNG 导出复用同一配色。背景、变换与层级按账号短标识和自然日保存在当前设备，恢复时必须与服务端可见衣物取交集。只有所选衣物全部具有当前有效 `cutoutUrl` 时才能导出 1080×1350 PNG；系统文件分享不可用时降级为下载，图片不得包含账号、私有路径或内部字段。月历只查询当前用户当月 `outfit_diary_entries` 与单品收藏：当天收藏衣物优先，否则使用日记顺序第一件；不得补造空白日或新增“每日代表衣物”表。继续禁止 Grid/吸附、Reel、MP4、直播、转盘、烟花播放、自动轮播和公开社交发布。当前只完成本地代码与核心验收，Production 仍为 SDD-033 版本；本机专业贴纸调用失败，真实透明贴纸下载/分享必须在下次发布后复验。
+- SDD-034 覆盖 SDD-033 的固定自动排布限制，在独立 `/stickers` 页面恢复且仅恢复衣物贴纸创作：提供无格子、无吸附的 4:5 自由画板，当前账号当天选择的 1～8 张贴纸可用 Pointer Events 拖动、键盘或按钮微调、滑杆缩放/旋转、置顶置底并自由重叠。画板背景分为 5 个浅色与 4 个深色，深色必须使用高对比文字和亮色选中轮廓；屏幕与 PNG 导出复用同一配色。背景、变换与层级按账号短标识和自然日保存在当前设备，恢复时必须与服务端可见衣物取交集。只有所选衣物全部具有当前有效 `cutoutUrl` 时才能导出 1080×1350 PNG；系统文件分享不可用时降级为下载，图片不得包含账号、私有路径或内部字段。月历只查询当前用户当月 `outfit_diary_entries` 与单品收藏：当天收藏衣物优先，否则使用日记顺序第一件；不得补造空白日或新增“每日代表衣物”表。继续禁止 Grid/吸附、Reel、MP4、直播、转盘、烟花播放、自动轮播和公开社交发布。当前已部署 Production 并完成 390px 浅色/深色主题验收；本人真实透明贴纸下载/分享仍待集中复验。
 
 - SDD-033 根据用户决定新增独立 `/stickers` 衣物贴纸册，这是 SDD-030“停用默认抠图入口”的唯一当前例外。用户可从当前账号活跃衣物或单品收藏选择当天 1～8 件；当天 ID 只按日期和当前身份短标识保存在本设备，并在恢复时与服务端可见衣物取交集。已有 `cutoutUrl` 直接使用 loose 白边纸贴，不得重复请求；只有原图时必须显示完整纸卡和“待生成”。专业去背只能由用户点击“生成贴纸”触发，专用 `POST /api/stickers/items/[id]` 只接受 UUID，必须同源、`auth.getUser()` 鉴权并复验当前用户活跃衣物归属，再复用 SDD-026 百度去背、Sharp 裁边与私有 Storage。503 后停止继续排队并保留原图。旧画布抠图 route 继续为 410；人工擦除/恢复和虚拟人物仍不得接回，画板与月历能力以 SDD-034 为准。Production 已完成 1 件隔离样本真实去背并部署。
 
@@ -50,7 +50,7 @@
 - `lib/profile/`：昵称、头像类型/大小/私有路径校验，以及个人主页当前账号统计与近期画布聚合。
 - `lib/inspiration/`：Vogue/GQ 官方 RSS 白名单、每日来源/中文标题缓存、纯函数过滤与排序、稳定 URL ID 和 30 天账号主题展示记录；个性化复用临时城市优先、真实天气、近期场景和当前衣橱。未核实日期的编辑后备不得展示。
 - `supabase/migrations/`：可复现数据库迁移；`scripts/verify-sdd-001.mjs` 至 `scripts/verify-sdd-007.mjs`、`scripts/verify-sdd-009.mjs`、`scripts/verify-sdd-012.mjs` 至 `scripts/verify-sdd-034.mjs`：双匿名会话、幂等、固定样本、推荐/日记/反馈隔离、天气/场景/风格、分层搭配、私有图片、个人主页、内容阅读状态与 UI 门禁。
-- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/029-profile-style-refresh/` 已完成并发布；SDD-030 代码已发布但真实千问凭据联调仍未完成；SDD-031/032/033 已发布，SDD-034 自由贴纸画板与月历已完成本地实现但未发布。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
+- `specs/001-app-foundation/`、`specs/003-wardrobe-core/` 至 `specs/007-release-deploy/`、`specs/009-outfit-diary/`、`specs/011-global-motion/` 至 `specs/029-profile-style-refresh/` 已完成并发布；SDD-030 代码已发布但真实千问凭据联调仍未完成；SDD-031/032/033/034 已发布。`specs/002-account-binding/` 的无邮件注册与合成账号重登录已通过，本地历史账号设密与用户本人重登录仍等待集中调试。
 - `README.md`：本地启动、环境变量、迁移、质量命令、5 分钟演示、部署和已知限制的交付入口。
 - `public/brand/`：正式主标为 1024px 透明底青柠/丁香折叠 `E`（`ensemble-icon-a-folded-e.png`），旧主标与未选设计稿继续保留；页面统一通过 `components/brand-mark.tsx` 使用正式主标。
 - `biome.json`：格式化与 lint 规则；`.husky/pre-commit`：提交卡控。
@@ -58,9 +58,8 @@
 
 ## 注意事项
 
-- **当前 Production（2026-09-07）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_CPgDvrXG75npJiQ63Nm1PeTsov3i`，源提交 `15bcc45`，Ready / production。SDD-027 至 SDD-033 当前代码、新版 `Ensemble` 主标、动态标题、偏好/趋势上下文、最新导航和衣物贴纸册均已上线；百炼凭据仍未配置，所以 SDD-030 继续为“部分完成”。首页、登录、贴纸册、衣橱、推荐、资讯、日记和个人主页均返回 HTTP 200；390px Production 隔离体验身份真实生成 1 件百度贴纸并回显就绪，`scrollWidth=390`，无错误覆盖层或浏览器 error，最近 30 分钟无 error 日志。手机无代理/有代理、本人定位、真实千问和历史账号登录仍待集中验收。详见 progress.md。
-- **当前本地增量（2026-09-07）**：SDD-034 自由贴纸画板与月历已完成代码、check/build、034/033 门禁、009 双账号 RLS 回归和 390px 核心浏览器验收，尚未部署。Production 仍为上一条 SDD-033 版本，不得把线上贴纸页误报为已包含自由画板。
-- 本次发布：`npx vercel deploy --prod --yes --scope jialin-d583`；检视 `npx vercel inspect https://yipai-jihe-kth958wca-jialin-d583.vercel.app --scope jialin-d583`。后续发布继续核对同项目、11 项生产配置名称及 Ready/production/固定域名，不得使用旧 ai-coding 项目。`vercel link --yes` 当前会刷新本地 OIDC；本次已核对既有 Supabase/OpenAI/百度/和风配置仍在，后续先保护本地配置，不得以完整 env pull 覆盖。
+- **当前 Production（2026-09-07）**：`yipai-jihe` / `https://yipai-jihe.vercel.app`，部署 `dpl_J3uUGRFN7sKcxcA1vZ6Lp759H6QD`，源提交 `fdf5ddb`，Ready / production。SDD-027 至 SDD-034 当前代码、新版 `Ensemble` 主标、动态标题、偏好/趋势上下文、最新导航、衣物贴纸册、自由画板与贴纸月历均已上线；百炼凭据仍未配置，所以 SDD-030 继续为“部分完成”。首页、登录、贴纸册、衣橱、推荐、资讯、日记和个人主页均返回 HTTP 200；390px Production 隔离体验身份确认 5 个浅色和 4 个深色色块，切换夜紫后 `data-tone=dark`、`scrollWidth=390`，无错误覆盖层或浏览器 error，最近 30 分钟无 error 日志。本人透明贴纸下载/分享、手机无代理/有代理、本人定位、真实千问和历史账号登录仍待集中验收。详见 progress.md。
+- 本次发布：`npx vercel deploy --prod --yes --scope jialin-d583`；检视 `npx vercel inspect https://yipai-jihe-nzcvgfyox-jialin-d583.vercel.app --scope jialin-d583`。后续发布继续核对同项目、11 项生产配置名称及 Ready/production/固定域名，不得使用旧 ai-coding 项目。`vercel link --yes` 当前会刷新本地 OIDC；本次已核对既有 Supabase/OpenAI/百度/和风配置仍在，后续先保护本地配置，不得以完整 env pull 覆盖。
 
 - 2026-09-06 发布配置：和风五项 `QWEATHER_*` 已安全保存为 `yipai-jihe` Production Secret，覆盖下文旧的“线上尚未配置”记录。`scripts/configure-qweather-production.mjs` 校验项目/团队与本机既有 Ed25519 密钥，默认 dry run，只有 `--apply` 经 stdin 写入、不覆盖已有变量、不输出私钥。Vercel Secret 导出只得到 `[SENSITIVE]`，不得作为有效本地凭据；部署与本机百度配置是不同任务，当前本机百度密钥仍缺失。
 
@@ -106,7 +105,7 @@
 - Storage bucket `wardrobe-images` 必须保持私有，对象路径第一段固定为当前 `auth.uid()`；读取、插入、更新和删除均由同一路径规则限制。
 - 当前 Supabase 项目已于 2026-08-21 开启 Anonymous Sign-Ins；`npm run verify:sdd-001` 已用两组真实匿名会话验证自身访问、跨用户 RLS 与 Storage 路径隔离。
 - 当前 Supabase Auth 已开启 Email、Anonymous Sign-Ins 和 Manual Linking，并于 2026-08-25 经用户明确允许关闭 Confirm email；保存后重新加载页面复核仍为关闭。Site URL 为 `http://localhost:3000`，Redirect URL 包含 `http://localhost:3000/**` 与 `https://*-jialin-d583.vercel.app/**`，仅用于兼容旧链接和新增部署域名。
-- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-09-06 最新部署为 `dpl_7rExx8heDCu5k8EogqsLRsiprDfG`，对应部署源 Git 提交 `275ef04`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、OpenAI、百度及和风所需服务端变量；尚未配置百炼 `DASHSCOPE_*`。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
+- 当前主 Vercel 项目为 `yipai-jihe`（project id：`prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team：`jialin-d583`，框架预设：Next.js）；Production 固定域名为 `https://yipai-jihe.vercel.app`，2026-09-07 最新部署为 `dpl_J3uUGRFN7sKcxcA1vZ6Lp759H6QD`，对应部署源 Git 提交 `fdf5ddb`。Production 已配置两个 Supabase `NEXT_PUBLIC_` 变量、OpenAI、百度及和风所需服务端变量；尚未配置百炼 `DASHSCOPE_*`。旧 `ai-coding` 项目仅保留历史 Preview，不得再作为默认部署目标。
 - Vercel Production 发布流程：先运行 `npx vercel link --yes --project yipai-jihe --scope jialin-d583`、`npx vercel project inspect yipai-jihe --scope jialin-d583` 与 `npx vercel env ls production --scope jialin-d583`，确认链接项目正确、框架预设为 Next.js 且变量名称齐全；再运行 `npm run check`、`npm run build`，最后执行 `npx vercel deploy --prod --yes --scope jialin-d583`。发布后使用 `npx vercel inspect <deployment-url> --scope jialin-d583` 核对 `target=production`、`status=Ready` 和固定别名，并检查核心页面 HTTP 状态及 `npx vercel logs <deployment-id> --level error --since 30m --scope jialin-d583`；不得把密钥放进命令参数、日志或仓库。
 - SDD-001 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-001`；最后一项会创建两组非敏感匿名测试资料并验证跨用户访问被拒绝。
 - SDD-003 质量命令：`npm run check`、`npm run build`、`npm run verify:sdd-003`；最后一项会创建两组安全合成 PNG 衣物，验证记录与 Storage 的自身 CRUD 和跨用户拒绝，然后自动清理。
@@ -142,7 +141,7 @@
 
 ## 开发进度与 SDD 执行规则
 
-- 当前阶段：SDD-034 自由贴纸画板与月历已完成本地实现和核心验收，尚未部署；Production 仍为 SDD-033 的 `dpl_CPgDvrXG75npJiQ63Nm1PeTsov3i` / `15bcc45`。本机专业贴纸调用失败，所以下次发布后仍须用既有透明贴纸复验下载和系统分享。SDD-030 真实百炼北京凭据联调仍未完成，因此该阶段保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
+- 当前阶段：SDD-034 自由贴纸画板与月历已完成并发布；Production 为 `dpl_J3uUGRFN7sKcxcA1vZ6Lp759H6QD` / `fdf5ddb`。本机专业贴纸调用失败，本次 Production 隔离身份衣橱为空，因此仍须用本人既有透明贴纸复验下载和系统分享。SDD-030 真实百炼北京凭据联调仍未完成，因此该阶段保持“部分完成”。SDD-002 本人历史账号重登录、手机定位与联网仍待集中调试。不得代替用户输入或保存密码、擅改公开策略或保护绕过设置。每阶段开发后必须更新 progress.md，不得把固定测试、规则后备或本地成功标记为真实接口验收。
 
 - 项目阶段进度唯一追踪入口为 [`progress.md`](progress.md)，该文件覆盖此前的路线图。每次开始 AI Coding 前 MUST 阅读当前阶段；规划发生变化时更新并覆盖旧计划，不得让多个路线图并行生效；完成阶段后 MUST 立即更新对应 TODO、状态、完成日期、验收结果、已知限制和提交记录。
 - 每个阶段 MUST 作为独立 Spec Kit SDD 单元放在 `specs/<阶段编号>-<名称>/` 下，至少包含 `spec.md`、`plan.md` 和 `tasks.md`；涉及数据、接口或验证时同步维护 `data-model.md`、`contracts/` 和 `quickstart.md`。
