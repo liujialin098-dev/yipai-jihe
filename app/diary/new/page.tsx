@@ -50,12 +50,15 @@ export default async function NewDiaryEntryPage({
       </div>
 
       <DiaryComposer
-        items={data.items.map(({ category, id, imageUrl, name }) => ({
-          category,
-          id,
-          imageUrl,
-          name,
-        }))}
+        items={data.items.map(
+          ({ category, cutoutUrl, id, imageUrl, name }) => ({
+            category,
+            cutoutUrl,
+            id,
+            imageUrl,
+            name,
+          }),
+        )}
         today={data.today}
         initialEntry={{
           itemIds: data.entry?.item_ids ?? [],

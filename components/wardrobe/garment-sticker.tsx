@@ -37,7 +37,7 @@ export function GarmentSticker({
           loading={eager ? "eager" : "lazy"}
           unoptimized
           aria-hidden="true"
-          className="garment-sticker-outline object-contain"
+          className="garment-sticker-outline pointer-events-none object-contain"
         />
       ) : null}
       <Image
@@ -47,7 +47,11 @@ export function GarmentSticker({
         sizes={sizes}
         loading={eager ? "eager" : "lazy"}
         unoptimized
-        className={cn("garment-sticker-image", fitClassName, imageClassName)}
+        className={cn(
+          "garment-sticker-image pointer-events-none",
+          fitClassName,
+          imageClassName,
+        )}
       />
     </span>
   );

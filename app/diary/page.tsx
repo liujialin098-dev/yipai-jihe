@@ -9,11 +9,11 @@ import {
   Shirt,
   TrendingUp,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DiaryDeleteButton } from "@/components/diary/diary-delete-button";
 import { FavoritesPanel } from "@/components/diary/favorites-panel";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import {
   getDiaryMonthData,
   getDiaryReportData,
@@ -255,14 +255,13 @@ function DiaryEntryCard({
                 : "min-h-24"
             }`}
           >
-            {item.current?.imageUrl ? (
-              <Image
-                src={item.current.imageUrl}
+            {item.current?.cutoutUrl || item.current?.imageUrl ? (
+              <GarmentSticker
+                imageUrl={item.current.imageUrl}
+                cutoutUrl={item.current.cutoutUrl}
                 alt={item.name}
-                fill
                 sizes="(max-width: 480px) 44vw, 210px"
-                unoptimized
-                className="object-cover"
+                className="size-full rounded-[1.1rem]"
               />
             ) : (
               <span className="flex size-full flex-col items-center justify-center gap-2 px-3 text-center text-xs text-[var(--text-tertiary)]">
@@ -427,14 +426,13 @@ function UtilizationReport({
                 className="surface-card pressable min-w-0 rounded-[1.35rem] p-2.5"
               >
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[0.95rem] bg-[var(--surface-soft)]">
-                  {utilization.item.imageUrl ? (
-                    <Image
-                      src={utilization.item.imageUrl}
+                  {utilization.item.cutoutUrl || utilization.item.imageUrl ? (
+                    <GarmentSticker
+                      imageUrl={utilization.item.imageUrl}
+                      cutoutUrl={utilization.item.cutoutUrl}
                       alt={utilization.item.name}
-                      fill
                       sizes="(max-width: 480px) 44vw, 210px"
-                      unoptimized
-                      className="object-cover"
+                      className="size-full rounded-[0.95rem]"
                     />
                   ) : (
                     <ImageOff
@@ -483,14 +481,13 @@ function UtilizationRow({
       className="pressable flex min-h-20 items-center gap-3 py-3"
     >
       <div className="relative size-14 shrink-0 overflow-hidden rounded-[0.9rem] bg-[var(--surface-soft)]">
-        {item.imageUrl ? (
-          <Image
-            src={item.imageUrl}
+        {item.cutoutUrl || item.imageUrl ? (
+          <GarmentSticker
+            imageUrl={item.imageUrl}
+            cutoutUrl={item.cutoutUrl}
             alt={item.name}
-            fill
             sizes="56px"
-            unoptimized
-            className="object-cover"
+            className="size-full rounded-[0.9rem]"
           />
         ) : (
           <ImageOff

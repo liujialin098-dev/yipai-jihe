@@ -1,9 +1,9 @@
 import { ArrowLeft, Heart, ImageOff, Pencil, Sparkles } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { WardrobeActionButton } from "@/components/wardrobe/action-button";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import { wardrobeAudienceLabel } from "@/lib/personalization/constants";
 import {
   CATEGORY_OPTIONS,
@@ -55,15 +55,14 @@ export default async function WardrobeItemPage({
 
       <section className="surface-card mt-4 overflow-hidden rounded-[1.75rem] p-3">
         <div className="relative aspect-[4/5] overflow-hidden rounded-[1.4rem] bg-[var(--surface-soft)]">
-          {item.imageUrl ? (
-            <Image
-              src={item.imageUrl}
+          {item.cutoutUrl || item.imageUrl ? (
+            <GarmentSticker
+              imageUrl={item.imageUrl}
+              cutoutUrl={item.cutoutUrl}
               alt={`${item.name}${item.demo_key ? "的演示棚拍图" : "的原图"}`}
-              fill
               sizes="440px"
-              unoptimized
-              className="object-cover"
-              priority
+              eager
+              className="size-full rounded-[1.4rem]"
             />
           ) : (
             <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-[var(--text-tertiary)]">

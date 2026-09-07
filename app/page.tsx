@@ -8,10 +8,10 @@ import {
   Sparkles,
   UserPlus,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AuthEntryGateway } from "@/components/auth/auth-entry-gateway";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import { getViewer } from "@/lib/auth/viewer";
 import { getTodayDiarySummary } from "@/lib/diary/data";
 import { FashionUnreadBadge } from "@/components/inspiration/unread-badge";
@@ -97,15 +97,14 @@ export default async function Home({
                 className="stagger-item relative aspect-[4/5] overflow-hidden rounded-[1.15rem] bg-[var(--surface-soft)]"
                 style={{ "--stagger": index } as React.CSSProperties}
               >
-                {item.imageUrl ? (
-                  <Image
-                    src={item.imageUrl}
+                {item.cutoutUrl || item.imageUrl ? (
+                  <GarmentSticker
+                    imageUrl={item.imageUrl}
+                    cutoutUrl={item.cutoutUrl}
                     alt={`${item.name}${item.demo_key ? "的演示棚拍图" : "的原图"}`}
-                    fill
                     sizes="120px"
-                    unoptimized
-                    className="object-cover"
-                    priority={index === 0}
+                    eager={index === 0}
+                    className="size-full rounded-[1.15rem]"
                   />
                 ) : null}
               </div>

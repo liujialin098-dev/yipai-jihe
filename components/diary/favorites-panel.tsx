@@ -1,8 +1,8 @@
 import { type Heart, Shirt, Sparkles } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { FavoriteButton } from "@/components/favorites/favorite-button";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import { getViewer } from "@/lib/auth/viewer";
 import { isWardrobeStyle } from "@/lib/feedback/preferences";
 import { createClient } from "@/lib/supabase/server";
@@ -149,14 +149,13 @@ export async function FavoritesPanel() {
                 href={`/wardrobe/${item.id}`}
                 className="relative block aspect-[4/5] bg-[var(--surface-soft)]"
               >
-                {item.imageUrl ? (
-                  <Image
-                    src={item.imageUrl}
+                {item.cutoutUrl || item.imageUrl ? (
+                  <GarmentSticker
+                    imageUrl={item.imageUrl}
+                    cutoutUrl={item.cutoutUrl}
                     alt={item.name}
-                    fill
                     sizes="180px"
-                    unoptimized
-                    className="object-cover"
+                    className="size-full rounded-[1.35rem]"
                   />
                 ) : null}
               </Link>
@@ -215,15 +214,14 @@ function FavoriteSection({
 function FavoriteImage({ item }: { item: WardrobeItem | null }) {
   return (
     <div className="relative aspect-square overflow-hidden rounded-[0.95rem] bg-white">
-      {item?.imageUrl ? (
-        <Image
-          src={item.imageUrl}
+      {item?.cutoutUrl || item?.imageUrl ? (
+        <GarmentSticker
+          imageUrl={item.imageUrl}
+          cutoutUrl={item.cutoutUrl}
           alt={item.name}
-          fill
-          loading="eager"
           sizes="120px"
-          unoptimized
-          className="object-cover"
+          eager
+          className="size-full rounded-[0.95rem]"
         />
       ) : (
         <span className="flex size-full items-center justify-center px-2 text-center text-[0.65rem] text-[var(--text-tertiary)]">

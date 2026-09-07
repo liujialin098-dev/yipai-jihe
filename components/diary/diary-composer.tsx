@@ -1,10 +1,10 @@
 "use client";
 
 import { Check, ImageOff, LoaderCircle } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { saveManualDiaryEntry } from "@/app/diary/actions";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import { INITIAL_DIARY_ACTION_STATE } from "@/lib/diary/validation";
 import {
   CATEGORY_OPTIONS,
@@ -14,6 +14,7 @@ import {
 
 type DiaryComposerItem = {
   category: string;
+  cutoutUrl: string | null;
   id: string;
   imageUrl: string | null;
   name: string;
@@ -149,14 +150,13 @@ export function DiaryComposer({
                     className="sr-only"
                   />
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[1.05rem] bg-[var(--surface-soft)]">
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
+                    {item.cutoutUrl || item.imageUrl ? (
+                      <GarmentSticker
+                        imageUrl={item.imageUrl}
+                        cutoutUrl={item.cutoutUrl}
                         alt={item.name}
-                        fill
                         sizes="(max-width: 480px) 44vw, 210px"
-                        unoptimized
-                        className="object-cover"
+                        className="size-full rounded-[1.05rem]"
                       />
                     ) : (
                       <span className="flex size-full items-center justify-center text-[var(--text-tertiary)]">
