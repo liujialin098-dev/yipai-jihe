@@ -18,7 +18,7 @@ assert.deepEqual(links, [
 for (const label of ["首页", "推荐", "添加", "贴纸", "资讯"])
   assert.match(navigationConfig, new RegExp(`label: "${label}"`));
 assert.doesNotMatch(nav, /label: "(?:添加衣物|推荐穿搭|时尚资讯)"/);
-assert.match(nav, /nav-primary-bevel/);
+assert.match(nav, /dock-add/);
 const header = await read("components/status-header.tsx");
 assert.match(header, /href="\/profile"/);
 assert.match(header, /aria-label="打开个人主页"/);
@@ -86,7 +86,7 @@ assert.match(css, /\.editorial-header-shell/);
 assert.match(css, /var\(--fashion-lime-soft\)/);
 assert.match(css, /\.bottom-navigation-shell/);
 assert.match(css, /var\(--fashion-lilac\) 68%/);
-assert.match(css, /\.nav-primary-bevel/);
+assert.match(css, /\.dock-add/);
 console.log("SDD-030：导航、退役入口、原图与隐私边界通过。");
 
 registerHooks({

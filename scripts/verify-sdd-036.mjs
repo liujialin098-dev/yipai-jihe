@@ -72,6 +72,10 @@ for (const [saved, system, blocked, expected] of [
 }
 const nav = await read("components/bottom-navigation.tsx");
 assert.ok(nav.includes("aria-label="));
+assert.doesNotMatch(nav, /nav-primary-bevel/);
+const dockCss = await read("app/globals.css");
+assert.match(dockCss, /\.dock-add\s*\{[^}]*border-radius: 18px/s);
+assert.doesNotMatch(dockCss, /\.nav-primary-bevel/);
 assert.doesNotMatch(nav, /<span[^>]*>\{label\}<\/span>/);
 const header = await read("components/status-header.tsx");
 for (const value of [

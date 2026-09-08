@@ -1,6 +1,7 @@
 "use client";
 
 import { CloudSun, RefreshCw } from "lucide-react";
+import Link from "next/link";
 import {
   createContext,
   useContext,
@@ -30,11 +31,13 @@ export function WeatherPanel({
   targetDate,
   city,
   children,
+  compact = false,
 }: {
   targetDay: RecommendationTargetDay;
   targetDate: string;
   city: string | null;
-  children: ReactNode;
+  children?: ReactNode;
+  compact?: boolean;
 }) {
   const [attempt, retry] = useState(0);
   const [state, setState] = useState<WeatherState>({
@@ -89,6 +92,57 @@ export function WeatherPanel({
     };
   }, [city, targetDate, targetDay, attempt]);
   const weather = state.snapshot;
+  if (compact) {
+    return (
+      <div
+        className="home-weather"
+        aria-live="polite"
+        aria-busy={state.status === "loading"}
+      >
+        <Link
+          href="/recommendations?day=today"
+          className="home-weather-link"
+          aria-label="查看天气或选择城市"
+        >
+          <CloudSun size={15} aria-hidden="true" />
+          {city ? `${city} · ` : ""}
+          {state.status === "ready" && weather
+            ? `${weather.summary} ${weather.temperatureC}°C`
+            : state.status === "loading"
+              ? "获取天气中…"
+              : state.status === "missing"
+                ? "选择城市"
+                : state.status === "stale"
+                  ? "天气待刷新"
+                  : "天气暂不可用"}
+        </Link>
+        {weather && state.status === "ready" ? (
+          <details className="home-weather-source">
+            <summary>
+              和风天气 ·{" "}
+              {new Date(weather.observedAt).toLocaleTimeString("zh-CN", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Asia/Shanghai",
+              })}
+            </summary>
+            <a
+              href="https://www.qweather.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              和风天气
+            </a>
+            {weather.attributions?.map((url, index) => (
+              <a key={url} href={url} target="_blank" rel="noreferrer">
+                数据来源 {index + 1}
+              </a>
+            ))}
+          </details>
+        ) : null}
+      </div>
+    );
+  }
   return (
     <WeatherContext.Provider value={state}>
       <section

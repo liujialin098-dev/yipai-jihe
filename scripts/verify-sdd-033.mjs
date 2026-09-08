@@ -63,7 +63,9 @@ for (const style of [
   assert.ok(css.includes(style), `缺少贴纸视觉合同：${style}`);
 }
 
-for (const entry of ["app/page.tsx", "app/diary/page.tsx"]) {
+// SDD-037 removes the duplicate homepage card; the persistent dock owns its entry.
+assert.match(await read("lib/ui/navigation.ts"), /href: "\/stickers"/);
+for (const entry of ["app/diary/page.tsx"]) {
   const source = await read(entry);
   assert.match(source, /href="\/stickers"/, `${entry} 缺少贴纸册入口`);
 }

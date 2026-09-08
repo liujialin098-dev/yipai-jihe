@@ -1,22 +1,10 @@
-import {
-  ArrowRight,
-  CalendarDays,
-  Images,
-  Layers3,
-  LogIn,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  UserPlus,
-} from "lucide-react";
-import Link from "next/link";
-import { Suspense } from "react";
 import { AuthEntryGateway } from "@/components/auth/auth-entry-gateway";
-import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
+import { DailyEdit } from "@/components/home/daily-edit";
 import { getViewer } from "@/lib/auth/viewer";
-import { getTodayDiarySummary } from "@/lib/diary/data";
-import { FashionUnreadBadge } from "@/components/inspiration/unread-badge";
-import { getWardrobeCount, getWardrobePreview } from "@/lib/wardrobe/data";
+import { getDiaryMonthData } from "@/lib/diary/data";
+import { dateInTimeZone } from "@/lib/diary/validation";
+import { recentHomeDays } from "@/lib/home/presentation";
+import { getRecommendationPageData } from "@/lib/recommendations/data";
 
 const entryFeedback = {
   "anonymous-unavailable": "暂时无法建立体验身份，请稍后重试。",
@@ -29,7 +17,6 @@ export default async function Home({
   searchParams: Promise<{ error?: string; status?: string }>;
 }) {
   const [viewer, params] = await Promise.all([getViewer(), searchParams]);
-
   if (!viewer) {
     const feedbackKey = params.error ?? params.status;
     const feedback =
@@ -38,261 +25,23 @@ export default async function Home({
         : null;
     return <AuthEntryGateway feedback={feedback} />;
   }
-
-  const [itemCount, previewItems, diarySummary] = await Promise.all([
-    getWardrobeCount(),
-    getWardrobePreview(3),
-    getTodayDiarySummary(),
-  ]);
-  const hasItems = itemCount > 0;
-  const wardrobeHref =
-    hasItems || viewer.isAnonymous ? "/wardrobe" : "/wardrobe/new";
-
-  return (
-    <div className="page-enter px-5 pt-4">
-      <section className="pt-2">
-        <h1 className="app-page-title app-page-title-home">今天穿什么</h1>
-        <p className="app-page-lead mt-4">
-          从你的衣橱里，找出适合天气和场合的一套。
-        </p>
-      </section>
-
-      <Link
-        href="/recommendations"
-        className="motion-button mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
-      >
-        <Sparkles className="size-4" aria-hidden="true" />
-        生成今日搭配
-      </Link>
-
-      <Link
-        href={wardrobeHref}
-        className="surface-card fashion-accent-card pressable mt-5 block overflow-hidden rounded-[1.75rem] p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
-      >
-        <div className="flex items-start justify-between gap-5">
-          <div>
-            <p className="text-xs font-medium text-[var(--text-tertiary)]">
-              当前衣橱
-            </p>
-            <div className="mt-2 flex items-end gap-2">
-              <strong className="app-display-number">{itemCount}</strong>
-              <span className="pb-1 text-xs text-[var(--text-secondary)]">
-                件衣物
-              </span>
-            </div>
-          </div>
-          <span className="flex size-10 items-center justify-center rounded-full bg-[#1d1d1f] text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)]">
-            <ArrowRight
-              className="size-4"
-              strokeWidth={1.8}
-              aria-hidden="true"
-            />
-          </span>
-        </div>
-
-        {previewItems.length > 0 ? (
-          <div className="mt-7 grid grid-cols-3 gap-2.5">
-            {previewItems.map((item, index) => (
-              <div
-                key={item.id}
-                className="stagger-item relative aspect-[4/5] overflow-hidden rounded-[1.15rem] bg-[var(--surface-soft)]"
-                style={{ "--stagger": index } as React.CSSProperties}
-              >
-                {item.cutoutUrl || item.imageUrl ? (
-                  <GarmentSticker
-                    imageUrl={item.imageUrl}
-                    cutoutUrl={item.cutoutUrl}
-                    alt={`${item.name}${item.demo_key ? "的演示棚拍图" : "的原图"}`}
-                    sizes="120px"
-                    eager={index === 0}
-                    className="size-full rounded-[1.15rem]"
-                  />
-                ) : null}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-8 max-w-[17rem] text-sm leading-6 text-[var(--text-secondary)]">
-            {viewer.isAnonymous
-              ? "可先建立演示衣橱体验完整流程，也可以直接添加自己的衣物。"
-              : "添加第一件自己的衣物，开始整理衣橱和生成搭配。"}
-          </p>
-        )}
-
-        <div className="mt-5 flex items-center justify-between border-t border-[var(--hairline)] pt-4">
-          <p className="text-sm font-semibold text-[var(--foreground)]">
-            {hasItems
-              ? "查看全部衣物"
-              : viewer.isAnonymous
-                ? "建立体验衣橱"
-                : "添加第一件衣物"}
-          </p>
-          <p className="text-xs text-[var(--text-tertiary)]">仅当前身份可见</p>
-        </div>
-      </Link>
-
-      <Link
-        href="/inspiration"
-        className="pressable stagger-item mt-5 block overflow-hidden rounded-[1.65rem] bg-[var(--fashion-lime-soft)] p-5 shadow-[0_16px_42px_rgba(82,96,33,0.1)] [--stagger:1]"
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold text-[var(--text-secondary)]">
-              DAILY EDIT
-            </p>
-            <h2 className="app-section-title mt-2">今天的时尚灵感</h2>
-            <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
-              可信来源，结合你的衣橱重新讲清楚。
-            </p>
-          </div>
-          <span className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1d1d1f] text-white">
-            <Sparkles className="size-4.5" aria-hidden="true" />
-            <Suspense fallback={null}>
-              <FashionUnreadBadge />
-            </Suspense>
-          </span>
-        </div>
-      </Link>
-
-      <Link
-        href="/diary"
-        className="surface-card pressable stagger-item mt-5 flex items-center gap-4 rounded-[1.55rem] p-4.5 [--stagger:2]"
-      >
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
-          <CalendarDays
-            className="size-4.5"
-            strokeWidth={1.7}
-            aria-hidden="true"
-          />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">
-            {diarySummary?.entry ? "今天已经记录" : "记录今天的穿搭"}
-          </h2>
-          <p className="mt-1 truncate text-xs text-[var(--text-secondary)]">
-            {diarySummary?.entry
-              ? `${diarySummary.entry.title} · ${diarySummary.entry.item_ids.length} 件衣物`
-              : "从推荐一键记入，或自己选择实际穿过的衣物"}
-          </p>
-        </div>
-        <ArrowRight
-          className="size-4 shrink-0 text-[var(--text-tertiary)]"
-          aria-hidden="true"
-        />
-      </Link>
-
-      <Link
-        href="/stickers"
-        className="pressable stagger-item mt-5 flex items-center gap-4 rounded-[1.55rem] bg-[var(--fashion-lilac-soft)] p-4.5 shadow-[0_14px_34px_rgba(81,59,104,0.1)] [--stagger:3]"
-      >
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--fashion-lime)] text-[#1d1d1f]">
-          <Layers3 className="size-4.5" strokeWidth={1.7} aria-hidden="true" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">
-            衣物贴纸册
-          </h2>
-          <p className="mt-1 truncate text-xs text-[var(--text-secondary)]">
-            挑出今天想穿的衣物，做成白边贴纸
-          </p>
-        </div>
-        <ArrowRight
-          className="size-4 shrink-0 text-[var(--text-tertiary)]"
-          aria-hidden="true"
-        />
-      </Link>
-
-      <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:4]">
-        <h2 className="app-section-title">登录后可跨设备使用</h2>
-        <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">
-          {viewer && !viewer.isAnonymous
-            ? "当前衣橱已绑定账号，可在设置中管理登录状态。"
-            : "注册会保留现有衣物。已有账号可以直接登录。"}
-        </p>
-        {viewer && !viewer.isAnonymous ? (
-          <Link
-            href="/settings"
-            className="motion-button mt-4 flex h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
-          >
-            <ShieldCheck className="size-4" aria-hidden="true" />
-            查看账号设置
-          </Link>
-        ) : (
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <Link
-              href="/settings#account"
-              className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-3 text-center text-sm font-semibold text-white"
-            >
-              <UserPlus className="size-4 shrink-0" aria-hidden="true" />
-              注册账号
-            </Link>
-            <Link
-              href="/login"
-              className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-3 text-center text-sm font-semibold text-[var(--foreground)]"
-            >
-              <LogIn className="size-4 shrink-0" aria-hidden="true" />
-              登录
-            </Link>
-          </div>
-        )}
-      </section>
-
-      <section className="mt-8">
-        <h2 className="app-section-title">管理衣橱</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <ReadyItem
-            icon={Images}
-            title="原图目录"
-            description="每件衣物都有自己的位置"
-            wide
-          />
-          <ReadyItem
-            icon={Search}
-            title="快速查找"
-            description="组合条件立即定位"
-          />
-          <ReadyItem
-            icon={ShieldCheck}
-            title="私有维护"
-            description="操作只影响自己"
-          />
-        </div>
-      </section>
-    </div>
+  const today = dateInTimeZone(
+    new Date(),
+    viewer.weatherTimezone ?? "Asia/Shanghai",
   );
-}
-
-function ReadyItem({
-  description,
-  icon: Icon,
-  title,
-  wide = false,
-}: {
-  description: string;
-  icon: typeof Images;
-  title: string;
-  wide?: boolean;
-}) {
+  const days = recentHomeDays(today);
+  const months = [...new Set(days.map((date) => date.slice(0, 7)))];
+  const [data, diaryMonths] = await Promise.all([
+    getRecommendationPageData("today"),
+    Promise.all(months.map(getDiaryMonthData)),
+  ]);
   return (
-    <div
-      className={`surface-card stagger-item rounded-[1.5rem] p-4 ${wide ? "col-span-2 flex items-center gap-4" : "min-h-40"}`}
-      style={
-        {
-          "--stagger": wide ? 0 : title === "快速查找" ? 1 : 2,
-        } as React.CSSProperties
-      }
-    >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
-        <Icon className="size-4.5" strokeWidth={1.7} aria-hidden="true" />
-      </span>
-      <div className={wide ? "" : "mt-8"}>
-        <h3 className="text-sm font-semibold text-[var(--foreground)]">
-          {title}
-        </h3>
-        <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-          {description}
-        </p>
-      </div>
-    </div>
+    <DailyEdit
+      data={data}
+      days={days}
+      entries={diaryMonths.flatMap((month) => month?.entries ?? [])}
+      diaryError={diaryMonths.some((month) => !month || Boolean(month.error))}
+      anonymous={viewer.isAnonymous}
+    />
   );
 }

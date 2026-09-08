@@ -9,7 +9,7 @@ assert.match(component, /pointer-events: none|pointer-events-none/);
 assert.doesNotMatch(component, /fetch\(|createClient|\.storage|\.from\(/);
 
 const rolloutFiles = [
-  "app/page.tsx",
+  "components/home/daily-edit.tsx",
   "app/wardrobe/[id]/page.tsx",
   "app/diary/page.tsx",
   "components/diary/diary-composer.tsx",
@@ -23,9 +23,9 @@ for (const path of rolloutFiles) {
   assert.match(source, /imageUrl=/, `${path} 未保留原图降级`);
 }
 
-const home = await read("app/page.tsx");
-assert.match(home, /eager=\{index === 0\}/);
-assert.match(home, /href=\{wardrobeHref\}/);
+const home = await read("components/home/daily-edit.tsx");
+assert.match(home, /eager=\{index < 2\}/);
+assert.match(home, /看这套搭配/);
 
 const detail = await read("app/wardrobe/[id]/page.tsx");
 for (const preservedAction of [

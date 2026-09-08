@@ -4,7 +4,7 @@ import path from "node:path";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const corePages = [
-  "app/page.tsx",
+  "components/home/daily-edit.tsx",
   "app/wardrobe/page.tsx",
   "app/wardrobe/new/page.tsx",
   "app/recommendations/page.tsx",

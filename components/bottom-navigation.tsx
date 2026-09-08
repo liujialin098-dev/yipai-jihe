@@ -46,9 +46,7 @@ export function BottomNavigation() {
             <span className="nav-bubble" aria-hidden="true" />
             <span
               className={
-                primary
-                  ? "nav-icon-shell nav-primary-bevel dock-add"
-                  : "nav-icon-shell dock-icon"
+                primary ? "nav-icon-shell dock-add" : "nav-icon-shell dock-icon"
               }
             >
               <Icon
