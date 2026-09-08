@@ -1,5 +1,6 @@
 import {
   stickerCanvasTheme,
+  stickerRenderGeometry,
   type StickerCanvasItem,
   type StickerCanvasTheme,
 } from "@/lib/stickers/canvas";
@@ -29,19 +30,14 @@ function drawSticker(
   outlineColor: StickerOutlineColor,
 ) {
   const baseWidth = width * 0.29 * item.scale;
-  const ratio = bitmap.height / Math.max(1, bitmap.width);
-  const drawHeight = Math.min(baseWidth * ratio, height * 0.42);
-  const drawWidth = drawHeight / ratio;
+  const { drawWidth, drawHeight, cropLeft, cropTop, cropWidth, cropHeight } =
+    stickerRenderGeometry(baseWidth, bitmap.width, bitmap.height, item.crop);
   const centerX = item.x * width;
   const centerY = item.y * height;
 
   context.save();
   context.translate(centerX, centerY);
   context.rotate((item.rotation * Math.PI) / 180);
-  const cropLeft = -drawWidth / 2 + drawWidth * item.crop.left;
-  const cropTop = -drawHeight / 2 + drawHeight * item.crop.top;
-  const cropWidth = drawWidth * (1 - item.crop.left - item.crop.right);
-  const cropHeight = drawHeight * (1 - item.crop.top - item.crop.bottom);
   context.beginPath();
   context.rect(cropLeft, cropTop, cropWidth, cropHeight);
   context.clip();

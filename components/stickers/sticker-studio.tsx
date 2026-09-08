@@ -242,6 +242,14 @@ export function StickerStudio({
       ) : (
         <>
           <StickerCanvas
+            onRefined={(id, url) => {
+              setCurrentItems((current) =>
+                current.map((item) =>
+                  item.id === id ? { ...item, cutoutUrl: url } : item,
+                ),
+              );
+              router.refresh();
+            }}
             day={day}
             items={selectedItems}
             onRemove={toggleItem}

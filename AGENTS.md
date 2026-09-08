@@ -1,5 +1,14 @@
 # 项目开发说明
 
+## 当前增量：SDD-040（2026-09-08，Production发布中）
+
+- 贴纸画板选中就绪透明衣物后可打开人工橡皮擦：最长1280px编辑、8～64px笔刷、擦除/恢复本次透明源/最近6笔撤销/重置、脏稿退出确认、保存失败保留编辑。只修改当前单品透明贴纸，原照片不变；旧410抠图编辑路由继续停用。恢复不能带回原照片背景。
+- 专用 `/api/stickers/items/[id]/refine` GET/POST：当前 `auth.getUser()`、活跃衣物归属和私有路径复验；GET返回私有PNG和ETag路径哈希，POST仅同源、3MiB PNG、1280²像素及有效透明通道、If-Match。双UUID工作图/展示图成功后才按id/user_id/status/旧cutout_path比较更新；版本冲突409。请求结果不确定时先复查指针，不得误删除可能已生效的新图；旧透明图和原照片保留，本期没有历史版本UI。没有新表、权限或供应商配置。
+- 裁切模式在四边显示44px拖柄；旋转逆变换后按局部坐标裁切0～40%，pointercancel还原，键盘和「精确调整」滑杆保留。普通模式显示四角缩放/旋转，避免八柄相撞。裁切仍为v2本设备画板数据。`stickerRenderGeometry` 统一PNG的正方形裁切坐标与loose贴纸4%留白，禁止恢复按原图长宽裁切的旧导出差异。
+- 验证：check/build、040/034/035/036/039/007通过；040联网双匿名会话真实保存、自身读取、跨账号拒绝、旧版本拒绝、原图与旧透明图保留通过。仅清理本轮合成衣物和4个私有PNG，不删除匿名Auth用户。实际React画板/橡皮擦在本地隔离HTTP样本完成390px旋转下边拖裁、擦除碎片/撤销/恢复/取消确认/保存回显，以及375px暗色、844px横屏无溢出、Escape焦点恢复、0浏览器error。样本HTTP保存不冒充登录浏览器端到端；本人照片、真机触控与分享仍待复验。
+- 测试命令 `npm run verify:sdd-040`；联网 `node --env-file=.env.local --no-warnings scripts/verify-sdd-040.mjs --live`。`node scripts/serve-sticker-040-fixture.mjs` 在127.0.0.1:3040运行实际组件的合成内存样本（mock图片接口与next/image，仅用于交互，不连接账号或供应商）；浏览器通过CUA操作，不注入用户状态。
+- 2026-09-08 Context7 `/supabase/supabase` 与Supabase changelog复核：私有Storage下载需用户鉴权或短期签名；沿用受RLS约束的用户客户端，不使用service_role。本轮没有部署请求，Production仍为下述SDD-039；进度以progress.md的040节为准。
+
 ## 当前有效决策：SDD-030 至 SDD-039（2026-09-08）
 
 - **最新Production发布：SDD-039（2026-09-08 21:53，覆盖下方未发布/旧部署记录）**：项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `13d2364`，部署 `dpl_7JhasNyXGMafiPNj2X3AHvdnhBcu`，部署URL `https://yipai-jihe-664w7bxry-jialin-d583.vercel.app`，正式别名 `https://yipai-jihe.vercel.app`。包含首页最多8件与六色实心描边。inspect确认Ready/production/别名，云端Next.js16.3.1构建14秒通过；首页、login、stickers、recommendations的无会话HTTP GET均200（不等于登录后功能验收），30分钟error日志无记录。内置浏览器重载超时，登录后真实照片/下载/分享未完成复验。

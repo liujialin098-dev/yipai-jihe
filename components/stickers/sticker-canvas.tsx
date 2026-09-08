@@ -10,6 +10,7 @@ import {
   Check,
   Crop,
   Download,
+  Eraser,
   ImageOff,
   LoaderCircle,
   Maximize2,
@@ -29,6 +30,8 @@ import {
   useState,
 } from "react";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
+import { StickerEraser } from "@/components/stickers/sticker-eraser";
+import { cropFromPointerDelta } from "@/lib/stickers/crop-gesture";
 import {
   StickerOutlineControls,
   useStickerOutlineColor,
@@ -101,11 +104,13 @@ export function StickerCanvas({
   day,
   items: selectedItems,
   onRemove,
+  onRefined,
   storageKey,
 }: {
   day: string;
   items: StickerCanvasWardrobeItem[];
   onRemove: (id: string) => void;
+  onRefined?: (id: string, url: string) => void;
   storageKey: string;
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -119,11 +124,29 @@ export function StickerCanvas({
   const [selectedId, setSelectedId] = useState("");
   const [theme, setTheme] = useState<StickerCanvasTheme>("lilac");
   const [cropOpen, setCropOpen] = useState(false);
+  const [eraserId, setEraserId] = useState("");
+  const [refinedUrls, setRefinedUrls] = useState<Record<string, string>>({});
+  const cropGesture = useRef<{
+    id: string;
+    pointerId: number;
+    edge: keyof StickerCanvasItem["crop"];
+    x: number;
+    y: number;
+    size: number;
+    rotation: number;
+    crop: StickerCanvasItem["crop"];
+  } | null>(null);
   const [exporting, setExporting] = useState<"download" | "share" | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
   const wardrobeMap = useMemo(
-    () => new Map(selectedItems.map((item) => [item.id, item])),
-    [selectedItems],
+    () =>
+      new Map(
+        selectedItems.map((item) => [
+          item.id,
+          { ...item, cutoutUrl: refinedUrls[item.id] ?? item.cutoutUrl },
+        ]),
+      ),
+    [selectedItems, refinedUrls],
   );
   const categoryById = useMemo(
     () => new Map(selectedItems.map((item) => [item.id, item.category])),
@@ -135,7 +158,7 @@ export function StickerCanvas({
   );
   const selectedWardrobeItem = wardrobeMap.get(selectedId);
   useEffect(() => {
-    if (!selectedId) return;
+    if (!selectedId || eraserId) return;
     const dismiss = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") {
         setSelectedId("");
@@ -144,7 +167,7 @@ export function StickerCanvas({
     };
     document.addEventListener("keydown", dismiss);
     return () => document.removeEventListener("keydown", dismiss);
-  }, [selectedId]);
+  }, [selectedId, eraserId]);
   const allReady =
     selectedItems.length > 0 && selectedItems.every((item) => item.cutoutUrl);
 
@@ -379,6 +402,57 @@ export function StickerCanvas({
       ...item,
       crop: clampStickerCrop({ ...item.crop, [edge]: value }),
     }));
+  }
+
+  function startCrop(
+    event: PointerEvent<HTMLButtonElement>,
+    edge: keyof StickerCanvasItem["crop"],
+  ) {
+    if (
+      !selectedCanvasItem ||
+      !event.isPrimary ||
+      event.button !== 0 ||
+      cropGesture.current
+    )
+      return;
+    const element = itemElements.current.get(selectedId);
+    if (!element) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    cropGesture.current = {
+      id: selectedId,
+      pointerId: event.pointerId,
+      edge,
+      x: event.clientX,
+      y: event.clientY,
+      size: element.offsetWidth,
+      rotation: selectedCanvasItem.rotation,
+      crop: { ...selectedCanvasItem.crop },
+    };
+  }
+  function moveCrop(event: PointerEvent<HTMLButtonElement>) {
+    const gesture = cropGesture.current;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const crop = cropFromPointerDelta(
+      gesture.crop,
+      gesture.edge,
+      event.clientX - gesture.x,
+      event.clientY - gesture.y,
+      gesture.rotation,
+      gesture.size,
+    );
+    updateItem(gesture.id, (item) => ({ ...item, crop }));
+  }
+  function finishCrop(event: PointerEvent<HTMLButtonElement>, cancel = false) {
+    const gesture = cropGesture.current;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    if (cancel)
+      updateItem(gesture.id, (item) => ({ ...item, crop: gesture.crop }));
+    else moveCrop(event);
+    cropGesture.current = null;
   }
 
   function handleKeyDown(
@@ -695,54 +769,161 @@ export function StickerCanvas({
               transform: transformStyle(selectedCanvasItem),
             }}
           >
-            <CornerHandle
-              label="缩小贴纸"
-              position="top-left"
-              icon={Maximize2}
-              onPointerDown={(event) =>
-                handleTransformPointerDown(event, selectedCanvasItem, "scale")
-              }
-              onPointerMove={handleTransformPointerMove}
-              onPointerUp={finishTransform}
-              onPointerCancel={finishTransform}
-              onClick={() => handleCornerClick(selectedId, "shrink")}
-            />
-            <CornerHandle
-              label="顺时针旋转贴纸"
-              position="top-right"
-              icon={RotateCw}
-              onPointerDown={(event) =>
-                handleTransformPointerDown(event, selectedCanvasItem, "rotate")
-              }
-              onPointerMove={handleTransformPointerMove}
-              onPointerUp={finishTransform}
-              onPointerCancel={finishTransform}
-              onClick={() => handleCornerClick(selectedId, "clockwise")}
-            />
-            <CornerHandle
-              label="逆时针旋转贴纸"
-              position="bottom-left"
-              icon={RotateCcw}
-              onPointerDown={(event) =>
-                handleTransformPointerDown(event, selectedCanvasItem, "rotate")
-              }
-              onPointerMove={handleTransformPointerMove}
-              onPointerUp={finishTransform}
-              onPointerCancel={finishTransform}
-              onClick={() => handleCornerClick(selectedId, "counterclockwise")}
-            />
-            <CornerHandle
-              label="放大贴纸"
-              position="bottom-right"
-              icon={Maximize2}
-              onPointerDown={(event) =>
-                handleTransformPointerDown(event, selectedCanvasItem, "scale")
-              }
-              onPointerMove={handleTransformPointerMove}
-              onPointerUp={finishTransform}
-              onPointerCancel={finishTransform}
-              onClick={() => handleCornerClick(selectedId, "grow")}
-            />
+            {cropOpen ? (
+              <>
+                <span
+                  className="absolute border-2 border-white shadow-[0_0_0_1px_#46364f]"
+                  style={{
+                    inset: `${selectedCanvasItem.crop.top * 100}% ${selectedCanvasItem.crop.right * 100}% ${selectedCanvasItem.crop.bottom * 100}% ${selectedCanvasItem.crop.left * 100}%`,
+                  }}
+                />
+                {(
+                  [
+                    ["top", "上边"],
+                    ["right", "右边"],
+                    ["bottom", "下边"],
+                    ["left", "左边"],
+                  ] as const
+                ).map(([edge, label]) => {
+                  const crop = selectedCanvasItem.crop;
+                  const horizontal = edge === "top" || edge === "bottom";
+                  return (
+                    <button
+                      key={edge}
+                      type="button"
+                      aria-label={`拖动裁切${label}`}
+                      title={`裁切${label}；方向键微调`}
+                      data-crop-edge={edge}
+                      className="pointer-events-auto absolute z-20 flex size-11 touch-none items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-[#d9c6ef]"
+                      style={{
+                        left: `${(edge === "left" ? crop.left : edge === "right" ? 1 - crop.right : (crop.left + 1 - crop.right) / 2) * 100}%`,
+                        top: `${(edge === "top" ? crop.top : edge === "bottom" ? 1 - crop.bottom : (crop.top + 1 - crop.bottom) / 2) * 100}%`,
+                        transform:
+                          edge === "top"
+                            ? "translate(-50%,-100%)"
+                            : edge === "bottom"
+                              ? "translate(-50%,0)"
+                              : edge === "left"
+                                ? "translate(-100%,-50%)"
+                                : "translate(0,-50%)",
+                      }}
+                      onPointerDown={(event) => startCrop(event, edge)}
+                      onPointerMove={moveCrop}
+                      onPointerUp={(event) => finishCrop(event)}
+                      onPointerCancel={(event) => finishCrop(event, true)}
+                      onLostPointerCapture={(event) => {
+                        if (cropGesture.current) finishCrop(event, true);
+                      }}
+                      onKeyDown={(event) => {
+                        if (
+                          ![
+                            "ArrowUp",
+                            "ArrowDown",
+                            "ArrowLeft",
+                            "ArrowRight",
+                            "Home",
+                            "End",
+                          ].includes(event.key)
+                        )
+                          return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const inward =
+                          edge === "top"
+                            ? "ArrowDown"
+                            : edge === "bottom"
+                              ? "ArrowUp"
+                              : edge === "left"
+                                ? "ArrowRight"
+                                : "ArrowLeft";
+                        updateCrop(
+                          edge,
+                          event.key === "Home"
+                            ? 0
+                            : event.key === "End"
+                              ? 0.4
+                              : crop[edge] +
+                                (event.key === inward ? 0.02 : -0.02),
+                        );
+                      }}
+                    >
+                      <span
+                        className={`rounded-full bg-white shadow-[0_0_0_1px_#46364f] ${horizontal ? "h-2 w-6" : "h-6 w-2"}`}
+                      />
+                    </button>
+                  );
+                })}
+              </>
+            ) : (
+              <>
+                <CornerHandle
+                  label="缩小贴纸"
+                  position="top-left"
+                  icon={Maximize2}
+                  onPointerDown={(event) =>
+                    handleTransformPointerDown(
+                      event,
+                      selectedCanvasItem,
+                      "scale",
+                    )
+                  }
+                  onPointerMove={handleTransformPointerMove}
+                  onPointerUp={finishTransform}
+                  onPointerCancel={finishTransform}
+                  onClick={() => handleCornerClick(selectedId, "shrink")}
+                />
+                <CornerHandle
+                  label="顺时针旋转贴纸"
+                  position="top-right"
+                  icon={RotateCw}
+                  onPointerDown={(event) =>
+                    handleTransformPointerDown(
+                      event,
+                      selectedCanvasItem,
+                      "rotate",
+                    )
+                  }
+                  onPointerMove={handleTransformPointerMove}
+                  onPointerUp={finishTransform}
+                  onPointerCancel={finishTransform}
+                  onClick={() => handleCornerClick(selectedId, "clockwise")}
+                />
+                <CornerHandle
+                  label="逆时针旋转贴纸"
+                  position="bottom-left"
+                  icon={RotateCcw}
+                  onPointerDown={(event) =>
+                    handleTransformPointerDown(
+                      event,
+                      selectedCanvasItem,
+                      "rotate",
+                    )
+                  }
+                  onPointerMove={handleTransformPointerMove}
+                  onPointerUp={finishTransform}
+                  onPointerCancel={finishTransform}
+                  onClick={() =>
+                    handleCornerClick(selectedId, "counterclockwise")
+                  }
+                />
+                <CornerHandle
+                  label="放大贴纸"
+                  position="bottom-right"
+                  icon={Maximize2}
+                  onPointerDown={(event) =>
+                    handleTransformPointerDown(
+                      event,
+                      selectedCanvasItem,
+                      "scale",
+                    )
+                  }
+                  onPointerMove={handleTransformPointerMove}
+                  onPointerUp={finishTransform}
+                  onPointerCancel={finishTransform}
+                  onClick={() => handleCornerClick(selectedId, "grow")}
+                />
+              </>
+            )}
           </div>
         ) : null}
       </div>
@@ -758,7 +939,9 @@ export function StickerCanvas({
                 {selectedWardrobeItem.name}
               </p>
               <p className="mt-1 text-[0.66rem] text-[var(--text-tertiary)]">
-                中间移动 · 四角缩放与旋转
+                {cropOpen
+                  ? "拖动四边裁切 · 可随时恢复完整"
+                  : "中间移动 · 四角缩放与旋转"}
               </p>
             </div>
             <button
@@ -770,6 +953,20 @@ export function StickerCanvas({
               重排
             </button>
           </div>
+
+          {selectedWardrobeItem.cutoutUrl ? (
+            <button
+              type="button"
+              onClick={() => {
+                setCropOpen(false);
+                setEraserId(selectedId);
+              }}
+              className="motion-button mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--fashion-lilac-soft)] text-sm font-semibold"
+            >
+              <Eraser className="size-4" aria-hidden="true" />
+              橡皮擦
+            </button>
+          ) : null}
 
           <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-8">
             <CanvasTool
@@ -818,7 +1015,7 @@ export function StickerCanvas({
           {cropOpen ? (
             <div className="sticker-crop-panel mt-4 rounded-[1.2rem] bg-[var(--surface-soft)] p-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-semibold">裁切边缘</p>
+                <p className="text-xs font-semibold">四边裁切</p>
                 <button
                   type="button"
                   onClick={() =>
@@ -832,37 +1029,42 @@ export function StickerCanvas({
                   恢复完整
                 </button>
               </div>
-              <div className="mt-3 grid gap-3">
-                {(
-                  [
-                    ["top", "上边"],
-                    ["right", "右边"],
-                    ["bottom", "下边"],
-                    ["left", "左边"],
-                  ] as const
-                ).map(([edge, label]) => (
-                  <label
-                    key={edge}
-                    className="grid grid-cols-[2.5rem_1fr_2.4rem] items-center gap-2 text-xs font-semibold"
-                  >
-                    <span>{label}</span>
-                    <input
-                      type="range"
-                      min="0"
-                      max="0.4"
-                      step="0.02"
-                      value={selectedCanvasItem.crop[edge]}
-                      onChange={(event) =>
-                        updateCrop(edge, Number(event.target.value))
-                      }
-                      className="sticker-tool-range"
-                    />
-                    <span className="text-right text-[0.62rem] text-[var(--text-tertiary)]">
-                      {Math.round(selectedCanvasItem.crop[edge] * 100)}%
-                    </span>
-                  </label>
-                ))}
-              </div>
+              <details className="mt-3">
+                <summary className="min-h-11 cursor-pointer text-xs font-semibold leading-[44px]">
+                  精确调整
+                </summary>
+                <div className="grid gap-3">
+                  {(
+                    [
+                      ["top", "上边"],
+                      ["right", "右边"],
+                      ["bottom", "下边"],
+                      ["left", "左边"],
+                    ] as const
+                  ).map(([edge, label]) => (
+                    <label
+                      key={edge}
+                      className="grid grid-cols-[2.5rem_1fr_2.4rem] items-center gap-2 text-xs font-semibold"
+                    >
+                      <span>{label}</span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="0.4"
+                        step="0.02"
+                        value={selectedCanvasItem.crop[edge]}
+                        onChange={(event) =>
+                          updateCrop(edge, Number(event.target.value))
+                        }
+                        className="sticker-tool-range"
+                      />
+                      <span className="text-right text-[0.62rem] text-[var(--text-tertiary)]">
+                        {Math.round(selectedCanvasItem.crop[edge] * 100)}%
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </details>
               <button
                 type="button"
                 onClick={() => setCropOpen(false)}
@@ -916,6 +1118,23 @@ export function StickerCanvas({
         >
           {notice.text}
         </output>
+      ) : null}
+      {eraserId && wardrobeMap.get(eraserId) ? (
+        <StickerEraser
+          key={eraserId}
+          itemId={eraserId}
+          name={wardrobeMap.get(eraserId)?.name ?? "衣物贴纸"}
+          onCancel={() => setEraserId("")}
+          onSaved={(url) => {
+            setRefinedUrls((current) => ({ ...current, [eraserId]: url }));
+            onRefined?.(eraserId, url);
+            setEraserId("");
+            setNotice({
+              tone: "success",
+              text: "贴纸已保存，原照片保持不变。",
+            });
+          }}
+        />
       ) : null}
     </>
   );

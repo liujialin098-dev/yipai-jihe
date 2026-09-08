@@ -109,6 +109,24 @@ export const EMPTY_STICKER_CROP: StickerCrop = {
   left: 0,
 };
 
+// Matches the square editor box and GarmentSticker loose-surface 4% padding.
+export function stickerRenderGeometry(
+  size: number,
+  imageWidth: number,
+  imageHeight: number,
+  crop: StickerCrop,
+) {
+  const fit = (size * 0.92) / Math.max(imageWidth, imageHeight, 1);
+  return {
+    drawWidth: imageWidth * fit,
+    drawHeight: imageHeight * fit,
+    cropLeft: -size / 2 + size * crop.left,
+    cropTop: -size / 2 + size * crop.top,
+    cropWidth: size * (1 - crop.left - crop.right),
+    cropHeight: size * (1 - crop.top - crop.bottom),
+  };
+}
+
 export const STICKER_CANVAS_LIMITS = {
   x: { min: 0.06, max: 0.94 },
   y: { min: 0.16, max: 0.92 },
