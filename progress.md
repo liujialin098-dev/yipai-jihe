@@ -1438,6 +1438,16 @@
 
 下一步：配置本地百度凭据或按用户指令部署到已有生产环境后，补验真实照片及移动端批量流程；不能把固定渲染/模拟HTTP样本记为真实供应商成功。
 
+### 2026-09-08 21:12 Production部署（覆盖上述仅本地状态）
+
+- [x] 已核对项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n` / `jialin-d583`，Next.js框架和11项生产配置名称；百度双密钥存在，不读取值，不覆盖本机.env。
+- [x] 源提交 `d2e4832`（feat: refine home and create stickers on ingestion）；只提交相关功能与文档，排除无关Logo/PRD素材。
+- [x] 本地check/build、038/037/036/033/007通过；云端构建约15秒通过。SDD-018历史城市文案断言仍单独待维护，不把它记为通过。
+- [x] `npx vercel deploy --prod --yes --scope jialin-d583` 完成。部署 `dpl_CtCoGe4J7qHxdqQSYpZCizNQuMUo`，`https://yipai-jihe-7jvd4n3e5-jialin-d583.vercel.app`，inspect确认Ready/production，固定域名 `https://yipai-jihe.vercel.app` 已切换。
+- [x] 已发布036导航与夜间模式、037最新首页拼图/每日推送、038入库贴纸队列。日志检查最近30分钟无error记录，不等同于有真实访问或抠图成功。
+- [ ] 当前设备访问固定域名20秒连接超时，浏览器打开也超时；线上页面交互与真实上传→贴纸→画板验收未完成。没有关闭保护或创建绕过链接。
+- 状态：发布完成，线上完整验收待网络恢复；本地仍缺百度双密钥、真实千问/本人登录等既有限制未消除。
+
 完成任一阶段后，在对应阶段的“阶段完成记录”中填写：
 
 ```text

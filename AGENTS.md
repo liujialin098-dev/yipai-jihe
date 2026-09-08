@@ -2,6 +2,9 @@
 
 ## 当前有效决策：SDD-030 至 SDD-038（2026-09-08）
 
+- **最新Production发布（2026-09-08 21:12，覆盖下方所有未部署历史记录）**：项目 `yipai-jihe`，源提交 `d2e4832`，部署 `dpl_CtCoGe4J7qHxdqQSYpZCizNQuMUo`，URL `https://yipai-jihe-7jvd4n3e5-jialin-d583.vercel.app`，正式别名 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正确别名；云端Next.js16.3.1构建通过（约15秒）。包含036导航/夜间模式、037居中问候/透明拼图/每日推送入口、038入库自动制贴。生产11项配置名称已核对，百度双Secret存在；不得推定真实抠图已通过。最近30分钟error日志无记录；本设备正式域名HTTP连接20秒超时，浏览器加载亦超时，线上交互/真实照片制贴仍待网络恢复验收。
+- 本次复用已核对的 `.vercel/project.json`，未重新link或env pull，避免覆盖本地配置；发布指令 `npx vercel deploy --prod --yes --scope jialin-d583`，检查 `npx vercel inspect yipai-jihe-7jvd4n3e5-jialin-d583.vercel.app --scope jialin-d583`，日志 `npx vercel logs yipai-jihe-7jvd4n3e5-jialin-d583.vercel.app --level error --since 30m --scope jialin-d583`。Context7 `/websites/vercel` 复核当前deploy/inspect用法。未修改权限、域名或密钥；无关Logo备选与PRD保持未追踪，并通过.vercelignore排除部署。
+
 - SDD-038 入库贴纸：单件/批量确认成功后，添加页自动调用现有 `/api/stickers/items/:id`，单并发且相邻请求间隔4秒，60秒客户端超时；已完成/处理中同ID不重复排队，失败仅显式重试。入库与贴纸状态独立，失败不回滚衣物或伪造透明图；只有真实就绪URL才复用GarmentSticker白边与阴影预览。页面卸载取消未开始任务，必须告知用户暂留或到贴纸页继续，不宣称持久后台队列。待制贴时不能清空满批次。无新表、无供应商/权限变更、无首页自动抠图。代码check/build与038/033/037/007通过；本地百度双密钥缺失，真实供应商联调和Production仍未完成。SDD-018历史城市文案断言失败单独保留，不修改天气来迎合测试。
 
 - SDD-037 首页最新增量：五日手帐下增加「每日推送」轻量整行入口，进入 `/inspiration`。复用日夜主题、青柠图标与浅紫表面，不能恢复资讯大卡堆叠；关闭入口预取，不新增首页内容查询、未读计数、通知订阅或系统推送。check/build、037固定渲染、日夜截图与实际资讯页跳转已验证；仅本地，未部署。
