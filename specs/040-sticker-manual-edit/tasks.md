@@ -6,3 +6,5 @@
 - [x] T04 贴纸专用鉴权GET/POST、PNG验证、CAS和失败清理。
 - [x] T05 自动测试、check/build及本地浏览器；双账号真实存储通过，交互使用隔离样本，限制见quickstart。
 - [x] T06 更新progress、AGENTS和quickstart；本轮不部署、不自动提交。
+- [x] T07 用户后续要求发布：源提交c6c9e87，Production部署dpl_54YV7QY1rYJHhiAgDxai5JmCb3tf，Ready/别名/云构建与日志核对完成。
+- [ ] T08 连接恢复后补做线上浏览器交互复验；本机正式站点与内置浏览器超时，限制已写入progress。
