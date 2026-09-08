@@ -5,4 +5,5 @@
 - [x] T003 PNG导出同步无阴影描边与颜色。
 - [x] T004 固定测试、check/build和浏览器合成样本视觉复验；更新进度。
 - [ ] T005 用户真实照片、完整下载和真机分享复验（不能以固定样本代替）。
-- [ ] Production部署与真机验收（未请求部署）。
+- [x] Production部署：2026-09-08，源提交13d2364，dpl_7JhasNyXGMafiPNj2X3AHvdnhBcu，Ready/production/固定域名已核对。
+- [ ] 线上登录后交互与真机验收：内置浏览器重载超时；HTTP200不代替真实交互。

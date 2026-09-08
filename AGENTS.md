@@ -2,6 +2,9 @@
 
 ## 当前有效决策：SDD-030 至 SDD-039（2026-09-08）
 
+- **最新Production发布：SDD-039（2026-09-08 21:53，覆盖下方未发布/旧部署记录）**：项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `13d2364`，部署 `dpl_7JhasNyXGMafiPNj2X3AHvdnhBcu`，部署URL `https://yipai-jihe-664w7bxry-jialin-d583.vercel.app`，正式别名 `https://yipai-jihe.vercel.app`。包含首页最多8件与六色实心描边。inspect确认Ready/production/别名，云端Next.js16.3.1构建14秒通过；首页、login、stickers、recommendations的无会话HTTP GET均200（不等于登录后功能验收），30分钟error日志无记录。内置浏览器重载超时，登录后真实照片/下载/分享未完成复验。
+- 本次发布复用既有正确project.json，未pull、改密钥或访问策略；发布 `npx vercel deploy --prod --yes --scope jialin-d583`，核验 `npx vercel inspect yipai-jihe-664w7bxry-jialin-d583.vercel.app --scope jialin-d583`，日志 `npx vercel logs yipai-jihe-664w7bxry-jialin-d583.vercel.app --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核prod/inspect命令；原有11项生产变量名称齐全，无关素材/PRD仍未追踪且未上传。
+
 - **SDD-039 本地增量，尚未发布**：首页始终从当前可见衣橱就绪透明图选最多8件，按类别优先去重；拼图明确叫「衣橱拼图」，不是推荐中的一套，不改写真实推荐。无足够贴纸只展示实际数量。共享GarmentSticker用512px有界alpha圆盘膨胀产生实心轮廓，默认白色，禁止恢复放大白色副本或轮廓drop-shadow；cutout悬停不能单独缩放衣物使描边错位。首页「描边」折叠色点与贴纸画板可选白/丁香/青柠/珊瑚/天蓝/墨色，用设备localStorage记忆，不保存账号或原图；所有共享贴纸与PNG导出复用此颜色和轮廓算法。读取失败保留实拍，缓存上限64，不触发付费抠图。check/build与039/037/038/031/034/035/036/007通过，390/375px与横屏合成透明样本通过；真实照片和完整下载/真机分享尚待复验。详见progress及039/quickstart；本条覆盖下方白边阴影、有推荐时只展示3～7件的旧约定。
 
 - **最新Production发布（2026-09-08 21:12，覆盖下方所有未部署历史记录）**：项目 `yipai-jihe`，源提交 `d2e4832`，部署 `dpl_CtCoGe4J7qHxdqQSYpZCizNQuMUo`，URL `https://yipai-jihe-7jvd4n3e5-jialin-d583.vercel.app`，正式别名 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正确别名；云端Next.js16.3.1构建通过（约15秒）。包含036导航/夜间模式、037居中问候/透明拼图/每日推送入口、038入库自动制贴。生产11项配置名称已核对，百度双Secret存在；不得推定真实抠图已通过。最近30分钟error日志无记录；本设备正式域名HTTP连接20秒超时，浏览器加载亦超时，线上交互/真实照片制贴仍待网络恢复验收。

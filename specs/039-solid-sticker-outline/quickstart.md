@@ -8,6 +8,8 @@
 
 ## 已执行与限制（2026-09-08）
 
+- 发布补充（覆盖下方本地未部署记录）：源提交13d2364已发布Production，部署dpl_7JhasNyXGMafiPNj2X3AHvdnhBcu，正式域名https://yipai-jihe.vercel.app；云端构建14秒、Ready及别名通过。四个无会话页面GET200，error日志无记录；内置浏览器重载超时，登录后照片、下载和分享仍待复验。
+
 - check/build通过；039像素圆盘膨胀/alpha阈值/越界/六色/本地存储与跨标签同步/存储拒绝通过；037实际首页组件0～8件、有无推荐/空数据、038实际入库卡片回归通过。
 - 031/034历史阴影与brightness断言按039新合同更新；035/036/007通过。
 - 本地固定透明形状样本（`node scripts/verify-sdd-039.mjs --preview`，127.0.0.1:3012）复用实际512px遮罩算法与CSS；390px浅/深背景白色与丁香色、375px及844px横屏无溢出、44px色点、Canvas轮廓生成已验证，无浏览器error。
