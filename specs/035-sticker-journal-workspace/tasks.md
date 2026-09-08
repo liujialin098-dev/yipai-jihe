@@ -57,6 +57,7 @@
 - [x] T015 运行 `npm run check`、`npm run build`、`npm run verify:sdd-035`、`npm run verify:sdd-034`、`npm run verify:sdd-009`
 - [x] T016 按 `quickstart.md` 在 390px 与横屏完成浏览器验收并修复发现的问题
 - [x] T017 提交 SDD-035 实现，记录提交号；本阶段不执行 Production 部署
+- [x] T018 收到用户后续明确指令后部署现有 `yipai-jihe` Production，并记录部署状态与受限验收项
 
 ## Dependencies
 
