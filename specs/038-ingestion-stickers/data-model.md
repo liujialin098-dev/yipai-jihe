@@ -1,0 +1,5 @@
+# 数据模型
+
+不新增表或列。衣物仍通过source_ingestion_id幂等入库；贴纸复用wardrobe_items.cutout_path和私有cutouts/cutout-sources对象，白边与阴影在GarmentSticker展示层生成，不改变原始衣物照片。
+
+添加页QueueItem新增sticker对象：status为idle/queued/processing/ready/failed，cutoutUrl可空。仅当前挂载工作区持有；不写localStorage，不保存密钥或私有路径。服务端已完成结果可被首页、日记与画板复用。

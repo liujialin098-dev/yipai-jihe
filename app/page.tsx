@@ -42,6 +42,7 @@ export default async function Home({
       entries={diaryMonths.flatMap((month) => month?.entries ?? [])}
       diaryError={diaryMonths.some((month) => !month || Boolean(month.error))}
       anonymous={viewer.isAnonymous}
+      displayName={viewer.displayName}
     />
   );
 }

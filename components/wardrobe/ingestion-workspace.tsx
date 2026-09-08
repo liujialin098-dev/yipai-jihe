@@ -8,12 +8,18 @@ import {
   LoaderCircle,
   RefreshCw,
   Sparkles,
+  Sticker,
   Trash2,
   Upload,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
+import {
+  createIngestionStickerQueue,
+  type IngestionStickerState,
+} from "@/lib/wardrobe/ingestion-stickers";
 import { createClient } from "@/lib/supabase/client";
 import { WARDROBE_AUDIENCE_OPTIONS } from "@/lib/personalization/constants";
 import {
@@ -52,6 +58,7 @@ type QueueItem = {
   selectedForConfirm: boolean;
   error: string | null;
   recognitionMs: number | null;
+  sticker: IngestionStickerState;
 };
 
 const MAX_FILES = 10;
@@ -75,6 +82,25 @@ export function IngestionWorkspace() {
   const [items, setItems] = useState<QueueItem[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const stickerQueue = useRef<ReturnType<
+    typeof createIngestionStickerQueue
+  > | null>(null);
+  const confirming = useRef(new Set<string>());
+
+  useEffect(() => {
+    const queue = createIngestionStickerQueue((job, sticker) => {
+      setItems((current) =>
+        current.map((item) =>
+          item.localId === job.localId ? { ...item, sticker } : item,
+        ),
+      );
+    });
+    stickerQueue.current = queue;
+    return () => {
+      queue.dispose();
+      stickerQueue.current = null;
+    };
+  }, []);
 
   function patchItem(localId: string, patch: Partial<QueueItem>) {
     setItems((current) =>
@@ -118,6 +144,7 @@ export function IngestionWorkspace() {
         selectedForConfirm: true,
         error: null,
         recognitionMs: null,
+        sticker: { status: "idle", cutoutUrl: null },
       });
     }
 
@@ -190,10 +217,13 @@ export function IngestionWorkspace() {
   }
 
   async function confirmItem(item: QueueItem) {
+    if (confirming.current.has(item.localId) || item.status === "confirmed")
+      return false;
     if (!item.ingestionId) {
       patchItem(item.localId, { error: "请先完成原图上传" });
       return false;
     }
+    confirming.current.add(item.localId);
     patchItem(item.localId, { status: "confirming", error: null });
     try {
       const response = await fetch(
@@ -213,6 +243,10 @@ export function IngestionWorkspace() {
         wardrobeItemId: payload.wardrobeItemId,
         error: null,
       });
+      stickerQueue.current?.enqueue({
+        localId: item.localId,
+        itemId: payload.wardrobeItemId,
+      });
       return true;
     } catch (error) {
       patchItem(item.localId, {
@@ -220,6 +254,8 @@ export function IngestionWorkspace() {
         error: error instanceof Error ? error.message : "入库失败，请重试",
       });
       return false;
+    } finally {
+      confirming.current.delete(item.localId);
     }
   }
 
@@ -266,6 +302,9 @@ export function IngestionWorkspace() {
   function resetCompletedBatch() {
     if (
       busy ||
+      items.some((item) =>
+        ["queued", "processing"].includes(item.sticker.status),
+      ) ||
       items.length !== MAX_FILES ||
       items.some((item) => item.status !== "confirmed")
     ) {
@@ -294,6 +333,12 @@ export function IngestionWorkspace() {
   ).length;
   const batchComplete =
     items.length === MAX_FILES && confirmedCount === MAX_FILES;
+  const stickerPending = items.filter((item) =>
+    ["queued", "processing"].includes(item.sticker.status),
+  ).length;
+  const stickersReady = items.filter(
+    (item) => item.sticker.status === "ready",
+  ).length;
 
   return (
     <div className="pb-8">
@@ -323,6 +368,9 @@ export function IngestionWorkspace() {
           className="sr-only"
         />
       </label>
+      <p className="mt-3 text-center text-xs text-[var(--text-secondary)]">
+        确认入库后，自动制作白边衣物贴纸
+      </p>
 
       {notice ? (
         <p
@@ -347,6 +395,32 @@ export function IngestionWorkspace() {
             </p>
           </div>
 
+          {confirmedCount > 0 ? (
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-[var(--fashion-lilac-soft)] px-4 py-3">
+              <div
+                className="text-xs text-[var(--foreground)]"
+                aria-live="polite"
+              >
+                <p>
+                  贴纸已就绪 {stickersReady}/{confirmedCount}
+                </p>
+                {stickerPending > 0 ? (
+                  <p className="mt-1 text-[var(--text-secondary)]">
+                    正在逐件制作，请暂留此页；离开后可到贴纸页继续。
+                  </p>
+                ) : null}
+              </div>
+              <Link
+                href="/stickers"
+                prefetch={false}
+                className="pressable inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs font-semibold"
+              >
+                <Sticker size={16} aria-hidden="true" />
+                去贴纸画板
+                <ChevronRight size={14} aria-hidden="true" />
+              </Link>
+            </div>
+          ) : null}
           <div className="mt-4 grid gap-4">
             {items.map((item) => (
               <IngestionCard
@@ -356,6 +430,14 @@ export function IngestionWorkspace() {
                 onRetry={() => processItem(item)}
                 onConfirm={() => confirmItem(item)}
                 onRemove={() => removeItem(item)}
+                onRetrySticker={() => {
+                  if (item.status === "confirmed" && item.wardrobeItemId) {
+                    stickerQueue.current?.enqueue({
+                      localId: item.localId,
+                      itemId: item.wardrobeItemId,
+                    });
+                  }
+                }}
               />
             ))}
           </div>
@@ -365,13 +447,15 @@ export function IngestionWorkspace() {
               <button
                 type="button"
                 onClick={resetCompletedBatch}
-                className="motion-button inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)]"
+                disabled={stickerPending > 0 || busy}
+                className="motion-button inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
               >
                 <ImagePlus className="size-4" aria-hidden="true" />
                 继续添加衣服
               </button>
               <Link
                 href="/wardrobe"
+                prefetch={false}
                 className="pressable inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--hairline)] px-4 text-sm font-semibold text-[var(--foreground)]"
               >
                 查看衣橱
@@ -415,12 +499,14 @@ function IngestionCard({
   onRetry,
   onConfirm,
   onRemove,
+  onRetrySticker,
 }: {
   item: QueueItem;
   onPatch: (patch: Partial<QueueItem>) => void;
   onRetry: () => void;
   onConfirm: () => void;
   onRemove: () => void;
+  onRetrySticker: () => void;
 }) {
   const locked = [
     "uploading",
@@ -442,14 +528,25 @@ function IngestionCard({
     <article className="surface-card overflow-hidden rounded-[1.75rem]">
       <div className="grid grid-cols-[7.5rem_1fr] gap-4 p-4">
         <div className="relative aspect-[4/5] overflow-hidden rounded-[1.2rem] bg-[var(--surface-soft)]">
-          <Image
-            src={item.previewUrl}
-            alt="待识别衣物原图"
-            fill
-            unoptimized
-            sizes="120px"
-            className="object-cover"
-          />
+          {item.sticker.status === "ready" && item.sticker.cutoutUrl ? (
+            <GarmentSticker
+              imageUrl={item.previewUrl}
+              cutoutUrl={item.sticker.cutoutUrl}
+              alt={`${item.fields.name}贴纸`}
+              sizes="120px"
+              surface="loose"
+              className="size-full"
+            />
+          ) : (
+            <Image
+              src={item.previewUrl}
+              alt="待识别衣物原图"
+              fill
+              unoptimized
+              sizes="120px"
+              className="object-cover"
+            />
+          )}
         </div>
         <div className="min-w-0">
           <div className="flex items-start justify-between gap-2">
@@ -627,9 +724,47 @@ function IngestionCard({
         </div>
       ) : null}
 
+      {item.status === "confirmed" ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--hairline)] px-4 py-2">
+          <p
+            aria-live="polite"
+            className="flex items-center gap-2 text-xs text-[var(--text-secondary)]"
+          >
+            {item.sticker.status === "processing" ||
+            item.sticker.status === "queued" ? (
+              <LoaderCircle
+                size={15}
+                className="animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
+            ) : (
+              <Sticker size={15} aria-hidden="true" />
+            )}
+            {item.sticker.status === "ready"
+              ? "贴纸已就绪"
+              : item.sticker.status === "queued"
+                ? "贴纸排队中"
+                : item.sticker.status === "processing"
+                  ? "正在制作贴纸"
+                  : "衣物已保存，贴纸暂未完成"}
+          </p>
+          {item.sticker.status === "failed" ||
+          item.sticker.status === "idle" ? (
+            <button
+              type="button"
+              onClick={onRetrySticker}
+              className="pressable inline-flex min-h-11 items-center gap-1 rounded-full border border-[var(--hairline)] px-3 text-xs font-semibold"
+            >
+              <RefreshCw size={14} aria-hidden="true" />
+              重试贴纸
+            </button>
+          ) : null}
+        </div>
+      ) : null}
       {item.status === "confirmed" && item.wardrobeItemId ? (
         <Link
           href={`/wardrobe/${item.wardrobeItemId}`}
+          prefetch={false}
           className="pressable flex min-h-12 items-center justify-between border-t border-[var(--hairline)] px-4 text-sm font-semibold text-[var(--system-blue)]"
         >
           已放入衣橱，查看详情

@@ -1,6 +1,6 @@
 "use client";
 
-import { CloudSun, RefreshCw } from "lucide-react";
+import { CloudSun, Info, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import {
   createContext,
@@ -118,26 +118,31 @@ export function WeatherPanel({
         </Link>
         {weather && state.status === "ready" ? (
           <details className="home-weather-source">
-            <summary>
-              和风天气 ·{" "}
-              {new Date(weather.observedAt).toLocaleTimeString("zh-CN", {
-                hour: "2-digit",
-                minute: "2-digit",
-                timeZone: "Asia/Shanghai",
-              })}
+            <summary aria-label="天气来源与更新时间" title="天气来源与更新时间">
+              <Info size={14} aria-hidden="true" />
             </summary>
-            <a
-              href="https://www.qweather.com/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              和风天气
-            </a>
-            {weather.attributions?.map((url, index) => (
-              <a key={url} href={url} target="_blank" rel="noreferrer">
-                数据来源 {index + 1}
+            <div className="home-weather-source-content">
+              <p>
+                获取于{" "}
+                {new Date(weather.observedAt).toLocaleTimeString("zh-CN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "Asia/Shanghai",
+                })}
+              </p>
+              <a
+                href="https://www.qweather.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                和风天气
               </a>
-            ))}
+              {weather.attributions?.map((url, index) => (
+                <a key={url} href={url} target="_blank" rel="noreferrer">
+                  数据来源 {index + 1}
+                </a>
+              ))}
+            </div>
           </details>
         ) : null}
       </div>

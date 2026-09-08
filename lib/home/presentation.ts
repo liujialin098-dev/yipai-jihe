@@ -21,23 +21,63 @@ export function homeDiaryItem<T extends { id: string }>(
   );
 }
 
-// Bounded collage slots; never an interactive canvas or a fabricated outfit.
+/** 仅展示已就绪透明贴纸，不用普通照片冒充抠图；不是搭配算法。 */
+export function homePreviewItems<
+  T extends { id: string; category: string; cutoutUrl: string | null },
+>(items: T[]): T[] {
+  const categories = new Set<string>();
+  const ids = new Set<string>();
+  const first: T[] = [];
+  const rest: T[] = [];
+  for (const item of items) {
+    if (!item.cutoutUrl) continue;
+    if (ids.has(item.id)) continue;
+    ids.add(item.id);
+    if (!categories.has(item.category)) {
+      categories.add(item.category);
+      first.push(item);
+    } else rest.push(item);
+  }
+  return [...first, ...rest].slice(0, 8);
+}
+
+type HomePosition = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotate: number;
+};
+// 透明衣物在同一区域轻微交叠，不添加独立纸片背景。
 export function homeLookPositions(count: number) {
-  const positions =
-    count <= 3
-      ? [
-          { x: 29, y: 38, width: 43, height: 58, rotate: -6 },
-          { x: 71, y: 43, width: 39, height: 64, rotate: 6 },
-          { x: 48, y: 80, width: 33, height: 28, rotate: -3 },
-        ]
-      : [
-          { x: 28, y: 31, width: 38, height: 47, rotate: -5 },
-          { x: 68, y: 41, width: 36, height: 56, rotate: 5 },
-          { x: 28, y: 73, width: 33, height: 26, rotate: -4 },
-          { x: 74, y: 79, width: 26, height: 29, rotate: 6 },
-          { x: 82, y: 13, width: 22, height: 22, rotate: 8 },
-          { x: 48, y: 15, width: 20, height: 25, rotate: -3 },
-          { x: 49, y: 66, width: 20, height: 23, rotate: 3 },
-        ];
-  return positions.slice(0, Math.max(0, Math.min(7, count)));
+  const size = Number.isFinite(count)
+    ? Math.max(0, Math.min(8, Math.floor(count)))
+    : 0;
+  if (size === 0) return [];
+  if (size === 1)
+    return [
+      { x: 50, y: 50, width: 68, height: 78, rotate: -4 },
+    ] satisfies HomePosition[];
+  if (size === 2)
+    return [
+      { x: 33, y: 43, width: 52, height: 66, rotate: -7 },
+      { x: 68, y: 59, width: 48, height: 58, rotate: 7 },
+    ] satisfies HomePosition[];
+  if (size === 3)
+    return [
+      { x: 32, y: 35, width: 52, height: 58, rotate: -7 },
+      { x: 70, y: 53, width: 46, height: 66, rotate: 6 },
+      { x: 32, y: 76, width: 48, height: 36, rotate: -6 },
+    ] satisfies HomePosition[];
+  const positions: HomePosition[] = [
+    { x: 32, y: 28, width: 50, height: 48, rotate: -7 },
+    { x: 72, y: 27, width: 42, height: 42, rotate: 7 },
+    { x: 68, y: 68, width: 46, height: 49, rotate: 5 },
+    { x: 26, y: 69, width: 40, height: 42, rotate: -8 },
+    { x: 49, y: 84, width: 36, height: 23, rotate: -5 },
+    { x: 76, y: 49, width: 32, height: 27, rotate: 9 },
+    { x: 20, y: 46, width: 28, height: 29, rotate: -9 },
+    { x: 47, y: 50, width: 32, height: 30, rotate: 5 },
+  ];
+  return positions.slice(0, size);
 }
