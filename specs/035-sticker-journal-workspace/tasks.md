@@ -56,7 +56,7 @@
 - [x] T014 更新 `progress.md`、`AGENTS.md` 和 SDD-035 文档中的实际状态与限制
 - [x] T015 运行 `npm run check`、`npm run build`、`npm run verify:sdd-035`、`npm run verify:sdd-034`、`npm run verify:sdd-009`
 - [x] T016 按 `quickstart.md` 在 390px 与横屏完成浏览器验收并修复发现的问题
-- [ ] T017 提交 SDD-035 实现，记录提交号；本阶段不执行 Production 部署
+- [x] T017 提交 SDD-035 实现，记录提交号；本阶段不执行 Production 部署
 
 ## Dependencies
 
