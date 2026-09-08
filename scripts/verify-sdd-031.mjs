@@ -43,7 +43,7 @@ for (const selector of [
   'data-sticker-mode="cutout"',
   'data-sticker-mode="photo"',
   "repeating-linear-gradient",
-  "rgb(91 70 112 / 20%)",
+  "mask-origin: content-box",
   "prefers-reduced-motion",
   "prefers-reduced-transparency",
 ]) {
@@ -64,4 +64,4 @@ for (const path of [
   );
 }
 
-console.log("SDD-031：衣物纸贴白边、轻阴影、纸纹与原图降级边界通过。");
+console.log("SDD-031：衣物纸贴轮廓（039覆盖阴影）、纸纹与原图降级边界通过。");

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
+import { StickerOutlineControls } from "@/components/stickers/outline-controls";
 import { WeatherPanel } from "@/components/recommendations/weather-panel";
 import type { DiaryEntryView } from "@/lib/diary/data";
 import {
@@ -18,23 +19,13 @@ import {
 import type { RecommendationPageData } from "@/lib/recommendations/data";
 import type { WardrobeItem } from "@/lib/wardrobe/data";
 
-function ClothingComposition({
-  items,
-  recommended,
-}: {
-  items: WardrobeItem[];
-  recommended: boolean;
-}) {
+function ClothingComposition({ items }: { items: WardrobeItem[] }) {
   const positions = homeLookPositions(items.length);
   return (
     <figure
       className="home-look-composition"
       data-count={items.length}
-      aria-label={
-        recommended
-          ? "今日搭配中已完成的衣物贴纸"
-          : "衣物贴纸拼图，尚未生成搭配"
-      }
+      aria-label="衣橱贴纸拼图，不代表一套推荐"
     >
       {items.map((item, index) => {
         const position = positions[index];
@@ -86,12 +77,7 @@ export function DailyEdit({
   displayName: string;
 }) {
   const outfit = data.recommendation?.outfits[0];
-  const sourceItems = outfit
-    ? outfit.itemIds.flatMap((id) => {
-        const item = data.items.find((candidate) => candidate.id === id);
-        return item ? [item] : [];
-      })
-    : data.items;
+  const sourceItems = data.items;
   const items = homePreviewItems(sourceItems);
   const pendingCount = sourceItems.filter((item) => !item.cutoutUrl).length;
   const needsStickers = !data.error && !items.length && data.items.length > 0;
@@ -127,17 +113,12 @@ export function DailyEdit({
       </header>
       <section aria-label="今日穿搭" className="home-edit-feature">
         <div className="home-feature-heading">
-          <h2>{outfit ? "今天穿什么" : "衣橱灵感"}</h2>
-          <span>
-            {items.length
-              ? outfit
-                ? `${items.length}/${outfit.itemIds.length} 件贴纸`
-                : `${items.length} 件贴纸`
-              : ""}
-          </span>
+          <h2>衣橱拼图</h2>
+          <span>{items.length ? `${items.length} 件贴纸` : ""}</span>
         </div>
+        {items.length > 0 ? <StickerOutlineControls compact /> : null}
         {items.length ? (
-          <ClothingComposition items={items} recommended={Boolean(outfit)} />
+          <ClothingComposition items={items} />
         ) : (
           <div className="home-look-empty">
             {needsStickers ? (
@@ -148,6 +129,7 @@ export function DailyEdit({
           </div>
         )}
         <div className="home-look-caption">
+          {outfit && !needsStickers ? <p>今日推荐</p> : null}
           <h2>
             {needsStickers
               ? "把喜欢的衣服，拼在一起"

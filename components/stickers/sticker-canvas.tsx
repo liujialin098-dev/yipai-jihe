@@ -30,6 +30,10 @@ import {
 } from "react";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import {
+  StickerOutlineControls,
+  useStickerOutlineColor,
+} from "@/components/stickers/outline-controls";
+import {
   STICKER_CANVAS_LIMITS,
   STICKER_CANVAS_THEMES,
   EMPTY_STICKER_CROP,
@@ -105,6 +109,7 @@ export function StickerCanvas({
   storageKey: string;
 }) {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const outlineColor = useStickerOutlineColor();
   const itemElements = useRef(new Map<string, HTMLDivElement>());
   const dragState = useRef<DragState | null>(null);
   const transformState = useRef<TransformState | null>(null);
@@ -452,6 +457,7 @@ export function StickerCanvas({
     if (!allReady) throw new Error("stickers_not_ready");
     return exportStickerBoard({
       theme,
+      outlineColor,
       items: canvasItems.flatMap((item) => {
         const wardrobeItem = wardrobeMap.get(item.wardrobeItemId);
         return wardrobeItem?.cutoutUrl
@@ -566,6 +572,8 @@ export function StickerCanvas({
           ))}
         </div>
       </fieldset>
+
+      <StickerOutlineControls />
 
       <div
         ref={canvasRef}

@@ -211,6 +211,12 @@ assert.doesNotMatch(
 );
 const elementImport = `import {createElement} from ${JSON.stringify(import.meta.resolve("react"))};`;
 const imports = {
+  "@/components/stickers/outline-controls": dataUrl(
+    "export function useStickerOutlineColor(){return 'white'}",
+  ),
+  "@/lib/stickers/outline": dataUrl(
+    compile(await read("lib/stickers/outline.ts")),
+  ),
   react: import.meta.resolve("react"),
   "react/jsx-runtime": import.meta.resolve("react/jsx-runtime"),
   "lucide-react": import.meta.resolve("lucide-react"),

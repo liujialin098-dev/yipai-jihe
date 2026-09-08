@@ -3,6 +3,11 @@ import {
   type StickerCanvasItem,
   type StickerCanvasTheme,
 } from "@/lib/stickers/canvas";
+import {
+  createSolidOutline,
+  outlinePalette,
+  type StickerOutlineColor,
+} from "@/lib/stickers/outline";
 
 export type StickerExportItem = StickerCanvasItem & {
   imageUrl: string;
@@ -21,6 +26,7 @@ function drawSticker(
   item: StickerExportItem,
   width: number,
   height: number,
+  outlineColor: StickerOutlineColor,
 ) {
   const baseWidth = width * 0.29 * item.scale;
   const ratio = bitmap.height / Math.max(1, bitmap.width);
@@ -40,23 +46,17 @@ function drawSticker(
   context.rect(cropLeft, cropTop, cropWidth, cropHeight);
   context.clip();
 
-  context.save();
-  context.filter = "brightness(0) saturate(100%) invert(100%)";
-  const outline = 10;
-  for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 12) {
-    context.drawImage(
-      bitmap,
-      -drawWidth / 2 + Math.cos(angle) * outline,
-      -drawHeight / 2 + Math.sin(angle) * outline,
-      drawWidth,
-      drawHeight,
-    );
-  }
-  context.restore();
-
-  context.shadowColor = "rgba(61, 45, 74, 0.18)";
-  context.shadowBlur = 24;
-  context.shadowOffsetY = 12;
+  const outline = createSolidOutline(
+    bitmap,
+    outlinePalette(outlineColor).color,
+  );
+  context.drawImage(
+    outline,
+    -drawWidth / 2,
+    -drawHeight / 2,
+    drawWidth,
+    drawHeight,
+  );
   context.drawImage(
     bitmap,
     -drawWidth / 2,
@@ -70,9 +70,11 @@ function drawSticker(
 export async function exportStickerBoard({
   items,
   theme,
+  outlineColor = "white",
 }: {
   items: StickerExportItem[];
   theme: StickerCanvasTheme;
+  outlineColor?: StickerOutlineColor;
 }) {
   if (items.length < 1 || items.length > 8) {
     throw new Error("invalid_item_count");
@@ -113,7 +115,7 @@ export async function exportStickerBoard({
   );
   try {
     for (const { item, bitmap } of bitmaps) {
-      drawSticker(context, bitmap, item, width, height);
+      drawSticker(context, bitmap, item, width, height, outlineColor);
     }
   } finally {
     for (const { bitmap } of bitmaps) bitmap.close();

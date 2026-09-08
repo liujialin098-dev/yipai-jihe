@@ -99,6 +99,9 @@ const dataUrl = (code) =>
 const elementImport = `import {createElement} from ${JSON.stringify(import.meta.resolve("react"))};`;
 // Test the actual presentation component, without framework IO or weather network calls.
 const imports = {
+  "@/components/stickers/outline-controls": dataUrl(
+    "export function StickerOutlineControls(){return null}",
+  ),
   "react/jsx-runtime": import.meta.resolve("react/jsx-runtime"),
   "lucide-react": import.meta.resolve("lucide-react"),
   "next/link": dataUrl(
@@ -186,7 +189,7 @@ const partialMarkup = render({
   },
 });
 assert.equal((partialMarkup.match(/class="home-look-piece"/g) || []).length, 1);
-assert.match(partialMarkup, /1\/3 件贴纸/);
+assert.match(partialMarkup, /1 件贴纸/);
 assert.match(partialMarkup, /还有 2 件待制作/);
 assert.doesNotMatch(partialMarkup, /src="\/test-/);
 const css = await read("app/globals.css");
@@ -224,7 +227,8 @@ for (let count = 3; count <= 7; count++) {
       },
     },
   });
-  assert.equal((result.match(/class="home-look-piece"/g) || []).length, count);
+  assert.equal((result.match(/class="home-look-piece"/g) || []).length, 8);
+  assert.match(result, /衣橱贴纸拼图，不代表一套推荐/);
   assert.match(result, /看这套搭配/);
   assert.doesNotMatch(result, /还未生成今日搭配/);
 }
@@ -258,6 +262,18 @@ if (process.argv.includes("--preview")) {
     },
   ).outputText;
   const stickerImports = {
+    react: import.meta.resolve("react"),
+    "@/components/stickers/outline-controls": dataUrl(
+      "export function useStickerOutlineColor(){return 'white'}",
+    ),
+    "@/lib/stickers/outline": dataUrl(
+      ts.transpileModule(await read("lib/stickers/outline.ts"), {
+        compilerOptions: {
+          module: ts.ModuleKind.ESNext,
+          target: ts.ScriptTarget.ES2022,
+        },
+      }).outputText,
+    ),
     "react/jsx-runtime": import.meta.resolve("react/jsx-runtime"),
     "next/image": dataUrl(
       `${elementImport} export default function Image({fill,unoptimized,sizes,loading,...p}){return createElement('img',{...p,style:fill?{position:'absolute',inset:0,width:'100%',height:'100%'}:p.style})}`,

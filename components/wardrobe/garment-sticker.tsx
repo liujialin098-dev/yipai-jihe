@@ -1,4 +1,9 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useStickerOutlineColor } from "@/components/stickers/outline-controls";
+import { loadOutlineMask, outlinePalette } from "@/lib/stickers/outline";
 import { cn } from "@/lib/utils";
 
 type GarmentStickerProps = {
@@ -22,6 +27,24 @@ export function GarmentSticker({
   imageClassName,
   surface = "card",
 }: GarmentStickerProps) {
+  const color = useStickerOutlineColor();
+  const [mask, setMask] = useState<{ source: string; url: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    if (!cutoutUrl) return;
+    let active = true;
+    void loadOutlineMask(cutoutUrl)
+      .then((url) => {
+        if (active) setMask({ source: cutoutUrl, url });
+      })
+      .catch(() => {
+        /* 保留实拍，不使用模糊副本冒充描边。 */
+      });
+    return () => {
+      active = false;
+    };
+  }, [cutoutUrl]);
   const source = cutoutUrl ?? imageUrl;
   if (!source) return null;
 
@@ -35,15 +58,15 @@ export function GarmentSticker({
       data-sticker-surface={surface}
     >
       {mode === "cutout" ? (
-        <Image
-          src={source}
-          alt=""
-          fill
-          sizes={sizes}
-          loading={eager ? "eager" : "lazy"}
-          unoptimized
+        <span
           aria-hidden="true"
-          className="garment-sticker-outline pointer-events-none object-contain"
+          className="garment-sticker-outline"
+          data-outline-ready={mask?.source === source}
+          style={{
+            backgroundColor: outlinePalette(color).color,
+            maskImage: mask?.source === source ? `url("${mask.url}")` : "none",
+            visibility: mask?.source === source ? "visible" : "hidden",
+          }}
         />
       ) : null}
       <Image

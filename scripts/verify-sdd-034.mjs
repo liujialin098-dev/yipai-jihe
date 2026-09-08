@@ -85,7 +85,7 @@ for (const contract of [
   '"image/png"',
   "zIndex",
   "rotation",
-  "brightness(0)",
+  "createSolidOutline",
   "palette.endColor",
   "palette.accentColor",
 ]) {
