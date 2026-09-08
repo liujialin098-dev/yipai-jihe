@@ -32,6 +32,13 @@ function drawSticker(
   context.save();
   context.translate(centerX, centerY);
   context.rotate((item.rotation * Math.PI) / 180);
+  const cropLeft = -drawWidth / 2 + drawWidth * item.crop.left;
+  const cropTop = -drawHeight / 2 + drawHeight * item.crop.top;
+  const cropWidth = drawWidth * (1 - item.crop.left - item.crop.right);
+  const cropHeight = drawHeight * (1 - item.crop.top - item.crop.bottom);
+  context.beginPath();
+  context.rect(cropLeft, cropTop, cropWidth, cropHeight);
+  context.clip();
 
   context.save();
   context.filter = "brightness(0) saturate(100%) invert(100%)";

@@ -1,34 +1,56 @@
 "use client";
 
-import { Home, Newspaper, Plus, Shirt, Sparkles } from "lucide-react";
+import { BookHeart, Heart, Home, Layers3, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const items = [
-  { href: "/", icon: Home, label: "首页", primary: false },
-  { href: "/wardrobe", icon: Shirt, label: "衣橱", primary: false },
-  { href: "/wardrobe/new", icon: Plus, label: "添加", primary: true },
+  { href: "/", icon: Home, key: "home", label: "首页", primary: false },
+  {
+    href: "/diary?view=diary",
+    icon: BookHeart,
+    key: "diary",
+    label: "日记",
+    primary: false,
+  },
+  {
+    href: "/stickers",
+    icon: Layers3,
+    key: "stickers",
+    label: "贴纸",
+    primary: true,
+  },
+  {
+    href: "/diary?view=favorites",
+    icon: Heart,
+    key: "favorites",
+    label: "收藏",
+    primary: false,
+  },
   {
     href: "/recommendations",
     icon: Sparkles,
+    key: "recommendations",
     label: "推荐",
     primary: false,
   },
-  { href: "/inspiration", icon: Newspaper, label: "资讯", primary: false },
 ] as const;
 
-function isCurrent(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  if (href === "/wardrobe") {
+function isCurrent(pathname: string, view: string | null, key: string) {
+  if (key === "home") return pathname === "/";
+  if (key === "diary") return pathname === "/diary" && view !== "favorites";
+  if (key === "favorites") {
     return (
-      pathname.startsWith("/wardrobe") && !pathname.startsWith("/wardrobe/new")
+      pathname === "/favorites" ||
+      (pathname === "/diary" && view === "favorites")
     );
   }
-  return pathname.startsWith(href);
+  return pathname.startsWith(`/${key}`);
 }
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   if (pathname === "/login" || pathname.startsWith("/auth/")) return null;
 
@@ -37,8 +59,8 @@ export function BottomNavigation() {
       aria-label="主导航"
       className="bottom-navigation-shell fixed bottom-3 left-1/2 z-30 grid min-h-16 w-[calc(100%-1.5rem)] max-w-[28.5rem] -translate-x-1/2 grid-cols-5 rounded-[1.65rem] px-1.5 py-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))]"
     >
-      {items.map(({ href, icon: Icon, label, primary }) => {
-        const current = isCurrent(pathname, href);
+      {items.map(({ href, icon: Icon, key, label, primary }) => {
+        const current = isCurrent(pathname, searchParams.get("view"), key);
 
         return (
           <Link

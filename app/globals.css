@@ -408,7 +408,6 @@
 }
 
 .sticker-free-canvas-item {
-  cursor: grab;
   touch-action: none;
   transition:
     filter var(--motion-fast) ease,
@@ -416,8 +415,51 @@
   will-change: transform;
 }
 
-.sticker-free-canvas-item:active {
+.sticker-drag-surface {
+  cursor: grab;
+}
+
+.sticker-drag-surface:active {
   cursor: grabbing;
+}
+
+.sticker-corner-handle {
+  pointer-events: auto;
+  border: 1px solid rgb(83 65 102 / 14%);
+  transition:
+    transform var(--motion-fast) var(--motion-spring),
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+}
+
+.sticker-corner-handle[data-position="top-left"] {
+  top: -1.1rem;
+  left: -1.1rem;
+}
+
+.sticker-corner-handle[data-position="top-right"] {
+  top: -1.1rem;
+  right: -1.1rem;
+}
+
+.sticker-corner-handle[data-position="bottom-left"] {
+  bottom: -1.1rem;
+  left: -1.1rem;
+}
+
+.sticker-corner-handle[data-position="bottom-right"] {
+  right: -1.1rem;
+  bottom: -1.1rem;
+}
+
+.sticker-corner-handle:active {
+  color: white;
+  background: var(--action-purple);
+  transform: scale(0.92);
+}
+
+.sticker-crop-panel {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 68%);
 }
 
 .sticker-free-canvas-item[data-selected="true"] {
@@ -455,6 +497,34 @@
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 82%),
     0 18px 48px rgb(76 56 92 / 11%);
+}
+
+.utilization-sticker-wall {
+  background:
+    radial-gradient(circle at 18% 18%, rgb(255 255 255 / 82%), transparent 24%),
+    radial-gradient(
+      circle at 86% 78%,
+      color-mix(in srgb, var(--fashion-lime) 30%, transparent),
+      transparent 32%
+    ),
+    linear-gradient(145deg, #e8dcf1, #f8f3fb 58%, #eef5d3);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 78%),
+    0 18px 48px rgb(76 56 92 / 12%);
+}
+
+.utilization-sticker-piece {
+  filter: drop-shadow(0 8px 8px rgb(74 55 90 / 12%));
+}
+
+.sticker-diary-entry {
+  border: 1px solid rgb(255 255 255 / 68%);
+  background:
+    radial-gradient(circle at 82% 20%, rgb(255 255 255 / 58%), transparent 28%),
+    linear-gradient(135deg, #e8d9f2, #f3eafa 58%, #eaf4b9);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 80%),
+    0 16px 38px rgb(79 58 98 / 12%);
 }
 
 .sticker-calendar-day {
@@ -559,7 +629,7 @@
   right: 0;
 }
 
-.editorial-header .diary-header-button {
+.editorial-header .wardrobe-header-button {
   position: absolute;
   left: 0;
   transition:
@@ -569,7 +639,7 @@
     box-shadow var(--motion-medium) var(--motion-spring);
 }
 
-.editorial-header .diary-header-button[aria-current="page"] {
+.editorial-header .wardrobe-header-button[aria-current="page"] {
   color: #352c40;
   background: color-mix(in srgb, var(--fashion-lilac) 48%, white);
   box-shadow:
@@ -578,7 +648,7 @@
 }
 
 @media (hover: hover) {
-  .editorial-header .diary-header-button:hover {
+  .editorial-header .wardrobe-header-button:hover {
     color: #352c40;
     background: color-mix(in srgb, var(--fashion-lilac) 38%, white);
     transform: translateY(-1px);
@@ -1578,7 +1648,7 @@
   .outfit-color-chip,
   .profile-avatar,
   .profile-header-avatar,
-  .diary-header-button,
+  .wardrobe-header-button,
   .bottom-navigation-shell {
     transition: none;
   }
@@ -1603,7 +1673,7 @@
   .group:hover .brand-mark,
   .profile-avatar:hover,
   .profile-header-avatar:hover,
-  .diary-header-button:hover {
+  .wardrobe-header-button:hover {
     transform: none;
   }
 

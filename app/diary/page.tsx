@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
   ImageOff,
   Layers3,
   PenLine,
@@ -13,7 +10,9 @@ import {
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DiaryDeleteButton } from "@/components/diary/diary-delete-button";
+import { DiaryStickerCalendar } from "@/components/diary/diary-sticker-calendar";
 import { FavoritesPanel } from "@/components/diary/favorites-panel";
+import { UtilizationStickerWall } from "@/components/diary/utilization-sticker-wall";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import {
   getDiaryMonthData,
@@ -21,11 +20,7 @@ import {
   type DiaryEntryView,
 } from "@/lib/diary/data";
 import type { DiaryItemUtilization } from "@/lib/diary/report";
-import {
-  parseDiaryRange,
-  shiftMonth,
-  type DiaryRange,
-} from "@/lib/diary/validation";
+import { parseDiaryRange, type DiaryRange } from "@/lib/diary/validation";
 import {
   CATEGORY_OPTIONS,
   OCCASION_OPTIONS,
@@ -43,19 +38,6 @@ function formatDate(value: string) {
     weekday: "short",
     timeZone: "UTC",
   }).format(new Date(`${value}T12:00:00.000Z`));
-}
-
-function formatMonth(value: string) {
-  const [year, month] = value.split("-").map(Number);
-  return new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  }).format(new Date(Date.UTC(year, month - 1, 1, 12)));
-}
-
-function diaryHref(month: string) {
-  return `/diary?view=diary&month=${month}`;
 }
 
 function reportHref(range: DiaryRange) {
@@ -113,6 +95,8 @@ export default async function DiaryPage({
         </ViewLink>
       </nav>
 
+      {view !== "report" ? <StickerWorkspaceEntry /> : null}
+
       {view === "diary" && monthData ? (
         <DiaryHistory
           entries={monthData.entries}
@@ -126,10 +110,33 @@ export default async function DiaryPage({
         <UtilizationReport
           error={reportData.error}
           range={range}
+          recentStickerItems={reportData.recentStickerItems}
           report={reportData.report}
         />
       ) : null}
     </div>
+  );
+}
+
+function StickerWorkspaceEntry() {
+  return (
+    <Link
+      href="/stickers"
+      className="sticker-diary-entry pressable relative mt-5 flex min-h-24 items-center justify-between overflow-hidden rounded-[1.7rem] px-5 py-4"
+    >
+      <div className="relative z-10">
+        <p className="text-[0.66rem] font-semibold tracking-[0.08em] text-[#554263]">
+          STICKER STUDIO
+        </p>
+        <p className="mt-1 text-lg font-bold tracking-[-0.03em]">
+          制作贴纸画板
+        </p>
+        <p className="mt-1 text-xs text-[#665a70]">移动、裁切、叠放并分享</p>
+      </div>
+      <span className="relative z-10 flex size-12 items-center justify-center rounded-[1rem] bg-[#705787] text-white shadow-[0_10px_24px_rgba(70,50,88,0.2)]">
+        <Layers3 className="size-5" aria-hidden="true" />
+      </span>
+    </Link>
   );
 }
 
@@ -168,53 +175,16 @@ function DiaryHistory({
   month: string;
   today: string;
 }) {
-  const previousMonth = shiftMonth(month, -1);
-  const nextMonth = shiftMonth(month, 1);
-  const canMoveNext = nextMonth <= today.slice(0, 7);
-
   return (
     <>
-      <section className="mt-6 flex items-center justify-between gap-3">
-        <Link
-          href={diaryHref(previousMonth)}
-          className="pressable flex size-10 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)]"
-          aria-label="查看上个月"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-        </Link>
-        <div className="text-center">
-          <h2 className="app-section-title">{formatMonth(month)}</h2>
-          <p className="mt-1 text-xs text-[var(--text-tertiary)]">
-            已记录 {entries.length} 天
-          </p>
-        </div>
-        {canMoveNext ? (
-          <Link
-            href={diaryHref(nextMonth)}
-            className="pressable flex size-10 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)]"
-            aria-label="查看下个月"
-          >
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
-        ) : (
-          <span className="size-10" aria-hidden="true" />
-        )}
-      </section>
+      <DiaryStickerCalendar entries={entries} month={month} today={today} />
 
       <Link
         href="/diary/new"
-        className="motion-button mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+        className="motion-button mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
       >
         <Plus className="size-4" aria-hidden="true" />
-        手工记录穿搭
-      </Link>
-
-      <Link
-        href="/stickers"
-        className="pressable mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--fashion-lilac-soft)] px-5 text-sm font-semibold text-[var(--foreground)]"
-      >
-        <Layers3 className="size-4" aria-hidden="true" />
-        制作今日贴纸
+        添加一件单品
       </Link>
 
       {error ? (
@@ -228,15 +198,9 @@ function DiaryHistory({
           ))}
         </section>
       ) : (
-        <section className="mt-6 rounded-[1.7rem] border border-dashed border-[var(--hairline-strong)] px-6 py-10 text-center">
-          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
-            <CalendarDays className="size-5" aria-hidden="true" />
-          </span>
-          <h2 className="app-section-title mt-4">这个月还没有记录</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            可从今日推荐一键记入，也可以自己选择实际穿过的衣物。
-          </p>
-        </section>
+        <p className="mt-5 text-center text-sm text-[var(--text-secondary)]">
+          这个月还没有记录，点日期或上方按钮添加。
+        </p>
       )}
     </>
   );
@@ -323,10 +287,12 @@ function DiaryEntryCard({
 function UtilizationReport({
   error,
   range,
+  recentStickerItems,
   report,
 }: {
   error: string | null;
   range: DiaryRange;
+  recentStickerItems: DiaryItemUtilization[];
   report: NonNullable<Awaited<ReturnType<typeof getDiaryReportData>>>["report"];
 }) {
   const rangeLabels: Record<DiaryRange, string> = {
@@ -359,6 +325,8 @@ function UtilizationReport({
           {error}
         </p>
       ) : null}
+
+      <UtilizationStickerWall items={recentStickerItems} />
 
       <section className="mt-6 overflow-hidden rounded-[1.75rem] bg-[#1d1d1f] p-5 text-white shadow-[0_18px_50px_rgba(29,29,31,0.2)]">
         <div className="flex items-start justify-between gap-5">

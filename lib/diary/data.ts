@@ -165,6 +165,7 @@ export async function getDiaryComposerData(dateValue: unknown) {
 
 export async function getDiaryReportData(range: DiaryRange): Promise<{
   error: string | null;
+  recentStickerItems: DiaryUtilizationReport["frequentItems"];
   report: DiaryUtilizationReport;
   today: string;
 } | null> {
@@ -189,12 +190,18 @@ export async function getDiaryReportData(range: DiaryRange): Promise<{
     getWardrobeItems({ q: "", status: "active" }),
   ]);
   const entries = entriesResult.data ?? [];
+  const recentStart = diaryRangeStart("30", today);
+  const recentReport = buildDiaryUtilizationReport(
+    entries.filter((entry) => !recentStart || entry.worn_on >= recentStart),
+    wardrobeResult.items,
+  );
 
   return {
     error:
       entriesResult.error || wardrobeResult.error
         ? "利用率报告暂时无法完整读取，请稍后重试。"
         : null,
+    recentStickerItems: recentReport.frequentItems.slice(0, 24),
     report: buildDiaryUtilizationReport(entries, wardrobeResult.items),
     today,
   };

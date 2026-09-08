@@ -92,6 +92,21 @@ export type StickerCanvasItem = {
   scale: number;
   rotation: number;
   zIndex: number;
+  crop: StickerCrop;
+};
+
+export type StickerCrop = {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
+
+export const EMPTY_STICKER_CROP: StickerCrop = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
 };
 
 export const STICKER_CANVAS_LIMITS = {
@@ -208,13 +223,52 @@ export function clampStickerCanvasItem(
       STICKER_CANVAS_LIMITS.rotation.max,
     ),
     zIndex: Math.max(1, Math.round(item.zIndex)),
+    crop: clampStickerCrop(item.crop),
   };
+}
+
+export function clampStickerCrop(crop: Partial<StickerCrop> | undefined) {
+  const safe = (value: number | undefined) =>
+    typeof value === "number" && Number.isFinite(value) ? value : 0;
+  const next = {
+    top: clampNumber(safe(crop?.top), 0, 0.4),
+    right: clampNumber(safe(crop?.right), 0, 0.4),
+    bottom: clampNumber(safe(crop?.bottom), 0, 0.4),
+    left: clampNumber(safe(crop?.left), 0, 0.4),
+  };
+  if (next.top + next.bottom > 0.72) {
+    next.bottom = 0.72 - next.top;
+  }
+  if (next.left + next.right > 0.72) {
+    next.right = 0.72 - next.left;
+  }
+  return next;
 }
 
 export function normalizeStickerStack(items: StickerCanvasItem[]) {
   return [...items]
     .sort((left, right) => left.zIndex - right.zIndex)
     .map((item, index) => ({ ...item, zIndex: index + 1 }));
+}
+
+function reindexStickerStack(items: StickerCanvasItem[]) {
+  return items.map((item, index) => ({ ...item, zIndex: index + 1 }));
+}
+
+export function moveStickerLayer(
+  items: StickerCanvasItem[],
+  wardrobeItemId: string,
+  direction: "front" | "back",
+) {
+  const ordered = [...items].sort((left, right) => left.zIndex - right.zIndex);
+  const selected = ordered.find(
+    (item) => item.wardrobeItemId === wardrobeItemId,
+  );
+  if (!selected) return normalizeStickerStack(items);
+  const rest = ordered.filter((item) => item.wardrobeItemId !== wardrobeItemId);
+  return reindexStickerStack(
+    direction === "front" ? [...rest, selected] : [selected, ...rest],
+  );
 }
 
 export function createInitialStickerCanvasItems(
@@ -238,6 +292,7 @@ export function createInitialStickerCanvasItems(
       ),
       rotation: ROTATIONS[index] ?? 0,
       zIndex: index + 1,
+      crop: { ...EMPTY_STICKER_CROP },
     }),
   );
 }
@@ -267,7 +322,11 @@ export function parseStoredStickerCanvas(
   value: unknown,
   availableIds: ReadonlySet<string>,
 ) {
-  if (!isRecord(value) || value.version !== 1 || !Array.isArray(value.items)) {
+  if (
+    !isRecord(value) ||
+    (value.version !== 1 && value.version !== 2) ||
+    !Array.isArray(value.items)
+  ) {
     return { items: [] as StickerCanvasItem[], theme: null };
   }
   const seen = new Set<string>();
@@ -304,6 +363,15 @@ export function parseStoredStickerCanvas(
         scale: candidate.scale as number,
         rotation: candidate.rotation as number,
         zIndex: candidate.zIndex as number,
+        crop:
+          value.version === 2 && isRecord(candidate.crop)
+            ? {
+                top: Number(candidate.crop.top),
+                right: Number(candidate.crop.right),
+                bottom: Number(candidate.crop.bottom),
+                left: Number(candidate.crop.left),
+              }
+            : { ...EMPTY_STICKER_CROP },
       }),
     ];
   });
