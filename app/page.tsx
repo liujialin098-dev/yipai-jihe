@@ -137,7 +137,9 @@ export default async function Home({
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-[#566326]">DAILY EDIT</p>
+            <p className="text-xs font-semibold text-[var(--text-secondary)]">
+              DAILY EDIT
+            </p>
             <h2 className="app-section-title mt-2">今天的时尚灵感</h2>
             <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
               可信来源，结合你的衣橱重新讲清楚。

@@ -129,6 +129,17 @@ export function StickerCanvas({
     (item) => item.wardrobeItemId === selectedId,
   );
   const selectedWardrobeItem = wardrobeMap.get(selectedId);
+  useEffect(() => {
+    if (!selectedId) return;
+    const dismiss = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedId("");
+        setCropOpen(false);
+      }
+    };
+    document.addEventListener("keydown", dismiss);
+    return () => document.removeEventListener("keydown", dismiss);
+  }, [selectedId]);
   const allReady =
     selectedItems.length > 0 && selectedItems.every((item) => item.cutoutUrl);
 
@@ -154,7 +165,7 @@ export function StickerCanvas({
       );
       if (stored.theme) setTheme(stored.theme);
       loadedStorageKey.current = storageKey;
-      setSelectedId(ids[0] ?? "");
+      setSelectedId("");
       return;
     }
 
@@ -162,7 +173,7 @@ export function StickerCanvas({
       reconcileStickerCanvasItems(current, ids, categoryById),
     );
     setSelectedId((current) =>
-      ids.includes(current) ? current : (ids[0] ?? ""),
+      !current || ids.includes(current) ? current : "",
     );
   }, [categoryById, selectedItems, storageKey]);
 
@@ -558,6 +569,7 @@ export function StickerCanvas({
 
       <div
         ref={canvasRef}
+        data-no-swipe
         className="sticker-free-canvas relative mt-4 aspect-[4/5] overflow-hidden rounded-[2rem]"
         data-tone={palette.tone}
         style={
@@ -569,6 +581,21 @@ export function StickerCanvas({
           } as CSSProperties
         }
       >
+        <button
+          type="button"
+          aria-label="取消选择贴纸"
+          onClick={() => {
+            setSelectedId("");
+            setCropOpen(false);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setSelectedId("");
+              setCropOpen(false);
+            }
+          }}
+          className="absolute inset-0 z-0 rounded-[2rem] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[var(--sticker-canvas-ink)]"
+        />
         <div className="pointer-events-none absolute left-5 top-5 z-30">
           <p className="font-heading text-lg font-bold tracking-[-0.025em] text-[var(--sticker-canvas-ink)]">
             今日贴纸

@@ -90,7 +90,7 @@ export default async function ProfilePage() {
             <Link
               key={href}
               href={href}
-              className="interaction-preserve profile-feature-link motion-button flex items-center gap-3 rounded-2xl bg-white/80 p-4"
+              className="interaction-preserve profile-feature-link motion-button flex items-center gap-3 rounded-2xl bg-[var(--surface)] p-4"
             >
               <Icon
                 className="size-5 shrink-0"

@@ -208,7 +208,7 @@ export function WeatherCitySelector({
       {ipSuggestion ? (
         <div className="grid gap-3 border-t border-[var(--hairline)] bg-[var(--system-blue-soft)] p-4">
           <div className="flex items-start gap-3">
-            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-white/70 text-[var(--system-blue)]">
+            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-raised)] text-[var(--system-blue)]">
               <LocateFixed
                 className="size-4"
                 strokeWidth={1.8}
@@ -231,7 +231,7 @@ export function WeatherCitySelector({
               name="mode"
               value="session"
               disabled={suggestionPending}
-              className="motion-button inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--hairline-strong)] bg-white/72 px-3 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55"
+              className="motion-button inline-flex min-h-11 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-raised)] px-3 text-xs font-semibold text-[var(--foreground)] disabled:opacity-55"
             >
               本次使用
             </button>

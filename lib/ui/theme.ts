@@ -1,0 +1,2 @@
+// Runs before first paint. This device-only setting contains no account data.
+export const themeBootstrapScript = `try{var t=localStorage.getItem('ensemble-theme-v1');var d=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.add(d?'dark':'light')}catch{document.documentElement.classList.add(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}`;

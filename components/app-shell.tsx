@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { PageMotion } from "@/components/page-motion";
 import { SessionBootstrap } from "@/components/session-bootstrap";
 import { StatusHeader } from "@/components/status-header";
 import type { Viewer } from "@/lib/auth/viewer";
@@ -19,13 +20,20 @@ export function AppShell({
       >
         跳到主要内容
       </a>
-      {viewer ? <StatusHeader viewer={viewer} /> : null}
+      {viewer ? (
+        <Suspense>
+          <StatusHeader viewer={viewer} />
+        </Suspense>
+      ) : null}
       <SessionBootstrap isReady={Boolean(viewer)} />
       <main
         id="main-content"
+        tabIndex={-1}
         className={`motion-stage flex-1 ${viewer ? "pb-28" : "pb-0"}`}
       >
-        {children}
+        <Suspense fallback={children}>
+          <PageMotion>{children}</PageMotion>
+        </Suspense>
       </main>
       {viewer ? <BottomNavigation /> : null}
     </div>

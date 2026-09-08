@@ -361,7 +361,7 @@ export function IngestionWorkspace() {
           </div>
 
           {batchComplete ? (
-            <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[1.35fr_1fr] gap-2 rounded-[1.35rem] border border-white/70 bg-white/85 p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
+            <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[1.35fr_1fr] gap-2 rounded-[1.35rem] border border-[var(--hairline)] bg-[var(--surface)] p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
               <button
                 type="button"
                 onClick={resetCompletedBatch}
@@ -378,7 +378,7 @@ export function IngestionWorkspace() {
               </Link>
             </div>
           ) : (
-            <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[auto_1fr] gap-2 rounded-[1.35rem] border border-white/70 bg-white/85 p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
+            <div className="sticky bottom-[5.8rem] z-20 mt-5 grid grid-cols-[auto_1fr] gap-2 rounded-[1.35rem] border border-[var(--hairline)] bg-[var(--surface)] p-2 shadow-[0_18px_44px_rgba(29,29,31,0.15)] backdrop-blur-2xl">
               <button
                 type="button"
                 disabled={busy || actionableCount === 0}

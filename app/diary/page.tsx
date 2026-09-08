@@ -218,11 +218,11 @@ function DiaryEntryCard({
       className="surface-card stagger-item overflow-hidden rounded-[1.7rem]"
       style={{ "--stagger": Math.min(index, 8) } as React.CSSProperties}
     >
-      <div className="grid min-h-48 grid-cols-2 gap-2 bg-[linear-gradient(145deg,rgba(224,235,250,0.82),rgba(248,250,253,0.98))] p-3">
+      <div className="grid min-h-48 grid-cols-2 gap-2 bg-[var(--surface-soft)] p-3">
         {entry.items.slice(0, 4).map((item, itemIndex) => (
           <div
             key={`${entry.id}-${item.id}`}
-            className={`relative overflow-hidden rounded-[1.1rem] bg-white/74 ${
+            className={`relative overflow-hidden rounded-[1.1rem] bg-[var(--surface-solid)] ${
               entry.items.length % 2 === 1 && itemIndex === 0
                 ? "row-span-2 min-h-44"
                 : "min-h-24"

@@ -12,33 +12,31 @@ export default async function InspirationPage() {
   const data = await getFashionFeedData();
   return (
     <div className="page-enter px-5 pt-4">
-      <header className="overflow-hidden rounded-[1.9rem] bg-[var(--fashion-lilac)] p-5 shadow-[0_22px_55px_rgba(79,61,137,0.18)]">
+      <header className="inspiration-cover overflow-hidden rounded-[1.9rem] bg-[var(--fashion-lilac)] p-5 shadow-[0_22px_55px_rgba(79,61,137,0.18)]">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold text-[#2b2441]/65">
+            <p className="text-xs font-semibold opacity-85">
               DAILY EDIT · 每日更新
             </p>
-            <h1 className="app-page-title mt-3 text-[#1d1d1f]">
-              今天值得看的穿搭灵感
-            </h1>
+            <h1 className="app-page-title mt-3">今天值得看的穿搭灵感</h1>
           </div>
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--fashion-lime)] text-[#1d1d1f] shadow-[0_10px_26px_rgba(43,36,65,0.16)]">
             <Sparkles className="size-5" strokeWidth={1.7} aria-hidden="true" />
           </span>
         </div>
-        <p className="mt-4 max-w-[22rem] text-sm leading-6 text-[#2b2441]/76">
+        <p className="mt-4 max-w-[22rem] text-sm leading-6">
           只看可信来源，把趋势变成你现有衣橱可以尝试的动作。
         </p>
-        <div className="mt-5 flex flex-wrap gap-2 text-[0.68rem] font-semibold text-[#2b2441]/72">
-          <span className="rounded-full bg-white/52 px-3 py-1.5">
+        <div className="mt-5 flex flex-wrap gap-2 text-[0.68rem] font-semibold">
+          <span className="inspiration-chip rounded-full px-3 py-1.5">
             {data.preferences.unreadEnabled
               ? `${data.unreadCount} 条未读`
               : "未读提示已关闭"}
           </span>
-          <span className="rounded-full bg-white/52 px-3 py-1.5">
+          <span className="inspiration-chip rounded-full px-3 py-1.5">
             Vogue · GQ
           </span>
-          <span className="rounded-full bg-white/52 px-3 py-1.5">
+          <span className="inspiration-chip rounded-full px-3 py-1.5">
             {data.weatherUsed ? "已结合真实天气" : "未使用天气加权"}
           </span>
         </div>

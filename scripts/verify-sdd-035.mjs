@@ -66,11 +66,17 @@ assert.match(
 );
 assert.match(exporter, /context\.clip\(\)/);
 
-for (const label of ["首页", "日记", "贴纸", "收藏", "推荐"]) {
-  assert.ok(navigation.includes(`label: "${label}"`), `底部导航缺少：${label}`);
+// SDD-036 moves favourites to the header and centralises primary navigation.
+const navigationConfig = await read("lib/ui/navigation.ts");
+for (const label of ["首页", "推荐", "添加", "贴纸", "资讯"]) {
+  assert.ok(
+    navigationConfig.includes(`label: "${label}"`),
+    `底部导航缺少：${label}`,
+  );
 }
-assert.ok(navigation.includes('href: "/stickers"'));
-assert.ok(navigation.includes('href: "/diary?view=favorites"'));
+assert.ok(navigation.includes("primaryNavigation"));
+assert.ok(navigationConfig.includes('href: "/stickers"'));
+assert.ok(header.includes('href="/diary?view=favorites"'));
 assert.ok(header.includes('aria-label="打开衣库"'));
 assert.ok(header.includes('href="/wardrobe"'));
 

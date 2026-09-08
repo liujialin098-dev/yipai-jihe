@@ -24,7 +24,7 @@ export function ReplaceItemPanel({
   );
 
   return (
-    <details className="group rounded-[1rem] bg-white/82 open:shadow-[0_12px_30px_rgba(29,29,31,0.12)]">
+    <details className="group rounded-[1rem] bg-[var(--surface-raised)] open:shadow-[0_12px_30px_rgba(29,29,31,0.12)]">
       <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-3 px-3 text-xs font-semibold text-[var(--foreground)]">
         <span className="truncate">{currentItem.name}</span>
         <span className="flex shrink-0 items-center gap-1 text-[var(--system-blue)]">

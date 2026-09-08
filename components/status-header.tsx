@@ -2,62 +2,92 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Shirt } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Heart, Shirt } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { BrandName } from "@/components/brand-name";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { Viewer } from "@/lib/auth/viewer";
 import { displayNameInitial } from "@/lib/profile/validation";
 
 export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   if (pathname === "/login" || pathname.startsWith("/auth/")) return null;
 
   return (
     <header className="editorial-header pointer-events-none sticky top-0 z-30 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
       <div className="editorial-header-shell pointer-events-auto min-h-16 overflow-hidden rounded-[1.65rem] p-2">
-        <div className="relative flex min-h-12 items-center justify-center px-1">
-          <Link
-            href="/wardrobe"
-            aria-label="打开衣库"
-            title="衣库"
-            aria-current={pathname.startsWith("/wardrobe") ? "page" : undefined}
-            className="wardrobe-header-button pressable absolute left-0 flex size-10 items-center justify-center rounded-full border-2 border-white/70 bg-white/52 text-[#4a5133] shadow-sm"
-          >
-            <Shirt
-              className="size-[1.15rem]"
-              strokeWidth={1.9}
-              aria-hidden="true"
-            />
-          </Link>
+        <div className="header-tools relative flex min-h-12 items-center justify-between gap-1">
+          <div className="flex shrink-0 items-center">
+            <Link
+              href="/wardrobe"
+              aria-label="打开衣库"
+              title="衣库"
+              aria-current={
+                pathname.startsWith("/wardrobe") && pathname !== "/wardrobe/new"
+                  ? "page"
+                  : undefined
+              }
+              className="header-icon"
+            >
+              <Shirt
+                className="size-[1.15rem]"
+                strokeWidth={1.9}
+                aria-hidden="true"
+              />
+            </Link>
+            <Link
+              href="/diary?view=favorites"
+              aria-label="打开收藏"
+              title="收藏与日记"
+              aria-current={
+                pathname === "/diary" &&
+                searchParams.get("view") === "favorites"
+                  ? "page"
+                  : undefined
+              }
+              className="header-icon"
+            >
+              <Heart className="size-5" aria-hidden="true" />
+            </Link>
+          </div>
           <Link
             href="/"
             aria-label="Ensemble 衣拍即合首页"
-            className="brand-lockup flex min-h-11 items-center gap-2"
+            className="brand-lockup header-brand flex min-h-11 min-w-0 items-center justify-center gap-1.5"
           >
-            <BrandMark className="size-8 rounded-xl" sizes="32px" />
+            <BrandMark
+              className="header-brand-mark size-7 shrink-0 rounded-lg"
+              sizes="28px"
+            />
             <BrandName />
           </Link>
-          <Link
-            href="/profile"
-            aria-label="打开个人主页"
-            title="个人主页"
-            aria-current={pathname.startsWith("/profile") ? "page" : undefined}
-            className="profile-header-avatar pressable absolute right-0 flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-white/80 bg-[#8c75a3] text-sm font-semibold text-white shadow-sm"
-          >
-            {viewer?.avatarUrl ? (
-              <Image
-                src={viewer.avatarUrl}
-                alt="个人头像"
-                fill
-                sizes="40px"
-                unoptimized
-                className="object-cover"
-              />
-            ) : (
-              <span>{displayNameInitial(viewer?.displayName ?? "衣")}</span>
-            )}
-          </Link>
+          <div className="flex shrink-0 items-center">
+            <ThemeToggle />
+            <Link
+              href="/profile"
+              aria-label="打开个人主页"
+              title="个人主页"
+              aria-current={
+                pathname.startsWith("/profile") ? "page" : undefined
+              }
+              className="header-icon header-avatar relative overflow-hidden text-sm font-semibold"
+            >
+              {viewer?.avatarUrl ? (
+                <Image
+                  src={viewer.avatarUrl}
+                  alt="个人头像"
+                  fill
+                  sizes="40px"
+                  unoptimized
+                  className="object-cover"
+                />
+              ) : (
+                <span>{displayNameInitial(viewer?.displayName ?? "衣")}</span>
+              )}
+            </Link>
+          </div>
         </div>
       </div>
     </header>

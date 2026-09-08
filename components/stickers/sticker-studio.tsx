@@ -370,7 +370,7 @@ export function StickerStudio({
                       className={`absolute right-3 top-3 z-20 flex size-8 items-center justify-center rounded-full border shadow-sm ${
                         selected
                           ? "border-[#705886] bg-[#705886] text-white"
-                          : "border-white/80 bg-white/88 text-[var(--text-tertiary)]"
+                          : "border-[var(--hairline)] bg-[var(--surface-solid)] text-[var(--text-tertiary)]"
                       }`}
                       aria-hidden="true"
                     >

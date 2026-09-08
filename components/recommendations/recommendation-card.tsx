@@ -50,7 +50,7 @@ export function RecommendationCard({
       className="surface-card stagger-item overflow-hidden rounded-[1.75rem]"
       style={{ "--stagger": index + 1 } as CSSProperties}
     >
-      <div className="border-t border-[var(--hairline)] bg-white p-3">
+      <div className="border-t border-[var(--hairline)] bg-[var(--surface-solid)] p-3">
         <div className="mb-3 flex items-center justify-between px-1">
           <p className="text-xs font-semibold text-[var(--text-secondary)]">
             搭配单品

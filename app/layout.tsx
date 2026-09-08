@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { AppShell } from "@/components/app-shell";
 import { getViewer } from "@/lib/auth/viewer";
+import { themeBootstrapScript } from "@/lib/ui/theme";
 import "./globals.css";
 
 const playful = localFont({
@@ -51,9 +52,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="zh-CN"
-      className={`light h-full antialiased ${playful.variable} ${roundedBrand.variable}`}
+      className={`h-full antialiased ${playful.variable} ${roundedBrand.variable}`}
+      suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
+      <head>
+        <script>{themeBootstrapScript}</script>
+      </head>
       <body className="min-h-full bg-background">
         <AppShell viewer={viewer}>{children}</AppShell>
       </body>

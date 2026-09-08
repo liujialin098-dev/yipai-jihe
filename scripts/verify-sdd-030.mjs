@@ -4,24 +4,27 @@ import { registerHooks } from "node:module";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const nav = await read("components/bottom-navigation.tsx");
-const links = [...nav.matchAll(/href: "([^"]+)"/g)].map((m) => m[1]);
+const navigationConfig = await read("lib/ui/navigation.ts");
+const links = [...navigationConfig.matchAll(/href: "([^"]+)"/g)].map(
+  (m) => m[1],
+);
 assert.deepEqual(links, [
   "/",
-  "/wardrobe",
-  "/wardrobe/new",
   "/recommendations",
+  "/wardrobe/new",
+  "/stickers",
   "/inspiration",
 ]);
-for (const label of ["首页", "衣橱", "添加", "推荐", "资讯"])
-  assert.match(nav, new RegExp(`label: "${label}"`));
+for (const label of ["首页", "推荐", "添加", "贴纸", "资讯"])
+  assert.match(navigationConfig, new RegExp(`label: "${label}"`));
 assert.doesNotMatch(nav, /label: "(?:添加衣物|推荐穿搭|时尚资讯)"/);
 assert.match(nav, /nav-primary-bevel/);
 const header = await read("components/status-header.tsx");
 assert.match(header, /href="\/profile"/);
 assert.match(header, /aria-label="打开个人主页"/);
-assert.match(header, /href="\/diary"/);
-assert.match(header, /aria-label="打开穿搭日记"/);
-assert.match(header, /diary-header-button/);
+assert.match(header, /href="\/diary\?view=favorites"/);
+assert.match(header, /aria-label="打开收藏"/);
+assert.match(header, /ThemeToggle/);
 assert.doesNotMatch(header, /editorial-nav|顶部导航/);
 assert.match(header, /editorial-header-shell/);
 const diary = await read("app/diary/page.tsx");
