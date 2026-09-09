@@ -37,6 +37,10 @@ const items = Array.from({ length: 12 }, (_, i) => ({
 }));
 const pieces = defaultCollage(items);
 assert.equal(pieces.length, 8);
+assert.ok(pieces.some((piece) => piece.x < 15));
+assert.ok(pieces.some((piece) => piece.x > 85));
+assert.ok(pieces.some((piece) => piece.width >= 78));
+assert.equal(pieces.at(-1).x, 52);
 assert.equal(
   defaultCollage(items.map((i) => ({ ...i, cutoutUrl: null }))).length,
   0,
@@ -45,13 +49,13 @@ assert.notEqual(homeCollageKey("viewer-a"), homeCollageKey("viewer-b"));
 for (const bad of [
   null,
   {},
-  { version: 2 },
+  { version: 3 },
   "wrong",
   { version: 1, pieces: [null, {}, { id: "another-user" }] },
 ])
   assert.deepEqual(restoreCollage(bad, items), pieces);
 const corrupt = {
-  version: 1,
+  version: 2,
   pieces: [
     { ...pieces[0], x: Infinity, y: -300, rotate: 999, scale: NaN },
     pieces[0],
@@ -66,8 +70,14 @@ assert.equal(safe[0].rotate, 180);
 assert.equal(safe[0].scale, 1);
 assert.doesNotMatch(JSON.stringify(safe), /private|imageUrl|cutoutUrl/);
 const reversed = [...pieces].reverse();
+const migrated = restoreCollage({ version: 1, pieces: reversed }, items);
 assert.deepEqual(
-  restoreCollage({ version: 1, pieces: reversed }, items),
+  migrated.map((piece) => piece.id),
+  reversed.map((piece) => piece.id),
+);
+assert.notDeepEqual(migrated, reversed);
+assert.deepEqual(
+  restoreCollage({ version: 2, pieces: reversed }, items),
   reversed,
 );
 assert.ok(
@@ -101,6 +111,7 @@ assert.match(ui, /data-no-swipe/);
 assert.match(ui, /onKeyDown/);
 assert.match(ui, /setDraft\(saved\)/);
 assert.match(ui, /保存失败/);
+assert.match(ui, /version: 2/);
 assert.doesNotMatch(ui, /fetch\(|supabase|cutoutService/);
 assert.match(read("components/home/daily-edit.tsx"), /href="\/wardrobe"/);
 assert.match(read("app/settings/page.tsx"), /<SkinPicker/);
@@ -141,15 +152,15 @@ assert.match(navigation, /<RoundedIcon name=\{key\}/);
 assert.match(navigation, /aria-current=\{current/);
 assert.doesNotMatch(navigation, /strokeWidth=\{current/);
 // Bright original colours must stay readable, and must not overwrite other skins.
-assert.deepEqual(skins[0].colors, ["#ae8bed", "#d8ff52", "#e8d9fa"]);
+assert.deepEqual(skins[0].colors, ["#b58af0", "#d8ff52", "#ffffff"]);
 assert.deepEqual(
   skins.slice(1).map((skin) => skin.colors),
   [
-    ["#afa0e7", "#ffb571", "#f4f0fb"],
-    ["#e8afc8", "#ebd9b7", "#faf3e7"],
-    ["#9ebf9d", "#e8ec89", "#f1f5e8"],
-    ["#b8b8b8", "#e0e0dc", "#f4f4f1"],
-    ["#9fbfe7", "#ffbc83", "#eef4fa"],
+    ["#a783ee", "#ff9f54", "#ffffff"],
+    ["#f09fc8", "#f4cf86", "#ffffff"],
+    ["#8fd18f", "#e2f34b", "#ffffff"],
+    ["#bfc0c5", "#f0f0eb", "#ffffff"],
+    ["#82bff1", "#ff9e5c", "#ffffff"],
   ],
 );
 function luminance(hex) {
@@ -167,8 +178,13 @@ for (const [fg, bg] of [
   ["#42295f", "#b595e8"],
   ["#f4eaff", "#624388"],
   ["#f4eaff", "#493065"],
-  ["#62576d", "#e8d9fa"],
-  ["#d2c3e0", "#412c59"],
+  ["#3f2b4d", "#b58af0"],
+  ["#d2c3e0", "#302044"],
+  ["#3d3742", "#bea2f4"],
+  ["#3d3742", "#f3b5d2"],
+  ["#3d3742", "#a7dc98"],
+  ["#3d3742", "#d0d1d5"],
+  ["#3d3742", "#9bcdf3"],
 ]) {
   const a = luminance(fg),
     b = luminance(bg);
@@ -189,6 +205,14 @@ assert.ok(
     ':root:is(:not([data-skin]), [data-skin="original"]) .app-backdrop',
   ),
 );
+assert.match(
+  css,
+  /:root:is\(:not\(\[data-skin\]\), \[data-skin="original"\]\) \.app-backdrop\s*\{\s*background: var\(--background\);/,
+);
+assert.match(
+  css,
+  /\.home-collage-board\s*\{[^}]*background: var\(--home-collage-board\);/s,
+);
 console.log(
-  "SDD-043: skins/bootstrap fallback, collage restore/privacy/limits/layers, rounded icons and UI boundaries passed",
+  "SDD-043/044: flat vivid skins, full-bleed collage migration, rounded icons and UI boundaries passed",
 );

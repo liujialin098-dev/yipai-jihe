@@ -3,13 +3,13 @@ export const skins = [
   {
     id: "original",
     name: "丁香青柠",
-    colors: ["#ae8bed", "#d8ff52", "#e8d9fa"],
+    colors: ["#b58af0", "#d8ff52", "#ffffff"],
   },
-  { id: "violet", name: "紫橙日落", colors: ["#afa0e7", "#ffb571", "#f4f0fb"] },
-  { id: "rose", name: "玫瑰奶油", colors: ["#e8afc8", "#ebd9b7", "#faf3e7"] },
-  { id: "green", name: "青绿柠黄", colors: ["#9ebf9d", "#e8ec89", "#f1f5e8"] },
-  { id: "mono", name: "黑白映画", colors: ["#b8b8b8", "#e0e0dc", "#f4f4f1"] },
-  { id: "blue", name: "海盐橙光", colors: ["#9fbfe7", "#ffbc83", "#eef4fa"] },
+  { id: "violet", name: "紫橙日落", colors: ["#a783ee", "#ff9f54", "#ffffff"] },
+  { id: "rose", name: "玫瑰奶油", colors: ["#f09fc8", "#f4cf86", "#ffffff"] },
+  { id: "green", name: "青绿柠黄", colors: ["#8fd18f", "#e2f34b", "#ffffff"] },
+  { id: "mono", name: "黑白映画", colors: ["#bfc0c5", "#f0f0eb", "#ffffff"] },
+  { id: "blue", name: "海盐橙光", colors: ["#82bff1", "#ff9e5c", "#ffffff"] },
 ] as const;
 export type SkinId = (typeof skins)[number]["id"];
 export function validSkin(value: unknown): SkinId {

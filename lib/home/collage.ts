@@ -45,7 +45,8 @@ export function restoreCollage(
     !value ||
     typeof value !== "object" ||
     !("version" in value) ||
-    value.version !== 1 ||
+    typeof value.version !== "number" ||
+    ![1, 2].includes(Number(value.version)) ||
     !("pieces" in value) ||
     !Array.isArray(value.pieces)
   )
@@ -55,6 +56,7 @@ export function restoreCollage(
   );
   const seen = new Set<string>();
   const result: CollagePiece[] = [];
+  const legacyIds: string[] = [];
   for (const p of value.pieces.slice(0, 64)) {
     if (
       !p ||
@@ -65,16 +67,28 @@ export function restoreCollage(
     )
       continue;
     seen.add(p.id);
+    if (value.version === 1) {
+      legacyIds.push(p.id);
+      if (legacyIds.length === 8) break;
+      continue;
+    }
     result.push({
       id: p.id,
       x: bound(p.x, 8, 92, 50),
       y: bound(p.y, 8, 92, 50),
-      width: bound(p.width, 20, 68, 42),
-      height: bound(p.height, 20, 78, 48),
+      width: bound(p.width, 20, 86, 42),
+      height: bound(p.height, 20, 88, 48),
       rotate: bound(p.rotate, -180, 180, 0),
       scale: bound(p.scale, 0.5, 1.6, 1),
     });
     if (result.length === 8) break;
+  }
+  if (legacyIds.length) {
+    return homeLookPositions(legacyIds.length).map((position, index) => ({
+      id: legacyIds[index],
+      ...position,
+      scale: 1,
+    }));
   }
   return result.length ? result : fallback;
 }

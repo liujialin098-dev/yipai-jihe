@@ -38,10 +38,35 @@ for (let count = 0; count <= 8; count++) {
   const positions = homeLookPositions(count);
   assert.equal(positions.length, count);
   for (const p of positions) {
-    assert.ok(p.x - p.width / 2 >= 0 && p.x + p.width / 2 <= 100);
-    assert.ok(p.y - p.height / 2 >= 0 && p.y + p.height / 2 <= 100);
+    assert.ok(p.x >= 0 && p.x <= 100);
+    assert.ok(p.y >= 0 && p.y <= 100);
+    assert.ok(p.width >= 20 && p.width <= 90);
+    assert.ok(p.height >= 20 && p.height <= 90);
   }
 }
+const fullBleed = homeLookPositions(8);
+assert.ok(
+  fullBleed.some(
+    (p) =>
+      p.x - p.width / 2 < 0 ||
+      p.x + p.width / 2 > 100 ||
+      p.y - p.height / 2 < 0 ||
+      p.y + p.height / 2 > 100,
+  ),
+);
+assert.ok(
+  fullBleed.some((a, index) =>
+    fullBleed
+      .slice(index + 1)
+      .some(
+        (b) =>
+          Math.min(a.x + a.width / 2, b.x + b.width / 2) >
+            Math.max(a.x - a.width / 2, b.x - b.width / 2) &&
+          Math.min(a.y + a.height / 2, b.y + b.height / 2) >
+            Math.max(a.y - a.height / 2, b.y - b.height / 2),
+      ),
+  ),
+);
 assert.equal(homeLookPositions(-1).length, 0);
 assert.equal(homeLookPositions(NaN).length, 0);
 assert.equal(homeLookPositions(99).length, 8);

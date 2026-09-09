@@ -1,8 +1,11 @@
-/* SDD-043: vivid original lilac; optional palettes remain independently scoped. */
+/* SDD-044: flat, vivid skin fields; content stays readable on calm paper surfaces. */
 :root:is(:not([data-skin]), [data-skin="original"]) {
-  --background: #eee4ff;
-  --surface-soft: #f1e9fc;
-  --fashion-lilac: #ae8bed;
+  --background: #b58af0;
+  --surface: rgb(255 255 255 / 92%);
+  --surface-solid: #ffffff;
+  --surface-raised: rgb(255 255 255 / 86%);
+  --surface-soft: #f1e6ff;
+  --fashion-lilac: #b58af0;
   --fashion-lilac-soft: #eee2ff;
   --action-purple: #7650bb;
   --system-blue: #7650bb;
@@ -10,8 +13,10 @@
   --primary: #7650bb;
   --accent: #ede1fc;
   --accent-foreground: #513277;
-  --text-secondary: #62576d;
-  --text-tertiary: #71617e;
+  --text-secondary: #3f2b4d;
+  --text-tertiary: #42294d;
+  --home-collage-board: #18131d;
+  --home-collage-board-border: rgb(255 255 255 / 32%);
   --original-dock-top: #c9aff0;
   --original-dock-bottom: #b595e8;
   --original-dock-ink: #42295f;
@@ -19,7 +24,7 @@
   --original-add-ink: #ffffff;
 }
 :root.dark:is(:not([data-skin]), [data-skin="original"]) {
-  --background: #21172e;
+  --background: #302044;
   --surface-soft: #3b2d50;
   --fashion-lilac-soft: #44305e;
   --system-blue: #d1b2ff;
@@ -29,6 +34,8 @@
   --accent-foreground: #f4eff8;
   --text-secondary: #d2c3e0;
   --text-tertiary: #c1afd2;
+  --home-collage-board: #110e15;
+  --home-collage-board-border: rgb(216 255 82 / 26%);
   --original-dock-top: #624388;
   --original-dock-bottom: #493065;
   --original-dock-ink: #f4eaff;
@@ -36,22 +43,10 @@
   --original-add-ink: #2c1946;
 }
 :root:is(:not([data-skin]), [data-skin="original"]) .app-backdrop {
-  background:
-    radial-gradient(
-      ellipse 100% 34rem at 100% 0%,
-      rgb(174 125 238 / 36%),
-      transparent 80%
-    ),
-    linear-gradient(165deg, #d3bdf4 0%, #e8d9fa 38%, #faf6ff 72%, #e1cef8 100%);
+  background: var(--background);
 }
 :root.dark:is(:not([data-skin]), [data-skin="original"]) .app-backdrop {
-  background:
-    radial-gradient(
-      ellipse 100% 34rem at 100% 0%,
-      rgb(146 91 217 / 18%),
-      transparent 80%
-    ),
-    linear-gradient(165deg, #412c59 0%, #2c1f3e 40%, #21172e 75%, #342346 100%);
+  background: var(--background);
 }
 :root:is(:not([data-skin]), [data-skin="original"]) .bottom-navigation-shell {
   background: linear-gradient(
@@ -91,48 +86,53 @@
 }
 
 :root[data-skin="violet"] {
-  --skin-accent: #afa0e7;
-  --skin-secondary: #ffb571;
-  --skin-ink: #604584;
-  --skin-paper: #f4f0fb;
+  --skin-accent: #a783ee;
+  --skin-secondary: #ff9f54;
+  --skin-ink: #4e2d70;
+  --skin-paper: #bea2f4;
+  --skin-night: #30243f;
 }
 :root[data-skin="rose"] {
-  --skin-accent: #e8afc8;
-  --skin-secondary: #ebd9b7;
-  --skin-ink: #894663;
-  --skin-paper: #faf3e7;
+  --skin-accent: #f09fc8;
+  --skin-secondary: #f4cf86;
+  --skin-ink: #6f3150;
+  --skin-paper: #f3b5d2;
+  --skin-night: #472637;
 }
 :root[data-skin="green"] {
-  --skin-accent: #9ebf9d;
-  --skin-secondary: #e8ec89;
-  --skin-ink: #3e6549;
-  --skin-paper: #f1f5e8;
+  --skin-accent: #8fd18f;
+  --skin-secondary: #e2f34b;
+  --skin-ink: #285c38;
+  --skin-paper: #a7dc98;
+  --skin-night: #21382a;
 }
 :root[data-skin="mono"] {
-  --skin-accent: #b8b8b8;
-  --skin-secondary: #e0e0dc;
-  --skin-ink: #454545;
-  --skin-paper: #f4f4f1;
+  --skin-accent: #bfc0c5;
+  --skin-secondary: #f0f0eb;
+  --skin-ink: #38383c;
+  --skin-paper: #d0d1d5;
+  --skin-night: #242427;
 }
 :root[data-skin="blue"] {
-  --skin-accent: #9fbfe7;
-  --skin-secondary: #ffbc83;
-  --skin-ink: #3d5f87;
-  --skin-paper: #eef4fa;
+  --skin-accent: #82bff1;
+  --skin-secondary: #ff9e5c;
+  --skin-ink: #28577f;
+  --skin-paper: #9bcdf3;
+  --skin-night: #20364d;
 }
 :root[data-skin]:not([data-skin="original"]) {
   --background: var(--skin-paper);
   --foreground: #242426;
-  --surface-solid: color-mix(in srgb, var(--skin-paper) 20%, white);
-  --surface: var(--surface-solid);
+  --surface-solid: #ffffff;
+  --surface: rgb(255 255 255 / 92%);
   --surface-soft: color-mix(
     in srgb,
     var(--skin-accent) 15%,
     var(--surface-solid)
   );
   --surface-raised: var(--surface-solid);
-  --text-secondary: #626067;
-  --text-tertiary: #68656d;
+  --text-secondary: #3d3742;
+  --text-tertiary: #403a45;
   --hairline: color-mix(in srgb, var(--skin-ink) 18%, transparent);
   --action-purple: var(--skin-ink);
   --system-blue: var(--skin-ink);
@@ -172,9 +172,15 @@
   --skin-dock: color-mix(in srgb, var(--skin-accent) 62%, var(--surface-solid));
   --skin-control: var(--skin-ink);
   --skin-on-control: #fff;
+  --home-collage-board: color-mix(in srgb, var(--skin-ink) 22%, #121014);
+  --home-collage-board-border: color-mix(
+    in srgb,
+    var(--skin-secondary) 42%,
+    transparent
+  );
 }
 :root.dark[data-skin]:not([data-skin="original"]) {
-  --background: color-mix(in srgb, var(--skin-ink) 18%, #181819);
+  --background: var(--skin-night);
   --foreground: #f7f4f8;
   --surface-solid: color-mix(in srgb, var(--skin-ink) 22%, #262529);
   --surface-soft: color-mix(
@@ -199,12 +205,7 @@
   --skin-on-control: #202024;
 }
 :root[data-skin]:not([data-skin="original"]) .app-backdrop {
-  background: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--skin-accent) 12%, var(--background)),
-    var(--background) 70%,
-    var(--surface-solid)
-  );
+  background: var(--background);
 }
 :root[data-skin]:not([data-skin="original"]) .editorial-header-shell {
   background: var(--skin-header);
@@ -516,11 +517,17 @@
 }
 .home-collage-board {
   overflow: hidden;
-  border-radius: 32px;
+  padding: 0;
+  border: 1px solid var(--home-collage-board-border);
+  border-radius: 36px;
+  background: var(--home-collage-board);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 18px 42px rgb(34 22 44 / 18%);
 }
 .home-collage-board[data-editing="true"] {
-  background: var(--surface-raised);
-  outline: 1px solid var(--hairline);
+  outline: 2px solid color-mix(in srgb, var(--fashion-lime) 70%, white);
+  outline-offset: 3px;
 }
 .home-collage-piece {
   position: absolute;

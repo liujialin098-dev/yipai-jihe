@@ -96,9 +96,9 @@ export function HomeCollage({
     drag.current = null;
   }
   function save() {
-    const next = restoreCollage({ version: 1, pieces: draft }, items);
+    const next = restoreCollage({ version: 2, pieces: draft }, items);
     try {
-      localStorage.setItem(key, JSON.stringify({ version: 1, pieces: next }));
+      localStorage.setItem(key, JSON.stringify({ version: 2, pieces: next }));
       setSaved(next);
       setMessage("拼图已保存到本设备");
       stopEdit();

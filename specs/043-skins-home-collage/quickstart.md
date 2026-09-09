@@ -1,5 +1,11 @@
 # SDD-043 验收
 
+## SDD-044本地增量（2026-09-09，未部署）
+
+首页拼图应显示36px圆角深紫黑画板；8件衣物覆盖四边、中央前置并存在明显遮挡，不显示格子。编辑后画板仍保持深色。旧version 1本地草稿保留衣物选择和层级顺序，但首次读取会改用新满铺位置；保存后写version 2。
+
+六套皮肤的`.app-backdrop`都应为纯色且`background-image:none`，日夜模式分别可读。已运行check/build、043/037/036/039/042；375px样本画板320×320、8件产生19组重叠并有边缘裁切，320px六皮肤和844×390横屏无水平溢出，夜间/编辑态与浏览器error检查通过。未使用真实账号或真机，不等于线上端到端。
+
 ## 最新Production（2026-09-09 22:44）
 
 - 鲜亮丁香与圆润尺寸源提交`e170cc3`已发布到既有`yipai-jihe`项目；部署`dpl_3Ysug9fWPdoiJeoVVQBWc8ManACr`，唯一URL `https://yipai-jihe-qzmn0urgo-jialin-d583.vercel.app`，正式域名`https://yipai-jihe.vercel.app`。

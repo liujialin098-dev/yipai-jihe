@@ -48,7 +48,7 @@ type HomePosition = {
   height: number;
   rotate: number;
 };
-// 透明衣物在同一区域轻微交叠，不添加独立纸片背景。
+// 深色画板使用杂志拼贴式满铺：边缘允许裁切，中心单品前置，避免退回均匀格子。
 export function homeLookPositions(count: number) {
   const size = Number.isFinite(count)
     ? Math.max(0, Math.min(8, Math.floor(count)))
@@ -56,28 +56,28 @@ export function homeLookPositions(count: number) {
   if (size === 0) return [];
   if (size === 1)
     return [
-      { x: 50, y: 50, width: 68, height: 78, rotate: -4 },
+      { x: 50, y: 50, width: 86, height: 88, rotate: -3 },
     ] satisfies HomePosition[];
   if (size === 2)
     return [
-      { x: 33, y: 43, width: 52, height: 66, rotate: -7 },
-      { x: 68, y: 59, width: 48, height: 58, rotate: 7 },
+      { x: 29, y: 43, width: 72, height: 78, rotate: -8 },
+      { x: 70, y: 58, width: 72, height: 78, rotate: 7 },
     ] satisfies HomePosition[];
   if (size === 3)
     return [
-      { x: 32, y: 35, width: 52, height: 58, rotate: -7 },
-      { x: 70, y: 53, width: 46, height: 66, rotate: 6 },
-      { x: 32, y: 76, width: 48, height: 36, rotate: -6 },
+      { x: 22, y: 30, width: 66, height: 68, rotate: -8 },
+      { x: 79, y: 34, width: 66, height: 70, rotate: 7 },
+      { x: 51, y: 72, width: 78, height: 74, rotate: -3 },
     ] satisfies HomePosition[];
   const positions: HomePosition[] = [
-    { x: 32, y: 28, width: 50, height: 48, rotate: -7 },
-    { x: 72, y: 27, width: 42, height: 42, rotate: 7 },
-    { x: 68, y: 68, width: 46, height: 49, rotate: 5 },
-    { x: 26, y: 69, width: 40, height: 42, rotate: -8 },
-    { x: 49, y: 84, width: 36, height: 23, rotate: -5 },
-    { x: 76, y: 49, width: 32, height: 27, rotate: 9 },
-    { x: 20, y: 46, width: 28, height: 29, rotate: -9 },
-    { x: 47, y: 50, width: 32, height: 30, rotate: 5 },
+    { x: 14, y: 18, width: 62, height: 62, rotate: -9 },
+    { x: 54, y: 13, width: 64, height: 60, rotate: 5 },
+    { x: 91, y: 25, width: 56, height: 62, rotate: 9 },
+    { x: 12, y: 59, width: 62, height: 66, rotate: 7 },
+    { x: 89, y: 64, width: 60, height: 66, rotate: -8 },
+    { x: 27, y: 92, width: 62, height: 58, rotate: -5 },
+    { x: 73, y: 92, width: 64, height: 58, rotate: 6 },
+    { x: 52, y: 54, width: 78, height: 80, rotate: -2 },
   ];
   return positions.slice(0, size);
 }
