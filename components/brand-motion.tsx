@@ -36,13 +36,22 @@ export function BrandMotion({
       aria-live={variant === "loader" ? "polite" : undefined}
     >
       <span className="brand-motion-stage" aria-hidden="true">
-        <span className="brand-motion-halo" />
         <span className="brand-motion-mark">
           <BrandIconLayer className="brand-motion-mark-base" />
-          <BrandIconLayer className="brand-motion-part brand-motion-part--top" />
-          <BrandIconLayer className="brand-motion-part brand-motion-part--middle" />
-          <BrandIconLayer className="brand-motion-part brand-motion-part--bottom" />
-          <span className="brand-motion-sheen" />
+          <span className="brand-motion-morph">
+            <Image
+              src={
+                variant === "splash"
+                  ? "/brand/ensemble-shirt-morph.svg"
+                  : "/brand/ensemble-shirt-morph-loop.svg"
+              }
+              alt=""
+              fill
+              unoptimized
+              loading="eager"
+              className="object-contain"
+            />
+          </span>
         </span>
       </span>
 

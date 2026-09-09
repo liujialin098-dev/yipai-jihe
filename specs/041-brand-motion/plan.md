@@ -6,7 +6,7 @@
 
 ## Summary
 
-基于现有青柠/丁香折叠 E 正式图标，增加一套共享品牌动效：完整打开时由三段图标轻微错位后合拢，品牌字标随后出现并淡出；页面级等待时使用同一图标的克制折叠呼吸和形状内高光。根级 `loading.tsx` 与会话跳转等待复用该组件。使用 CSS 的 transform、opacity 和静态遮罩完成，不新增动画依赖、GIF、数据请求或业务状态。
+用户最终批准衣服→E方案：本地SVG同构路径插值，外轮廓与两个青柠色块同步变化，固定双色、连续曲线、无收尾换图。文字和退出仍使用CSS transform/opacity；根布局开屏、loading.tsx及会话返回复用共享组件。900ms单次形变，3.2秒往返加载，无泡泡、光晕、扫光；正式PNG仅用于减少动态静态降级。不新增依赖、业务请求或业务状态。
 
 ## Technical Context
 
@@ -22,7 +22,7 @@
 
 **Project Type**: 单体 Next.js Web 应用
 
-**Performance Goals**: 动效只改变 transform/opacity；不产生布局抖动；标准开屏 1.5 秒内退出；页面加载动效延迟 120ms 显示
+**Performance Goals**: 图标采用小型SVG几何形变，其余仅transform/opacity；不产生布局抖动；标准开屏1.5秒内退出，页面加载延迟120ms显示
 
 **Constraints**: 复用正式 PNG 与既有色彩/字体 token；无新依赖、无网络请求、无音频/振动；减少动态关闭位移与循环
 
