@@ -1,5 +1,12 @@
 # 项目开发说明
 
+## SDD-043 当前本地增量（2026-09-09，未部署）
+
+- 默认丁香青柠不变，卡片32px、输入20px圆角；保留字体/Logo/原导航。设置的SkinPicker新增紫橙、粉米、绿黄、黑白灰、蓝橙五套皮肤；`lib/ui/skins.ts`为ID白名单，`ensemble-skin-v1`本设备保存，绘制前data-skin恢复，独立于`ensemble-theme-v1`日夜模式。`app/skins.css`用语义变量覆盖，照片/Logo/实心描边/用户画板背景/错误语义不染色。
+- 首页新增我的衣橱入口与HomeCollage编辑。只接收当前可见且有cutoutUrl衣物显示字段，1～8件；移动、缩放、旋转、置顶置底按数组次序、重排、保存和取消。`ensemble-home-collage-v1:<viewerId>`只存ID/有限数字，恢复与当前衣物交集，不存图片URL，不写推荐、日记或其他画板。点击空白/Escape仅取消选中；pointercancel回滚，键盘与44px按钮替代拖动。存储失败保留编辑，不假报保存。
+- check/build、043/037/036/035/039/042/029通过；真实组件隔离样本320/375px/横屏无溢出，拖动、层级、换衣取消、保存刷新、焦点恢复和六套日夜切换已测。样本为合成透明图与简化导航，不冒充真实账号端到端；真机最大字体/多指仍待补验。本轮不部署，不改环境/密钥/权限。Production继续使用下面SDD-042发布记录。
+- `npm run verify:sdd-043`；隔离预览 `node scripts/serve-sdd-043-fixture.mjs`（3043）。fixture排除生产上传。技能ui-ux-pro-max/frontend-design用于参考提炼与圆角层次，React/Next用于状态与服务端边界检查。
+
 ## 最新Production：SDD-042资讯卡增量（2026-09-09 15:40，覆盖旧发布记录）
 
 - 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `563ceff`，部署 `dpl_CQii6eDyvdpk87CKfTJB5tWfURJm`，部署URL `https://yipai-jihe-qfix2bu4k-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。卡片去除重复段落与详情折叠，保留标题速览和底部来源日期/阅读原文。inspect确认Ready/production/正式别名，云端Next.js16.3.1构建12秒通过。

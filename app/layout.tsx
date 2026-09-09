@@ -4,7 +4,9 @@ import { AppShell } from "@/components/app-shell";
 import { LaunchSplash } from "@/components/brand-motion";
 import { getViewer } from "@/lib/auth/viewer";
 import { themeBootstrapScript } from "@/lib/ui/theme";
+import { skinBootstrapScript } from "@/lib/ui/skins";
 import "./globals.css";
+import "./skins.css";
 
 const playful = localFont({
   src: "../public/fonts/ZCOOLKuaiLe-Regular.ttf",
@@ -59,6 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script>{themeBootstrapScript}</script>
+        <script>{skinBootstrapScript}</script>
       </head>
       <body className="min-h-full bg-background">
         <LaunchSplash />

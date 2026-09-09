@@ -118,15 +118,17 @@ function StickerWorkspaceEntry() {
       className="sticker-diary-entry pressable relative mt-5 flex min-h-24 items-center justify-between overflow-hidden rounded-[1.7rem] px-5 py-4"
     >
       <div className="relative z-10">
-        <p className="text-[0.66rem] font-semibold tracking-[0.08em] text-[#554263]">
+        <p className="text-[0.66rem] font-semibold tracking-[0.08em] text-[var(--text-secondary)]">
           STICKER STUDIO
         </p>
         <p className="mt-1 text-lg font-bold tracking-[-0.03em]">
           制作贴纸画板
         </p>
-        <p className="mt-1 text-xs text-[#665a70]">移动、裁切、叠放并分享</p>
+        <p className="mt-1 text-xs text-[var(--text-secondary)]">
+          移动、裁切、叠放并分享
+        </p>
       </div>
-      <span className="relative z-10 flex size-12 items-center justify-center rounded-[1rem] bg-[#705787] text-white shadow-[0_10px_24px_rgba(70,50,88,0.2)]">
+      <span className="relative z-10 flex size-12 items-center justify-center rounded-[1rem] bg-[var(--action-purple)] text-white shadow-[0_10px_24px_rgba(70,50,88,0.2)]">
         <Layers3 className="size-5" aria-hidden="true" />
       </span>
     </Link>

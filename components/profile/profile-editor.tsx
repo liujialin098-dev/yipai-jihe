@@ -165,7 +165,7 @@ export function ProfileEditor({
                   {displayNameInitial(displayName || initialDisplayName)}
                 </span>
               )}
-              <span className="absolute right-0 bottom-0 flex size-8 items-center justify-center rounded-full border-2 border-white bg-[#d8ff52] text-[#202124] shadow-lg">
+              <span className="absolute right-0 bottom-0 flex size-8 items-center justify-center rounded-full border-2 border-white bg-[var(--fashion-lime)] text-[#202124] shadow-lg">
                 <Camera className="size-3.5" aria-hidden="true" />
               </span>
             </button>

@@ -1,0 +1,549 @@
+/* SDD-043: original palette stays intact; optional skins use semantic roles. */
+:root[data-skin="violet"] {
+  --skin-accent: #afa0e7;
+  --skin-secondary: #ffb571;
+  --skin-ink: #604584;
+  --skin-paper: #f4f0fb;
+}
+:root[data-skin="rose"] {
+  --skin-accent: #e8afc8;
+  --skin-secondary: #ebd9b7;
+  --skin-ink: #894663;
+  --skin-paper: #faf3e7;
+}
+:root[data-skin="green"] {
+  --skin-accent: #9ebf9d;
+  --skin-secondary: #e8ec89;
+  --skin-ink: #3e6549;
+  --skin-paper: #f1f5e8;
+}
+:root[data-skin="mono"] {
+  --skin-accent: #b8b8b8;
+  --skin-secondary: #e0e0dc;
+  --skin-ink: #454545;
+  --skin-paper: #f4f4f1;
+}
+:root[data-skin="blue"] {
+  --skin-accent: #9fbfe7;
+  --skin-secondary: #ffbc83;
+  --skin-ink: #3d5f87;
+  --skin-paper: #eef4fa;
+}
+:root[data-skin]:not([data-skin="original"]) {
+  --background: var(--skin-paper);
+  --foreground: #242426;
+  --surface-solid: color-mix(in srgb, var(--skin-paper) 20%, white);
+  --surface: var(--surface-solid);
+  --surface-soft: color-mix(
+    in srgb,
+    var(--skin-accent) 15%,
+    var(--surface-solid)
+  );
+  --surface-raised: var(--surface-solid);
+  --text-secondary: #626067;
+  --text-tertiary: #68656d;
+  --hairline: color-mix(in srgb, var(--skin-ink) 18%, transparent);
+  --action-purple: var(--skin-ink);
+  --system-blue: var(--skin-ink);
+  --system-blue-soft: var(--surface-soft);
+  --fashion-lilac: var(--skin-accent);
+  --fashion-lilac-soft: var(--surface-soft);
+  --fashion-lime: var(--skin-secondary);
+  --fashion-lime-soft: color-mix(
+    in srgb,
+    var(--skin-secondary) 35%,
+    var(--surface-solid)
+  );
+  --fashion-coral: var(--skin-secondary);
+  --fashion-coral-soft: var(--fashion-lime-soft);
+  --fashion-sky: var(--skin-accent);
+  --fashion-sky-soft: var(--surface-soft);
+  --card: var(--surface-solid);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface-solid);
+  --popover-foreground: var(--foreground);
+  --primary: var(--skin-ink);
+  --primary-foreground: #fff;
+  --secondary: var(--surface-soft);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-soft);
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--surface-soft);
+  --accent-foreground: var(--foreground);
+  --border: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--system-blue);
+  --skin-header: color-mix(
+    in srgb,
+    var(--skin-secondary) 64%,
+    var(--surface-solid)
+  );
+  --skin-dock: color-mix(in srgb, var(--skin-accent) 62%, var(--surface-solid));
+  --skin-control: var(--skin-ink);
+  --skin-on-control: #fff;
+}
+:root.dark[data-skin]:not([data-skin="original"]) {
+  --background: color-mix(in srgb, var(--skin-ink) 18%, #181819);
+  --foreground: #f7f4f8;
+  --surface-solid: color-mix(in srgb, var(--skin-ink) 22%, #262529);
+  --surface-soft: color-mix(
+    in srgb,
+    var(--skin-accent) 17%,
+    var(--surface-solid)
+  );
+  --text-secondary: #d1cbd4;
+  --text-tertiary: #c0b9c5;
+  --hairline: rgb(255 255 255 / 19%);
+  --system-blue: color-mix(in srgb, var(--skin-accent) 70%, white);
+  --primary: var(--system-blue);
+  --primary-foreground: #202024;
+  --fashion-lime-soft: color-mix(
+    in srgb,
+    var(--skin-secondary) 16%,
+    var(--surface-solid)
+  );
+  --skin-header: color-mix(in srgb, var(--skin-secondary) 22%, #252529);
+  --skin-dock: color-mix(in srgb, var(--skin-accent) 27%, #252529);
+  --skin-control: var(--skin-accent);
+  --skin-on-control: #202024;
+}
+:root[data-skin]:not([data-skin="original"]) .app-backdrop {
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--skin-accent) 12%, var(--background)),
+    var(--background) 70%,
+    var(--surface-solid)
+  );
+}
+:root[data-skin]:not([data-skin="original"]) .editorial-header-shell {
+  background: var(--skin-header);
+  border-color: var(--hairline);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 7%);
+}
+:root[data-skin]:not([data-skin="original"])
+  :is(.header-icon, .brand-lockup, .brand-name-chinese) {
+  color: var(--foreground);
+}
+:root[data-skin]:not([data-skin="original"]) .header-avatar {
+  background: var(--skin-control);
+  color: var(--skin-on-control);
+}
+:root[data-skin]:not([data-skin="original"]) .header-icon[aria-current="page"] {
+  background: var(--surface-soft);
+}
+:root[data-skin]:not([data-skin="original"]) .bottom-navigation-shell {
+  background: var(--skin-dock);
+  border-color: var(--hairline);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 10%);
+}
+:root[data-skin]:not([data-skin="original"]) .icon-dock .nav-item {
+  color: var(--foreground);
+}
+:root[data-skin]:not([data-skin="original"]) .icon-dock .nav-item .nav-bubble {
+  background: color-mix(in srgb, var(--surface-solid) 65%, transparent);
+  border-color: var(--hairline);
+}
+:root[data-skin]:not([data-skin="original"]) .dock-add {
+  background: var(--skin-control);
+  color: var(--skin-on-control);
+}
+:root[data-skin]:not([data-skin="original"]) .home-edit-action {
+  background: var(--skin-control);
+  color: var(--skin-on-control);
+}
+:root[data-skin]:not([data-skin="original"])
+  .home-journal-day[data-today="true"]
+  .home-journal-sticker {
+  background: var(--surface-soft);
+}
+:root[data-skin]:not([data-skin="original"])
+  :is(
+    .fashion-accent-card,
+    .sticker-month-card,
+    .sticker-diary-entry,
+    .utilization-sticker-wall
+  ) {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}
+:root[data-skin]:not([data-skin="original"]) .inspiration-cover {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}
+:root[data-skin]:not([data-skin="original"]) .inspiration-cover-chip {
+  background: var(--surface-solid);
+  color: var(--foreground);
+}
+
+/* Smooth corners, not heavy fills or a new navigation layout. */
+:root[data-skin]:not([data-skin="original"]) .brand-splash {
+  background: var(--background);
+}
+:root[data-skin]:not([data-skin="original"])
+  .nav-item[data-primary="true"]:is(:hover, :active)
+  .nav-icon-shell {
+  background: color-mix(
+    in srgb,
+    var(--skin-control) 92%,
+    var(--skin-on-control)
+  );
+  color: var(--skin-on-control);
+}
+:root[data-skin]:not([data-skin="original"])
+  .header-avatar:is(:hover, :active) {
+  background: color-mix(
+    in srgb,
+    var(--skin-control) 92%,
+    var(--skin-on-control)
+  );
+}
+.surface-card {
+  border-radius: 2rem;
+}
+.field-control {
+  border-radius: 20px;
+}
+.profile-cover,
+.inspiration-cover {
+  border-radius: 2rem;
+}
+.editorial-header-shell,
+.bottom-navigation-shell {
+  border-radius: 2rem;
+}
+.home-edit-action {
+  border-radius: 999px;
+}
+.home-journal-day,
+.home-journal-sticker {
+  border-radius: 24px;
+}
+.home-daily-feed {
+  border-radius: 30px;
+}
+.home-daily-feed-icon {
+  border-radius: 17px;
+}
+.skin-picker {
+  margin-top: 24px;
+  padding: 20px;
+  scroll-margin-top: 100px;
+}
+.skin-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.skin-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.skin-option {
+  min-width: 0;
+  padding: 8px;
+  border: 2px solid transparent;
+  background: var(--surface-soft);
+  color: var(--foreground);
+  border-radius: 24px;
+  cursor: pointer;
+}
+.skin-option[aria-pressed="true"] {
+  border-color: var(--system-blue);
+}
+.skin-preview {
+  display: block;
+  height: 86px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 17px;
+}
+.skin-preview-header {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  height: 14px;
+  border-radius: 8px;
+}
+.skin-preview-card {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 60%;
+  height: 42px;
+  border-radius: 15px;
+}
+.skin-preview-dot {
+  position: absolute;
+  right: 12px;
+  bottom: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.skin-option-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 2px 4px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.skin-status,
+.collage-status {
+  display: block;
+  min-height: 0;
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.skin-status:empty,
+.collage-status:empty {
+  display: none;
+}
+.home-wardrobe-entry {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 80px;
+  margin-top: 26px;
+  padding: 16px 20px;
+  border-radius: 30px;
+  background: var(--fashion-lime-soft);
+  color: var(--foreground);
+  border: 1px solid var(--hairline);
+}
+.home-wardrobe-symbol {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  background: var(--surface-solid);
+}
+.home-wardrobe-entry > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.home-wardrobe-entry strong {
+  display: block;
+  font-family: var(--title-font);
+  font-size: var(--title-card-size);
+}
+.home-wardrobe-entry small {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.home-wardrobe-entry > svg {
+  flex-shrink: 0;
+}
+.collage-edit-trigger {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--surface-solid);
+  color: var(--foreground);
+  border: 1px solid var(--hairline);
+  font-size: 13px;
+}
+.collage-edit-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.home-collage-board {
+  overflow: hidden;
+  border-radius: 32px;
+}
+.home-collage-board[data-editing="true"] {
+  background: var(--surface-raised);
+  outline: 1px solid var(--hairline);
+}
+.home-collage-piece {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 18px;
+  touch-action: none;
+  cursor: grab;
+}
+.home-collage-piece:active {
+  cursor: grabbing;
+}
+.home-collage-piece[aria-pressed="true"] {
+  outline: 2px dashed var(--system-blue);
+  outline-offset: -2px;
+}
+.home-collage-piece .garment-sticker {
+  pointer-events: none;
+}
+.collage-editor-panel {
+  position: relative;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 28px;
+  background: var(--surface-solid);
+  border: 1px solid var(--hairline);
+}
+.collage-hint,
+.collage-selected-name {
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+.collage-tool-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.collage-tool-row button,
+.collage-editor-actions button {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 16px;
+  color: var(--foreground);
+  background: var(--surface-soft);
+  font-size: 13px;
+}
+.collage-slider {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  font-size: 13px;
+}
+.collage-slider input {
+  min-width: 0;
+  width: 0;
+  flex: 1;
+  height: 44px;
+  accent-color: var(--system-blue);
+}
+.collage-slider output {
+  min-width: 42px;
+  flex-shrink: 0;
+}
+.collage-rotation-row {
+  margin-top: 8px;
+  align-items: center;
+  font-size: 12px;
+}
+.collage-rotation-row button {
+  gap: 6px;
+}
+.collage-wardrobe-picker {
+  margin-top: 12px;
+  border-top: 1px solid var(--hairline);
+}
+.collage-wardrobe-picker summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.collage-search {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.collage-search input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: var(--surface-soft);
+  padding: 10px 12px;
+  margin-top: 6px;
+  color: var(--foreground);
+  font-size: 16px;
+}
+.collage-item-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 8px 2px;
+}
+.collage-item-options button {
+  position: relative;
+  padding: 6px;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  color: var(--foreground);
+  background: var(--surface-soft);
+  min-width: 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.collage-item-options button[aria-pressed="true"] {
+  border-color: var(--system-blue);
+}
+.collage-item-options button > svg {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  background: var(--surface-solid);
+  border-radius: 50%;
+}
+.collage-item-image {
+  display: block;
+  height: 68px;
+}
+.collage-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+.collage-editor-actions .collage-save {
+  background: var(--action-purple);
+  color: #fff;
+}
+.skin-option,
+.collage-edit-trigger,
+.collage-tool-row button,
+.collage-editor-actions button {
+  transition:
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+.skin-option:active,
+.collage-edit-trigger:active,
+.collage-tool-row button:active,
+.collage-editor-actions button:active {
+  opacity: 0.78;
+}
+@media (hover: hover) {
+  .skin-option:hover,
+  .home-wardrobe-entry:hover {
+    box-shadow: inset 0 0 0 1px var(--hairline);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skin-option,
+  .collage-edit-trigger,
+  .collage-tool-row button,
+  .collage-editor-actions button {
+    transition: none;
+  }
+}

@@ -7,59 +7,12 @@ import {
   Sticker,
 } from "lucide-react";
 import Link from "next/link";
+import { HomeCollage } from "@/components/home/home-collage";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
-import { StickerOutlineControls } from "@/components/stickers/outline-controls";
 import { WeatherPanel } from "@/components/recommendations/weather-panel";
 import type { DiaryEntryView } from "@/lib/diary/data";
-import {
-  homeDiaryItem,
-  homeLookPositions,
-  homePreviewItems,
-} from "@/lib/home/presentation";
+import { homeDiaryItem, homePreviewItems } from "@/lib/home/presentation";
 import type { RecommendationPageData } from "@/lib/recommendations/data";
-import type { WardrobeItem } from "@/lib/wardrobe/data";
-
-function ClothingComposition({ items }: { items: WardrobeItem[] }) {
-  const positions = homeLookPositions(items.length);
-  return (
-    <figure
-      className="home-look-composition"
-      data-count={items.length}
-      aria-label="衣橱贴纸拼图，不代表一套推荐"
-    >
-      {items.map((item, index) => {
-        const position = positions[index];
-        if (!position) return null;
-        return (
-          <div
-            key={item.id}
-            className="home-look-piece"
-            style={{
-              left: `${position.x}%`,
-              top: `${position.y}%`,
-              width: `${position.width}%`,
-              height: `${position.height}%`,
-              transform: `translate(-50%, -50%) rotate(${position.rotate}deg)`,
-            }}
-          >
-            {item.cutoutUrl ? (
-              <GarmentSticker
-                imageUrl={item.imageUrl}
-                cutoutUrl={item.cutoutUrl}
-                alt={item.name}
-                sizes="(max-width: 480px) 40vw, 180px"
-                eager={index < 2}
-                surface="loose"
-                className="size-full"
-                imageClassName="object-contain"
-              />
-            ) : null}
-          </div>
-        );
-      })}
-    </figure>
-  );
-}
 
 export function DailyEdit({
   data,
@@ -112,13 +65,20 @@ export function DailyEdit({
         </div>
       </header>
       <section aria-label="今日穿搭" className="home-edit-feature">
-        <div className="home-feature-heading">
-          <h2 className="app-section-title">衣橱拼图</h2>
-          <span>{items.length ? `${items.length} 件贴纸` : ""}</span>
-        </div>
-        {items.length > 0 ? <StickerOutlineControls compact /> : null}
-        {items.length ? (
-          <ClothingComposition items={items} />
+        {items.length && data.viewerId ? (
+          <HomeCollage
+            key={data.viewerId}
+            viewerId={data.viewerId}
+            items={sourceItems
+              .filter((item) => item.cutoutUrl)
+              .map(({ id, name, category, imageUrl, cutoutUrl }) => ({
+                id,
+                name,
+                category,
+                imageUrl,
+                cutoutUrl,
+              }))}
+          />
         ) : (
           <div className="home-look-empty">
             {needsStickers ? (
@@ -180,6 +140,16 @@ export function DailyEdit({
           ) : null}
         </div>
       </section>
+      <Link href="/wardrobe" className="home-wardrobe-entry" prefetch={false}>
+        <span className="home-wardrobe-symbol">
+          <Shirt size={23} strokeWidth={1.5} aria-hidden="true" />
+        </span>
+        <span>
+          <strong>我的衣橱</strong>
+          <small>{sourceItems.length} 件衣物</small>
+        </span>
+        <ArrowRight size={18} aria-hidden="true" />
+      </Link>
       <section className="home-journal" aria-labelledby="home-journal-title">
         <div className="home-journal-heading">
           <h2 id="home-journal-title" className="app-section-title">

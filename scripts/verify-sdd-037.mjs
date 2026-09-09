@@ -99,6 +99,7 @@ const dataUrl = (code) =>
 const elementImport = `import {createElement} from ${JSON.stringify(import.meta.resolve("react"))};`;
 // Test the actual presentation component, without framework IO or weather network calls.
 const imports = {
+  react: import.meta.resolve("react"),
   "@/components/stickers/outline-controls": dataUrl(
     "export function StickerOutlineControls(){return null}",
   ),
@@ -115,6 +116,35 @@ const imports = {
   ),
   "@/lib/home/presentation": dataUrl(output),
 };
+// SDD-043 extracted the interactive composition; still render the real component.
+const collageState = ts
+  .transpileModule(await read("lib/home/collage.ts"), {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2022,
+    },
+  })
+  .outputText.replaceAll(
+    'from "./presentation"',
+    `from ${JSON.stringify(dataUrl(output))}`,
+  );
+imports["@/lib/home/collage"] = dataUrl(collageState);
+let collageComponent = ts.transpileModule(
+  await read("components/home/home-collage.tsx"),
+  {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2022,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
+  },
+).outputText;
+for (const [name, url] of Object.entries(imports))
+  collageComponent = collageComponent.replaceAll(
+    `from "${name}"`,
+    `from ${JSON.stringify(url)}`,
+  );
+imports["@/components/home/home-collage"] = dataUrl(collageComponent);
 let compiled = ts.transpileModule(home, {
   compilerOptions: {
     module: ts.ModuleKind.ESNext,

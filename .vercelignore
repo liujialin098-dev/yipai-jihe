@@ -6,6 +6,8 @@ scripts/fixtures/sticker-040.tsx
 scripts/fixtures/sticker-040-image.tsx
 scripts/fixtures/sticker-040-loader.cjs
 scripts/serve-sticker-040-fixture.mjs
+scripts/fixtures/skin-collage-043.tsx
+scripts/serve-sdd-043-fixture.mjs
 revise_prd_mvp.py
 scripts/build_picksee_prd.py
 public/brand/ensemble-icon-b-match-knot.png

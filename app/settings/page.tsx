@@ -8,6 +8,7 @@ import {
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import { SkinPicker } from "@/components/skin-picker";
 import {
   AccountProtectedBadge,
   EmailBindingForm,
@@ -30,6 +31,7 @@ export default async function SettingsPage({
   return (
     <div className="page-enter px-5 pt-4">
       <h1 className="app-page-title">账号与偏好</h1>
+      <SkinPicker />
 
       <section className="surface-card stagger-item mt-7 rounded-[1.65rem] p-5">
         <div className="flex items-center gap-4">
