@@ -1,5 +1,11 @@
 # 项目开发说明
 
+## 最新Production：SDD-042资讯卡增量（2026-09-09 15:40，覆盖旧发布记录）
+
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `563ceff`，部署 `dpl_CQii6eDyvdpk87CKfTJB5tWfURJm`，部署URL `https://yipai-jihe-qfix2bu4k-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。卡片去除重复段落与详情折叠，保留标题速览和底部来源日期/阅读原文。inspect确认Ready/production/正式别名，云端Next.js16.3.1构建12秒通过。
+- check/build/042与隔离视觉检查通过；11项生产配置名称核实，不pull/relink/改密钥或权限，无关素材继续排除。命令 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-qfix2bu4k-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_CQii6eDyvdpk87CKfTJB5tWfURJm --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核。
+- 正式首页/inspiration/login无会话HTTP GET均200，登录首次TLS失败单次重试成功；最近30分钟error日志无记录。不等于真实登录后卡片/阅读写入端到端通过；本轮未执行线上登录后浏览器交互。部署/CLI技能用于项目核实与发布后检查。
+
 ## SDD-042资讯卡精简增量（2026-09-09，当前功能覆盖）
 
 - 用户确认移除“来源标题简述 · 非全文摘要”、重复标题的说明段和“内容详情与时效”折叠区。当前资讯只由来源标题整理，因此统一保留轻量“标题速览”，不伪装成全文摘要；不再渲染summary/reason/获取时间/有效期，但数据字段与后台过滤、排序、缓存均不变。
