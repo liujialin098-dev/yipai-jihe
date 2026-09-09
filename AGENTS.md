@@ -1,11 +1,11 @@
 # 项目开发说明
 
-## SDD-045 紫灰画板与品牌动效描边（2026-09-10，本地完成，待发布）
+## 最新Production：SDD-045紫灰画板与品牌动效描边（2026-09-10 00:41，覆盖下方记录）
 
-- 首页衣橱拼图画板由近黑调整为有明确紫灰色相的深色表面：原色浅色 `#463452`、夜间 `#382943`，其余皮肤按自身墨色混合紫灰基色；继续保留满铺、重叠、编辑和现有边框，不修改衣物贴纸颜色或几何。
-- 开屏与页面加载继续使用同一衣服→E SVG、固定丁香/青柠填充和既有时序；图片层增加四向 1px、零模糊的随形硬边描边，浅色使用深紫、夜间使用浅丁香，各皮肤按自身色彩适配。没有新增泡泡、光晕、填充闪变或第二份错位图层。
-- `npm run check`、`npm run build`、041/043/045专项验证通过。实际隔离视觉复验覆盖原色浅色、夜间和替代皮肤画板，以及浅/深背景的衣服与E阶段；画板不再发黑，动态图标轮廓可辨且填充无闪色。375px与844×390尺寸布局沿用043/044已通过契约；未改账号、数据、AI、供应商、环境变量或权限。
-- ui-ux-pro-max用于深色表面层级与皮肤语义色，animate用于保留现有时序并选择零模糊随形描边。待提交并发布至既有 `yipai-jihe` Production；部署后补充唯一URL、部署ID、正式域名、静态资源和错误日志核验。
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `ee65d92`，部署 `dpl_6sb1KeirkRKi7bUCv51VwfPHDz15`，部署URL `https://yipai-jihe-b1l3xc9zf-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建9秒通过。
+- 首页衣橱拼图画板由近黑调整为有明确紫灰色相的深色表面：原色浅色 `#463452`、夜间 `#382943`，其余皮肤按自身墨色混合紫灰基色；继续保留满铺、重叠、编辑和现有边框，不修改衣物贴纸颜色或几何。开屏与页面加载继续使用同一衣服→E SVG、固定丁香/青柠填充和既有时序；图片层增加四向1px零模糊随形硬边描边，浅色使用深紫、夜间使用浅丁香，各皮肤按自身色彩适配。没有新增泡泡、光晕、填充闪变或第二份错位图层。
+- `npm run check`、`npm run build`、041/043/045专项验证通过；原色浅色、夜间、替代皮肤画板及浅/深背景的衣服/E阶段已完成隔离视觉复验。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-b1l3xc9zf-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_6sb1KeirkRKi7bUCv51VwfPHDz15 --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；ui-ux-pro-max、animate及Vercel部署/CLI技能用于表面层级、动效边界和发布检查。
+- 正式首页/settings/stickers无会话HTTP GET均200；两份CSS均200且包含新画板色、`--brand-motion-outline`和四向描边，两份动画SVG均200并保持固定双色填充；最近30分钟error日志无记录。未改账号、数据、AI、供应商、环境变量或权限；本轮未执行真实账号登录后的拼图编辑或真机动效验收，公开入口和静态资源检查不等于完整业务端到端。
 
 ## 最新Production：SDD-044纯色皮肤与深色满铺拼图（2026-09-09 23:54，覆盖下方记录）
 
