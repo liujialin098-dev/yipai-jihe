@@ -14,4 +14,10 @@
 - 375px标题居中；独立宽度测量中心差0px。320px深色、375px浅色及844×390横屏的clientWidth/scrollWidth分别305/305、360/360、829/829。
 - 页面标题移动端24px、分区18px、卡片16px，统一圆润字体；长标题自然换行。首页Hello为已确认品牌字形例外。
 - 内容详情默认折叠，点击后显示推荐依据与日期；来源和错误提示可见。浏览器error日志为空。
-- 用户现有完整账号页面、系统最大字体与真机仍待集中复验。本轮未部署Production，线上仍为SDD-041。
+- 用户现有完整账号页面、系统最大字体与真机仍待集中复验。
+
+## Production发布（2026-09-09 14:53）
+
+- 源提交 `17074b2`；部署 `dpl_4cgNbmMZrS8n9Nkx4Zqot1uyc1Nn`，正式链接 `https://yipai-jihe.vercel.app`，唯一URL `https://yipai-jihe-n3ujejs90-jialin-d583.vercel.app`。inspect核实Ready/production/正式别名，云端构建14秒通过；发布前check/build/042再跑通过。
+- 正式首页/login/stickers/inspiration无会话HTTP GET均200；公开CSS为200，包含新标题token及app-page-heading规则。资讯/CSS首次TLS失败，单次重试成功；最近30分钟error日志无记录。
+- 本轮未做登录后浏览器交互复验，不将HTTP、样式资源及无错误日志写作完整功能验收。项目、命令与限制同步AGENTS.md及progress.md。

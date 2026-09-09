@@ -1,12 +1,18 @@
 # 项目开发说明
 
-## 当前本地增量：SDD-042 标题与文案精简（2026-09-09，未部署）
+## 最新Production：SDD-042（2026-09-09 14:53，覆盖下方旧发布记录）
+
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `17074b2`，部署 `dpl_4cgNbmMZrS8n9Nkx4Zqot1uyc1Nn`，部署URL `https://yipai-jihe-n3ujejs90-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。包含贴纸册居中、统一标题与文案精简。inspect确认Ready/production/正式别名；云端Next.js16.3.1构建14秒通过。
+- 本轮check/build/042通过，11项生产配置名称已核对；复用既有project.json，不pull、不改密钥和权限，无关PRD/Logo草稿排除上传。首次上传fetch失败，ls确认没有新部署后重试成功。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-n3ujejs90-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_4cgNbmMZrS8n9Nkx4Zqot1uyc1Nn --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；部署技能用于项目锁定与发布后检查。
+- 正式首页/login/stickers/inspiration无会话HTTP GET均200，公开CSS为200且包含新title-page-size和app-page-heading；资讯与CSS首次TLS失败，单次重试成功。最近30分钟error日志无记录。以上仅证明入口及新版样式可用，不替代登录后浏览器交互与真机验收；本轮未进行登录后视觉复验。
+
+## SDD-042已发布功能与边界
 
 - 新增无状态PageHeading，贴纸册/资讯/衣橱/日记/添加编辑复用全宽居中标题；不得用右侧装饰挤占宽度造成伪居中。资讯标题缩为“时尚灵感”，移除介绍段落与装饰口号；其他页面同类介绍节点显式删除，不全局隐藏p或app-page-lead。
 - 标题统一使用title-font与page/section/card字号token（页面24～28px、分区18px、卡片16px），同字重/字距、自然换行；首页Hello继续Fredoka品牌字形但字号归一。清理首页h2、资料昵称、衣物详情/卡片与资讯局部字号覆盖；保留原导航、配色及动效。
 - 资讯推荐依据移入既有ContentDetails，来源、日期、简述性质和外链保留；错误、加载、身份风险、表单提示与天气归因不得隐藏。没有数据/鉴权/供应商/权限变更。
 - check/build/042/015/029/030/034/035/037/041通过。027离线通过、联网鉴权fetch失败，未标记全通过。实际标题/资讯卡的隔离浏览器样本320px深色、375px浅色、844px横屏无溢出，标题中心差0，详情可展开，error为空；不冒充完整账号端到端。真机最大字体及完整页面复验待补。
-- ui-ux-pro-max/frontend-design用于保留品牌并统一标题层级、精简介绍；React复核无新增请求/effect。运行 `npm run verify:sdd-042`；视觉样本 `node --no-warnings scripts/verify-sdd-042.mjs --preview`（3042），不读账号。进度见progress.md；本轮未部署，Production仍为下方041。
+- ui-ux-pro-max/frontend-design用于保留品牌并统一标题层级、精简介绍；React复核无新增请求/effect。运行 `npm run verify:sdd-042`；视觉样本 `node --no-warnings scripts/verify-sdd-042.mjs --preview`（3042），不读账号。后续用户要求发布后已完成上述042生产部署；进度见progress.md。
 
 ## 最新Production：SDD-041（2026-09-09 13:17，覆盖下方旧发布记录）
 

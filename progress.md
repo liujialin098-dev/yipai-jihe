@@ -33,7 +33,7 @@
 
 ## 当前总览
 
-### 当前 SDD-042：标题与文案精简，本地完成未部署（2026-09-09）
+### 当前 SDD-042：标题与文案精简，已发布Production（2026-09-09 14:53）
 
 - [x] 独立spec/plan/tasks/quickstart：保持现有风格，不修改数据流程。
 - [x] 贴纸册真正居中；共享PageHeading用于主要页头，日期/数量不影响标题中心。资讯改为“时尚灵感”。
@@ -42,7 +42,9 @@
 - [x] check/build/042/015/029/030/034/035/037/041通过；027离线通过，旧联网部分鉴权fetch失败，未修改服务迎合测试。
 - [x] 320px深色、375px浅色、844px横屏实际标题/资讯卡隔离样本无溢出；中心差0px、长标题换行、详情展开、错误提示可见、浏览器error为空。
 - [x] 按设计技能保留视觉基线、用统一层级替代随机字号；React复核无新增请求/状态。文档随 `feat: unify headings and simplify interface copy` 提交，未包含无关Logo和PRD。
-- [ ] 完整登录页面、真机最大字体与Production复验待补。本轮未部署，线上仍为SDD-041。每阶段结束后继续更新本文档。
+- [x] 用户要求更新部署后复跑check/build/042通过；源提交 `17074b2` 发布至 `yipai-jihe`，部署 `dpl_4cgNbmMZrS8n9Nkx4Zqot1uyc1Nn`，URL `https://yipai-jihe-n3ujejs90-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。Ready/production/固定别名核实，云端构建14秒通过。11项生产变量名称核实，不改配置；首次上传fetch失败且无新部署，重试成功。
+- [x] 正式首页/login/stickers/inspiration无会话HTTP200；CSS为200且含统一标题新token与PageHeading规则。资讯/CSS的临时TLS失败单次重试成功；最近30分钟error日志无记录。发布命令 `npx vercel deploy --prod --yes --scope jialin-d583`，inspect/logs及项目记录见AGENTS.md。
+- [ ] 完整登录页面、真机最大字体与Production浏览器交互复验待补；无会话HTTP/资源检查不等同于登录后验收。每阶段结束后继续更新本文档。
 
 ### 当前 SDD-041：已发布，浏览器播放复验待补（2026-09-09）
 
