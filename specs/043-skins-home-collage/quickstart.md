@@ -26,6 +26,8 @@
 - 已于2026-09-09 20:53按用户要求部署Production，源提交6ba40dc；正式域名https://yipai-jihe.vercel.app。部署Ready，公开首页/设置/贴纸与新版CSS可用，线上登录后浏览器交互尚未复验。
 # 圆润图标增量验收（2026-09-09）
 
+后续按用户要求于21:28发布Production：源6a220c6，部署dpl_9CzxDhe8LS6CFcaQQXF8WucrJKnm，正式https://yipai-jihe.vercel.app。check/build/043、云端16秒构建、Ready与别名通过；首页/settings/stickers无会话HTTP200（贴纸TLS单次重试），新版CSS含图标尺寸，30分钟error日志无记录。未进行线上登录后交互。此记录覆盖下方开发轮“未部署”。
+
 `npm run check`、`npm run build`及043/037/036/042/029/030/041通过。043新增九种SVG实际静态渲染、圆头圆角、隐藏装饰语义、尺寸token和减少动态检查；037继续渲染真实首页组件。
 
 `node scripts/serve-sdd-043-fixture.mjs`升级使用真实StatusHeader、BottomNavigation及ThemeToggle，路由/图片为本地适配，无登录或业务IO。浏览器375/320px与844×390无水平溢出；顶部44px点击区、24px图标，底部48px点击区、26px图标/28px加号，圆承托44px。六种皮肤日夜切换、推荐/收藏/添加选中态通过，浏览器error为空。本轮样本服务与标签已关闭。系统减少动态及最大字体尚未真机复验，不能以静态断言替代；本轮未部署。

@@ -1,5 +1,11 @@
 # 项目开发说明
 
+## 最新Production：SDD-043圆润图标增量（2026-09-09 21:28，覆盖下方记录）
+
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `6a220c6`（图标功能 `c51f8d9`），部署 `dpl_9CzxDhe8LS6CFcaQQXF8WucrJKnm`，部署URL `https://yipai-jihe-k8dcd6nq9-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。包含圆润SVG、24/26/28px尺寸与圆形选中承托；inspect确认Ready/production/正式别名，云端Next.js16.3.1构建16秒通过。
+- 本轮check/build/043通过，复用正确project.json与现有生产配置，未pull/relink/改密钥或权限。新增navigation-043测试适配文件也已排除上传，无关素材保持未追踪。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-k8dcd6nq9-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_9CzxDhe8LS6CFcaQQXF8WucrJKnm --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`复核，部署/CLI技能用于锁定项目与发布后检查。
+- 正式首页/settings/stickers无会话HTTP200，贴纸入口首次TLS失败后单次重试成功；两份CSS均200，`3y_84zn0kr0d5.css`包含rounded-app-icon与26px尺寸token。最近30分钟error日志无记录；本轮未检查Drains配置、未执行线上登录后交互，HTTP与资源可用不替代真实账号/真机验收。
+
 ## SDD-043 圆润图标增量（2026-09-09，本地完成，未部署）
 
 - 主导航/顶部衣库收藏日夜/首页衣橱与资讯入口使用无状态RoundedIcon：自绘圆润SVG、1.85圆头圆角线条、同色0.1底填/选中0.24；取代这些入口的Lucide，其他编辑工具/小箭头不变。顶部24px、底部与入口26px、中央加号28px；图标与装饰不可截获点击。保留父控件aria-label/current/pressed、44px以上操作区、底部顺序、18px圆角添加按钮、品牌Logo与六套日夜配色。

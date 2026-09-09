@@ -1,5 +1,12 @@
 # 衣拍即合开发进度
 
+## SDD-043 圆润图标已部署Production（2026-09-09 21:28）
+
+- [x] 发布源 `6a220c6`（功能c51f8d9），部署 `dpl_9CzxDhe8LS6CFcaQQXF8WucrJKnm` / `https://yipai-jihe-k8dcd6nq9-jialin-d583.vercel.app`，正式域名 `https://yipai-jihe.vercel.app`。Ready/production/别名已确认，云端构建16秒通过。
+- [x] 本轮check/build/043通过；无关素材及测试文件排除，不改密钥、权限或配置。首页/settings/stickers无会话HTTP200，贴纸首次TLS失败重试成功；两份CSS200，新版含圆润图标与26px token。最近30分钟error日志无记录。
+- [x] AGENTS.md同步项目、链接、部署/inspect/logs指令。本节覆盖下方未部署状态。
+- [ ] 真实账号线上交互与真机验收待集中调试；未检查Drains，不将HTTP和无错误日志当作完整业务验收。
+
 ## SDD-043 圆润图标增量（2026-09-09，本地完成，未部署）
 
 - [x] 主导航、顶部衣库/收藏/日夜、首页入口改为圆润SVG，顶部24px/底部26px/加号28px；底部44px圆形承托，保留原矩形添加按钮与配色。
