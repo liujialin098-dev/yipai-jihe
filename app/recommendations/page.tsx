@@ -209,7 +209,7 @@ export default async function RecommendationsPage({
           ) : null}
         </section>
       )}
-      <TrendInspirationPanel occasion={recommendation?.occasion ?? "commute"} />
+      <TrendInspirationPanel />
     </div>
   );
 }

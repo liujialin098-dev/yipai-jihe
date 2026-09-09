@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archive, ArrowRight, SearchX, Shirt } from "lucide-react";
 import Link from "next/link";
+import { PageHeading } from "@/components/page-heading";
 import { DemoLoader } from "@/components/wardrobe/demo-loader";
 import { FilterPanel } from "@/components/wardrobe/filter-panel";
 import { WardrobeItemCard } from "@/components/wardrobe/item-card";
@@ -45,20 +46,16 @@ export default async function WardrobePage({
 
   return (
     <div className="page-enter px-5 pt-4">
-      <header>
-        <div className="flex items-end justify-between gap-4">
-          <h1 className="app-page-title">衣橱</h1>
-          <span className="app-page-meta pb-1">{items.length} 件</span>
-        </div>
-        <p className="app-page-lead mt-3">浏览、筛选和编辑每件衣物。</p>
-      </header>
+      <PageHeading title="衣橱">
+        <p className="app-page-meta">{items.length} 件</p>
+      </PageHeading>
 
       {showEmptyState ? (
         <section className="surface-card mt-6 overflow-hidden rounded-[1.75rem] p-6">
           <span className="flex size-11 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
             <Shirt className="size-5" aria-hidden="true" />
           </span>
-          <h2 className="app-page-title mt-12 max-w-[18rem]">
+          <h2 className="app-section-title mt-8">
             {isPartialDemo ? "演示衣橱还没加载完整" : "衣橱还是空的"}
           </h2>
           <p className="mt-3 max-w-[20rem] text-sm leading-6 text-[var(--text-secondary)]">

@@ -69,9 +69,6 @@ export default async function PreferencesPage() {
         <ArrowLeft className="size-4" aria-hidden="true" />
       </Link>
       <h1 className="app-page-title mt-5">穿衣偏好</h1>
-      <p className="app-page-lead mt-3">
-        设置常用城市、衣着类型和风格，推荐会据此调整。
-      </p>
 
       <section className="surface-card mt-6 rounded-[1.65rem] p-5">
         <PreferenceForm

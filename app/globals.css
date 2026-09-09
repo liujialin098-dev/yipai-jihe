@@ -55,6 +55,10 @@
 }
 
 :root {
+  --title-font: var(--font-playful), var(--font-heading);
+  --title-page-size: clamp(1.5rem, 6.2vw, 1.75rem);
+  --title-section-size: 1.125rem;
+  --title-card-size: 1rem;
   --background: #f5f1f8;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
@@ -408,7 +412,7 @@
   gap: 0 8px;
   text-align: center;
   font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 6vw, 1.75rem);
+  font-size: var(--title-page-size);
   font-weight: 600;
   line-height: 1.3;
 }
@@ -509,11 +513,6 @@
   gap: 12px;
   margin-bottom: 12px;
 }
-.home-feature-heading h2 {
-  font-family: var(--font-playful), var(--font-heading);
-  font-size: 19px;
-  font-weight: 400;
-}
 .home-feature-heading > span {
   font-size: 12px;
   color: var(--text-secondary);
@@ -544,10 +543,6 @@
   margin-top: 16px;
 }
 .home-look-caption h2 {
-  font-size: 17px;
-  line-height: 1.6;
-  font-weight: 600;
-  color: var(--foreground);
   overflow-wrap: anywhere;
 }
 .home-look-caption p {
@@ -594,10 +589,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-}
-.home-journal-heading h2 {
-  font-size: 14px;
-  font-weight: 600;
 }
 .home-journal-more {
   display: flex;
@@ -1453,10 +1444,6 @@
   grid-column: 1 / -1;
   margin-top: 0.75rem;
   overflow-wrap: anywhere;
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.02em;
 }
 
 .profile-display-caption {
@@ -1846,22 +1833,37 @@
   letter-spacing: 0.01em;
 }
 
+.app-page-heading {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.app-page-heading > .app-page-title {
+  width: 100%;
+  margin-block: 0;
+}
+
 .app-page-title {
   max-width: 23rem;
   color: var(--foreground);
   margin-inline: auto;
-  font-family: var(--font-playful), var(--font-heading);
-  font-size: clamp(1.5rem, 6.4vw, 1.85rem);
+  font-family: var(--title-font);
+  font-size: var(--title-page-size);
   font-weight: 400;
-  letter-spacing: 0.035em;
+  letter-spacing: 0.02em;
   line-height: 1.3;
   text-align: center;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .app-page-title-home {
-  font-size: clamp(1.75rem, 7.5vw, 2rem);
-  letter-spacing: 0.04em;
+  font-size: var(--title-page-size);
+  letter-spacing: 0.02em;
   line-height: 1.3;
 }
 
@@ -1875,22 +1877,24 @@
 
 .app-section-title {
   color: var(--foreground);
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.018em;
-  line-height: 1.32;
+  font-family: var(--title-font);
+  font-size: var(--title-section-size);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .app-card-title {
   color: var(--foreground);
-  font-family: var(--font-heading);
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: -0.012em;
-  line-height: 1.35;
+  font-family: var(--title-font);
+  font-size: var(--title-card-size);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
   text-wrap: pretty;
+  overflow-wrap: anywhere;
 }
 
 .app-display-number {

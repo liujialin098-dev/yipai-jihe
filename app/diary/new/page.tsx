@@ -26,13 +26,10 @@ export default async function NewDiaryEntryPage({
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
         </Link>
-        <p className="app-page-meta mt-6">
+        <p className="app-page-meta mt-6 text-center">
           {data.entry ? "编辑已有记录" : "记录实际穿着"}
         </p>
         <h1 className="app-page-title mt-2">这天穿了什么</h1>
-        <p className="app-page-lead mt-3">
-          只记录真正穿过的衣物，利用率才有参考价值。
-        </p>
       </header>
 
       {data.error ? (

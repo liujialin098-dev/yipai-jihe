@@ -77,7 +77,7 @@ export default async function WardrobeItemPage({
               <p className="app-page-meta">
                 {optionLabel(CATEGORY_OPTIONS, item.category)}
               </p>
-              <h1 className="app-page-title mt-1 text-[2.1rem]">{item.name}</h1>
+              <h1 className="app-page-title mt-1">{item.name}</h1>
             </div>
             <span className="rounded-full bg-[var(--system-blue-soft)] px-3 py-1.5 text-[0.68rem] font-semibold text-[var(--system-blue)]">
               {item.status === "archived" ? "已归档" : "使用中"}

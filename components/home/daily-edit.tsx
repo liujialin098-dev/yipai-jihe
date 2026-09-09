@@ -113,7 +113,7 @@ export function DailyEdit({
       </header>
       <section aria-label="今日穿搭" className="home-edit-feature">
         <div className="home-feature-heading">
-          <h2>衣橱拼图</h2>
+          <h2 className="app-section-title">衣橱拼图</h2>
           <span>{items.length ? `${items.length} 件贴纸` : ""}</span>
         </div>
         {items.length > 0 ? <StickerOutlineControls compact /> : null}
@@ -130,7 +130,7 @@ export function DailyEdit({
         )}
         <div className="home-look-caption">
           {outfit && !needsStickers ? <p>今日推荐</p> : null}
-          <h2>
+          <h2 className="app-section-title">
             {needsStickers
               ? "把喜欢的衣服，拼在一起"
               : (outfit?.title ??
@@ -182,7 +182,9 @@ export function DailyEdit({
       </section>
       <section className="home-journal" aria-labelledby="home-journal-title">
         <div className="home-journal-heading">
-          <h2 id="home-journal-title">我的穿搭手帐</h2>
+          <h2 id="home-journal-title" className="app-section-title">
+            我的穿搭手帐
+          </h2>
           <Link href="/diary?view=diary" className="home-journal-more">
             全部 <ArrowRight size={14} aria-hidden="true" />
           </Link>

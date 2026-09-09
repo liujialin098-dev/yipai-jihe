@@ -21,18 +21,11 @@ export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
         <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
         <div>
           <BrandName className="auth-brand-name" />
-          <p className="mt-1.5 text-[0.68rem] font-medium text-[var(--text-tertiary)]">
-            你的私人穿搭助手
-          </p>
         </div>
       </header>
 
       <section className="mt-10">
-        <p className="app-page-meta">进入衣橱前</p>
         <h1 className="app-page-title mt-2">先选择一种身份</h1>
-        <p className="app-page-lead mt-4">
-          登录可找回原衣橱，注册后可跨设备使用，也可以先用体验身份看看。
-        </p>
       </section>
 
       {feedback ? (

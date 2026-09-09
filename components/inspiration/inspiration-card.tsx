@@ -53,7 +53,7 @@ export function InspirationCard({
                 {dateFormatter.format(new Date(item.publishedAt))}
               </span>
             </div>
-            <h2 className="app-card-title mt-3 text-[1.16rem]">{item.title}</h2>
+            <h2 className="app-card-title mt-3">{item.title}</h2>
           </div>
           {showUnread && (
             <span
@@ -81,17 +81,11 @@ export function InspirationCard({
         <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
           {item.summary}
         </p>
-        <div className="mt-4 rounded-[1.1rem] bg-[var(--surface-soft)] px-3.5 py-3">
-          <p className="text-[0.67rem] font-semibold text-[var(--foreground)]">
-            {personalized ? "为什么给你看" : "展示顺序"}
-          </p>
-          <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-            {item.reason}
-          </p>
-        </div>
-
         <ContentDetails id={item.id} isRead={item.isRead}>
           <div className="space-y-2 break-words leading-5">
+            <p>
+              {personalized ? "推荐依据" : "展示顺序"}：{item.reason}
+            </p>
             <p>原始标题：{item.originalTitle ?? item.title}</p>
             <p>来源发布：{dateFormatter.format(new Date(item.publishedAt))}</p>
             <p>

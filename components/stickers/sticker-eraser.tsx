@@ -252,7 +252,7 @@ export function StickerEraser({
     >
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <h2 id="sticker-eraser-title" className="text-base font-semibold">
+          <h2 id="sticker-eraser-title" className="app-section-title">
             橡皮擦
           </h2>
           <p className="truncate text-xs text-[var(--text-secondary)]">

@@ -8,6 +8,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { PageHeading } from "@/components/page-heading";
 import { redirect } from "next/navigation";
 import { DiaryDeleteButton } from "@/components/diary/diary-delete-button";
 import { DiaryStickerCalendar } from "@/components/diary/diary-sticker-calendar";
@@ -70,15 +71,7 @@ export default async function DiaryPage({
 
   return (
     <div className="page-enter px-5 pt-4">
-      <header>
-        <p className="app-page-meta">我的穿搭档案</p>
-        <h1 className="app-page-title mt-2">日记与收藏</h1>
-        <p className="app-page-lead mt-3">
-          {view === "favorites"
-            ? "把喜欢的单品和整套搭配收在一起。"
-            : "记下真正穿过的衣服，再看哪些单品最常陪你出门。"}
-        </p>
-      </header>
+      <PageHeading title="日记与收藏" />
 
       <nav
         aria-label="穿搭记录视图"

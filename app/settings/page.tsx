@@ -26,14 +26,10 @@ export default async function SettingsPage({
 }) {
   const [viewer, params] = await Promise.all([getViewer(), searchParams]);
   const verifiedNow = params.binding === "verified";
-  const summary = viewer?.isAnonymous
-    ? "注册后可以在其他设备登录，并继续使用当前衣橱。"
-    : "管理登录状态、常用城市和穿衣偏好。";
 
   return (
     <div className="page-enter px-5 pt-4">
       <h1 className="app-page-title">账号与偏好</h1>
-      <p className="app-page-lead mt-3">{summary}</p>
 
       <section className="surface-card stagger-item mt-7 rounded-[1.65rem] p-5">
         <div className="flex items-center gap-4">

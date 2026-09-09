@@ -27,7 +27,7 @@ export function InspirationFeed({ data }: { data: FashionFeedData }) {
           />
           <h2 className="app-section-title mt-4">今天没有合适的新内容</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            当前没有获取到有效且匹配的来源内容，可以稍后重试或调整主题。我们不会为了填满页面编造新闻。
+            暂无新内容，请稍后重试或调整主题。
           </p>
         </section>
       )}

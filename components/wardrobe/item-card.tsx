@@ -42,9 +42,7 @@ export function WardrobeItemCard({
         )}
       </div>
       <div className="px-1 pt-3 pb-1">
-        <h2 className="truncate text-sm font-semibold text-[var(--foreground)]">
-          {item.name}
-        </h2>
+        <h2 className="app-card-title truncate">{item.name}</h2>
         <div className="mt-2 flex items-center gap-2 text-[0.68rem] text-[var(--text-tertiary)]">
           <span>{optionLabel(CATEGORY_OPTIONS, item.category)}</span>
           <span className="h-3 w-px bg-[var(--hairline)]" aria-hidden="true" />

@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { PageHeading } from "@/components/page-heading";
 import { notFound } from "next/navigation";
 import { WardrobeItemForm } from "@/components/wardrobe/item-form";
 import { getWardrobeItem } from "@/lib/wardrobe/data";
@@ -22,12 +23,9 @@ export default async function EditWardrobeItemPage({
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
       </Link>
-      <header className="mt-5">
-        <h1 className="app-page-title">编辑衣物</h1>
-        <p className="app-page-lead mt-3">
-          修改名称、类别和使用场景。原图保持不变。
-        </p>
-      </header>
+      <div className="mt-5">
+        <PageHeading title="编辑衣物" />
+      </div>
       <section className="surface-card mt-6 rounded-[1.6rem] p-5">
         <WardrobeItemForm item={item} />
       </section>

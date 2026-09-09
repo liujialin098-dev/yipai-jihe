@@ -45,18 +45,12 @@ export default async function LoginPage({
           <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
           <div>
             <BrandName className="auth-brand-name" />
-            <p className="mt-1.5 text-[0.68rem] font-medium text-[var(--text-tertiary)]">
-              你的私人穿搭助手
-            </p>
           </div>
         </div>
       ) : null}
       <h1 className={`${viewer?.isAnonymous ? "mt-5 " : ""}app-page-title`}>
         登录 Ensemble
       </h1>
-      <p className="app-page-lead mt-4">
-        使用已绑定的邮箱和密码直接登录，不会发送验证邮件。
-      </p>
 
       {message ? (
         <div className="motion-status mt-5 flex gap-3 rounded-[1.2rem] bg-[var(--system-blue-soft)] px-4 py-3 text-sm leading-6 text-[var(--system-blue)]">

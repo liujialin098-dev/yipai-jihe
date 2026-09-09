@@ -138,7 +138,9 @@ export function ProfileEditor({
             <Pencil className="size-3.5" aria-hidden="true" />
             编辑资料
           </span>
-          <h1 className="profile-display-name">{initialDisplayName}</h1>
+          <h1 className="app-page-title profile-display-name">
+            {initialDisplayName}
+          </h1>
         </summary>
         <form
           onSubmit={handleSubmit}

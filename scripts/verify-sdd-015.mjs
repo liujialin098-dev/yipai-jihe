@@ -35,7 +35,7 @@ for (const token of [
 
 for (const [file, source] of pageSources) {
   assert.ok(
-    source.includes("app-page-title"),
+    source.includes("app-page-title") || source.includes("<PageHeading"),
     `${file} 尚未接入统一页面标题层级`,
   );
 }

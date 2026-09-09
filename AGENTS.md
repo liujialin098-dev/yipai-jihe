@@ -1,5 +1,13 @@
 # 项目开发说明
 
+## 当前本地增量：SDD-042 标题与文案精简（2026-09-09，未部署）
+
+- 新增无状态PageHeading，贴纸册/资讯/衣橱/日记/添加编辑复用全宽居中标题；不得用右侧装饰挤占宽度造成伪居中。资讯标题缩为“时尚灵感”，移除介绍段落与装饰口号；其他页面同类介绍节点显式删除，不全局隐藏p或app-page-lead。
+- 标题统一使用title-font与page/section/card字号token（页面24～28px、分区18px、卡片16px），同字重/字距、自然换行；首页Hello继续Fredoka品牌字形但字号归一。清理首页h2、资料昵称、衣物详情/卡片与资讯局部字号覆盖；保留原导航、配色及动效。
+- 资讯推荐依据移入既有ContentDetails，来源、日期、简述性质和外链保留；错误、加载、身份风险、表单提示与天气归因不得隐藏。没有数据/鉴权/供应商/权限变更。
+- check/build/042/015/029/030/034/035/037/041通过。027离线通过、联网鉴权fetch失败，未标记全通过。实际标题/资讯卡的隔离浏览器样本320px深色、375px浅色、844px横屏无溢出，标题中心差0，详情可展开，error为空；不冒充完整账号端到端。真机最大字体及完整页面复验待补。
+- ui-ux-pro-max/frontend-design用于保留品牌并统一标题层级、精简介绍；React复核无新增请求/effect。运行 `npm run verify:sdd-042`；视觉样本 `node --no-warnings scripts/verify-sdd-042.mjs --preview`（3042），不读账号。进度见progress.md；本轮未部署，Production仍为下方041。
+
 ## 最新Production：SDD-041（2026-09-09 13:17，覆盖下方旧发布记录）
 
 - 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `c2b85d1`，部署 `dpl_EEstrUkgAuhF8MbQFLLzPCMvQZAY`，部署URL `https://yipai-jihe-dwm5hdy8h-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。衣服→E平滑开屏与加载已发布；inspect确认Ready/production/正式别名，云端Next.js16.3.1构建17秒通过。

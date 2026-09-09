@@ -33,6 +33,17 @@
 
 ## 当前总览
 
+### 当前 SDD-042：标题与文案精简，本地完成未部署（2026-09-09）
+
+- [x] 独立spec/plan/tasks/quickstart：保持现有风格，不修改数据流程。
+- [x] 贴纸册真正居中；共享PageHeading用于主要页头，日期/数量不影响标题中心。资讯改为“时尚灵感”。
+- [x] 页面/分区/卡片三级圆润标题统一，清理局部字号/字重覆盖；Hello保留品牌字形，字号与页面层级一致。
+- [x] 删除主要页面重复介绍语；资讯推荐理由收进默认折叠详情，保留来源、日期、错误、天气与风险提示。
+- [x] check/build/042/015/029/030/034/035/037/041通过；027离线通过，旧联网部分鉴权fetch失败，未修改服务迎合测试。
+- [x] 320px深色、375px浅色、844px横屏实际标题/资讯卡隔离样本无溢出；中心差0px、长标题换行、详情展开、错误提示可见、浏览器error为空。
+- [x] 按设计技能保留视觉基线、用统一层级替代随机字号；React复核无新增请求/状态。文档随 `feat: unify headings and simplify interface copy` 提交，未包含无关Logo和PRD。
+- [ ] 完整登录页面、真机最大字体与Production复验待补。本轮未部署，线上仍为SDD-041。每阶段结束后继续更新本文档。
+
 ### 当前 SDD-041：已发布，浏览器播放复验待补（2026-09-09）
 
 - [x] 2026-09-09 13:17 Production发布：源提交`c2b85d1`，部署`dpl_EEstrUkgAuhF8MbQFLLzPCMvQZAY`，URL `https://yipai-jihe-dwm5hdy8h-jialin-d583.vercel.app`，正式域名 `https://yipai-jihe.vercel.app`；Ready/production/别名确认，云端构建17秒通过。

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { PageHeading } from "@/components/page-heading";
 import {
   StickerCanvas,
   type StickerCanvasWardrobeItem,
@@ -200,18 +201,7 @@ export function StickerStudio({
 
   return (
     <div className="page-enter px-5 pt-4">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <p className="app-page-meta">{displayDate(day)}</p>
-          <h1 className="app-page-title mt-2">衣物贴纸册</h1>
-          <p className="app-page-lead mt-3 max-w-[18rem]">
-            排一张今日画板，也回看每月常穿。
-          </p>
-        </div>
-        <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[var(--fashion-lime)] text-[#1d1d1f] shadow-[0_12px_28px_rgba(92,105,39,0.16)]">
-          <Sparkles className="size-5" aria-hidden="true" />
-        </span>
-      </header>
+      <PageHeading title="衣物贴纸册" meta={displayDate(day)} />
 
       <nav
         aria-label="贴纸册视图"
