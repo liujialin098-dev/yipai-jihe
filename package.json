@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "verify:sdd-043": "node --no-warnings scripts/verify-sdd-043.mjs",
+    "verify:sdd-045": "node --no-warnings scripts/verify-sdd-045.mjs",
     "verify:sdd-042": "node --no-warnings scripts/verify-sdd-042.mjs",
     "dev": "next dev",
     "build": "next build",

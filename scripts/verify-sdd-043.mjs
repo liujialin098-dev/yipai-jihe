@@ -213,6 +213,16 @@ assert.match(
   css,
   /\.home-collage-board\s*\{[^}]*background: var\(--home-collage-board\);/s,
 );
+assert.match(css, /--home-collage-board:\s*#463452/);
+assert.match(css, /--home-collage-board:\s*#382943/);
+assert.match(
+  css,
+  /--home-collage-board:\s*color-mix\(in srgb, var\(--skin-ink\) 52%, #51415b\)/,
+);
+assert.doesNotMatch(
+  css,
+  /--home-collage-board:\s*(?:#18131d|#110e15|color-mix\(in srgb, var\(--skin-ink\) 22%, #121014\))/,
+);
 console.log(
-  "SDD-043/044: flat vivid skins, full-bleed collage migration, rounded icons and UI boundaries passed",
+  "SDD-043/044/045: vivid skins, plum collage board, full-bleed migration, rounded icons and UI boundaries passed",
 );

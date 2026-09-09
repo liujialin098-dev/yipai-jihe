@@ -55,6 +55,15 @@ assert.doesNotMatch(brandCss, /brand-motion-(halo|sheen)/);
 
 assert.doesNotMatch(brandCss, /transition:\s*all/);
 assert.doesNotMatch(brandCss, /scale\(0(?:[),\s])/);
+assert.match(
+  brandCss,
+  /\.brand-motion-morph img\s*\{[\s\S]*drop-shadow\(1px 0 0 var\(--brand-motion-outline/,
+);
+assert.equal(
+  (brandCss.match(/drop-shadow\(/g) ?? []).length,
+  4,
+  "动态图标应使用四向硬边描边，不能靠模糊光晕分离颜色",
+);
 
 assert.match(
   brandCss,
@@ -159,7 +168,7 @@ if (process.argv.includes("--preview")) {
     );
     res.setHeader("Content-Type", "text/html;charset=utf-8");
     res.end(
-      `<!doctype html><html class="${isDark ? "dark" : "light"}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${stylesheets.map((name) => `<link rel="stylesheet" href="/styles/${name}">`).join("")}<style>${motionCss}\n.preview-loop .brand-splash{animation:none}\n@font-face{font-family:PreviewBrand;src:url(/brand-font.ttf)}.brand-name-english{font-family:PreviewBrand,sans-serif}.brand-name-lockup{display:flex;flex-direction:column}.app-backdrop{background:#f5f1f8}.dark .app-backdrop{background:#211c28}body{background:#f5f1f8}.dark body{background:#211c28}.preview-controls{position:fixed;bottom:24px;left:0;right:0;z-index:200;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.preview-controls a{padding:10px 16px;border-radius:14px;background:#e9e0f0;color:#51415f;text-decoration:none;font:14px system-ui}.brand-motion-preview .brand-splash,.brand-motion-preview .brand-motion *{animation-play-state:paused!important;animation-delay:-560ms!important}</style></head><body class="${isLoop ? "preview-loop" : isLive ? "" : "brand-motion-preview"}"><main class="app-backdrop" style="min-height:100svh;max-width:480px;margin:auto">${isLoader ? `<div class="brand-page-loader">${motion("loader", "正在准备页面")}</div>` : `<div class="brand-splash">${isLoop ? motion("splash", "").replace("ensemble-shirt-morph.svg", "ensemble-shirt-morph-loop.svg") : motion("splash", "")}</div>`}</main><nav class="preview-controls"><a href="/loop">循环看变形</a><a href="/?live=1${isDark ? "&theme=dark" : ""}">重播开屏</a><a href="/loader?live=1${isDark ? "&theme=dark" : ""}">加载动画</a><a href="${isLoader ? "/loader" : "/"}?live=1${isDark ? "" : "&theme=dark"}">切换明暗</a></nav></body></html>`,
+      `<!doctype html><html class="${isDark ? "dark" : "light"}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${stylesheets.map((name) => `<link rel="stylesheet" href="/styles/${name}">`).join("")}<style>${motionCss}\n.preview-loop .brand-splash{animation:none}\n@font-face{font-family:PreviewBrand;src:url(/brand-font.ttf)}.brand-name-english{font-family:PreviewBrand,sans-serif}.brand-name-lockup{display:flex;flex-direction:column}.app-backdrop,body{background:#b58af0}.dark .app-backdrop,.dark body{background:#302044}.preview-controls{position:fixed;bottom:24px;left:0;right:0;z-index:200;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.preview-controls a{padding:10px 16px;border-radius:14px;background:#e9e0f0;color:#51415f;text-decoration:none;font:14px system-ui}.brand-motion-preview .brand-splash,.brand-motion-preview .brand-motion *{animation-play-state:paused!important;animation-delay:-560ms!important}</style></head><body class="${isLoop ? "preview-loop" : isLive ? "" : "brand-motion-preview"}"><main class="app-backdrop" style="min-height:100svh;max-width:480px;margin:auto">${isLoader ? `<div class="brand-page-loader">${motion("loader", "正在准备页面")}</div>` : `<div class="brand-splash">${isLoop ? motion("splash", "").replace("ensemble-shirt-morph.svg", "ensemble-shirt-morph-loop.svg") : motion("splash", "")}</div>`}</main><nav class="preview-controls"><a href="/loop">循环看变形</a><a href="/?live=1${isDark ? "&theme=dark" : ""}">重播开屏</a><a href="/loader?live=1${isDark ? "&theme=dark" : ""}">加载动画</a><a href="${isLoader ? "/loader" : "/"}?live=1${isDark ? "" : "&theme=dark"}">切换明暗</a></nav></body></html>`,
     );
   });
   server.listen(3015, "127.0.0.1", () =>

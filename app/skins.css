@@ -15,8 +15,9 @@
   --accent-foreground: #513277;
   --text-secondary: #3f2b4d;
   --text-tertiary: #42294d;
-  --home-collage-board: #18131d;
+  --home-collage-board: #463452;
   --home-collage-board-border: rgb(255 255 255 / 32%);
+  --brand-motion-outline: #563b70;
   --original-dock-top: #c9aff0;
   --original-dock-bottom: #b595e8;
   --original-dock-ink: #42295f;
@@ -34,8 +35,9 @@
   --accent-foreground: #f4eff8;
   --text-secondary: #d2c3e0;
   --text-tertiary: #c1afd2;
-  --home-collage-board: #110e15;
+  --home-collage-board: #382943;
   --home-collage-board-border: rgb(216 255 82 / 26%);
+  --brand-motion-outline: #ddcef0;
   --original-dock-top: #624388;
   --original-dock-bottom: #493065;
   --original-dock-ink: #f4eaff;
@@ -172,12 +174,13 @@
   --skin-dock: color-mix(in srgb, var(--skin-accent) 62%, var(--surface-solid));
   --skin-control: var(--skin-ink);
   --skin-on-control: #fff;
-  --home-collage-board: color-mix(in srgb, var(--skin-ink) 22%, #121014);
+  --home-collage-board: color-mix(in srgb, var(--skin-ink) 52%, #51415b);
   --home-collage-board-border: color-mix(
     in srgb,
     var(--skin-secondary) 42%,
     transparent
   );
+  --brand-motion-outline: color-mix(in srgb, var(--skin-ink) 78%, #2c2036);
 }
 :root.dark[data-skin]:not([data-skin="original"]) {
   --background: var(--skin-night);
@@ -203,6 +206,7 @@
   --skin-dock: color-mix(in srgb, var(--skin-accent) 27%, #252529);
   --skin-control: var(--skin-accent);
   --skin-on-control: #202024;
+  --brand-motion-outline: color-mix(in srgb, var(--skin-accent) 58%, white);
 }
 :root[data-skin]:not([data-skin="original"]) .app-backdrop {
   background: var(--background);
