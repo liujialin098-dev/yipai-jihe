@@ -1,8 +1,8 @@
 "use client";
 
-import { LoaderCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { BrandMotion } from "@/components/brand-motion";
 
 export function SessionBootstrap({ isReady }: { isReady: boolean }) {
   const router = useRouter();
@@ -17,9 +17,8 @@ export function SessionBootstrap({ isReady }: { isReady: boolean }) {
   if (isReady || isPublicEntry) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)] px-6 text-[var(--system-blue)]">
-      <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-      <p className="ml-3 text-sm font-medium">正在返回账号入口…</p>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-[var(--background)] px-6">
+      <BrandMotion variant="loader" label="正在返回账号入口" />
     </div>
   );
 }

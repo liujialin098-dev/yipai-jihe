@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { AppShell } from "@/components/app-shell";
+import { LaunchSplash } from "@/components/brand-motion";
 import { getViewer } from "@/lib/auth/viewer";
 import { themeBootstrapScript } from "@/lib/ui/theme";
 import "./globals.css";
@@ -60,6 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <script>{themeBootstrapScript}</script>
       </head>
       <body className="min-h-full bg-background">
+        <LaunchSplash />
         <AppShell viewer={viewer}>{children}</AppShell>
       </body>
     </html>

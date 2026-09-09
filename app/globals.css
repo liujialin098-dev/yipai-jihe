@@ -1594,6 +1594,433 @@
     0 12px 30px rgb(29 29 31 / 13%);
 }
 
+/* SDD-041: brand motion */
+.brand-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  padding: calc(1.5rem + env(safe-area-inset-top))
+    calc(1.5rem + env(safe-area-inset-right))
+    calc(1.5rem + env(safe-area-inset-bottom))
+    calc(1.5rem + env(safe-area-inset-left));
+  background:
+    radial-gradient(circle at 50% 40%, rgb(216 255 82 / 30%), transparent 12rem),
+    radial-gradient(
+      circle at 16% 88%,
+      rgb(121 206 245 / 22%),
+      transparent 17rem
+    ),
+    radial-gradient(
+      circle at 88% 16%,
+      rgb(196 178 218 / 58%),
+      transparent 18rem
+    ),
+    linear-gradient(155deg, #f0e8f7 0%, #faf7fc 52%, #f4f8e7 100%);
+  pointer-events: none;
+  animation: brand-splash-exit 1350ms var(--motion-gentle) both;
+}
+
+.brand-motion {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  color: var(--foreground);
+  text-align: center;
+}
+
+.brand-motion[data-variant="loader"] {
+  opacity: 0;
+  animation: brand-loader-reveal 180ms var(--motion-gentle) 120ms both;
+}
+
+.brand-motion-stage {
+  position: relative;
+  display: block;
+  width: 4.25rem;
+  aspect-ratio: 1;
+  flex: none;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-stage {
+  width: clamp(7.5rem, 34vw, 9.5rem);
+}
+
+.brand-motion-halo {
+  position: absolute;
+  inset: -18%;
+  display: block;
+  border-radius: 42% 58% 55% 45% / 48% 44% 56% 52%;
+  background:
+    radial-gradient(circle at 35% 28%, rgb(255 255 255 / 74%), transparent 34%),
+    color-mix(in srgb, var(--fashion-lilac) 50%, transparent);
+  opacity: 0.7;
+  transform: scale(0.96) rotate(-4deg);
+  will-change: transform, opacity;
+}
+
+.brand-motion-mark {
+  position: absolute;
+  inset: 7%;
+  display: block;
+  isolation: isolate;
+}
+
+.brand-motion-mark-base,
+.brand-motion-part,
+.brand-motion-sheen {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.brand-motion-mark-base {
+  z-index: 1;
+  opacity: 0;
+}
+
+.brand-motion-part {
+  z-index: 2;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.brand-motion-part--top {
+  clip-path: inset(0 0 60% 0);
+}
+
+.brand-motion-part--middle {
+  clip-path: inset(30% 0 30% 0);
+}
+
+.brand-motion-part--bottom {
+  clip-path: inset(60% 0 0 0);
+}
+
+.brand-motion-sheen {
+  z-index: 3;
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    rgb(255 255 255 / 74%) 48%,
+    transparent 68%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-120%, 0, 0);
+  will-change: transform, opacity;
+  -webkit-mask-image: url("/brand/ensemble-icon-a-folded-e.png");
+  mask-image: url("/brand/ensemble-icon-a-folded-e.png");
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-mark-base {
+  animation: brand-splash-base 760ms var(--motion-gentle) 40ms both;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-part--top {
+  animation: brand-splash-top 680ms var(--motion-gentle) 20ms both;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-part--middle {
+  animation: brand-splash-middle 680ms var(--motion-gentle) 70ms both;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-part--bottom {
+  animation: brand-splash-bottom 680ms var(--motion-gentle) 120ms both;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-halo {
+  animation: brand-splash-halo 760ms var(--motion-gentle) both;
+}
+
+.brand-motion[data-variant="splash"] .brand-motion-sheen {
+  animation: brand-motion-sheen 720ms linear 390ms both;
+}
+
+.brand-motion-name {
+  align-items: center;
+  opacity: 0;
+  transform: translate3d(0, 0.5rem, 0);
+  animation: brand-splash-name 420ms var(--motion-gentle) 470ms both;
+}
+
+.brand-motion-name .brand-name-english {
+  font-size: clamp(1.8rem, 9vw, 2.35rem);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+}
+
+.brand-motion-name .brand-name-chinese {
+  color: color-mix(in srgb, var(--foreground) 58%, var(--fashion-lilac));
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+}
+
+.brand-motion[data-variant="loader"] .brand-motion-halo {
+  animation: brand-loader-halo 1400ms cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.brand-motion[data-variant="loader"] .brand-motion-part--top {
+  animation: brand-loader-top 1400ms cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.brand-motion[data-variant="loader"] .brand-motion-part--middle {
+  animation: brand-loader-middle 1400ms cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.brand-motion[data-variant="loader"] .brand-motion-part--bottom {
+  animation: brand-loader-bottom 1400ms cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.brand-motion[data-variant="loader"] .brand-motion-sheen {
+  animation: brand-motion-sheen 1400ms linear infinite;
+}
+
+.brand-motion-label {
+  max-width: min(17rem, 78vw);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 560;
+  line-height: 1.4;
+  letter-spacing: 0.035em;
+}
+
+.brand-page-loader {
+  display: grid;
+  min-height: min(62dvh, 34rem);
+  place-items: center;
+  padding: 2rem max(1.5rem, env(safe-area-inset-right)) 4rem
+    max(1.5rem, env(safe-area-inset-left));
+}
+
+.dark .brand-splash {
+  background:
+    radial-gradient(circle at 50% 40%, rgb(216 255 82 / 16%), transparent 12rem),
+    radial-gradient(
+      circle at 14% 88%,
+      rgb(121 206 245 / 11%),
+      transparent 17rem
+    ),
+    radial-gradient(
+      circle at 88% 16%,
+      rgb(196 178 218 / 24%),
+      transparent 18rem
+    ),
+    linear-gradient(155deg, #2e2538 0%, #1c1823 58%, #222719 100%);
+}
+
+.dark .brand-motion-halo {
+  background:
+    radial-gradient(circle at 35% 28%, rgb(255 255 255 / 16%), transparent 34%),
+    color-mix(in srgb, var(--fashion-lilac) 30%, transparent);
+}
+
+@keyframes brand-loader-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes brand-splash-exit {
+  0%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes brand-splash-base {
+  0%,
+  72% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes brand-splash-top {
+  from {
+    opacity: 0.22;
+    transform: translate3d(-8%, -12%, 0) rotate(-7deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes brand-splash-middle {
+  from {
+    opacity: 0.2;
+    transform: translate3d(9%, 0, 0) rotate(6deg) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes brand-splash-bottom {
+  from {
+    opacity: 0.2;
+    transform: translate3d(-7%, 12%, 0) rotate(-5deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes brand-splash-halo {
+  from {
+    opacity: 0;
+    transform: scale(0.9) rotate(-8deg);
+  }
+  to {
+    opacity: 0.7;
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+@keyframes brand-splash-name {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes brand-loader-halo {
+  0%,
+  100% {
+    opacity: 0.56;
+    transform: scale(0.96) rotate(-4deg);
+  }
+  50% {
+    opacity: 0.78;
+    transform: scale(1.025) rotate(-2deg);
+  }
+}
+
+@keyframes brand-loader-top {
+  0%,
+  100% {
+    transform: translate3d(0, 1px, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-1.5px, -1.5px, 0) rotate(-1.2deg);
+  }
+}
+
+@keyframes brand-loader-middle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(1.5px, 0, 0) rotate(1deg);
+  }
+}
+
+@keyframes brand-loader-bottom {
+  0%,
+  100% {
+    transform: translate3d(0, -1px, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-1px, 1.5px, 0) rotate(-0.8deg);
+  }
+}
+
+@keyframes brand-motion-sheen {
+  0%,
+  14% {
+    opacity: 0;
+    transform: translate3d(-120%, 0, 0);
+  }
+  34% {
+    opacity: 0.68;
+  }
+  64%,
+  100% {
+    opacity: 0;
+    transform: translate3d(120%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-splash {
+    animation: brand-splash-exit 420ms var(--motion-gentle) both;
+  }
+
+  .brand-motion[data-variant="loader"] {
+    animation: brand-loader-reveal 120ms var(--motion-gentle) 120ms both;
+  }
+
+  .brand-motion-part,
+  .brand-motion-halo,
+  .brand-motion-sheen,
+  .brand-motion-mark-base,
+  .brand-motion-name {
+    animation: none;
+    transform: none;
+  }
+
+  .brand-motion-mark-base,
+  .brand-motion-name {
+    opacity: 1;
+  }
+
+  .brand-motion-part,
+  .brand-motion-sheen {
+    opacity: 0;
+  }
+
+  .brand-motion-halo {
+    opacity: 0.42;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .brand-splash {
+    background: var(--surface-solid);
+  }
+
+  .brand-motion-halo {
+    background: var(--fashion-lilac-soft);
+    opacity: 0.42;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .brand-motion-label,
+  .brand-motion-name .brand-name-chinese {
+    color: var(--foreground);
+  }
+}
+/* End SDD-041 */
+
 .auth-entry-page {
   position: relative;
   isolation: isolate;
