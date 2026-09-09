@@ -1,7 +1,7 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { RoundedIcon } from "@/components/ui/rounded-icon";
 
 export function ThemeToggle() {
   const [dark, setDark] = useState(false);
@@ -36,8 +36,8 @@ export function ThemeToggle() {
       aria-pressed={dark}
       title={dark ? "切换为日间模式" : "切换为夜间模式"}
     >
-      <Moon className="theme-moon size-5" aria-hidden="true" />
-      <Sun className="theme-sun size-5" aria-hidden="true" />
+      <RoundedIcon name="moon" className="theme-moon" />
+      <RoundedIcon name="sun" className="theme-sun" />
     </button>
   );
 }

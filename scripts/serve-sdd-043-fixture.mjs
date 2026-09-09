@@ -20,6 +20,8 @@ await new Promise((done, reject) =>
         alias: {
           "@": process.cwd(),
           "next/image$": resolve("scripts/fixtures/sticker-040-image.tsx"),
+          "next/link$": resolve("scripts/fixtures/navigation-043.tsx"),
+          "next/navigation$": resolve("scripts/fixtures/navigation-043.tsx"),
         },
       },
       module: {
@@ -79,6 +81,11 @@ createServer(async (req, res) => {
     }
     if (req.url?.startsWith("/fonts/") && !req.url.includes("..")) {
       res.end(await readFile(join("public", req.url)));
+      return;
+    }
+    if (req.url === "/brand/ensemble-icon-a-folded-e.png") {
+      res.setHeader("Content-Type", "image/png");
+      res.end(await readFile("public/brand/ensemble-icon-a-folded-e.png"));
       return;
     }
     if (/^\/image-\d+\.png$/.test(req.url ?? "")) {

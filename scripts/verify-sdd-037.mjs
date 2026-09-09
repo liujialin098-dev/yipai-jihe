@@ -116,6 +116,19 @@ const imports = {
   ),
   "@/lib/home/presentation": dataUrl(output),
 };
+imports["@/components/ui/rounded-icon"] = dataUrl(
+  ts
+    .transpileModule(await read("components/ui/rounded-icon.tsx"), {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        jsx: ts.JsxEmit.ReactJSX,
+      },
+    })
+    .outputText.replaceAll(
+      'from "react/jsx-runtime"',
+      `from ${JSON.stringify(imports["react/jsx-runtime"])}`,
+    ),
+);
 // SDD-043 extracted the interactive composition; still render the real component.
 const collageState = ts
   .transpileModule(await read("lib/home/collage.ts"), {

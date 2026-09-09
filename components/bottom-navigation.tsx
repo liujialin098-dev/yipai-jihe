@@ -1,17 +1,9 @@
 "use client";
 
-import { House, Newspaper, Plus, Sparkles, Sticker } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { RoundedIcon } from "@/components/ui/rounded-icon";
 import { primaryNavigation } from "@/lib/ui/navigation";
-
-const icons = {
-  home: House,
-  recommendations: Sparkles,
-  add: Plus,
-  stickers: Sticker,
-  inspiration: Newspaper,
-};
 
 export function BottomNavigation() {
   const pathname = usePathname();
@@ -26,7 +18,6 @@ export function BottomNavigation() {
       {primaryNavigation.map(({ href, key, label, primary }) => {
         const current =
           href === "/" ? pathname === href : pathname.startsWith(href);
-        const Icon = icons[key];
 
         return (
           <Link
@@ -49,11 +40,7 @@ export function BottomNavigation() {
                 primary ? "nav-icon-shell dock-add" : "nav-icon-shell dock-icon"
               }
             >
-              <Icon
-                className={primary ? "size-7" : "size-6"}
-                strokeWidth={current ? 2.2 : 1.7}
-                aria-hidden="true"
-              />
+              <RoundedIcon name={key} />
             </span>
             {current && !primary ? (
               <span className="dock-current-dot" aria-hidden="true" />

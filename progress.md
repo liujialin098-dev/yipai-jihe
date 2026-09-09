@@ -1,5 +1,12 @@
 # 衣拍即合开发进度
 
+## SDD-043 圆润图标增量（2026-09-09，本地完成，未部署）
+
+- [x] 主导航、顶部衣库/收藏/日夜、首页入口改为圆润SVG，顶部24px/底部26px/加号28px；底部44px圆形承托，保留原矩形添加按钮与配色。
+- [x] check/build与043/037/036/042/029/030/041通过；实际导航组件隔离样本320/375px、844×390无溢出，六皮肤日夜切换与推荐/收藏/添加选中态验证通过，浏览器error为空。
+- [x] React复核无新增effect/业务请求；更新规范、测试与阶段记录，提交信息`feat: soften navigation icons and refine their scale`。
+- [ ] 真机最大字体、系统减少动态与真实账号完整页面留待集中复验。本轮不部署，线上仍为6ba40dc；不把隔离样本当作线上验收。
+
 ## SDD-043 已部署Production（2026-09-09 20:53）
 
 - [x] 源提交 `6ba40dc` 已发布到既有 `yipai-jihe` 项目；部署 `dpl_B56PU5pHFktoeSUYZNcATvn35ocZ`，URL `https://yipai-jihe-df9qhnfm0-jialin-d583.vercel.app`，正式域名 `https://yipai-jihe.vercel.app`。

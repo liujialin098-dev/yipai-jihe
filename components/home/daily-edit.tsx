@@ -1,13 +1,7 @@
-import {
-  ArrowRight,
-  Check,
-  Newspaper,
-  Plus,
-  Shirt,
-  Sticker,
-} from "lucide-react";
+import { ArrowRight, Check, Plus, Shirt, Sticker } from "lucide-react";
 import Link from "next/link";
 import { HomeCollage } from "@/components/home/home-collage";
+import { RoundedIcon } from "@/components/ui/rounded-icon";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
 import { WeatherPanel } from "@/components/recommendations/weather-panel";
 import type { DiaryEntryView } from "@/lib/diary/data";
@@ -142,7 +136,7 @@ export function DailyEdit({
       </section>
       <Link href="/wardrobe" className="home-wardrobe-entry" prefetch={false}>
         <span className="home-wardrobe-symbol">
-          <Shirt size={23} strokeWidth={1.5} aria-hidden="true" />
+          <RoundedIcon name="wardrobe" />
         </span>
         <span>
           <strong>我的衣橱</strong>
@@ -214,7 +208,7 @@ export function DailyEdit({
       </section>
       <Link href="/inspiration" prefetch={false} className="home-daily-feed">
         <span className="home-daily-feed-icon">
-          <Newspaper size={21} strokeWidth={1.5} aria-hidden="true" />
+          <RoundedIcon name="inspiration" />
         </span>
         <span className="home-daily-feed-copy">
           <strong>每日推送</strong>

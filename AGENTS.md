@@ -1,5 +1,12 @@
 # 项目开发说明
 
+## SDD-043 圆润图标增量（2026-09-09，本地完成，未部署）
+
+- 主导航/顶部衣库收藏日夜/首页衣橱与资讯入口使用无状态RoundedIcon：自绘圆润SVG、1.85圆头圆角线条、同色0.1底填/选中0.24；取代这些入口的Lucide，其他编辑工具/小箭头不变。顶部24px、底部与入口26px、中央加号28px；图标与装饰不可截获点击。保留父控件aria-label/current/pressed、44px以上操作区、底部顺序、18px圆角添加按钮、品牌Logo与六套日夜配色。
+- 底部非添加项选中承托为44px圆形，保留当前页小点；不增加悬停色相、全局SVG缩放或业务请求。遵循减少动态，未修改账号、存储、供应商或权限。
+- check/build、043/037/036/042/029/030/041通过。实际StatusHeader/BottomNavigation隔离浏览器样本320/375px与844×390无溢出，六皮肤日夜切换、推荐/收藏/添加选中状态与44/48px点击区通过；error为空。样本路由/图像为本地适配，不等于真实登录后端到端；真机最大字体、系统减少动态实测待补。Production仍为下节6ba40dc。
+- ui-ux-pro-max/frontend-design用于参考提炼与一致尺寸，图标搜索无匹配后使用规范与自绘；React技能复核无新增effect/数据请求。测试复用043，隔离预览3043的导航已升级为真实组件。
+
 ## 最新Production：SDD-043（2026-09-09 20:53，覆盖下方未部署记录）
 
 - 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `6ba40dc`，部署 `dpl_B56PU5pHFktoeSUYZNcATvn35ocZ`，部署URL `https://yipai-jihe-df9qhnfm0-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。圆润UI、五套可选皮肤、首页衣橱入口与拼图编辑已发布。inspect确认Ready/production/正式别名；云端Next.js16.3.1构建13秒通过。

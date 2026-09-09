@@ -3,12 +3,17 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import vm from "node:vm";
 import ts from "typescript";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 const require = createRequire(import.meta.url);
 const read = (file) => readFileSync(file, "utf8");
 function load(file, deps = {}) {
   const module = { exports: {} };
   const code = ts.transpileModule(read(file), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
   }).outputText;
   new Function("require", "module", "exports", code)(
     (name) => deps[name] ?? require(name),
@@ -104,6 +109,37 @@ const css = read("app/skins.css");
 for (const skin of skins.slice(1))
   assert.ok(css.includes(`[data-skin="${skin.id}"]`));
 assert.doesNotMatch(css, /filter:|\.garment-sticker-image\s*\{/);
+const { RoundedIcon } = load("components/ui/rounded-icon.tsx");
+for (const name of [
+  "home",
+  "recommendations",
+  "add",
+  "stickers",
+  "inspiration",
+  "wardrobe",
+  "favorites",
+  "moon",
+  "sun",
+]) {
+  const markup = renderToStaticMarkup(createElement(RoundedIcon, { name }));
+  assert.match(markup, /viewBox="0 0 24 24"/);
+  assert.match(markup, /stroke-linecap="round"/);
+  assert.match(markup, /stroke-linejoin="round"/);
+  assert.match(markup, /aria-hidden="true"/);
+  assert.match(markup, /focusable="false"/);
+  assert.doesNotMatch(markup, /NaN|undefined|<image|<filter/);
+}
+for (const [token, size] of [
+  ["header", 24],
+  ["feature", 26],
+  ["add", 28],
+])
+  assert.ok(css.includes(`--app-icon-${token}: ${size}px`));
+assert.match(css, /\.rounded-icon-tint\s*\{\s*transition: none;/);
+const navigation = read("components/bottom-navigation.tsx");
+assert.match(navigation, /<RoundedIcon name=\{key\}/);
+assert.match(navigation, /aria-current=\{current/);
+assert.doesNotMatch(navigation, /strokeWidth=\{current/);
 console.log(
-  "SDD-043: skins/bootstrap fallback, collage restore/privacy/limits/layers, UI boundaries passed",
+  "SDD-043: skins/bootstrap fallback, collage restore/privacy/limits/layers, rounded icons and UI boundaries passed",
 );

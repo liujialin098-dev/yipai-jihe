@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Heart, Shirt } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { BrandName } from "@/components/brand-name";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { RoundedIcon } from "@/components/ui/rounded-icon";
 import type { Viewer } from "@/lib/auth/viewer";
 import { displayNameInitial } from "@/lib/profile/validation";
 
@@ -31,11 +31,7 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
               }
               className="header-icon"
             >
-              <Shirt
-                className="size-[1.15rem]"
-                strokeWidth={1.9}
-                aria-hidden="true"
-              />
+              <RoundedIcon name="wardrobe" />
             </Link>
             <Link
               href="/diary?view=favorites"
@@ -49,7 +45,7 @@ export function StatusHeader({ viewer }: { viewer: Viewer | null }) {
               }
               className="header-icon"
             >
-              <Heart className="size-5" aria-hidden="true" />
+              <RoundedIcon name="favorites" />
             </Link>
           </div>
           <Link

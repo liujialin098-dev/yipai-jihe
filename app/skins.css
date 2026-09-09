@@ -175,6 +175,51 @@
   color: var(--foreground);
 }
 
+/* One compact icon scale; do not enlarge photos, logos, or editing tools. */
+:root {
+  --app-icon-header: 24px;
+  --app-icon-feature: 26px;
+  --app-icon-add: 28px;
+}
+.rounded-app-icon {
+  display: block;
+  flex: none;
+  pointer-events: none;
+}
+.rounded-icon-tint {
+  opacity: 0.1;
+  transition: opacity 160ms ease;
+}
+.header-icon .rounded-app-icon {
+  width: var(--app-icon-header);
+  height: var(--app-icon-header);
+}
+:is(.dock-icon, .home-wardrobe-symbol, .home-daily-feed-icon)
+  .rounded-app-icon {
+  width: var(--app-icon-feature);
+  height: var(--app-icon-feature);
+}
+.dock-add .rounded-app-icon {
+  width: var(--app-icon-add);
+  height: var(--app-icon-add);
+  stroke-width: 2.2;
+}
+:is(.nav-item[data-current="true"], .header-icon[aria-current="page"])
+  .rounded-icon-tint {
+  opacity: 0.24;
+}
+.icon-dock .nav-item:not([data-primary="true"]) .nav-bubble {
+  inset: calc(50% - 22px) auto auto calc(50% - 22px);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rounded-icon-tint {
+    transition: none;
+  }
+}
+
 /* Smooth corners, not heavy fills or a new navigation layout. */
 :root[data-skin]:not([data-skin="original"]) .brand-splash {
   background: var(--background);
