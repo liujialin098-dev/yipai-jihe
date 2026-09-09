@@ -27,7 +27,7 @@ npm run build
 
 - 不生成 GIF、MP4、Lottie 或原生 iOS/Android Launch Screen 资产。
 - 不替换按钮内高频提交反馈，不测试账号、天气、推荐、衣物或贴纸业务结果。
-- 本阶段不部署 Production；发布与线上复验需由后续明确请求触发。
+- 开发阶段不自动部署；用户后续已明确请求发布，结果见下方。
 
 ## 2026-09-09 本地验收记录
 
@@ -37,4 +37,6 @@ npm run build
 - [x] 320×568、375×812、844×390 均无水平溢出；浅色与深色加载态均保持正式图标原色和清晰文案。
 - [x] 加载态辅助树只有一个 `status`，装饰图层不重复朗读；浏览器控制台无 error/warn。
 - [ ] 当前浏览器自动化能力无法模拟系统 `prefers-reduced-motion` 和最大动态字体；减少动态/减少透明度已由独立源码门禁覆盖，仍需在真机系统设置下补验。
-- [ ] 本阶段尚未部署 Production，线上首次打开、弱网加载和 PWA/原生壳启动体验待发布后复验。
+- [x] 2026-09-09 Production部署`dpl_EEstrUkgAuhF8MbQFLLzPCMvQZAY`，源提交`c2b85d1`，正式域名`https://yipai-jihe.vercel.app`；Ready/production/别名及17秒构建通过。
+- [x] Windows HTTP验证首页及两份SVG均200，SVG内容与本地完全一致，最近30分钟无error日志。
+- [ ] 内置浏览器打开超时；线上首次播放、弱网和真机辅助设置仍待复验。

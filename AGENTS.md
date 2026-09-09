@@ -1,12 +1,18 @@
 # 项目开发说明
 
-## 当前本地增量：SDD-041（2026-09-09，已确认接入App，尚未部署）
+## 最新Production：SDD-041（2026-09-09 13:17，覆盖下方旧发布记录）
+
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `c2b85d1`，部署 `dpl_EEstrUkgAuhF8MbQFLLzPCMvQZAY`，部署URL `https://yipai-jihe-dwm5hdy8h-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。衣服→E平滑开屏与加载已发布；inspect确认Ready/production/正式别名，云端Next.js16.3.1构建17秒通过。
+- 本轮check/build/041通过，11项生产配置名称已核对，复用正确project.json，未pull、改密钥或权限；无关PRD/Logo草稿排除上传。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-dwm5hdy8h-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_EEstrUkgAuhF8MbQFLLzPCMvQZAY --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核。部署/CLI技能用于锁定项目、保留配置和发布后验收。
+- Windows Invoke-WebRequest验证正式首页HTTP200且含最终动画引用，两份SVG均HTTP200并与本地提交内容完全一致；最近30分钟error日志无记录。Node fetch失败、内置浏览器打开77秒超时，线上实时播放和登录后交互尚未复验，不能以资源可用或Ready替代；手机减少动态、最大字体和弱网仍待补验。
+
+## SDD-041已发布功能与边界
 
 - 用户批准最终版：衣服平滑变成E，纯浅丁香/深夜紫背景，无泡泡、光晕和扫光。全程使用同一个SVG、固定丁香/青柠双色；外轮廓及两个色块同步插值，停留E时不换图。文字保留420ms/470ms时序，开屏约1.35秒退出；加载3.2秒往返，120ms后显示。
 - 最终资产 `public/brand/ensemble-shirt-morph.svg` 与 `ensemble-shirt-morph-loop.svg` 已由共享BrandMotion接入根布局LaunchSplash、app/loading.tsx及会话返回等待。完整打开/刷新播放一次，站内导航不重复；覆盖层始终不接管指针。正式PNG仅用于减少动态静态降级，其他入口品牌图标不变。
 - 六条端点轮廓使用64段连续三次B样条贝塞尔曲线，5位精度、geometricPrecision。12条资产轮廓接缝最大误差0.00002；禁止用模糊、新描边或收尾换图掩盖边缘。保留深浅、安全区、窄屏及减少动态/透明度降级，无新依赖、业务数据或权限变化。
 - 验证：check/build/041及036/030回归通过；隔离预览实时形变与多尺寸日夜检查通过。本次生产构建在本地3016启动，首页HTTP200且含开屏和最终SVG引用，两份SVG均HTTP200。不将HTTP/隔离视觉检查写成登录业务端到端。
-- 本次按用户“可以了，加入app”完成最终接入收口并保存提交，进度见progress.md。尚未部署，Production仍为SDD-040；手机系统减少动态、最大字体、弱网与线上首次打开待补验。Web开屏在根布局返回后播放，不覆盖首次网络连接等待，也不是原生系统启动页。
+- 最终版已按用户后续“更新部署”要求发布，当前Production为SDD-041，进度见progress.md。手机系统减少动态、最大字体、弱网与线上首次播放待补验。Web开屏在根布局返回后播放，不覆盖首次网络连接等待，也不是原生系统启动页。
 
 ## 最新Production：SDD-040（2026-09-08 23:13，覆盖下方旧发布记录）
 

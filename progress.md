@@ -33,7 +33,12 @@
 
 ## 当前总览
 
-### 当前 SDD-041：已确认接入App，尚未部署（2026-09-09）
+### 当前 SDD-041：已发布，浏览器播放复验待补（2026-09-09）
+
+- [x] 2026-09-09 13:17 Production发布：源提交`c2b85d1`，部署`dpl_EEstrUkgAuhF8MbQFLLzPCMvQZAY`，URL `https://yipai-jihe-dwm5hdy8h-jialin-d583.vercel.app`，正式域名 `https://yipai-jihe.vercel.app`；Ready/production/别名确认，云端构建17秒通过。
+- [x] 本轮check/build/041通过，11项生产配置名称核对，未覆盖密钥或重新link；发布/inspect/logs命令已更新AGENTS.md，无关素材未上传。
+- [x] Windows网络栈验证正式首页HTTP200且引用新版动画，两份SVG均HTTP200且与本地提交内容完全一致；最近30分钟error日志无记录。
+- [ ] Node fetch失败、内置浏览器打开77秒超时，线上实时播放与登录交互未完成验收；后续恢复连接时补验并更新本节。
 
 - [x] 用户批准最终衣服→E动画，固定双色、同步内部色块、连续曲线轮廓；取消泡泡、光晕、扫光和收尾换图，保留文字动效。
 - [x] 12条资产端点轮廓切线/曲率连续检查通过，最大误差0.00002；无模糊或新描边。
@@ -43,7 +48,7 @@
 - [x] 本次本地生产构建3016首页HTTP200，包含实际开屏及最终SVG引用；两份SVG均HTTP200。已核对三个App入口，不是仅预览页。
 - [x] 最终规格与开发说明同步保存；初版提交76bae27，最终版本随本轮feat: integrate approved shirt-to-E brand motion提交。
 - [ ] 真机系统减少动态、最大字体、弱网及登录后业务交互待集中复验，不把HTTP/隔离预览记为完整端到端。
-- [ ] 尚未部署Production，线上仍为SDD-040；发布后补验正式域名。Web开屏从根布局返回后开始，不替代原生系统Launch Screen。
+- [x] 已按用户后续请求发布Production，覆盖SDD-040。Web开屏从根布局返回后开始，不替代原生系统Launch Screen。
 - 技能影响：animate、apple-design、ui-ux-pro-max用于控制开屏/重复加载强度与辅助设置；用户认可SVG几何形变，文字维持transform/opacity。每阶段完成后继续更新本文档。
 
 ### 当前 SDD-040：已发布，线上交互复验待网络恢复（2026-09-08）
