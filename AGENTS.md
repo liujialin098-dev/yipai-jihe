@@ -1,11 +1,17 @@
 # 项目开发说明
 
-## SDD-044纯色皮肤与深色满铺拼图（2026-09-09，本地完成，未部署）
+## 最新Production：SDD-044纯色皮肤与深色满铺拼图（2026-09-09 23:54，覆盖下方记录）
+
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `9d63927`，部署 `dpl_EMFvxEcAWwSdgD1Ve18WQuXb8Ger`，部署URL `https://yipai-jihe-r2gz05kaa-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建12秒通过。
+- 本轮复跑check/build/043通过，复用既有正确project.json和生产配置，未pull/relink、读取密钥值或修改权限；无关素材与fixture继续排除上传。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-r2gz05kaa-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_EMFvxEcAWwSdgD1Ve18WQuXb8Ger --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；部署/CLI技能用于锁定项目、发布与发布后检查。
+- 正式首页/settings/stickers无会话HTTP GET均200；两份CSS均200，并确认包含鲜明纯色皮肤`#b58af0`、深色拼图画板变量及`background-image:none`。最近30分钟error日志无记录。本轮没有执行线上真实账号旧草稿迁移、登录后拼图编辑或真机触控；公开入口、静态样式与无错误日志不等于完整业务端到端验收。
+
+## SDD-044已发布功能与边界
 
 - 首页衣橱拼图固定使用深紫黑纯色画板、36px圆角、轻内描边与受控景深；1～8件默认布局改为满铺杂志拼贴，允许衣物在画板边缘被裁切并层层遮挡，8件样本中央单品前置。继续使用真实透明衣物和共享实心描边，不添加格子、伪造衣物或图片滤镜；编辑时画板仍保持深色。
 - 默认丁香及紫橙、粉米、绿黄、黑白灰、蓝橙五套皮肤都改为鲜明纯色`--background`，`.app-backdrop`不再使用渐变；浅色内容卡保持白色，夜间各有独立深色纯色，辅助文字与各皮肤背景对比度至少4.5。背景选择仍只保存在本设备，不改照片、Logo、贴纸画板自选背景或语义色。
 - 首页拼图存储升级为version 2。读取旧version 1时保留当前可见衣物的选择与层级顺序，但一次性套用新满铺几何；之后保存继续保留用户的移动、旋转、缩放与层级。不写数据库、不增加AI/图片或供应商请求。
-- check/build、043/037/036/039/042通过。真实组件隔离样本375px为320×320深色画板、8件/19组重叠且存在边缘裁切；320px六套背景均`background-image:none`且无横向溢出；844×390横屏无溢出，夜间和编辑态保持深色画板，浏览器error为空。ui-ux-pro-max用于Vibrant & Block-based方向及对比/响应式约束；agent-browser命令不可用后使用内置浏览器完成等价检查。真实账号旧草稿迁移、真机触控和完整页面仍待集中复验；Production仍为下节`e170cc3`，本轮未部署。
+- check/build、043/037/036/039/042通过。真实组件隔离样本375px为320×320深色画板、8件/19组重叠且存在边缘裁切；320px六套背景均`background-image:none`且无横向溢出；844×390横屏无溢出，夜间和编辑态保持深色画板，浏览器error为空。ui-ux-pro-max用于Vibrant & Block-based方向及对比/响应式约束；agent-browser命令不可用后使用内置浏览器完成等价检查。真实账号旧草稿迁移、真机触控和完整页面仍待集中复验；后续用户要求发布后已完成上述Production部署。
 
 ## 最新Production：SDD-043鲜亮丁香与圆润尺寸（2026-09-09 22:44，覆盖下方记录）
 
