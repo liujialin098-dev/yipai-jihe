@@ -1,5 +1,14 @@
 # 衣拍即合开发进度
 
+## SDD-043 已部署Production（2026-09-09 20:53）
+
+- [x] 源提交 `6ba40dc` 已发布到既有 `yipai-jihe` 项目；部署 `dpl_B56PU5pHFktoeSUYZNcATvn35ocZ`，URL `https://yipai-jihe-df9qhnfm0-jialin-d583.vercel.app`，正式域名 `https://yipai-jihe.vercel.app`。
+- [x] 本轮check/build/043复跑通过，云端构建13秒成功，inspect确认Ready/production/正式别名。未修改配置和权限，无关素材/fixture未上传。
+- [x] 无会话首页、设置、贴纸入口HTTP200；首页有皮肤首屏脚本、设置页有皮肤选项，正式CSS200且含新版皮肤/拼图样式。最近30分钟error日志无记录。
+- [ ] 线上登录后拼图保存/换肤与真机复验仍待集中调试；不将HTTP可用性等同于完整业务验收。
+
+本节覆盖下方“尚未部署”开发阶段记录。部署指令及详情见AGENTS.md最新Production节。
+
 ## SDD-043 本地实现（2026-09-09，尚未部署）
 
 - [x] 保留原色，借鉴参考图统一大卡32px圆角、20px输入框与胶囊操作；不改字体、Logo和导航顺序。

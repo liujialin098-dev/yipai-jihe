@@ -1,5 +1,11 @@
 # 项目开发说明
 
+## 最新Production：SDD-043（2026-09-09 20:53，覆盖下方未部署记录）
+
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `6ba40dc`，部署 `dpl_B56PU5pHFktoeSUYZNcATvn35ocZ`，部署URL `https://yipai-jihe-df9qhnfm0-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。圆润UI、五套可选皮肤、首页衣橱入口与拼图编辑已发布。inspect确认Ready/production/正式别名；云端Next.js16.3.1构建13秒通过。
+- 本轮check/build/043通过；复用正确project.json及现有生产配置，未pull/relink、读取密钥值或修改权限；无关素材和fixture排除上传。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-df9qhnfm0-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_B56PU5pHFktoeSUYZNcATvn35ocZ --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；部署/CLI技能用于项目核实和发布后检查。
+- 正式首页/settings/stickers无会话HTTP GET均200；首页包含ensemble-skin-v1首屏恢复，设置页包含skin-option；两份CSS返回200，其中新版CSS包含skin-option与home-collage-board。最近30分钟error日志无记录。本轮没有执行线上真实登录后拼图保存/换肤浏览器交互，HTTP和资源检查不等同于业务端到端通过。
+
 ## SDD-043 当前本地增量（2026-09-09，未部署）
 
 - 默认丁香青柠不变，卡片32px、输入20px圆角；保留字体/Logo/原导航。设置的SkinPicker新增紫橙、粉米、绿黄、黑白灰、蓝橙五套皮肤；`lib/ui/skins.ts`为ID白名单，`ensemble-skin-v1`本设备保存，绘制前data-skin恢复，独立于`ensemble-theme-v1`日夜模式。`app/skins.css`用语义变量覆盖，照片/Logo/实心描边/用户画板背景/错误语义不染色。
