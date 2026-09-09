@@ -1,4 +1,95 @@
-/* SDD-043: original palette stays intact; optional skins use semantic roles. */
+/* SDD-043: vivid original lilac; optional palettes remain independently scoped. */
+:root:is(:not([data-skin]), [data-skin="original"]) {
+  --background: #eee4ff;
+  --surface-soft: #f1e9fc;
+  --fashion-lilac: #ae8bed;
+  --fashion-lilac-soft: #eee2ff;
+  --action-purple: #7650bb;
+  --system-blue: #7650bb;
+  --system-blue-soft: #ede1fc;
+  --primary: #7650bb;
+  --accent: #ede1fc;
+  --accent-foreground: #513277;
+  --text-secondary: #62576d;
+  --text-tertiary: #71617e;
+  --original-dock-top: #c9aff0;
+  --original-dock-bottom: #b595e8;
+  --original-dock-ink: #42295f;
+  --original-add: #7650bb;
+  --original-add-ink: #ffffff;
+}
+:root.dark:is(:not([data-skin]), [data-skin="original"]) {
+  --background: #21172e;
+  --surface-soft: #3b2d50;
+  --fashion-lilac-soft: #44305e;
+  --system-blue: #d1b2ff;
+  --system-blue-soft: #44305e;
+  --primary: #d1b2ff;
+  --accent: #44305e;
+  --accent-foreground: #f4eff8;
+  --text-secondary: #d2c3e0;
+  --text-tertiary: #c1afd2;
+  --original-dock-top: #624388;
+  --original-dock-bottom: #493065;
+  --original-dock-ink: #f4eaff;
+  --original-add: #cfb2ff;
+  --original-add-ink: #2c1946;
+}
+:root:is(:not([data-skin]), [data-skin="original"]) .app-backdrop {
+  background:
+    radial-gradient(
+      ellipse 100% 34rem at 100% 0%,
+      rgb(174 125 238 / 36%),
+      transparent 80%
+    ),
+    linear-gradient(165deg, #d3bdf4 0%, #e8d9fa 38%, #faf6ff 72%, #e1cef8 100%);
+}
+:root.dark:is(:not([data-skin]), [data-skin="original"]) .app-backdrop {
+  background:
+    radial-gradient(
+      ellipse 100% 34rem at 100% 0%,
+      rgb(146 91 217 / 18%),
+      transparent 80%
+    ),
+    linear-gradient(165deg, #412c59 0%, #2c1f3e 40%, #21172e 75%, #342346 100%);
+}
+:root:is(:not([data-skin]), [data-skin="original"]) .bottom-navigation-shell {
+  background: linear-gradient(
+    135deg,
+    var(--original-dock-top),
+    var(--original-dock-bottom)
+  );
+}
+:root:is(:not([data-skin]), [data-skin="original"]) .icon-dock .nav-item {
+  color: var(--original-dock-ink);
+}
+:root:is(:not([data-skin]), [data-skin="original"]) .dock-add {
+  background: var(--original-add);
+  color: var(--original-add-ink);
+}
+:root:is(:not([data-skin]), [data-skin="original"])
+  .nav-item[data-primary="true"]:active
+  .nav-icon-shell {
+  background: color-mix(
+    in srgb,
+    var(--original-add) 90%,
+    var(--original-dock-ink)
+  );
+  color: var(--original-add-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  :root:is(:not([data-skin]), [data-skin="original"])
+    .nav-item[data-primary="true"]:hover
+    .nav-icon-shell {
+    background: color-mix(
+      in srgb,
+      var(--original-add) 94%,
+      var(--original-add-ink)
+    );
+    color: var(--original-add-ink);
+  }
+}
+
 :root[data-skin="violet"] {
   --skin-accent: #afa0e7;
   --skin-secondary: #ffb571;
@@ -243,20 +334,35 @@
   );
 }
 .surface-card {
-  border-radius: 2rem;
+  border-radius: 36px;
 }
 .field-control {
-  border-radius: 20px;
+  min-height: 52px;
+  border-radius: 24px;
 }
 .profile-cover,
 .inspiration-cover {
-  border-radius: 2rem;
+  border-radius: 36px;
 }
 .editorial-header-shell,
 .bottom-navigation-shell {
-  border-radius: 2rem;
+  min-height: 72px;
+  border-radius: 36px;
+}
+.editorial-header-shell {
+  padding-block: 11px;
+}
+.icon-dock .nav-item {
+  min-height: 52px;
+}
+.icon-dock .dock-add {
+  height: 50px;
+  border-radius: 20px;
 }
 .home-edit-action {
+  min-height: 52px;
+  min-width: 176px;
+  padding: 12px 26px;
   border-radius: 999px;
 }
 .home-journal-day,
@@ -264,10 +370,14 @@
   border-radius: 24px;
 }
 .home-daily-feed {
-  border-radius: 30px;
+  min-height: 88px;
+  padding-block: 20px;
+  border-radius: 34px;
 }
 .home-daily-feed-icon {
-  border-radius: 17px;
+  width: 50px;
+  height: 50px;
+  border-radius: 20px;
 }
 .skin-picker {
   margin-top: 24px;
@@ -355,10 +465,10 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  min-height: 80px;
+  min-height: 88px;
   margin-top: 26px;
-  padding: 16px 20px;
-  border-radius: 30px;
+  padding: 20px;
+  border-radius: 34px;
   background: var(--fashion-lime-soft);
   color: var(--foreground);
   border: 1px solid var(--hairline);
@@ -366,10 +476,10 @@
 .home-wardrobe-symbol {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
-  border-radius: 18px;
+  border-radius: 20px;
   background: var(--surface-solid);
 }
 .home-wardrobe-entry > span:nth-child(2) {
@@ -392,8 +502,8 @@
   display: inline-flex;
   gap: 6px;
   align-items: center;
-  min-height: 44px;
-  padding: 8px 16px;
+  min-height: 48px;
+  padding: 10px 18px;
   border-radius: 999px;
   background: var(--surface-solid);
   color: var(--foreground);

@@ -1,5 +1,13 @@
 # 衣拍即合开发进度
 
+## SDD-043 鲜亮丁香与尺寸增量（2026-09-09，本地完成）
+
+- [x] 默认紫色/背景渐变/底栏更鲜亮，日夜配对；五套可选皮肤颜色保持不变，原色预览同步。
+- [x] 大卡36px圆角、上下栏72px、中央添加50px/20px圆角；首页入口至少88px、主操作与输入52px。不放大照片/Logo/编辑手柄，不改变导航。
+- [x] check/build、043/036/037/042通过，新增主要色对比和五皮肤不变检查。375浅色/320深色/844横屏实际组件隔离样本无溢出、上下栏72px、取消编辑和换肤通过，error为空。
+- [x] 更新阶段文档并保存提交：`feat: brighten lilac palette and soften UI scale`。
+- [ ] 真机大字体/减少动态与真实账号完整页面待补；未部署，线上仍为6a220c6。无配置/权限变化。
+
 ## SDD-043 圆润图标已部署Production（2026-09-09 21:28）
 
 - [x] 发布源 `6a220c6`（功能c51f8d9），部署 `dpl_9CzxDhe8LS6CFcaQQXF8WucrJKnm` / `https://yipai-jihe-k8dcd6nq9-jialin-d583.vercel.app`，正式域名 `https://yipai-jihe.vercel.app`。Ready/production/别名已确认，云端构建16秒通过。

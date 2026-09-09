@@ -140,6 +140,55 @@ const navigation = read("components/bottom-navigation.tsx");
 assert.match(navigation, /<RoundedIcon name=\{key\}/);
 assert.match(navigation, /aria-current=\{current/);
 assert.doesNotMatch(navigation, /strokeWidth=\{current/);
+// Bright original colours must stay readable, and must not overwrite other skins.
+assert.deepEqual(skins[0].colors, ["#ae8bed", "#d8ff52", "#e8d9fa"]);
+assert.deepEqual(
+  skins.slice(1).map((skin) => skin.colors),
+  [
+    ["#afa0e7", "#ffb571", "#f4f0fb"],
+    ["#e8afc8", "#ebd9b7", "#faf3e7"],
+    ["#9ebf9d", "#e8ec89", "#f1f5e8"],
+    ["#b8b8b8", "#e0e0dc", "#f4f4f1"],
+    ["#9fbfe7", "#ffbc83", "#eef4fa"],
+  ],
+);
+function luminance(hex) {
+  const c = hex
+    .slice(1)
+    .match(/../g)
+    .map((v) => parseInt(v, 16) / 255)
+    .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
+}
+for (const [fg, bg] of [
+  ["#ffffff", "#7650bb"],
+  ["#2c1946", "#cfb2ff"],
+  ["#42295f", "#c9aff0"],
+  ["#42295f", "#b595e8"],
+  ["#f4eaff", "#624388"],
+  ["#f4eaff", "#493065"],
+  ["#62576d", "#e8d9fa"],
+  ["#d2c3e0", "#412c59"],
+]) {
+  const a = luminance(fg),
+    b = luminance(bg);
+  assert.ok(
+    (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 4.5,
+    `${fg} on ${bg}`,
+  );
+}
+assert.match(css, /\.surface-card\s*\{\s*border-radius: 36px;/);
+assert.match(css, /\.field-control\s*\{\s*min-height: 52px;/);
+assert.match(css, /\.bottom-navigation-shell\s*\{\s*min-height: 72px;/);
+assert.match(
+  css,
+  /\.icon-dock \.dock-add\s*\{\s*height: 50px;\s*border-radius: 20px;/,
+);
+assert.ok(
+  css.includes(
+    ':root:is(:not([data-skin]), [data-skin="original"]) .app-backdrop',
+  ),
+);
 console.log(
   "SDD-043: skins/bootstrap fallback, collage restore/privacy/limits/layers, rounded icons and UI boundaries passed",
 );
