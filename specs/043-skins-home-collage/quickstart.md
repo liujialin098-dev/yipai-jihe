@@ -1,5 +1,11 @@
 # SDD-043 验收
 
+## 最新Production（2026-09-09 22:44）
+
+- 鲜亮丁香与圆润尺寸源提交`e170cc3`已发布到既有`yipai-jihe`项目；部署`dpl_3Ysug9fWPdoiJeoVVQBWc8ManACr`，唯一URL `https://yipai-jihe-qzmn0urgo-jialin-d583.vercel.app`，正式域名`https://yipai-jihe.vercel.app`。
+- Vercel inspect确认Ready/production/正式别名，Next.js 16.3.1云端构建12秒。首页、settings、stickers无会话HTTP200；正式CSS含鲜亮丁香、明显渐变、36px圆角、72px导航和52px输入尺寸，30分钟error日志无记录。
+- 本轮没有修改环境变量、密钥或权限，也未执行真实账号登录后的拼图/换肤及真机交互；公开入口和样式资源通过不代表完整业务端到端通过。
+
 ## 操作入口
 
 1. 头像→设置→外观皮肤；原色「丁香青柠」与紫橙日落、玫瑰奶油、青绿柠黄、黑白映画、海盐橙光均可选。右上角日夜开关独立生效。

@@ -1,11 +1,10 @@
 # 项目开发说明
 
-## SDD-043 鲜亮丁香与圆润尺寸（2026-09-09，本地完成，未部署）
+## 最新Production：SDD-043鲜亮丁香与圆润尺寸（2026-09-09 22:44，覆盖下方记录）
 
-- 用户要求紫色更鲜艳、背景渐变更明显、UI更大更圆润。original或无data-skin的默认紫色改为#ae8bed，主操作#7650bb；背景丁香→浅紫→奶白，夜间独立紫色渐变；底栏有明确紫色层次。其他五套皮肤颜色不改，原色预览同步。覆盖下方原色不变、32px卡片及旧导航尺寸约定。
-- 共享大卡/封面36px圆角、表单52px高/24px圆角；上下栏72px高，中央添加50px高/20px圆角；首页衣橱和资讯入口至少88px、图标承托50px、主操作52px。顶部44px触控区和24/26/28px图标、字体、Logo、照片/描边、画板及编辑手柄几何不变。无全页面scale、无新动效/依赖或业务请求。
-- check/build与043/036/037/042通过；043检查原色主要配对对比度≥4.5、五皮肤颜色不变及尺寸契约。真实导航/HomeCollage隔离预览375px浅色、320px深色、844×390横屏无溢出；上下栏实测72px，编辑打开/取消和换肤通过，浏览器error为空。没有真实账号/真机系统大字体、减少动态或线上复验；不冒充完整业务验收。
-- ui-ux-pro-max/frontend-design用于增强紫色层次、保持浅色内容卡和分级尺寸。已保存本地，Production仍为下节6a220c6；未自动部署。
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `e170cc3`，部署 `dpl_3Ysug9fWPdoiJeoVVQBWc8ManACr`，部署URL `https://yipai-jihe-qzmn0urgo-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。默认紫色、背景渐变和底栏更鲜亮；共享大卡36px圆角、表单/主操作52px、上下栏72px、中央添加50px/20px圆角已发布。其他五套皮肤、字体、Logo、照片/描边和画板几何不变。inspect确认Ready/production/正式别名，云端Next.js16.3.1构建12秒通过。
+- 本轮check/build与043/036/037/042通过，复用正确project.json及既有生产配置，未pull/relink、读取密钥值或修改权限；无关素材继续排除上传。发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-qzmn0urgo-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_3Ysug9fWPdoiJeoVVQBWc8ManACr --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核，部署/CLI技能用于项目锁定、发布和发布后检查。
+- 正式首页/settings/stickers无会话HTTP GET均200；两份CSS已加载，并确认含`#ae8bed`、径向渐变、36px共享圆角、72px导航高度及52px输入高度。最近30分钟error日志无记录；首次补查样式遇到一次TLS EOF，重试后成功。本轮未执行线上登录后拼图、换肤或真机交互，公开HTTP和静态资源检查不等于完整业务验收。
 
 ## 最新Production：SDD-043圆润图标增量（2026-09-09 21:28，覆盖下方记录）
 
