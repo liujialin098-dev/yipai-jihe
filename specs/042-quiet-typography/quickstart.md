@@ -1,5 +1,10 @@
 # SDD-042 验收记录
 
+## 资讯卡精简增量
+
+- 覆盖此前“详情展开”验收：实际卡片不含details/重复summary/reason，标题速览、来源与time保留。渲染三种summaryKind和未读开关，ReadingControls使用真实组件但Action明确mock，不读写账号。
+- check/build/042通过；375浅色client/scroll=375/375，320深色305/305，844横屏829/829；按钮44px，浏览器error为空。027仅同步文案断言，未跑联网；真机大字体、真实阅读状态持久化待验。
+
 ## 自动检查
 
 运行 `npm run verify:sdd-042`、`npm run check`、`npm run build`。042渲染真实PageHeading/InspirationCard，外部依赖为明确的固定样本，不联网写账号；检查标题转义、统一token、介绍语移除、真实来源性质和提示保留。

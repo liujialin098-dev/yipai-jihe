@@ -23,7 +23,7 @@ export function ReadingControls({
   const [linkMessage, setLinkMessage] = useState("");
   return (
     <div className="min-w-0">
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap justify-end gap-2">
         <form action={action}>
           <button
             type="submit"
@@ -54,9 +54,10 @@ export function ReadingControls({
                 }
               });
           }}
-          aria-label={`查看 ${sourceName} 原文`}
-          className="motion-button flex size-11 items-center justify-center rounded-full bg-[#1d1d1f] text-white"
+          aria-label={`阅读 ${sourceName} 原文（新窗口打开）`}
+          className="motion-button flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#1d1d1f] px-3.5 text-xs font-semibold text-white"
         >
+          阅读原文
           <ArrowUpRight className="size-4" aria-hidden="true" />
         </a>
       </div>

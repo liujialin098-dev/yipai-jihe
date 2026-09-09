@@ -1,7 +1,6 @@
 import { Check, Circle } from "lucide-react";
 import { ReadingControls } from "@/components/inspiration/reading-controls";
 import { ImpressionTracker } from "@/components/inspiration/impression-tracker";
-import { ContentDetails } from "@/components/inspiration/content-details";
 import type { FashionFeedCard } from "@/lib/inspiration/data";
 import { FASHION_TOPIC_LABELS } from "@/lib/inspiration/validation";
 
@@ -25,12 +24,10 @@ export function InspirationCard({
   item,
   index,
   showUnread = true,
-  personalized = true,
 }: {
   item: FashionFeedCard;
   index: number;
   showUnread?: boolean;
-  personalized?: boolean;
 }) {
   return (
     <article
@@ -42,16 +39,14 @@ export function InspirationCard({
         <ImpressionTracker id={item.id} />
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-[0.68rem] font-semibold">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
               <span
                 className="rounded-full px-2.5 py-1"
                 style={{ background: topicTone[item.topic] }}
               >
                 {FASHION_TOPIC_LABELS[item.topic]}
               </span>
-              <span className="text-[var(--text-tertiary)]">
-                {dateFormatter.format(new Date(item.publishedAt))}
-              </span>
+              <span className="text-[var(--text-secondary)]">标题速览</span>
             </div>
             <h2 className="app-card-title mt-3">{item.title}</h2>
           </div>
@@ -73,44 +68,13 @@ export function InspirationCard({
           )}
         </div>
 
-        <p className="mt-4 text-xs font-semibold text-[var(--text-tertiary)]">
-          {item.summaryKind === "source-summary"
-            ? "来源标题简述 · 非全文摘要"
-            : "阅读提示 · 中文简述暂不可用"}
-        </p>
-        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-          {item.summary}
-        </p>
-        <ContentDetails id={item.id} isRead={item.isRead}>
-          <div className="space-y-2 break-words leading-5">
-            <p>
-              {personalized ? "推荐依据" : "展示顺序"}：{item.reason}
-            </p>
-            <p>原始标题：{item.originalTitle ?? item.title}</p>
-            <p>来源发布：{dateFormatter.format(new Date(item.publishedAt))}</p>
-            <p>
-              展示有效期至：{dateFormatter.format(new Date(item.validUntil))}
-            </p>
-            {item.fetchedAt && (
-              <p>
-                来源获取：{dateFormatter.format(new Date(item.fetchedAt))}
-                ；缓存每日更新，超过一天仍未更新时可能是来源暂不可达。
-              </p>
-            )}
-            <p>
-              仅整理来源提供的标题信息，不代表阅读全文。原文中的广告和购买链接不代表本站推荐。
-            </p>
-          </div>
-        </ContentDetails>
-
-        <div className="mt-4 flex items-center justify-between gap-3 border-t border-[var(--hairline)] pt-4">
-          <div className="min-w-0">
-            <p className="truncate text-xs font-semibold text-[var(--foreground)]">
-              {item.sourceName}
-            </p>
-            <p className="mt-0.5 text-[0.65rem] text-[var(--text-tertiary)]">
-              外链将离开衣拍即合
-            </p>
+        <footer className="mt-4 flex flex-col gap-3 border-t border-[var(--hairline)] pt-4">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--text-secondary)]">
+            <span className="break-words font-semibold">{item.sourceName}</span>
+            <span aria-hidden="true">·</span>
+            <time dateTime={item.publishedAt}>
+              {dateFormatter.format(new Date(item.publishedAt))}
+            </time>
           </div>
           <ReadingControls
             id={item.id}
@@ -118,7 +82,7 @@ export function InspirationCard({
             sourceUrl={item.sourceUrl}
             sourceName={item.sourceName}
           />
-        </div>
+        </footer>
       </div>
     </article>
   );

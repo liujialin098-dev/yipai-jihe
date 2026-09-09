@@ -102,19 +102,19 @@ for (const level of ["page", "section", "card"]) {
 assert.doesNotMatch(css, /\.app-page-lead\s*\{[^}]*display:\s*none/);
 
 const noOp = () => null;
-const Details = ({ children }) =>
-  React.createElement(
-    "details",
-    null,
-    React.createElement("summary", null, "内容详情与时效"),
-    children,
-  );
+const { ReadingControls } = compile(
+  "components/inspiration/reading-controls.tsx",
+  {
+    "@/app/inspiration/actions": {
+      setFashionContentRead: async () => ({ ok: true, message: "" }),
+    },
+  },
+);
 const { InspirationCard } = compile(
   "components/inspiration/inspiration-card.tsx",
   {
-    "@/components/inspiration/reading-controls": { ReadingControls: noOp },
+    "@/components/inspiration/reading-controls": { ReadingControls },
     "@/components/inspiration/impression-tracker": { ImpressionTracker: noOp },
-    "@/components/inspiration/content-details": { ContentDetails: Details },
     "@/lib/inspiration/validation": { FASHION_TOPIC_LABELS: { trend: "趋势" } },
   },
 );
@@ -135,11 +135,51 @@ const card = renderToStaticMarkup(
     },
   }),
 );
-assert.match(card, /<details>[\s\S]*固定样本推荐依据[\s\S]*<\/details>/);
-assert.doesNotMatch(card, /<details open/);
-assert.match(card, /来源标题简述/);
+assert.doesNotMatch(
+  card,
+  /<details|内容详情与时效|来源标题简述|固定样本推荐依据|固定排版样本|展示有效期/,
+);
+assert.match(card, /标题速览/);
+assert.match(card, /阅读原文/);
+assert.match(card, /target="_blank"/);
+assert.match(card, /rel="noopener noreferrer"/);
+assert.match(card, /<time dateTime="2026-09-09"/);
 assert.match(card, /样本来源/);
 assert.match(card, /2026/);
+for (const summaryKind of ["source-summary", "reading-guide", undefined]) {
+  const item = {
+    id: "fixture",
+    title: "<标题>",
+    topic: "trend",
+    publishedAt: "2026-09-09",
+    validUntil: "2026-09-10",
+    fetchedAt: "2026-09-09",
+    summaryKind,
+    summary: "来源标题关注：重复说明",
+    reason: "内部排序依据",
+    sourceName: "测试来源",
+    sourceUrl: "https://example.com/",
+    isRead: true,
+  };
+  const html = renderToStaticMarkup(
+    React.createElement(InspirationCard, { item, index: 1, showUnread: false }),
+  );
+  assert.match(html, /标题速览/);
+  assert.match(html, /&lt;标题&gt;/);
+  assert.match(html, /设为未读/);
+  assert.doesNotMatch(
+    html,
+    /来源标题关注|内部排序依据|内容详情|展示有效期|2026-09-10|sr-only/,
+  );
+}
+assert.match(
+  read("components/inspiration/reading-controls.tsx"),
+  /原文已打开，但阅读状态未保存/,
+);
+assert.match(
+  read("components/inspiration/reading-controls.tsx"),
+  /disabled=\{pending \|\| opening\}/,
+);
 console.log(
   "SDD-042：实际标题/资讯卡渲染、转义、统一层级、介绍语移除及必要提示/来源保留通过（无网络固定样本）。",
 );

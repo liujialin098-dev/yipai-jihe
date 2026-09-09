@@ -15,7 +15,6 @@ export function InspirationFeed({ data }: { data: FashionFeedData }) {
               item={item}
               index={index}
               showUnread={data.preferences.unreadEnabled}
-              personalized={data.preferences.personalized}
             />
           ))}
         </section>

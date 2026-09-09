@@ -65,7 +65,11 @@ const [page, card, data, migration] = await Promise.all([
   read("supabase/migrations/20260903090000_fashion_news_feed.sql"),
 ]);
 assert.match(page, /Vogue · GQ/);
-assert.match(card, /外链将离开衣拍即合/);
+assert.match(card, /标题速览/);
+assert.match(
+  await read("components/inspiration/reading-controls.tsx"),
+  /新窗口打开/,
+);
 assert.doesNotMatch(card, /next\/image|<Image/);
 assert.match(data, /getWeatherSnapshot/);
 assert.match(data, /\.eq\("user_id", viewer\.userId\)/);

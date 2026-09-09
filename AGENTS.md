@@ -1,5 +1,11 @@
 # 项目开发说明
 
+## SDD-042资讯卡精简增量（2026-09-09，当前功能覆盖）
+
+- 用户确认移除“来源标题简述 · 非全文摘要”、重复标题的说明段和“内容详情与时效”折叠区。当前资讯只由来源标题整理，因此统一保留轻量“标题速览”，不伪装成全文摘要；不再渲染summary/reason/获取时间/有效期，但数据字段与后台过滤、排序、缓存均不变。
+- 底部展示来源与发布时间，使用time语义；阅读原文改为可见文字按钮，保留新窗口提示、noopener noreferrer/no-referrer和阅读状态失败提示。标记已读和ImpressionTracker保留；旧ContentDetails文件不删除，但不再挂载。
+- 保持既有字体、颜色和动效；footer分行且操作可换行。check/build/042通过，source-summary/reading-guide/未声明类型、标题转义、未读隐藏及外链安全固定测试通过。375px浅色、320px深色、844px横屏实际组件隔离样本无溢出，按钮高44px，浏览器error为空；不宣称真实登录后读状态写入验收。完整真机最大字体仍待补。后续部署记录见最新Production节。
+
 ## 最新Production：SDD-042（2026-09-09 14:53，覆盖下方旧发布记录）
 
 - 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `17074b2`，部署 `dpl_4cgNbmMZrS8n9Nkx4Zqot1uyc1Nn`，部署URL `https://yipai-jihe-n3ujejs90-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。包含贴纸册居中、统一标题与文案精简。inspect确认Ready/production/正式别名；云端Next.js16.3.1构建14秒通过。
