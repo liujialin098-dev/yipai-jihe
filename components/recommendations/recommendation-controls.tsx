@@ -71,7 +71,7 @@ export function RecommendationControls({
                 }}
                 className="peer sr-only"
               />
-              <span className="motion-button flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-2 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[#1d1d1f] peer-checked:bg-[#1d1d1f] peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--system-blue)]">
+              <span className="motion-button flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-2 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[var(--control-primary)] peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--system-blue)]">
                 {option.label}
               </span>
             </label>
@@ -109,7 +109,7 @@ export function RecommendationControls({
       <button
         type="submit"
         disabled={pending || weather.status !== "ready"}
-        className="motion-button mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white disabled:opacity-55"
+        className="motion-button mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
       >
         {pending ? (
           <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -127,7 +127,7 @@ export function RecommendationControls({
         <output
           className={`motion-status mt-3 rounded-[1rem] px-3.5 py-3 text-xs leading-5 ${
             state.status === "error"
-              ? "bg-[#ff453a]/8 text-[#b42318]"
+              ? "bg-[var(--danger-surface)] text-[var(--danger-text)]"
               : "bg-[var(--system-blue-soft)] text-[var(--system-blue)]"
           }`}
         >

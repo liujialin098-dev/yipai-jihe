@@ -55,7 +55,7 @@ export function ReadingControls({
               });
           }}
           aria-label={`阅读 ${sourceName} 原文（新窗口打开）`}
-          className="motion-button flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#1d1d1f] px-3.5 text-xs font-semibold text-white"
+          className="motion-button flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[var(--control-primary)] px-3.5 text-xs font-semibold text-[var(--control-primary-foreground)]"
         >
           阅读原文
           <ArrowUpRight className="size-4" aria-hidden="true" />

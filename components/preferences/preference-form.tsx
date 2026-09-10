@@ -77,7 +77,7 @@ export function PreferenceForm({
                 defaultChecked={option.value === defaultClothingPreference}
                 className="peer sr-only"
               />
-              <span className="motion-button flex h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-xs font-semibold peer-checked:border-[#1d1d1f] peer-checked:bg-[#1d1d1f] peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--system-blue)]">
+              <span className="motion-button flex h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-xs font-semibold peer-checked:border-[var(--control-primary)] peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--system-blue)]">
                 {option.label}
               </span>
             </label>
@@ -113,7 +113,7 @@ export function PreferenceForm({
                 defaultChecked={value === defaultFocus}
                 className="peer sr-only"
               />
-              <span className="motion-button flex h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-xs font-semibold peer-checked:bg-[#1d1d1f] peer-checked:text-white">
+              <span className="motion-button flex h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] text-xs font-semibold peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)]">
                 {label}
               </span>
             </label>
@@ -135,7 +135,7 @@ export function PreferenceForm({
           name="intent"
           value="save"
           disabled={pending}
-          className="motion-button flex h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] text-sm font-semibold text-white"
+          className="motion-button flex h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] text-sm font-semibold text-[var(--control-primary-foreground)]"
         >
           {pending ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -182,7 +182,7 @@ function ChoiceGroup({
               defaultChecked={defaults.includes(option.value)}
               className="peer sr-only"
             />
-            <span className="motion-button flex h-10 cursor-pointer items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-4 text-xs font-semibold peer-checked:bg-[#1d1d1f] peer-checked:text-white">
+            <span className="motion-button flex h-10 cursor-pointer items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-4 text-xs font-semibold peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)]">
               {option.label}
             </span>
           </label>

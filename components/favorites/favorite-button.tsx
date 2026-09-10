@@ -68,7 +68,7 @@ export function FavoriteButton(props: ItemProps | OutfitProps) {
           props.compact ? "size-9" : "h-10 gap-2 px-4 text-xs font-semibold"
         } ${
           isFavorite
-            ? "bg-[#1d1d1f] text-white"
+            ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)]"
             : "bg-[var(--surface-solid)] text-[var(--foreground)]"
         }`}
       >

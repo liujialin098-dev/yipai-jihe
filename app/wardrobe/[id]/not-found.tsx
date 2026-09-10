@@ -13,7 +13,7 @@ export default function WardrobeItemNotFound() {
       </p>
       <Link
         href="/wardrobe"
-        className="pressable mt-6 inline-flex min-h-11 items-center rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+        className="pressable mt-6 inline-flex min-h-11 items-center rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)]"
       >
         返回我的衣橱
       </Link>

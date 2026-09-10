@@ -502,7 +502,7 @@ export function OutfitCanvasEditor({
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value.slice(0, 30))}
-            className="field-control h-12 bg-white/80 px-4 text-sm"
+            className="field-control h-12 px-4 text-sm"
             maxLength={30}
             aria-describedby="outfit-title-count"
           />
@@ -586,7 +586,7 @@ export function OutfitCanvasEditor({
                 onPointerCancel={finishDrag}
                 onKeyDown={(event) => handleItemKeyDown(event, item)}
                 onClick={() => setSelectedId(item.wardrobeItemId)}
-                className="outfit-canvas-item absolute flex aspect-square touch-none items-center justify-center rounded-[1rem] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#202124]"
+                className="outfit-canvas-item absolute flex aspect-square touch-none items-center justify-center rounded-[1rem] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
                 data-selected={selected ? "true" : "false"}
                 data-cutout={cutoutUrl ? "true" : "false"}
                 style={{
@@ -718,7 +718,7 @@ export function OutfitCanvasEditor({
             disabled={
               !selectedWardrobeItem?.imageUrl || Boolean(cutoutPendingId)
             }
-            className="motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[#202124] px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-45"
+            className="motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--control-primary)] px-3 text-xs font-semibold text-[var(--control-primary-foreground)] disabled:cursor-not-allowed disabled:opacity-45"
           >
             {cutoutPendingId ? (
               <LoaderCircle
@@ -736,7 +736,7 @@ export function OutfitCanvasEditor({
             disabled={
               !selectedId || !cutoutUrls[selectedId] || Boolean(cutoutPendingId)
             }
-            className="interaction-preserve motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--fashion-lilac-soft)] px-3 text-xs font-semibold text-[#2c2542] disabled:cursor-not-allowed disabled:opacity-45"
+            className="interaction-preserve motion-button flex min-h-11 items-center justify-center gap-2 rounded-[1rem] bg-[var(--fashion-lilac-soft)] px-3 text-xs font-semibold text-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <Eraser className="size-4" aria-hidden="true" />
             边缘精修
@@ -775,7 +775,7 @@ export function OutfitCanvasEditor({
 
       {message ? (
         <output
-          className={`motion-status mt-3 rounded-[1rem] px-4 py-3 text-xs leading-5 ${message.tone === "error" ? "bg-[#fff0ed] text-[#9c2f1f]" : message.tone === "success" ? "bg-[#eef8e4] text-[#325821]" : "bg-[var(--surface-soft)] text-[var(--text-secondary)]"}`}
+          className={`motion-status mt-3 rounded-[1rem] px-4 py-3 text-xs leading-5 ${message.tone === "error" ? "bg-[var(--danger-surface)] text-[var(--danger-text)]" : message.tone === "success" ? "bg-[var(--success-surface)] text-[var(--success-text)]" : "bg-[var(--surface-soft)] text-[var(--text-secondary)]"}`}
         >
           {message.text}
         </output>
@@ -799,7 +799,7 @@ export function OutfitCanvasEditor({
           type="button"
           onClick={handleExport}
           disabled={exportPending}
-          className="motion-button flex h-12 items-center justify-center gap-2 rounded-full bg-[#202124] text-sm font-semibold text-white disabled:opacity-50"
+          className="motion-button flex h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-50"
         >
           {exportPending ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

@@ -279,7 +279,7 @@ export function StickerStudio({
               type="button"
               onClick={generateStickers}
               disabled={isGenerating || selectedItems.length === 0}
-              className="motion-button mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="motion-button mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:cursor-not-allowed disabled:opacity-45"
             >
               {isGenerating ? (
                 <LoaderCircle
@@ -343,7 +343,7 @@ export function StickerStudio({
                     aria-pressed={selected}
                     className={`sticker-selectable pressable relative min-h-44 overflow-hidden rounded-[1.5rem] border p-2.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)] disabled:cursor-wait ${
                       selected
-                        ? "border-[#8a70a1] bg-[var(--fashion-lilac-soft)] shadow-[0_14px_32px_rgba(81,59,104,0.13)]"
+                        ? "border-[var(--system-blue)] bg-[var(--fashion-lilac-soft)] shadow-[0_14px_32px_rgba(81,59,104,0.13)]"
                         : "border-[var(--hairline)] bg-[var(--surface-solid)]"
                     }`}
                   >
@@ -367,7 +367,7 @@ export function StickerStudio({
                     <span
                       className={`absolute right-3 top-3 z-20 flex size-8 items-center justify-center rounded-full border shadow-sm ${
                         selected
-                          ? "border-[#705886] bg-[#705886] text-white"
+                          ? "border-[var(--control-primary)] bg-[var(--control-primary)] text-[var(--control-primary-foreground)]"
                           : "border-[var(--hairline)] bg-[var(--surface-solid)] text-[var(--text-tertiary)]"
                       }`}
                       aria-hidden="true"
@@ -468,7 +468,7 @@ function SourceButton({
       aria-pressed={active}
       className={`motion-button flex min-h-11 items-center justify-center gap-2 rounded-full px-3 text-sm font-semibold ${
         active
-          ? "bg-[#1d1d1f] text-white shadow-[0_8px_22px_rgba(29,29,31,0.14)]"
+          ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_8px_22px_rgba(29,29,31,0.14)]"
           : "text-[var(--text-secondary)]"
       }`}
     >

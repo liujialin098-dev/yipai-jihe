@@ -20,6 +20,7 @@ assert.match(component, /ensemble-icon-a-folded-e\.png/);
 assert.match(component, /ensemble-shirt-morph\.svg/);
 assert.match(component, /ensemble-shirt-morph-loop\.svg/);
 assert.match(component, /BrandName/);
+assert.match(component, /export function RouteLoading/);
 assert.match(
   component,
   /role=\{variant === "loader" \? "status" : undefined\}/,
@@ -34,9 +35,7 @@ assert.match(layout, /import \{ LaunchSplash \}/);
 assert.match(layout, /<LaunchSplash \/>[\s\S]*<AppShell/);
 assert.doesNotMatch(layout, /"use client"/);
 
-assert.match(loading, /BrandMotion/);
-assert.match(loading, /variant="loader"/);
-assert.match(loading, /正在准备页面/);
+assert.match(loading, /RouteLoading/);
 
 assert.match(session, /BrandMotion/);
 assert.match(session, /正在返回账号入口/);
@@ -57,7 +56,7 @@ assert.doesNotMatch(brandCss, /transition:\s*all/);
 assert.doesNotMatch(brandCss, /scale\(0(?:[),\s])/);
 assert.match(
   brandCss,
-  /\.brand-motion-morph img\s*\{[\s\S]*drop-shadow\(1px 0 0 var\(--brand-motion-outline/,
+  /\.brand-motion-morph img,\s*\.brand-motion-mark-base img\s*\{[\s\S]*drop-shadow\(1px 0 0 var\(--brand-motion-outline, #ffffff\)/,
 );
 assert.equal(
   (brandCss.match(/drop-shadow\(/g) ?? []).length,

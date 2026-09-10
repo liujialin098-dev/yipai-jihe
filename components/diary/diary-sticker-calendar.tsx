@@ -115,7 +115,7 @@ export function DiaryStickerCalendar({
                       className="size-full rounded-[0.55rem]"
                     />
                     {entry && entry.items.length > 1 ? (
-                      <span className="absolute -right-1 -top-1 z-20 flex size-4 items-center justify-center rounded-full bg-[#1d1d1f] text-[0.5rem] font-bold text-white shadow-sm">
+                      <span className="absolute -right-1 -top-1 z-20 flex size-4 items-center justify-center rounded-full bg-[var(--control-primary)] text-[0.5rem] font-bold text-[var(--control-primary-foreground)] shadow-sm">
                         {entry.items.length}
                       </span>
                     ) : null}

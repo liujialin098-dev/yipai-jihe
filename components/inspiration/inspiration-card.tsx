@@ -55,7 +55,7 @@ export function InspirationCard({
               className={`mt-1 flex size-8 shrink-0 items-center justify-center rounded-full ${
                 item.isRead
                   ? "bg-[var(--surface-soft)] text-[var(--text-tertiary)]"
-                  : "bg-[#1d1d1f] text-white"
+                  : "bg-[var(--control-primary)] text-[var(--control-primary-foreground)]"
               }`}
             >
               <span className="sr-only">{item.isRead ? "已读" : "未读"}</span>

@@ -13,7 +13,7 @@ function SubmitButton({ children }: { children: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="motion-button mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white disabled:opacity-55"
+      className="motion-button mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
     >
       {pending ? <LoaderCircle className="size-4 animate-spin" /> : null}
       {pending ? "正在处理…" : children}
@@ -28,8 +28,8 @@ function FormMessage({ state }: { state: typeof initialAuthState }) {
       role={state.status === "error" ? "alert" : "status"}
       className={`motion-status mt-4 rounded-[1.1rem] px-4 py-3 text-sm leading-6 ${
         state.status === "error"
-          ? "bg-[#ff453a]/8 text-[#b42318]"
-          : "bg-[#30a46c]/9 text-[#18794e]"
+          ? "bg-[var(--danger-surface)] text-[var(--danger-text)]"
+          : "bg-[var(--success-surface)] text-[var(--success-text)]"
       }`}
     >
       {state.message}
@@ -75,7 +75,10 @@ export function RegistrationForm({
           className="field-control field-control-with-icon h-12 text-sm"
         />
       </div>
-      <p id="binding-email-error" className="mt-2 text-xs text-[#b42318]">
+      <p
+        id="binding-email-error"
+        className="mt-2 text-xs text-[var(--danger-text)]"
+      >
         {state.fieldErrors?.email}
       </p>
       <div className="mt-4">
@@ -173,7 +176,7 @@ function PasswordField({
           className="field-control field-control-with-icon h-12 text-sm"
         />
       </div>
-      <p id={`${id}-error`} className="mt-2 text-xs text-[#b42318]">
+      <p id={`${id}-error`} className="mt-2 text-xs text-[var(--danger-text)]">
         {error}
       </p>
     </div>
@@ -182,7 +185,7 @@ function PasswordField({
 
 export function AccountProtectedBadge() {
   return (
-    <div className="motion-status mt-5 flex items-start gap-3 rounded-[1.2rem] bg-[#30a46c]/9 px-4 py-3.5 text-[#18794e]">
+    <div className="motion-status mt-5 flex items-start gap-3 rounded-[1.2rem] bg-[var(--success-surface)] px-4 py-3.5 text-[var(--success-text)]">
       <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#30a46c] text-white">
         <Check className="size-4" aria-hidden="true" />
       </span>

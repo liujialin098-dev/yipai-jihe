@@ -32,7 +32,7 @@ function ResultMessage({ state }: { state: WeatherCityActionState }) {
       aria-live="polite"
       className={`rounded-[1rem] px-3.5 py-3 text-xs leading-5 ${
         state.status === "error"
-          ? "bg-[#ff453a]/8 text-[#b42318]"
+          ? "bg-[var(--danger-surface)] text-[var(--danger-text)]"
           : "bg-[var(--system-blue-soft)] text-[var(--system-blue)]"
       }`}
     >
@@ -240,7 +240,7 @@ export function WeatherCitySelector({
               name="mode"
               value="saved"
               disabled={suggestionPending}
-              className="motion-button inline-flex min-h-11 items-center justify-center rounded-full bg-[#1d1d1f] px-3 text-xs font-semibold text-white disabled:opacity-55"
+              className="motion-button inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--control-primary)] px-3 text-xs font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
             >
               {suggestionPending ? "确认中" : "设为常用城市"}
             </button>
@@ -292,7 +292,7 @@ export function WeatherCitySelector({
                 type="button"
                 disabled={devicePending}
                 onClick={() => locateFromDevice("saved")}
-                className="motion-button inline-flex min-h-11 items-center justify-center rounded-full bg-[#1d1d1f] px-3 text-xs font-semibold text-white disabled:opacity-55"
+                className="motion-button inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--control-primary)] px-3 text-xs font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
               >
                 {devicePending ? "请稍候" : "设为常用城市"}
               </button>
@@ -337,7 +337,7 @@ export function WeatherCitySelector({
               <button
                 type="submit"
                 disabled={manualPending}
-                className="motion-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white disabled:opacity-55"
+                className="motion-button inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-4 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
               >
                 {manualPending ? (
                   <LoaderCircle

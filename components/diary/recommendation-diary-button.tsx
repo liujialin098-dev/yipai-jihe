@@ -31,7 +31,10 @@ export function RecommendationDiaryButton({
           {pending ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
           ) : state.status === "success" ? (
-            <Check className="size-4 text-[#248a3d]" aria-hidden="true" />
+            <Check
+              className="size-4 text-[var(--success-text)]"
+              aria-hidden="true"
+            />
           ) : (
             <CalendarCheck className="size-4" aria-hidden="true" />
           )}
@@ -46,7 +49,9 @@ export function RecommendationDiaryButton({
         <p
           aria-live="polite"
           className={`mt-2 text-xs leading-5 ${
-            state.status === "error" ? "text-[#c9342f]" : "text-[#248a3d]"
+            state.status === "error"
+              ? "text-[var(--danger-text)]"
+              : "text-[var(--success-text)]"
           }`}
         >
           {state.message}

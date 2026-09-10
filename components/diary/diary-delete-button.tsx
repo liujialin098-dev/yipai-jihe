@@ -25,7 +25,7 @@ export function DiaryDeleteButton({ entryId }: { entryId: string }) {
         <button
           type="submit"
           disabled={pending}
-          className="interaction-danger interaction-preserve motion-button inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold text-[#c9342f] disabled:opacity-60"
+          className="interaction-danger interaction-preserve motion-button inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold text-[var(--danger-text)] disabled:opacity-60"
         >
           {pending ? (
             <LoaderCircle
@@ -39,7 +39,10 @@ export function DiaryDeleteButton({ entryId }: { entryId: string }) {
         </button>
       </form>
       {state.status === "error" ? (
-        <p aria-live="polite" className="mt-1 text-xs text-[#c9342f]">
+        <p
+          aria-live="polite"
+          className="mt-1 text-xs text-[var(--danger-text)]"
+        >
           {state.message}
         </p>
       ) : null}

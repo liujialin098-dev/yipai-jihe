@@ -46,7 +46,7 @@ export default async function WardrobeItemPage({
         </Link>
         <Link
           href={`/wardrobe/${item.id}/edit`}
-          className="pressable inline-flex min-h-10 items-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-xs font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.18)]"
+          className="pressable inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--control-primary)] px-4 text-xs font-semibold text-[var(--control-primary-foreground)] shadow-[0_10px_24px_rgba(29,29,31,0.18)]"
         >
           <Pencil className="size-3.5" aria-hidden="true" />
           编辑

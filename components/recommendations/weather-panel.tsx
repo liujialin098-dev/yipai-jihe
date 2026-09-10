@@ -186,7 +186,7 @@ export function WeatherPanel({
             <p className="app-page-lead">请选择城市</p>
           ) : null}
           {state.status === "error" ? (
-            <p className="text-sm leading-6 text-[#b42318]">
+            <p className="text-sm leading-6 text-[var(--danger-text)]">
               天气获取失败，请刷新重试。
             </p>
           ) : null}
@@ -238,7 +238,7 @@ export function WeatherPanel({
             </>
           ) : null}
           {state.status === "stale" ? (
-            <p className="mt-2 text-xs text-[#b42318]">
+            <p className="mt-2 text-xs text-[var(--danger-text)]">
               天气已超过 5 分钟，请刷新后再生成。
             </p>
           ) : null}

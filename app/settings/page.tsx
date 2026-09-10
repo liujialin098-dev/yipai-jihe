@@ -35,7 +35,7 @@ export default async function SettingsPage({
 
       <section className="surface-card stagger-item mt-7 rounded-[1.65rem] p-5">
         <div className="flex items-center gap-4">
-          <span className="flex size-12 items-center justify-center rounded-full bg-[#1d1d1f] text-white shadow-[0_10px_24px_rgba(29,29,31,0.18)]">
+          <span className="flex size-12 items-center justify-center rounded-full bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_10px_24px_rgba(29,29,31,0.18)]">
             <UserRound className="size-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">

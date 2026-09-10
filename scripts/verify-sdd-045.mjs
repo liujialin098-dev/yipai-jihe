@@ -12,15 +12,23 @@ const [skins, globals, splashSvg, loaderSvg] = await Promise.all([
 
 assert.match(skins, /--home-collage-board:\s*#463452/);
 assert.match(skins, /--home-collage-board:\s*#382943/);
-assert.match(skins, /--brand-motion-outline:\s*#563b70/);
-assert.match(skins, /--brand-motion-outline:\s*#ddcef0/);
+assert.equal(
+  [...skins.matchAll(/--brand-motion-outline:\s*([^;]+);/g)].every(
+    ([, value]) => value.trim().toLowerCase() === "#ffffff",
+  ),
+  true,
+);
+assert.match(skins, /border:\s*6px solid var\(--home-collage-board-border\)/);
 assert.doesNotMatch(skins, /--home-collage-board:\s*(?:#18131d|#110e15)/);
 
 const motionStart = globals.indexOf("/* SDD-041: brand motion */");
 const motionEnd = globals.indexOf("/* End SDD-041 */");
 const motionCss = globals.slice(motionStart, motionEnd);
 assert.ok(motionStart >= 0 && motionEnd > motionStart);
-assert.match(motionCss, /\.brand-motion-morph img\s*\{/);
+assert.match(
+  motionCss,
+  /\.brand-motion-morph img,\s*\.brand-motion-mark-base img\s*\{/,
+);
 assert.equal((motionCss.match(/drop-shadow\(/g) ?? []).length, 4);
 assert.doesNotMatch(motionCss, /drop-shadow\([^)]*\b(?:blur|rgba?)\b/);
 
@@ -31,5 +39,5 @@ for (const svg of [splashSvg, loaderSvg]) {
 }
 
 console.log(
-  "SDD-045: plum collage board and fixed-color hard-edge brand motion outline passed",
+  "SDD-045: plum collage board and white fixed-color hard-edge brand motion outline passed",
 );

@@ -94,7 +94,7 @@ export function FilterPanel({
         </label>
         <button
           type="submit"
-          className="pressable col-span-2 min-h-11 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white"
+          className="pressable col-span-2 min-h-11 rounded-full bg-[var(--control-primary)] px-4 text-sm font-semibold text-[var(--control-primary-foreground)]"
         >
           应用条件
         </button>

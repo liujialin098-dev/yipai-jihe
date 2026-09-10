@@ -164,7 +164,7 @@ export function DiaryComposer({
                       </span>
                     )}
                     {selected ? (
-                      <span className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full bg-[var(--system-blue)] text-white shadow-lg">
+                      <span className="absolute top-2 right-2 flex size-8 items-center justify-center rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] shadow-lg">
                         <Check className="size-4" aria-hidden="true" />
                       </span>
                     ) : null}
@@ -200,7 +200,7 @@ export function DiaryComposer({
         <button
           type="submit"
           disabled={pending || selectedIds.length === 0}
-          className="motion-button flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white disabled:opacity-45"
+          className="motion-button flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-45"
         >
           {pending ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -216,8 +216,8 @@ export function DiaryComposer({
           aria-live="polite"
           className={`rounded-[1.15rem] px-4 py-3 text-sm leading-6 ${
             state.status === "error"
-              ? "bg-[#ff453a]/8 text-[#b42318]"
-              : "bg-[#34c759]/10 text-[#248a3d]"
+              ? "bg-[var(--danger-surface)] text-[var(--danger-text)]"
+              : "bg-[var(--success-surface)] text-[var(--success-text)]"
           }`}
         >
           {state.message}

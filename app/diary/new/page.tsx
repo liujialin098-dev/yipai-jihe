@@ -33,7 +33,7 @@ export default async function NewDiaryEntryPage({
       </header>
 
       {data.error ? (
-        <p className="mt-5 rounded-[1.1rem] bg-[#ff453a]/8 px-4 py-3 text-sm leading-6 text-[#b42318]">
+        <p className="mt-5 rounded-[1.1rem] bg-[var(--danger-surface)] px-4 py-3 text-sm leading-6 text-[var(--danger-text)]">
           {data.error}
         </p>
       ) : null}

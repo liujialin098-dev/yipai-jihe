@@ -109,7 +109,9 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
         <p
           aria-live="polite"
           className={`text-sm ${
-            state.status === "error" ? "text-[#c9342f]" : "text-[#248a3d]"
+            state.status === "error"
+              ? "text-[var(--danger-text)]"
+              : "text-[var(--success-text)]"
           }`}
         >
           {state.message}
@@ -118,7 +120,7 @@ export function WardrobeItemForm({ item }: { item: WardrobeItem }) {
       <button
         type="submit"
         disabled={pending}
-        className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_12px_26px_rgba(29,29,31,0.18)] disabled:opacity-60"
+        className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_12px_26px_rgba(29,29,31,0.18)] disabled:opacity-60"
       >
         {pending ? (
           <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -151,7 +153,9 @@ function Field({
         {label}
       </label>
       {children}
-      {error ? <span className="text-xs text-[#c9342f]">{error}</span> : null}
+      {error ? (
+        <span className="text-xs text-[var(--danger-text)]">{error}</span>
+      ) : null}
     </div>
   );
 }
@@ -223,7 +227,9 @@ function CheckboxField({
           </label>
         ))}
       </div>
-      {error ? <p className="text-xs text-[#c9342f]">{error}</p> : null}
+      {error ? (
+        <p className="text-xs text-[var(--danger-text)]">{error}</p>
+      ) : null}
     </fieldset>
   );
 }

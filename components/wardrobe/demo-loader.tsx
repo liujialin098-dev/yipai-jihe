@@ -20,7 +20,7 @@ export function DemoLoader({ compact = false }: { compact?: boolean }) {
           className={
             compact
               ? "liquid-glass-web pressable inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-xs font-semibold text-[var(--foreground)] disabled:opacity-60"
-              : "pressable inline-flex min-h-11 items-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(29,29,31,0.2)] disabled:opacity-60"
+              : "pressable inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_12px_28px_rgba(29,29,31,0.2)] disabled:opacity-60"
           }
         >
           {pending ? (
@@ -43,7 +43,9 @@ export function DemoLoader({ compact = false }: { compact?: boolean }) {
         <p
           aria-live="polite"
           className={`mt-3 text-xs leading-5 ${
-            state.status === "error" ? "text-[#c9342f]" : "text-[#248a3d]"
+            state.status === "error"
+              ? "text-[var(--danger-text)]"
+              : "text-[var(--success-text)]"
           }`}
         >
           {state.message}

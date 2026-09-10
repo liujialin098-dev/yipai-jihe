@@ -195,7 +195,10 @@ function FavoriteSection({
     <section className="mt-8">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="app-section-title flex items-center gap-2">
-          <Icon className="size-4 text-[#79618f]" aria-hidden="true" />
+          <Icon
+            className="size-4 text-[var(--system-blue)]"
+            aria-hidden="true"
+          />
           {title}
         </h2>
         <span className="text-xs text-[var(--text-tertiary)]">{count}</span>

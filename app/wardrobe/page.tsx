@@ -72,7 +72,7 @@ export default async function WardrobePage({
               className={
                 canLoadDemo && !isPartialDemo
                   ? "pressable inline-flex min-h-11 items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-5 text-sm font-semibold text-[var(--foreground)]"
-                  : "pressable inline-flex min-h-11 items-center rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(29,29,31,0.2)]"
+                  : "pressable inline-flex min-h-11 items-center rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_12px_28px_rgba(29,29,31,0.2)]"
               }
             >
               添加自己的衣物
@@ -191,7 +191,7 @@ function CategoryLink({
       aria-current={active ? "page" : undefined}
       className={`pressable inline-flex min-h-9 items-center rounded-full px-4 text-xs font-semibold ${
         active
-          ? "bg-[#1d1d1f] text-white shadow-[0_8px_20px_rgba(29,29,31,0.16)]"
+          ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_8px_20px_rgba(29,29,31,0.16)]"
           : "border border-[var(--hairline)] bg-[var(--surface)] text-[var(--text-secondary)]"
       }`}
     >

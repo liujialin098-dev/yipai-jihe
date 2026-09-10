@@ -11,14 +11,14 @@ export function TrendInspirationPanel() {
             </h2>
           </div>
           <Newspaper
-            className="size-5 text-[#6556a8]"
+            className="size-5 text-[var(--system-blue)]"
             strokeWidth={1.7}
             aria-hidden="true"
           />
         </div>
         <Link
           href="/inspiration"
-          className="motion-button mt-4 flex h-11 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+          className="motion-button mt-4 flex h-11 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)]"
         >
           打开时尚灵感
           <ArrowRight className="size-4" aria-hidden="true" />

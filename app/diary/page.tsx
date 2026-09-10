@@ -128,7 +128,7 @@ function StickerWorkspaceEntry() {
           移动、裁切、叠放并分享
         </p>
       </div>
-      <span className="relative z-10 flex size-12 items-center justify-center rounded-[1rem] bg-[var(--action-purple)] text-white shadow-[0_10px_24px_rgba(70,50,88,0.2)]">
+      <span className="relative z-10 flex size-12 items-center justify-center rounded-[1rem] bg-[var(--action-purple)] text-[var(--action-purple-ink)] shadow-[0_10px_24px_rgba(70,50,88,0.2)]">
         <Layers3 className="size-5" aria-hidden="true" />
       </span>
     </Link>
@@ -150,7 +150,7 @@ function ViewLink({
       aria-current={active ? "page" : undefined}
       className={`motion-button flex h-11 items-center justify-center rounded-full text-sm font-semibold ${
         active
-          ? "bg-[#1d1d1f] text-white shadow-[0_8px_22px_rgba(29,29,31,0.16)]"
+          ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_8px_22px_rgba(29,29,31,0.16)]"
           : "text-[var(--text-secondary)]"
       }`}
     >
@@ -176,14 +176,14 @@ function DiaryHistory({
 
       <Link
         href="/diary/new"
-        className="motion-button mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+        className="motion-button mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)]"
       >
         <Plus className="size-4" aria-hidden="true" />
         添加一件单品
       </Link>
 
       {error ? (
-        <p className="mt-4 rounded-[1.1rem] bg-[#ff453a]/8 px-4 py-3 text-sm leading-6 text-[#b42318]">
+        <p className="mt-4 rounded-[1.1rem] bg-[var(--danger-surface)] px-4 py-3 text-sm leading-6 text-[var(--danger-text)]">
           {error}
         </p>
       ) : entries.length > 0 ? (
@@ -306,7 +306,7 @@ function UtilizationReport({
             aria-current={range === value ? "page" : undefined}
             className={`pressable flex min-h-9 flex-1 items-center justify-center rounded-full text-xs font-semibold ${
               range === value
-                ? "bg-[#1d1d1f] text-white"
+                ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)]"
                 : "border border-[var(--hairline)] bg-[var(--surface-solid)] text-[var(--text-secondary)]"
             }`}
           >
@@ -316,17 +316,17 @@ function UtilizationReport({
       </nav>
 
       {error ? (
-        <p className="mt-4 rounded-[1.1rem] bg-[#ff453a]/8 px-4 py-3 text-sm leading-6 text-[#b42318]">
+        <p className="mt-4 rounded-[1.1rem] bg-[var(--danger-surface)] px-4 py-3 text-sm leading-6 text-[var(--danger-text)]">
           {error}
         </p>
       ) : null}
 
       <UtilizationStickerWall items={recentStickerItems} />
 
-      <section className="mt-6 overflow-hidden rounded-[1.75rem] bg-[#1d1d1f] p-5 text-white shadow-[0_18px_50px_rgba(29,29,31,0.2)]">
+      <section className="mt-6 overflow-hidden rounded-[1.75rem] bg-[var(--feature-panel)] p-5 text-[var(--feature-panel-foreground)] shadow-[0_18px_50px_rgba(29,29,31,0.2)]">
         <div className="flex items-start justify-between gap-5">
           <div>
-            <p className="text-xs text-white/58">
+            <p className="text-xs text-[var(--feature-panel-foreground)] opacity-70">
               {rangeLabels[range]}衣橱利用率
             </p>
             <p className="mt-2 text-[2.8rem] font-semibold tracking-[-0.07em]">
@@ -337,7 +337,7 @@ function UtilizationReport({
             <TrendingUp className="size-5" aria-hidden="true" />
           </span>
         </div>
-        <p className="mt-3 text-xs leading-5 text-white/62">
+        <p className="mt-3 text-xs leading-5 text-[var(--feature-panel-foreground)] opacity-75">
           当前日常衣橱 {report.activeItemCount} 件，其中 {report.usedItemCount}{" "}
           件在范围内有真实穿着记录。
         </p>
@@ -435,7 +435,9 @@ function UtilizationReport({
 function ReportMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[1rem] bg-white/8 px-3 py-3">
-      <p className="text-[0.65rem] text-white/52">{label}</p>
+      <p className="text-[0.65rem] text-[var(--feature-panel-foreground)] opacity-65">
+        {label}
+      </p>
       <p className="mt-1 text-sm font-semibold">{value}</p>
     </div>
   );

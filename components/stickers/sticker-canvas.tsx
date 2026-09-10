@@ -703,7 +703,7 @@ export function StickerCanvas({
                       itemElements.current.set(item.wardrobeItemId, element);
                     else itemElements.current.delete(item.wardrobeItemId);
                   }}
-                  className="sticker-free-canvas-item absolute flex aspect-square touch-none items-center justify-center rounded-[1rem] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#27222d]"
+                  className="sticker-free-canvas-item absolute flex aspect-square touch-none items-center justify-center rounded-[1rem] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--system-blue)]"
                   data-selected={isSelected ? "true" : "false"}
                   data-ready={wardrobeItem.cutoutUrl ? "true" : "false"}
                   style={{
@@ -1024,7 +1024,7 @@ export function StickerCanvas({
                       crop: { ...EMPTY_STICKER_CROP },
                     }))
                   }
-                  className="motion-button min-h-10 rounded-full bg-white/70 px-3 text-xs font-semibold"
+                  className="motion-button min-h-10 rounded-full bg-[var(--surface-solid)] px-3 text-xs font-semibold text-[var(--foreground)]"
                 >
                   恢复完整
                 </button>
@@ -1068,7 +1068,7 @@ export function StickerCanvas({
               <button
                 type="button"
                 onClick={() => setCropOpen(false)}
-                className="motion-button mt-4 min-h-11 w-full rounded-full bg-[#1d1d1f] text-xs font-semibold text-white"
+                className="motion-button mt-4 min-h-11 w-full rounded-full bg-[var(--control-primary)] text-xs font-semibold text-[var(--control-primary-foreground)]"
               >
                 完成裁切
               </button>
@@ -1101,7 +1101,7 @@ export function StickerCanvas({
           type="button"
           onClick={handleShare}
           disabled={!allReady || Boolean(exporting)}
-          className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-45"
+          className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] text-sm font-semibold text-[var(--control-primary-foreground)] disabled:cursor-not-allowed disabled:opacity-45"
         >
           {exporting === "share" ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -1114,7 +1114,7 @@ export function StickerCanvas({
 
       {notice ? (
         <output
-          className={`motion-status mt-3 block rounded-[1rem] px-4 py-3 text-xs leading-5 ${notice.tone === "error" ? "bg-[#fff0ed] text-[#9c2f1f]" : notice.tone === "success" ? "bg-[#eef8e4] text-[#325821]" : "bg-[var(--surface-soft)] text-[var(--text-secondary)]"}`}
+          className={`motion-status mt-3 block rounded-[1rem] px-4 py-3 text-xs leading-5 ${notice.tone === "error" ? "bg-[var(--danger-surface)] text-[var(--danger-text)]" : notice.tone === "success" ? "bg-[var(--success-surface)] text-[var(--success-text)]" : "bg-[var(--surface-soft)] text-[var(--text-secondary)]"}`}
         >
           {notice.text}
         </output>
@@ -1192,7 +1192,7 @@ function CanvasTool({
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`motion-button flex min-h-12 flex-col items-center justify-center gap-1 rounded-[0.9rem] text-[0.62rem] font-semibold ${tone === "danger" ? "bg-[#fff0ed] text-[#a13b2c]" : "bg-[var(--surface-soft)]"}`}
+      className={`motion-button flex min-h-12 flex-col items-center justify-center gap-1 rounded-[0.9rem] text-[0.62rem] font-semibold ${tone === "danger" ? "bg-[var(--danger-surface)] text-[var(--danger-text)]" : "bg-[var(--surface-soft)]"}`}
     >
       <Icon className="size-3.5" strokeWidth={1.9} aria-hidden="true" />
       {label}

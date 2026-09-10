@@ -12,7 +12,7 @@ function LoginSubmit() {
     <button
       type="submit"
       disabled={pending}
-      className="motion-button mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] text-sm font-semibold text-white disabled:opacity-55"
+      className="motion-button mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
     >
       {pending ? <LoaderCircle className="size-4 animate-spin" /> : null}
       {pending ? "正在打开衣橱…" : "登录并恢复衣橱"}
@@ -52,7 +52,7 @@ export function LoginForm({
             className="field-control field-control-with-icon h-12 text-sm"
           />
         </div>
-        <p className="mt-1.5 min-h-4 text-xs text-[#b42318]">
+        <p className="mt-1.5 min-h-4 text-xs text-[var(--danger-text)]">
           {state.fieldErrors?.email}
         </p>
 
@@ -74,14 +74,14 @@ export function LoginForm({
             className="field-control field-control-with-icon h-12 text-sm"
           />
         </div>
-        <p className="mt-1.5 min-h-4 text-xs text-[#b42318]">
+        <p className="mt-1.5 min-h-4 text-xs text-[var(--danger-text)]">
           {state.fieldErrors?.password}
         </p>
         <LoginSubmit />
         {state.status === "error" ? (
           <p
             role="alert"
-            className="motion-status mt-4 rounded-[1rem] bg-[#ff453a]/8 px-4 py-3 text-sm text-[#b42318]"
+            className="motion-status mt-4 rounded-[1rem] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger-text)]"
           >
             {state.message}
           </p>

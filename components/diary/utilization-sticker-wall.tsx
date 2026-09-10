@@ -65,7 +65,7 @@ export function UtilizationStickerWall({
           </p>
           <Link
             href="/diary/new"
-            className="motion-button mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+            className="motion-button mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)]"
           >
             <Plus className="size-4" aria-hidden="true" />
             添加一件单品

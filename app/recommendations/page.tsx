@@ -80,7 +80,7 @@ export default async function RecommendationsPage({
               aria-current={selected ? "page" : undefined}
               className={`motion-button flex h-11 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
                 selected
-                  ? "bg-[#1d1d1f] text-white shadow-[0_8px_22px_rgba(29,29,31,0.16)]"
+                  ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_8px_22px_rgba(29,29,31,0.16)]"
                   : "text-[var(--text-secondary)]"
               }`}
             >
@@ -114,7 +114,7 @@ export default async function RecommendationsPage({
       </WeatherPanel>
 
       {error ? (
-        <p className="motion-status mt-4 rounded-[1.1rem] bg-[#ff453a]/8 px-4 py-3 text-sm leading-6 text-[#b42318]">
+        <p className="motion-status mt-4 rounded-[1.1rem] bg-[var(--danger-surface)] px-4 py-3 text-sm leading-6 text-[var(--danger-text)]">
           {error}
         </p>
       ) : null}
@@ -202,7 +202,7 @@ export default async function RecommendationsPage({
           {items.length === 0 ? (
             <Link
               href="/wardrobe"
-              className="motion-button mt-5 inline-flex h-11 items-center justify-center rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+              className="motion-button mt-5 inline-flex h-11 items-center justify-center rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)]"
             >
               前往衣橱
             </Link>

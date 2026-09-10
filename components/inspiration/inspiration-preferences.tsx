@@ -52,7 +52,7 @@ export function InspirationPreferences({
                   defaultChecked={preferences.topics.includes(topic)}
                   className="peer sr-only"
                 />
-                <span className="flex min-h-11 items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[#1d1d1f] peer-checked:bg-[#1d1d1f] peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+                <span className="flex min-h-11 items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[var(--control-primary)] peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                   {FASHION_TOPIC_LABELS[topic]}
                 </span>
               </label>
@@ -74,7 +74,7 @@ export function InspirationPreferences({
         <button
           type="submit"
           disabled={pending}
-          className="motion-button mt-4 h-11 w-full rounded-full bg-[#1d1d1f] text-sm font-semibold text-white"
+          className="motion-button mt-4 h-11 w-full rounded-full bg-[var(--control-primary)] text-sm font-semibold text-[var(--control-primary-foreground)]"
         >
           {pending ? "正在保存…" : "保存内容偏好"}
         </button>
@@ -104,7 +104,7 @@ function PreferenceToggle({
         type="checkbox"
         name={name}
         defaultChecked={defaultChecked}
-        className="size-4 accent-[#1d1d1f]"
+        className="size-4 accent-[var(--system-blue)]"
       />
     </label>
   );

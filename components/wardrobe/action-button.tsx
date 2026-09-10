@@ -65,7 +65,7 @@ export function WardrobeActionButton({
           disabled={pending}
           className={`pressable inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold disabled:opacity-60 ${
             mode === "delete"
-              ? "interaction-danger border border-[#ff453a]/20 bg-[#ff453a]/10 text-[#c9342f]"
+              ? "interaction-danger border border-[var(--danger-border)] bg-[var(--danger-surface)] text-[var(--danger-text)]"
               : "border border-[var(--hairline)] bg-[var(--surface-solid)] text-[var(--foreground)]"
           }`}
         >
@@ -81,7 +81,9 @@ export function WardrobeActionButton({
         <p
           aria-live="polite"
           className={`mt-2 text-xs leading-5 ${
-            state.status === "error" ? "text-[#c9342f]" : "text-[#248a3d]"
+            state.status === "error"
+              ? "text-[var(--danger-text)]"
+              : "text-[var(--success-text)]"
           }`}
         >
           {state.message}

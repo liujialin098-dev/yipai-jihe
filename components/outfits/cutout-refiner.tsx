@@ -243,7 +243,7 @@ export function CutoutRefiner({
             aria-label="透明图精修画布"
           />
           {error ? (
-            <div className="absolute inset-x-5 top-1/2 -translate-y-1/2 rounded-[1rem] bg-white/92 p-4 text-center text-xs leading-5 text-[#9c2f1f] shadow-lg">
+            <div className="absolute inset-x-5 top-1/2 -translate-y-1/2 rounded-[1rem] bg-white/92 p-4 text-center text-xs leading-5 text-[var(--danger-text)] shadow-lg">
               {error}
             </div>
           ) : null}
@@ -307,7 +307,7 @@ export function CutoutRefiner({
             type="button"
             onClick={save}
             disabled={loading || saving || Boolean(error)}
-            className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#202124] text-sm font-semibold text-white disabled:opacity-45"
+            className="motion-button flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-45"
           >
             {saving ? (
               <LoaderCircle

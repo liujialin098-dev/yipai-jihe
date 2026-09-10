@@ -346,7 +346,7 @@ export function IngestionWorkspace() {
         id="wardrobe-upload-picker"
         className="pressable surface-card mt-6 flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-[var(--hairline)] px-6 text-center"
       >
-        <span className="flex size-12 items-center justify-center rounded-full bg-[#1d1d1f] text-white shadow-[0_12px_24px_rgba(29,29,31,0.2)]">
+        <span className="flex size-12 items-center justify-center rounded-full bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_12px_24px_rgba(29,29,31,0.2)]">
           <ImagePlus className="size-5" aria-hidden="true" />
         </span>
         <span className="mt-4 text-sm font-semibold text-[var(--foreground)]">
@@ -448,7 +448,7 @@ export function IngestionWorkspace() {
                 type="button"
                 onClick={resetCompletedBatch}
                 disabled={stickerPending > 0 || busy}
-                className="motion-button inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
+                className="motion-button inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-4 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
               >
                 <ImagePlus className="size-4" aria-hidden="true" />
                 继续添加衣服
@@ -480,7 +480,7 @@ export function IngestionWorkspace() {
                 type="button"
                 disabled={busy || confirmableCount === 0}
                 onClick={confirmSelected}
-                className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
+                className="pressable inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_10px_24px_rgba(29,29,31,0.2)] disabled:opacity-45"
               >
                 <Upload className="size-4" />
                 入库 {confirmableCount || ""}
@@ -576,7 +576,7 @@ function IngestionCard({
           </div>
 
           {item.error ? (
-            <p className="mt-3 flex gap-1.5 text-xs leading-5 text-[#c9342f]">
+            <p className="mt-3 flex gap-1.5 text-xs leading-5 text-[var(--danger-text)]">
               <AlertCircle className="mt-0.5 size-3.5 shrink-0" />
               {item.error}
             </p>
@@ -591,7 +591,7 @@ function IngestionCard({
               <button
                 type="button"
                 onClick={onRetry}
-                className="pressable inline-flex min-h-9 items-center gap-1.5 rounded-full bg-[#1d1d1f] px-3 text-xs font-semibold text-white"
+                className="pressable inline-flex min-h-9 items-center gap-1.5 rounded-full bg-[var(--control-primary)] px-3 text-xs font-semibold text-[var(--control-primary-foreground)]"
               >
                 <RefreshCw className="size-3.5" />
                 重试识别
@@ -708,14 +708,14 @@ function IngestionCard({
                 onChange={(event) =>
                   onPatch({ selectedForConfirm: event.target.checked })
                 }
-                className="size-4 accent-[#1d1d1f]"
+                className="size-4 accent-[var(--system-blue)]"
               />
               加入本次入库
             </label>
             <button
               type="button"
               onClick={onConfirm}
-              className="pressable inline-flex min-h-10 items-center gap-1.5 rounded-full bg-[#1d1d1f] px-4 text-xs font-semibold text-white"
+              className="pressable inline-flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--control-primary)] px-4 text-xs font-semibold text-[var(--control-primary-foreground)]"
             >
               确认这件
               <ChevronRight className="size-3.5" />
@@ -881,7 +881,7 @@ function ChoiceField({
               }}
               className={`pressable min-h-8 rounded-full px-3 text-[11px] font-semibold ${
                 active
-                  ? "bg-[#1d1d1f] text-white"
+                  ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)]"
                   : "border border-[var(--hairline)] text-[var(--text-secondary)]"
               }`}
             >

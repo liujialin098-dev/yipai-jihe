@@ -181,7 +181,7 @@ export function ProfileEditor({
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
                 maxLength={20}
-                className="mt-1 h-11 w-full rounded-[1rem] border border-black/8 bg-white/82 px-3 text-sm font-semibold text-[#202124] outline-none transition focus:border-[#6556a8] focus:ring-3 focus:ring-[#6556a8]/14"
+                className="mt-1 h-11 w-full rounded-[1rem] border border-[var(--hairline)] bg-[var(--surface-solid)] px-3 text-sm font-semibold text-[var(--foreground)] outline-none transition focus:border-[var(--system-blue)] focus:ring-3 focus:ring-[color-mix(in_srgb,var(--system-blue)_16%,transparent)]"
               />
             </div>
           </div>
@@ -206,7 +206,7 @@ export function ProfileEditor({
           <button
             type="submit"
             disabled={pending}
-            className="motion-button mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#202124] px-4 text-sm font-semibold text-white disabled:opacity-50"
+            className="motion-button mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-4 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-50"
           >
             {pending ? (
               <LoaderCircle
@@ -222,7 +222,7 @@ export function ProfileEditor({
       </details>
       {message ? (
         <output
-          className={`mt-3 block rounded-[1rem] px-3 py-2.5 text-xs leading-5 ${message.tone === "success" ? "bg-[#effbd9] text-[#405c16]" : "bg-[#fff0ed] text-[#9c2f1f]"}`}
+          className={`mt-3 block rounded-[1rem] px-3 py-2.5 text-xs leading-5 ${message.tone === "success" ? "bg-[var(--success-surface)] text-[var(--success-text)]" : "bg-[var(--danger-surface)] text-[var(--danger-text)]"}`}
         >
           {message.text}
         </output>

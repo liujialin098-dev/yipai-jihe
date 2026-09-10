@@ -17,7 +17,7 @@ function GenerateButton({ hasImage }: { hasImage: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="motion-button inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(29,29,31,0.18)] disabled:cursor-wait disabled:opacity-65"
+      className="motion-button inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_10px_28px_rgba(29,29,31,0.18)] disabled:cursor-wait disabled:opacity-65"
     >
       {pending ? (
         <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -56,7 +56,7 @@ export function LookbookGenerator({
         <output
           className={`motion-status mt-2 text-center text-xs leading-5 ${
             state.status === "error"
-              ? "text-[#b42318]"
+              ? "text-[var(--danger-text)]"
               : "text-[var(--text-secondary)]"
           }`}
         >

@@ -160,7 +160,7 @@ export function StickerMonthCalendar({
                       className="size-full rounded-[0.55rem]"
                     />
                     {entry && entry.itemIds.length > 1 ? (
-                      <span className="absolute -right-1 -top-1 z-20 flex size-4 items-center justify-center rounded-full bg-[#1d1d1f] text-[0.5rem] font-bold text-white shadow-sm">
+                      <span className="absolute -right-1 -top-1 z-20 flex size-4 items-center justify-center rounded-full bg-[var(--control-primary)] text-[0.5rem] font-bold text-[var(--control-primary-foreground)] shadow-sm">
                         {entry.itemIds.length}
                       </span>
                     ) : null}
@@ -204,9 +204,12 @@ export function StickerMonthCalendar({
               </p>
               <h3 className="app-card-title mt-1">穿得多，也喜欢</h3>
             </div>
-            <Sparkles className="size-5 text-[#775f8e]" aria-hidden="true" />
+            <Sparkles
+              className="size-5 text-[var(--system-blue)]"
+              aria-hidden="true"
+            />
           </div>
-          <div className="mt-3 grid min-h-36 grid-cols-4 place-items-center gap-1 rounded-[1.2rem] bg-[linear-gradient(145deg,#f6f1fa,#eef6d8)] p-3">
+          <div className="mt-3 grid min-h-36 grid-cols-4 place-items-center gap-1 rounded-[1.2rem] border border-[var(--hairline)] bg-[var(--surface-soft)] p-3">
             {montageItems.map((item, index) => (
               <div
                 key={item.id}
@@ -272,7 +275,7 @@ export function StickerMonthCalendar({
       {entries.length === 0 ? (
         <Link
           href="/diary/new"
-          className="motion-button mt-4 flex min-h-12 items-center justify-center rounded-full bg-[#1d1d1f] px-5 text-sm font-semibold text-white"
+          className="motion-button mt-4 flex min-h-12 items-center justify-center rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)]"
         >
           记录第一套穿搭
         </Link>

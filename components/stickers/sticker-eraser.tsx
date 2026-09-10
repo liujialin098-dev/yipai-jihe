@@ -330,7 +330,7 @@ export function StickerEraser({
           <button
             type="button"
             aria-pressed={!restore}
-            className={`${toolClass} ${!restore ? "bg-[var(--fashion-lilac)] text-[#28222e]" : "bg-[var(--surface-soft)]"}`}
+            className={`${toolClass} ${!restore ? "bg-[var(--action-purple)] text-[var(--action-purple-ink)]" : "bg-[var(--surface-soft)]"}`}
             onClick={() => setRestore(false)}
           >
             <Eraser className="size-4" />
@@ -339,7 +339,7 @@ export function StickerEraser({
           <button
             type="button"
             aria-pressed={restore}
-            className={`${toolClass} ${restore ? "bg-[var(--fashion-lilac)] text-[#28222e]" : "bg-[var(--surface-soft)]"}`}
+            className={`${toolClass} ${restore ? "bg-[var(--action-purple)] text-[var(--action-purple-ink)]" : "bg-[var(--surface-soft)]"}`}
             onClick={() => setRestore(true)}
           >
             <Paintbrush className="size-4" />
@@ -400,7 +400,7 @@ export function StickerEraser({
         </button>
         <button
           type="button"
-          className={`${toolClass} bg-[#29232f] text-white`}
+          className={`${toolClass} bg-[var(--control-primary)] text-[var(--control-primary-foreground)]`}
           disabled={!ready || !dirty || saving}
           onClick={save}
         >

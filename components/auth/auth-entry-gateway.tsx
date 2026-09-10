@@ -130,7 +130,7 @@ function ModeButton({
       onClick={onClick}
       className={`auth-entry-switch-button motion-button flex h-11 items-center justify-center gap-2 rounded-[0.95rem] text-sm font-semibold ${
         active
-          ? "bg-[#1d1d1f] text-white shadow-[0_9px_24px_rgba(29,29,31,0.18)]"
+          ? "bg-[var(--control-primary)] text-[var(--control-primary-foreground)] shadow-[0_9px_24px_rgba(29,29,31,0.18)]"
           : "text-[var(--text-secondary)]"
       }`}
     >

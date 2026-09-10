@@ -71,3 +71,11 @@ export function LaunchSplash() {
     </div>
   );
 }
+
+export function RouteLoading({ label = "正在准备页面" }: { label?: string }) {
+  return (
+    <div className="brand-page-loader" aria-busy="true">
+      <BrandMotion variant="loader" label={label} />
+    </div>
+  );
+}
