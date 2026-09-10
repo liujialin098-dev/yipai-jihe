@@ -56,9 +56,15 @@
 
 :root {
   --title-font: var(--font-playful), var(--font-heading);
+  --title-home-size: clamp(1.75rem, 7vw, 2rem);
+  --title-home-section-size: 1.25rem;
+  --title-home-card-size: 1.0625rem;
   --title-page-size: clamp(1.5rem, 6.2vw, 1.75rem);
   --title-section-size: 1.125rem;
   --title-card-size: 1rem;
+  --text-body-size: 0.875rem;
+  --text-meta-size: 0.75rem;
+  --brand-lime: #d8ff52;
   --background: #f5f1f8;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
@@ -434,7 +440,7 @@
   gap: 0 8px;
   text-align: center;
   font-family: var(--font-heading);
-  font-size: var(--title-page-size);
+  font-size: var(--title-home-size);
   font-weight: 600;
   line-height: 1.3;
 }
@@ -458,7 +464,7 @@
   margin-top: 4px;
 }
 .home-edit-date {
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
   flex-shrink: 0;
 }
@@ -476,7 +482,7 @@
   justify-content: flex-start;
   gap: 5px;
   min-height: 44px;
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
   min-width: 0;
   overflow-wrap: anywhere;
@@ -486,7 +492,7 @@
 }
 .home-weather-source {
   margin-left: auto;
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
   flex-shrink: 0;
 }
@@ -536,7 +542,7 @@
   margin-bottom: 12px;
 }
 .home-feature-heading > span {
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
 }
 .home-look-composition {
@@ -569,7 +575,7 @@
 }
 .home-look-caption p {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: var(--text-body-size);
   color: var(--text-secondary);
 }
 .home-edit-action {
@@ -598,7 +604,7 @@
   gap: 6px;
   min-height: 44px;
   margin-top: 8px;
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
 }
 .home-journal {
@@ -617,7 +623,7 @@
   align-items: center;
   gap: 5px;
   min-height: 44px;
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
 }
 .home-journal-days {
@@ -654,14 +660,14 @@
   background: #493854;
 }
 .home-journal-date {
-  font-size: 11px;
+  font-size: var(--text-meta-size);
 }
 .home-journal-day[data-today="true"] .home-journal-date {
   color: var(--foreground);
 }
 .home-journal-error {
   padding-block: 20px;
-  font-size: 12px;
+  font-size: var(--text-body-size);
   color: var(--text-secondary);
 }
 .home-daily-feed {
@@ -708,12 +714,13 @@
   gap: 4px;
 }
 .home-daily-feed-copy strong {
-  font-size: 14px;
+  font-family: var(--title-font);
+  font-size: var(--title-home-card-size);
   font-weight: 600;
 }
 .home-daily-feed-copy > span {
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: var(--text-body-size);
 }
 .home-daily-feed > svg {
   flex-shrink: 0;
@@ -725,8 +732,11 @@
   justify-content: center;
   gap: 6px;
   margin-top: 19px;
-  font-size: 11px;
+  font-size: var(--text-meta-size);
   color: var(--text-secondary);
+}
+.home-daily-edit .app-section-title {
+  font-size: var(--title-home-section-size);
 }
 .route-content[data-swipe="true"] {
   touch-action: pan-y pinch-zoom;
@@ -1646,13 +1656,13 @@
 .brand-motion-stage {
   position: relative;
   display: block;
-  width: 4.25rem;
+  width: 5rem;
   aspect-ratio: 1;
   flex: none;
 }
 
 .brand-motion[data-variant="splash"] .brand-motion-stage {
-  width: clamp(7.5rem, 34vw, 9.5rem);
+  width: clamp(8.25rem, 36vw, 10.25rem);
 }
 
 .brand-motion-mark {
@@ -1712,7 +1722,7 @@
 .brand-motion[data-variant="loader"] .brand-motion-label {
   max-width: min(17rem, 78vw);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: var(--text-body-size);
   font-weight: 560;
   line-height: 1.4;
   letter-spacing: 0.035em;
@@ -1902,7 +1912,7 @@
 }
 
 .app-page-title-home {
-  font-size: var(--title-page-size);
+  font-size: var(--title-home-size);
   letter-spacing: 0.02em;
   line-height: 1.3;
 }

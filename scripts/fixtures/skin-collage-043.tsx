@@ -16,9 +16,10 @@ function Fixture() {
   return (
     <div className="app-backdrop mx-auto max-w-[30rem] min-h-dvh pb-28">
       <StatusHeader viewer={null} />
-      <main className="px-5 pt-4">
-        <h1 className="app-page-title text-center">
-          <span className="brand-name-english">Hello,</span> 小林
+      <main className="home-daily-edit px-5 pt-4">
+        <h1 className="app-page-title app-page-title-home home-greeting">
+          <span className="brand-name-english home-greeting-hello">Hello,</span>{" "}
+          <span className="home-greeting-name">小林</span>
         </h1>
         <HomeCollage items={items} viewerId="isolated-fixture-043" />
         <a className="home-wardrobe-entry" href="/wardrobe">

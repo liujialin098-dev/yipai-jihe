@@ -8,7 +8,8 @@ const boardRule = skins.match(/\.home-collage-board\s*\{[\s\S]*?\n\}/)?.[0];
 assert.ok(boardRule, "首页衣橱拼图画板样式必须存在");
 assert.match(skins, /--home-collage-board-highlight:/);
 assert.match(skins, /--home-collage-board-depth:/);
-assert.match(skins, /--home-collage-board-accent:/);
+assert.match(skins, /--home-collage-board-glow-primary:/);
+assert.match(skins, /--home-collage-board-glow-secondary:/);
 assert.match(boardRule, /background:\s*var\(--home-collage-board\)/);
 assert.match(boardRule, /background-image:/);
 assert.equal(

@@ -18,14 +18,15 @@
   --home-collage-board: #463452;
   --home-collage-board-highlight: #5d4869;
   --home-collage-board-depth: #32263c;
-  --home-collage-board-accent: #806597;
+  --home-collage-board-glow-primary: #a783ee;
+  --home-collage-board-glow-secondary: var(--brand-lime);
   --home-collage-board-border: #ffffff;
   --brand-motion-outline: #ffffff;
   --original-dock-top: #c9aff0;
   --original-dock-bottom: #b595e8;
   --original-dock-ink: #42295f;
-  --original-add: #7650bb;
-  --original-add-ink: #ffffff;
+  --original-add: var(--brand-lime);
+  --original-add-ink: #352244;
 }
 :root.dark:is(:not([data-skin]), [data-skin="original"]) {
   --background: #302044;
@@ -52,14 +53,15 @@
   --home-collage-board: #382943;
   --home-collage-board-highlight: #4b3858;
   --home-collage-board-depth: #281e31;
-  --home-collage-board-accent: #674d79;
+  --home-collage-board-glow-primary: #b892ee;
+  --home-collage-board-glow-secondary: var(--brand-lime);
   --home-collage-board-border: #ffffff;
   --brand-motion-outline: #ffffff;
   --original-dock-top: #74598c;
   --original-dock-bottom: #5c456f;
   --original-dock-ink: #fffaff;
-  --original-add: #8961b3;
-  --original-add-ink: #ffffff;
+  --original-add: var(--brand-lime);
+  --original-add-ink: #30203e;
 }
 :root:is(:not([data-skin]), [data-skin="original"]) .app-backdrop {
   background: var(--background);
@@ -207,11 +209,8 @@
     var(--home-collage-board) 82%,
     #201a26
   );
-  --home-collage-board-accent: color-mix(
-    in srgb,
-    var(--skin-accent) 64%,
-    var(--skin-secondary)
-  );
+  --home-collage-board-glow-primary: var(--skin-accent);
+  --home-collage-board-glow-secondary: var(--skin-secondary);
   --home-collage-board-border: #ffffff;
   --brand-motion-outline: #ffffff;
 }
@@ -277,8 +276,8 @@
   border-color: var(--hairline);
 }
 :root[data-skin]:not([data-skin="original"]) .dock-add {
-  background: var(--skin-control);
-  color: var(--skin-on-control);
+  background: var(--brand-lime);
+  color: #30203e;
 }
 :root[data-skin]:not([data-skin="original"]) .home-edit-action {
   background: var(--skin-control);
@@ -531,11 +530,11 @@
 .home-wardrobe-entry strong {
   display: block;
   font-family: var(--title-font);
-  font-size: var(--title-card-size);
+  font-size: var(--title-home-card-size);
 }
 .home-wardrobe-entry small {
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: var(--text-meta-size);
 }
 .home-wardrobe-entry > svg {
   flex-shrink: 0;
@@ -565,12 +564,21 @@
   background-image:
     radial-gradient(
       ellipse at 16% 12%,
-      color-mix(in srgb, var(--home-collage-board-accent) 30%, transparent) 0%,
+      color-mix(
+          in srgb,
+          var(--home-collage-board-glow-primary) 42%,
+          transparent
+        )
+        0%,
       transparent 46%
     ),
     radial-gradient(
       ellipse at 86% 84%,
-      color-mix(in srgb, var(--home-collage-board-highlight) 22%, transparent)
+      color-mix(
+          in srgb,
+          var(--home-collage-board-glow-secondary) 30%,
+          transparent
+        )
         0%,
       transparent 48%
     ),
