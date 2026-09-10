@@ -1,12 +1,14 @@
 # 衣拍即合开发进度
 
-## SDD-047 首页衣橱拼图画板层次（2026-09-10，本地完成，未部署）
+## SDD-047 首页衣橱拼图画板层次已部署Production（2026-09-10 11:58）
 
 - [x] 画板在深紫灰基色上增加左上/右下低透明度色晕与145度明暗过渡，不再像纯色色板。
 - [x] 原色浅色/夜间使用独立token；其余五套皮肤由自身主辅色生成层次，不统一染紫。
 - [x] 保留6px纯白外框、贴纸原色、满铺重叠、编辑数据和页面纯色背景；无图片纹理、泡泡、噪点、持续动画或业务请求。
 - [x] check/build及043/045/046/047通过；375px原色浅色/夜间、844×390玫瑰皮肤真实组件隔离复验无溢出、无浏览器error，页面背景仍为`background-image:none`。
-- [ ] 本轮仅本地实现；Production仍为SDD-046，用户明确要求更新部署后再发布并进行线上复验。
+- [x] 源提交`8083e11`已发布至既有`yipai-jihe`；部署`dpl_DhcGhsn2Ye6JKdmT3rpgCKxG6Nz2` / `https://yipai-jihe-b5iwhyh2t-jialin-d583.vercel.app`，正式域名`https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端构建12秒通过。
+- [x] 正式首页/login/settings/stickers/recommendations无会话HTTP200；贴纸入口首次TLS EOF后单次重试成功。两份线上CSS命中两层色晕、145度明暗、层次token、6px白框与纯色页面背景；最近30分钟error日志无记录。
+- [ ] 真实账号登录后的完整首页、拼图编辑和真机视觉待集中复验；不把公开HTTP、静态CSS和无错误日志当作完整业务验收。
 
 ## SDD-046 全局加载与暗色层次精修已部署Production（2026-09-10 11:21）
 

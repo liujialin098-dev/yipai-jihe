@@ -1,10 +1,13 @@
 # 项目开发说明
 
-## SDD-047本地增量：首页衣橱拼图画板层次（2026-09-10，未部署）
+## 最新Production：SDD-047首页衣橱拼图画板层次（2026-09-10 11:58，覆盖下方记录）
 
 - 只调整首页衣橱拼图的画板表面：在原深紫灰基色上增加两层低透明度局部色晕和一层145度明暗过渡，左上略亮、中央保留原基色、右下略深。原色浅色/夜间分别使用独立token，其余五套皮肤由自身主辅色生成对应层次；不使用图片纹理、泡泡、噪点或持续动画。
 - 保留6px纯白外框、现有阴影、满铺重叠、编辑态及衣物贴纸的颜色/描边/几何。App页面背景继续使用纯色，`app-backdrop`没有恢复渐变；没有新增业务请求、依赖、账号数据、存储、AI、供应商、环境变量或权限变化。
-- `npm run check`、`npm run build`及043/045/046/047专项验证通过；375px原色浅色/夜间和844×390玫瑰皮肤完成真实组件隔离浏览器复验，画板均为两层径向色晕加一层斜向明暗，白框6px，页面背景`background-image:none`，横向溢出为0，浏览器error为空。agent-browser命令不可用后使用已安装Chrome与Playwright完成等价检查；不等同于真实账号完整首页和真机验收。本轮未获发布指令，Production继续为下节SDD-046。
+- `npm run check`、`npm run build`及043/045/046/047专项验证通过；375px原色浅色/夜间和844×390玫瑰皮肤完成真实组件隔离浏览器复验，画板均为两层径向色晕加一层斜向明暗，白框6px，页面背景`background-image:none`，横向溢出为0，浏览器error为空。agent-browser命令不可用后使用已安装Chrome与Playwright完成等价检查；不等同于真实账号完整首页和真机验收。
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `8083e11`，部署 `dpl_DhcGhsn2Ye6JKdmT3rpgCKxG6Nz2`，部署URL `https://yipai-jihe-b5iwhyh2t-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建12秒通过。
+- 发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-b5iwhyh2t-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_DhcGhsn2Ye6JKdmT3rpgCKxG6Nz2 --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；Vercel部署/CLI技能用于项目锁定、发布与发布后检查。
+- 正式首页/login/settings/stickers/recommendations无会话HTTP GET均200；贴纸入口首次遇到临时TLS EOF，单次重试成功。两份线上CSS确认两层径向色晕、145度斜向明暗、层次token、6px白框及页面纯色背景已生效；最近30分钟error日志无记录。未执行真实账号登录后的完整首页、拼图编辑或真机视觉验收；公开入口与静态资源可用不等于完整业务端到端。
 
 ## 最新Production：SDD-046全局加载与暗色层次精修（2026-09-10 11:21，覆盖下方记录）
 
