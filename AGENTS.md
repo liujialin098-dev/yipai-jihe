@@ -1,12 +1,15 @@
 # 项目开发说明
 
-## 当前本地增量：SDD-049青柠顶部导航（2026-09-10，未部署）
+## 最新Production：SDD-049青柠顶部导航（2026-09-10 21:51，覆盖下方记录）
 
 - 顶部悬浮导航在默认皮肤、五套替代皮肤及日夜模式下统一复用底部中央添加按钮的品牌青柠`#d8ff52`；移除原先会把颜色稀释的浅色渐变和替代皮肤覆盖，系统减少透明效果时也保持同色。
 - 新增深紫前景语义色`#352244`，顶部图标、Ensemble品牌字及中文名统一使用；与青柠底色固定对比度为12.53:1。当前页、悬停与按压状态只在同一青柠底色上加入克制的深紫混色，不产生位移；头像保留独立承托，真实头像不染色。
 - 顶部导航结构、入口、72px高度、36px圆角和安全区不变；底部添加按钮继续使用同一青柠/深紫色对。未改账号、数据、AI、天气、图片、供应商、依赖、环境变量或权限。
 - `npm run check`、`npm run build`及043/046/048/049专项验证通过。真实组件隔离浏览器复验覆盖375px原色浅色/夜间、844×390紫橙皮肤：顶部与添加按钮均计算为`rgb(216, 255, 82)`，顶部无背景图，图标/品牌字为`rgb(53, 34, 68)`，高度72px、圆角36px、横向溢出0且浏览器error为空；减少动态与125%根字号样本无溢出，顶部按内容增高至84px。
-- 本轮使用ui-ux-pro-max的色彩、状态和深浅模式规则完成收敛；agent-browser命令不可用后使用已安装Chrome与Playwright完成等价视觉复验。真实账号、真机系统字号与完整业务链路待集中验收；当前Production仍为下方SDD-048，不把隔离样本当作线上端到端。
+- 本轮使用ui-ux-pro-max的色彩、状态和深浅模式规则完成收敛；agent-browser命令不可用后使用已安装Chrome与Playwright完成等价视觉复验。真实账号、真机系统字号与完整业务链路待集中验收；不把隔离样本当作线上端到端。
+- 项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`；源提交`5cecad2`，部署`dpl_DrPvVFCiKHzY89fbDZfuaZU6UWMS`，部署URL`https://yipai-jihe-9iwmexhv7-jialin-d583.vercel.app`，正式链接`https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建20秒通过。
+- 发布`npx vercel deploy --prod --yes --scope jialin-d583`；核验`npx vercel inspect yipai-jihe-9iwmexhv7-jialin-d583.vercel.app --scope jialin-d583`；日志`npx vercel logs dpl_DrPvVFCiKHzY89fbDZfuaZU6UWMS --level error --since 30m --scope jialin-d583`。Context7`/vercel/vercel`已复核；Vercel部署/CLI及浏览器验证技能用于项目锁定、干净发布与发布后检查。
+- 正式首页/login/settings/stickers/recommendations无会话HTTP GET均200；登录浏览器中首页与登录页正常渲染，受保护页面在无会话时按预期回到身份入口。两份线上CSS均200且命中`#d8ff52`、深紫前景、统一顶部背景及青柠添加按钮；浏览器error/错误浮层/横向溢出均为0，最近30分钟error日志无记录。未执行真实账号登录后的顶部导航交互与真机验收；公开入口、静态CSS和无错误日志不等于完整业务端到端。
 
 ## 最新Production：SDD-048紫青柠画板与首页字号层级（2026-09-10 12:47，覆盖下方记录）
 
