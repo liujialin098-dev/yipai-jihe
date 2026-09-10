@@ -1,10 +1,13 @@
 # 项目开发说明
 
-## SDD-046本地增量：全局加载与暗色层次精修（2026-09-10，未部署）
+## 最新Production：SDD-046全局加载与暗色层次精修（2026-09-10 11:21，覆盖下方记录）
 
 - 开屏与加载继续使用同一衣服→E SVG及原时序，动态图层和减少动态静态图层统一为四向1px纯白零模糊随形硬边；不允许黑边、光晕、泡泡、第二份错位图层或填充闪变。抽取`RouteLoading`，根`app/loading.tsx`覆盖其余页面，推荐/资讯/贴纸专用加载边界也复用同一组件，只在真实等待时显示。
 - 首页衣橱拼图深紫灰画板改为6px纯白外框；满铺、重叠、编辑、贴纸颜色与几何不变。夜间原色提升背景、卡片、输入、导航承托和主操作层级；固定黑色主操作、状态红绿和难读的紫色选中态迁移到语义token。原色夜间正文/辅助文字、按钮及状态色对比度固定验证均不低于4.5:1；五套皮肤按自身色相选择深浅前景，不把所有控件统一染紫。
-- check/build及041/043/045/046专项检查通过；Next.js 16.3.1生产构建29个页面/API路由成功。原色浅色/夜间加载、原色与紫橙夜间首页完成实际样本复验，浏览器无warning/error。375px内容宽360px、画板320px，844×390画板440px；两者横向溢出为0且画板边框均为6px纯白。未修改账号、数据、AI、天气、抠图供应商、环境变量或权限。本轮未获发布指令，Production继续为下节SDD-045。
+- check/build及041/043/045/046专项检查通过；Next.js 16.3.1生产构建29个页面/API路由成功。原色浅色/夜间加载、原色与紫橙夜间首页完成实际样本复验，浏览器无warning/error。375px内容宽360px、画板320px，844×390画板440px；两者横向溢出为0且画板边框均为6px纯白。未修改账号、数据、AI、天气、抠图供应商、环境变量或权限。
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `454cbe2`，部署 `dpl_7cSoKofS6zVdJv67ZF1x2eUZCT8p`，部署URL `https://yipai-jihe-ob4u58u05-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建16秒通过。
+- 发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-ob4u58u05-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_7cSoKofS6zVdJv67ZF1x2eUZCT8p --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；Vercel部署/CLI技能用于项目锁定、发布与发布后检查。
+- 正式首页/login/settings/stickers/recommendations无会话HTTP GET均200；两份线上CSS已确认纯白品牌动效描边、6px白色拼图外框、`#302044`夜间背景和`#8961b3`夜间主操作已生效，最近30分钟error日志无记录。未执行真实账号登录后的页面切换、拼图编辑和真机动效复验；公开入口与静态资源可用不等于完整业务端到端。
 
 ## 最新Production：SDD-045紫灰画板与品牌动效描边（2026-09-10 00:41，覆盖下方记录）
 
