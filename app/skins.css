@@ -16,6 +16,9 @@
   --text-secondary: #3f2b4d;
   --text-tertiary: #42294d;
   --home-collage-board: #463452;
+  --home-collage-board-highlight: #5d4869;
+  --home-collage-board-depth: #32263c;
+  --home-collage-board-accent: #806597;
   --home-collage-board-border: #ffffff;
   --brand-motion-outline: #ffffff;
   --original-dock-top: #c9aff0;
@@ -47,6 +50,9 @@
   --text-secondary: #eee6f4;
   --text-tertiary: #d9cde2;
   --home-collage-board: #382943;
+  --home-collage-board-highlight: #4b3858;
+  --home-collage-board-depth: #281e31;
+  --home-collage-board-accent: #674d79;
   --home-collage-board-border: #ffffff;
   --brand-motion-outline: #ffffff;
   --original-dock-top: #74598c;
@@ -191,6 +197,21 @@
   --skin-control: var(--skin-ink);
   --skin-on-control: #fff;
   --home-collage-board: color-mix(in srgb, var(--skin-ink) 52%, #51415b);
+  --home-collage-board-highlight: color-mix(
+    in srgb,
+    var(--home-collage-board) 78%,
+    var(--skin-accent)
+  );
+  --home-collage-board-depth: color-mix(
+    in srgb,
+    var(--home-collage-board) 82%,
+    #201a26
+  );
+  --home-collage-board-accent: color-mix(
+    in srgb,
+    var(--skin-accent) 64%,
+    var(--skin-secondary)
+  );
   --home-collage-board-border: #ffffff;
   --brand-motion-outline: #ffffff;
 }
@@ -541,6 +562,24 @@
   border: 6px solid var(--home-collage-board-border);
   border-radius: 36px;
   background: var(--home-collage-board);
+  background-image:
+    radial-gradient(
+      ellipse at 16% 12%,
+      color-mix(in srgb, var(--home-collage-board-accent) 30%, transparent) 0%,
+      transparent 46%
+    ),
+    radial-gradient(
+      ellipse at 86% 84%,
+      color-mix(in srgb, var(--home-collage-board-highlight) 22%, transparent)
+        0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      var(--home-collage-board-highlight) 0%,
+      var(--home-collage-board) 48%,
+      var(--home-collage-board-depth) 100%
+    );
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),
     0 18px 42px rgb(34 22 44 / 18%);
