@@ -1,12 +1,14 @@
 # 项目开发说明
 
-## SDD-048本地增量：紫青柠画板与首页字号层级（2026-09-10，未部署）
+## 最新Production：SDD-048紫青柠画板与首页字号层级（2026-09-10 12:47，覆盖下方记录）
 
 - 默认原色首页衣橱拼图保留深紫灰基底、6px纯白外框和既有明暗过渡，左上色晕明确映射品牌紫、右下映射品牌青柠；其余五套皮肤分别使用自身`skin-accent`和`skin-secondary`，因此紫橙皮肤实际显示紫/橙而不是被统一染成紫/青柠。页面背景仍为纯色，贴纸颜色、满铺层级、编辑几何和存储不变。
 - 首页新增展示/分区/卡片/正文/辅助五级语义字号：手机问候28px、宽屏最高32px，分区20px、卡片17px、正文14px、辅助12px；长昵称继续允许换行。页面加载图标由68px承托增至80px，375px开屏标志由约128px增至135px，加载文字使用14px正文级；动画路径、时序、纯白硬边和减少动态行为不变。
 - 底部中央添加按钮在六套皮肤及日夜模式下统一为品牌青柠`#d8ff52`与深紫前景，现有62×50px视觉尺寸、52px导航点击区及按压反馈保持不变；其他导航控件继续按皮肤着色。
 - `npm run check`、`npm run build`及043/045/046/047/048专项验证通过。实际组件隔离浏览器复验覆盖375px原色浅色/夜间和844×390紫橙皮肤：画板均含两层对应主辅色径向色晕、一层145度明暗过渡和6px白框；添加按钮62×50px、标题28/32px、分区20px，横向溢出0且浏览器error为空。品牌动效普通加载80px、开屏135px、减少动态加载80px，浏览器error为空。agent-browser命令不可用后使用已安装Chrome与Playwright等价复验；不等同于真实账号完整首页与真机验收。
-- 本轮没有新增依赖、业务请求、账号数据、AI、天气、抠图供应商、环境变量或权限变化；尚未发布Production，线上仍为下方SDD-047记录。
+- 项目 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`；源提交 `dd6d798`，部署 `dpl_FFuwhsGX5zBbsxD11XezGJ13SY5W`，部署URL `https://yipai-jihe-1fxchvhmb-jialin-d583.vercel.app`，正式链接 `https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建10秒通过。
+- 发布 `npx vercel deploy --prod --yes --scope jialin-d583`；核验 `npx vercel inspect yipai-jihe-1fxchvhmb-jialin-d583.vercel.app --scope jialin-d583`；日志 `npx vercel logs dpl_FFuwhsGX5zBbsxD11XezGJ13SY5W --level error --since 30m --scope jialin-d583`。Context7 `/vercel/vercel`已复核；Vercel部署/CLI技能用于项目锁定、发布与发布后检查。
+- 正式首页/login/settings/stickers/recommendations无会话HTTP GET均200；两份线上CSS均200且命中紫/青柠色晕、皮肤主辅色色晕、首页字号、80px加载/放大开屏、青柠添加按钮及6px白框。最近30分钟error日志无记录。本轮没有新增依赖、业务请求、账号数据、AI、天气、抠图供应商、环境变量或权限变化；未执行真实账号完整首页与真机验收，公开入口和静态CSS可用不等于完整业务端到端。
 
 ## 最新Production：SDD-047首页衣橱拼图画板层次（2026-09-10 11:58，覆盖下方记录）
 
