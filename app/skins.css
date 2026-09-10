@@ -26,7 +26,7 @@
   --original-dock-bottom: #b595e8;
   --original-dock-ink: #42295f;
   --original-add: var(--brand-lime);
-  --original-add-ink: #352244;
+  --original-add-ink: var(--brand-lime-ink);
 }
 :root.dark:is(:not([data-skin]), [data-skin="original"]) {
   --background: #302044;
@@ -61,7 +61,7 @@
   --original-dock-bottom: #5c456f;
   --original-dock-ink: #fffaff;
   --original-add: var(--brand-lime);
-  --original-add-ink: #30203e;
+  --original-add-ink: var(--brand-lime-ink);
 }
 :root:is(:not([data-skin]), [data-skin="original"]) .app-backdrop {
   background: var(--background);
@@ -190,11 +190,6 @@
   --border: var(--hairline);
   --input: var(--hairline);
   --ring: var(--system-blue);
-  --skin-header: color-mix(
-    in srgb,
-    var(--skin-secondary) 64%,
-    var(--surface-solid)
-  );
   --skin-dock: color-mix(in srgb, var(--skin-accent) 62%, var(--surface-solid));
   --skin-control: var(--skin-ink);
   --skin-on-control: #fff;
@@ -238,7 +233,6 @@
     var(--skin-secondary) 16%,
     var(--surface-solid)
   );
-  --skin-header: color-mix(in srgb, var(--skin-secondary) 34%, #39343f);
   --skin-dock: color-mix(in srgb, var(--skin-accent) 40%, #39343f);
   --skin-control: var(--skin-accent);
   --skin-on-control: #202024;
@@ -248,20 +242,20 @@
   background: var(--background);
 }
 :root[data-skin]:not([data-skin="original"]) .editorial-header-shell {
-  background: var(--skin-header);
-  border-color: var(--hairline);
+  background: var(--header-background);
+  border-color: rgb(255 255 255 / 74%);
   box-shadow: 0 10px 30px rgb(0 0 0 / 7%);
 }
 :root[data-skin]:not([data-skin="original"])
   :is(.header-icon, .brand-lockup, .brand-name-chinese) {
-  color: var(--foreground);
+  color: var(--header-foreground);
 }
 :root[data-skin]:not([data-skin="original"]) .header-avatar {
   background: var(--skin-control);
   color: var(--skin-on-control);
 }
 :root[data-skin]:not([data-skin="original"]) .header-icon[aria-current="page"] {
-  background: var(--surface-soft);
+  background: var(--header-state-background);
 }
 :root[data-skin]:not([data-skin="original"]) .bottom-navigation-shell {
   background: var(--skin-dock);
@@ -277,7 +271,7 @@
 }
 :root[data-skin]:not([data-skin="original"]) .dock-add {
   background: var(--brand-lime);
-  color: #30203e;
+  color: var(--brand-lime-ink);
 }
 :root[data-skin]:not([data-skin="original"]) .home-edit-action {
   background: var(--skin-control);

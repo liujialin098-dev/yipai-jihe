@@ -65,6 +65,14 @@
   --text-body-size: 0.875rem;
   --text-meta-size: 0.75rem;
   --brand-lime: #d8ff52;
+  --brand-lime-ink: #352244;
+  --header-background: var(--brand-lime);
+  --header-foreground: var(--brand-lime-ink);
+  --header-state-background: color-mix(
+    in srgb,
+    var(--brand-lime) 82%,
+    var(--brand-lime-ink)
+  );
   --background: #f5f1f8;
   --foreground: #1d1d1f;
   --surface: rgb(255 255 255 / 88%);
@@ -292,7 +300,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  color: #434a30;
+  color: var(--header-foreground);
   transition:
     background-color 180ms ease,
     color 180ms ease,
@@ -304,11 +312,11 @@
 }
 .header-icon:active {
   transform: scale(0.94);
-  background: rgb(116 92 143 / 16%);
+  background: var(--header-state-background);
 }
 .header-icon[aria-current="page"] {
-  background: rgb(255 255 255 / 62%);
-  color: #5d4377;
+  background: var(--header-state-background);
+  color: var(--header-foreground);
 }
 .header-avatar {
   background: #806292;
@@ -342,25 +350,25 @@
   transform: rotate(55deg) scale(0.7);
 }
 .dark .editorial-header-shell {
-  background: linear-gradient(135deg, #41492e, #343e27);
-  border-color: #596441;
+  background: var(--header-background);
+  border-color: rgb(255 255 255 / 74%);
   box-shadow:
     0 12px 30px rgb(0 0 0 / 18%),
-    inset 0 1px 0 rgb(216 255 82 / 12%);
+    inset 0 1px 0 rgb(255 255 255 / 52%);
 }
 .dark .header-icon,
 .dark .brand-lockup {
-  color: #e7f5c8;
+  color: var(--header-foreground);
 }
 .dark .header-avatar {
   background-color: #806292;
   color: white;
 }
 .dark .brand-name-chinese {
-  color: #c4d2a8;
+  color: var(--header-foreground);
 }
 .dark .header-icon[aria-current="page"] {
-  background: #565b43;
+  background: var(--header-state-background);
 }
 @media (max-width: 374px) {
   .header-brand-mark {
@@ -369,7 +377,7 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .header-icon:hover {
-    background-color: rgb(116 92 143 / 12%);
+    background-color: var(--header-state-background);
   }
   .header-avatar:hover {
     background-color: #6f5283;
@@ -1203,12 +1211,8 @@
 
 .editorial-header-shell {
   position: relative;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--fashion-lime-soft) 92%, white),
-    color-mix(in srgb, var(--fashion-lime) 52%, white)
-  );
-  border: 1px solid rgb(255 255 255 / 68%);
+  background: var(--header-background);
+  border: 1px solid rgb(255 255 255 / 74%);
   box-shadow:
     0 14px 38px rgb(81 91 45 / 13%),
     inset 0 1px 0 rgb(255 255 255 / 58%);
@@ -1217,7 +1221,7 @@
 }
 
 .brand-lockup {
-  color: #303326;
+  color: var(--header-foreground);
 }
 
 .brand-name-lockup {
@@ -1239,7 +1243,7 @@
 
 .brand-name-chinese {
   padding-left: 0.08rem;
-  color: #656b4e;
+  color: var(--header-foreground);
   font-family: var(--font-heading);
   font-size: 0.5rem;
   font-weight: 600;
@@ -2528,7 +2532,7 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .editorial-header-shell {
-    background: var(--fashion-lime-soft);
+    background: var(--header-background);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
