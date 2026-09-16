@@ -1,5 +1,12 @@
 # 衣拍即合开发进度
 
+## 推荐交互与上传提示已发布（2026-09-16 22:11）
+
+- [x] 源提交7c70eae已push并核对GitHub master；仅本次15个文件，050未完成增量保持本地。
+- [x] 精确Git归档部署正式项目，dpl_BT6J23nh7zFPvKvsY2oxRfumCrt1为Ready/production，正式链接https://yipai-jihe.vercel.app；Next.js 16.3.1云端构建20秒。
+- [x] lint/typecheck/build、007/036复核通过；四个未登录入口HTTP200，线上CSS包含三项新增UI，近期error日志无记录。项目和发布指令已补AGENTS.md。
+- [ ] 真实账号生成/上传/iPhone端到端仍待验收，前轮021认证连接失败不计为通过；Drains未检查，无新增持续监控。
+
 ## 021/036推荐交互与004上传提示增量（2026-09-16，本地完成）
 
 - [x] 先在实际PageMotion+推荐组件复现鼠标场景文字点击失败，再修复指针捕获时机及label/form隔离；触控、鼠标、键盘和空白左右滑动回归通过。

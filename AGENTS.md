@@ -1,5 +1,13 @@
 # 项目开发说明
 
+## 最新Production与GitHub：推荐交互及上传提示（2026-09-16 22:11）
+
+- 源提交`7c70eae04cf932ac46c1f5590c983603366ac2e1`已push至`https://github.com/liujialin098-dev/yipai-jihe`的master并核对SHA；15个文件仅包含场景点击/手势修复、圆角风格底部面板、上传拍摄建议及验证资料。050注销核心、测试库、相关配置增量及备选品牌图未提交、未部署。
+- 从精确Git归档`.codex-work/release-7c70eae`部署；项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`；部署`dpl_BT6J23nh7zFPvKvsY2oxRfumCrt1`，地址`https://yipai-jihe-2eki7mvos-jialin-d583.vercel.app`，正式链接`https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，Next.js 16.3.1云端构建20秒通过。
+- 发布：`npx vercel deploy --prod --yes --scope jialin-d583 --cwd .codex-work/release-7c70eae --meta releaseCommit=7c70eae04cf932ac46c1f5590c983603366ac2e1`；核验：`npx vercel inspect yipai-jihe-2eki7mvos-jialin-d583.vercel.app --scope jialin-d583`；日志：`npx vercel logs dpl_BT6J23nh7zFPvKvsY2oxRfumCrt1 --level error --since 30m --scope jialin-d583`。GitHub仅`git push origin master`。
+- 本轮lint/typecheck/build、007/036复核通过，前轮实际组件隔离交互测试通过；749个候选文件有限秘密扫描未发现命中。正式首页/login/recommendations/wardrobe/new无会话HTTP均200（含身份入口重定向结果）；两份CSS均200，0d0yatpm3s643.css包含风格面板、场景卡片和上传建议选择器。近期error日志查询无记录。
+- 未执行线上真实账号生成/上传/iPhone验收，前轮021真实后端认证连接失败仍未解决；HTTP与样式可用不是完整业务验收。Drains未检查，未新增持续监控。未改环境变量、权限、数据库、供应商或用户数据；Vercel部署/CLI技能和Context7用于精确发布与核验，发布记录另行提交同步。
+
 ## 推荐场景交互与上传提示修复（2026-09-16，本地，未部署）
 
 - 036 PageMotion在pointerdown即捕获指针且未排除label/form，实际组件包裹下复现鼠标点“约会”文字不选中（触控样本正常）。改为排除表单、标签及语义控件，只在横向移动超过15px且大于纵向1.8倍时捕获；空白区域左右滑动保留，取消/结束清理不变。

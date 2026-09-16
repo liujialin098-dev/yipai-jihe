@@ -29,4 +29,8 @@
 
 ## 未完成边界
 
-真实账号AI生成与上传、iPhone/Safari/VoiceOver、真实持久化及线上验收待执行。没有数据库/权限/密钥/供应商变化，没有提交、GitHub上传或Vercel部署。本地050注销增量保持独立未发布。
+真实账号AI生成与上传、iPhone/Safari/VoiceOver、真实持久化及线上交互验收待执行。没有数据库/权限/密钥/供应商变化。本地050注销增量保持独立未发布。
+
+## 2026-09-16 22:11 发布补充
+
+源提交7c70eae已同步GitHub，精确归档发布dpl_BT6J23nh7zFPvKvsY2oxRfumCrt1，Ready/production且绑定https://yipai-jihe.vercel.app，云端构建20秒通过。本轮复核lint/typecheck/build与007/036；四个无会话入口HTTP200、线上CSS命中风格面板/场景卡片/上传提示，近期error日志无记录。上述仅公开入口及资源检查，不替代未完成的真实业务/iPhone验收；Drains未检查。部署指令见AGENTS.md最新记录。
