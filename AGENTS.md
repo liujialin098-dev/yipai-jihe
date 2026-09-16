@@ -1,5 +1,56 @@
 # 项目开发说明
 
+## 最新Production与GitHub：新用户空衣橱（2026-09-16 20:17，覆盖下方未部署记录）
+
+- 发布源提交`a25797fd6410c2c9deaef1e7cb25ed01493b2e67`已正常非强制推送到`https://github.com/liujialin098-dev/yipai-jihe`的master，并以ls-remote核实。仅包含衣橱页、停用演示Action、007门禁、新空衣橱回归及README；SDD-050未完成注销核心/测试/迁移仍留本地，不包含在本次代码发布中。下方050进度是本地开发记录，不代表该代码已上传。
+- 使用git archive从该提交生成独立发布目录`.codex-work/release-a25797f`，只复制原有.vercel项目绑定，不复制.env、.git或未提交代码。确认不含注销核心及.env.local；无生产数据库、权限、密钥、邮件或真实账号数据变更，既有衣物不删除。
+- Vercel项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`；部署`dpl_6LhmEC5bTw7YcuvRwXn6VhHPkCi3`，地址`https://yipai-jihe-elb4w74je-jialin-d583.vercel.app`，正式链接`https://yipai-jihe.vercel.app`。inspect确认Ready/production及正式别名，Next.js 16.3.1云端构建28秒完成。
+- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583 --cwd ".codex-work/release-a25797f" --meta releaseCommit=a25797fd6410c2c9deaef1e7cb25ed01493b2e67`。核验：`npx vercel inspect yipai-jihe-elb4w74je-jialin-d583.vercel.app --scope jialin-d583`。GitHub更新：`git push origin master`，仅推master，不推stash/其他引用，不强推。
+- 公开首页、/login、/wardrobe、/support、/privacy无会话HTTP均200；最近30分钟该部署error日志无记录，Drains未检查。空衣橱实际页面/Action离线回归、007门禁、lint、typecheck通过；未创建新账号、未执行线上登录业务或真机验收，HTTP200不等同于新用户完整链路通过。
+- 推送前有限规则扫描1834个历史blob及733个当前候选文件，未命中所检查秘密/超大对象；不保证绝无敏感信息。五张未采用品牌图、环境配置、无关材料及测试库凭据未上传。发布/CLI技能和Context7用于正确项目、精确快照与发布后核验。发布记录另行文档提交，不需重新构建应用。
+
+## 新用户空衣橱（2026-09-16，本地完成，未部署）
+
+- 新体验身份及新正式账号统一从空衣橱添加自己的衣物；移除衣橱页演示导入/补齐入口及多余身份、组成计数请求。旧loadDemoWardrobe保留兼容签名但始终返回停用，无认证、数据库、Storage或缓存副作用；不再生成演示数据。
+- 已有衣物（含历史演示记录）保持不动，保留历史图片映射和离线测试素材；不改数据库、账号或生产配置。README及007门禁同步当前规则，历史规格不作为恢复演示入口的依据。
+- verify-empty-wardrobe离线执行实际页面及Action，覆盖空态、已有自有/历史衣物、筛选空态、归档空态、读取错误和旧Action零副作用；007、lint、typecheck、build通过。沿用UI/UX空态主操作及现有主题样式；没有真实新账号或线上浏览器端到端验收。未提交、上传或部署。
+
+## SDD-050 第一轮真实隔离验证通过（2026-09-16，仅测试项目）
+
+- 已按用户授权仅在`ylfdcspehlsbxpmbjwho`执行：新增独立测试SQL结构、真实SDK驱动`scripts/verify-account-deletion-live.mjs`，固定测试ref/凭据ref/请求origin，不读取.env、不落盘/输出密钥、不接App路由。生产与旧INACTIVE项目、Vercel均未修改。
+- 真实双模拟账号验证通过：业务RLS、任务表/RPC拒绝普通账号、旧JWT封锁、唯一领取、过期租约重领及旧worker拒绝、103个嵌套/跨页文件清理、第一批删除后中断及重试、Auth最后删除、完成幂等，B账号/文件/会话保持正常。测试结束模拟账号及对象硬删除；独立SQL确认users/objects/items/jobs/gates均0，保留空私有桶及结构，备份不保证即时清除。
+- 修复测试中发现的只读事务FOR SHARE错误与会话撤销顺序。14组离线注销、check/build、账号恢复/050回归通过。最终performance Advisor空，security仅3条管理表无用户策略INFO（权限核实为有意拒绝）；早期泄露密码保护警告最终未再返回，未修改配置、不假称已启用。
+- T028–T030完成，T027/T020仍未完成：本次只用safety_items业务样本，完整12类业务、实际在途上传竞争、跨HTTP副作用租约边界、签名URL、近期核验/二次确认、调度和客户端清理尚缺。不能开放生产注销或称达到上架条件。
+- Spec Kit及Supabase/Postgres技能用于任务/最小权限/验证；SQL由CLI在独立fixture目录生成并仅向测试库迭代应用，不在生产迁移目录，没有宣称远程迁移历史/db pull完成。fixture和脚本排除Vercel；尚未Git提交/上传或部署。
+
+## SDD-050 CLI登录已完成（2026-09-16，覆盖下方登录断点）
+
+- 用户提供官方页面一次性验证码，已在原CLI会话完成登录，返回You are now logged in。随后仅查询测试项目`ylfdcspehlsbxpmbjwho`，安全输出确认service_role/anon可用，未输出密钥或写入项目环境文件，未获取生产凭据。
+- 原测试项目管理和模拟账号删除授权继续有效，无需重复确认。T027实际数据库封锁/适配/双账号旧JWT测试仍未执行，本轮仅解除连接认证阻塞；没有真实账号删除或生产变更、Git上传、Vercel部署。
+
+## SDD-050 测试权限已确认，等待CLI登录（2026-09-16）
+
+- 用户已明确授权：仅`ylfdcspehlsbxpmbjwho`测试项目可配置服务端管理凭据、创建模拟账号/文件并执行注销隔离测试。不要重复询问此授权；不包含生产、真实用户、付费套餐或线上部署。
+- 只读SQL确认测试库auth.users=0、storage.objects=0、public表=0。尚未新增表/策略、创建账号/文件或执行删除；无真实JWT端到端证据，T027继续未完成。
+- MCP只提供公开密钥读取，不能获取服务端密钥；CLI安全捕获输出检查确认为未登录（不打印凭据）。已启动官方`npx supabase login --no-browser --agent no --output-format text`，打开浏览器和终端供本人完成登录。授权链接/验证码/令牌不记录到文件；登录失效时重新启动，不要求用户在聊天发送长期密钥。
+- 后续凭据必须仅指向测试ref、仅在本地服务端进程使用，不读取生产管理密钥、不覆盖.env.local、不提交仓库、不配置到Vercel。CLI登录本身可能覆盖账号管理范围，不应将其权限范围解释为对其他项目的操作授权。
+- Spec Kit需求检查7/7通过；Supabase/Postgres技能用于权限、RLS及测试边界复核。因本人登录门禁暂停，进度本地保存；本轮未改应用代码，未提交/上传/部署。
+
+## SDD-050 独立测试项目已创建（2026-09-16）
+
+- 用户确认使用`liujialin098-dev's Org`（`knrrvumafxssawbmfyws`）并明确确认新建项目0/月报价；通过成本确认后创建`yipai-jihe-safety-test`，ref=`ylfdcspehlsbxpmbjwho`，新加坡`ap-southeast-1`。创建及后续get_project均返回ACTIVE_HEALTHY；组织保持Free，没有升级套餐或购买附加项。
+- 仅完成空测试项目创建，未导入生产数据、运行迁移、读取/配置管理密钥、创建或删除测试账号。生产`gmjtzmxuveoaqcdmuifr`和旧INACTIVE项目`knzvhvjxmjgqebbtnztz`未修改；不得把测试ref写入线上配置或覆盖本地生产连接。
+- T027仍未完成。下一步需用户明确授权仅在此测试项目使用服务端管理凭据、创建合成测试账号/文件并执行注销隔离测试；未授权前暂停增权与删除。密钥不得提交Git、输出日志或放到NEXT_PUBLIC变量。此授权不能扩展到生产、真实用户或付费资源。
+- Supabase技能及Context7用于项目/费用/权限边界核对；本次只保存进度文档，无应用代码变动、Git提交/上传或Vercel部署。项目健康不等于注销安全验收通过。
+
+## SDD-050 注销核心本地增量（2026-09-16，未部署/上传）
+
+- lib/auth/account-deletion.ts为server-only内部执行核心，显式布尔true才启用，默认零调用；没有UI/Action/API入口、Supabase管理客户端、环境密钥或生产适配器。T024–T026完成不等于T020完成，更不代表可以删除真实用户。
+- 受信作业领取、封锁/租约复核和CAS通过适配器契约约束；存储固定wardrobe-images/账号UUID，100项分页offset=0边删边重读，整页校验、递归、300请求预算/16层上限/无进展检测，最后删除Auth身份。失败仅固定pending状态，不保证未修改；底层方法须幂等，checkpoint丢失可重试。真实数据库封锁/并发/租约持久化仍待实现与隔离验收。
+- npm run verify:account-deletion的14组离线测试、check/build、account-recovery和050通过；先观察缺实现ENOENT失败。没有数据库变更，因此无真实查询/advisor证据；不把内存假体当线上隔离或JWT立即失效保证。核心未导入任何用户入口，旧生产功能不变。
+- 按Spec Kit完成检查7/7、任务拆分及验证记录；Supabase技能/Context7核实删除与Storage约束。Node最低文档改22+，本机24.18.0，无依赖升级。本机未发现supabase/config.toml或PATH中的Docker；只读列出生产与INACTIVE旧项目，不自动恢复/复用旧项目。T027需先明确独立测试组织/项目、权限与实际费用，禁止在生产做破坏性验收。
+- T019发信门禁、T021独立AI授权及正式材料、iOS工程和会员仍未完成。未提交Git/上传/部署，未发邮件、修改生产权限或删除任何真实账号数据。
+
 ## MIT 开源完成与 iOS 准备（2026-09-16，覆盖下方私有状态）
 
 - `https://github.com/liujialin098-dev/yipai-jihe` 已改为公开。用户明确选择 MIT，并确认早期24张演示图及10张测试图为项目AI生成或已获授权、允许公开。根LICENSE为原创代码许可；字体保留OFL，Spec Kit保留原MIT，品牌及非代码图片边界见THIRD_PARTY_NOTICES.md，不默认授予商标/素材再授权。
