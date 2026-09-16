@@ -52,48 +52,74 @@ export function parseFashionRss(
 
 const fetchSource = unstable_cache(
   async (source: FashionSource) => {
-    const response = await fetch(source.feedUrl, {
-      headers: { "User-Agent": "YipaiJihe/1.0 fashion-inspiration" },
-      cache: "no-store",
-      signal: AbortSignal.timeout(5_000),
-      redirect: "error",
-    });
-    if (!response.ok) throw new Error("Fashion source unavailable");
-    if (
-      Number(response.headers.get("content-length")) > 1_000_000 ||
-      !response.body
-    )
-      throw new Error("Fashion source too large or empty");
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let xml = "";
-    let bytes = 0;
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      bytes += value.byteLength;
-      if (bytes > 1_000_000) {
-        await reader.cancel();
-        throw new Error("Fashion source exceeds size limit");
+    try {
+      const response = await fetch(source.feedUrl, {
+        headers: { "User-Agent": "YipaiJihe/1.0 fashion-inspiration" },
+        cache: "no-store",
+        signal: AbortSignal.timeout(8_000),
+        redirect: "error",
+      });
+      if (!response.ok)
+        throw new Error(`Fashion source HTTP ${response.status}`);
+      if (
+        Number(response.headers.get("content-length")) > 1_000_000 ||
+        !response.body
+      )
+        throw new Error("Fashion source too large or empty");
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let xml = "";
+      let bytes = 0;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        bytes += value.byteLength;
+        if (bytes > 1_000_000) {
+          await reader.cancel();
+          throw new Error("Fashion source exceeds size limit");
+        }
+        xml += decoder.decode(value, { stream: true });
       }
-      xml += decoder.decode(value, { stream: true });
+      xml += decoder.decode();
+      const entries = parseFashionRss(xml, source);
+      if (!entries.length) throw new Error("Fashion source invalid");
+      console.info("[fashion-source]", {
+        source: source.name,
+        entries: entries.length,
+      });
+      return entries.map((entry) => ({
+        ...entry,
+        fetchedAt: new Date().toISOString(),
+      }));
+    } catch (error) {
+      console.warn("[fashion-source]", {
+        source: source.name,
+        status: "unavailable",
+        reason:
+          error instanceof Error
+            ? error.message.startsWith("Fashion source")
+              ? error.message
+              : error.name
+            : "UnknownError",
+      });
+      // Reject inside the cache so a failed refresh cannot replace good data.
+      throw error;
     }
-    xml += decoder.decode();
-    const entries = parseFashionRss(xml, source);
-    if (!entries.length) throw new Error("Fashion source invalid");
-    return entries.map((entry) => ({
-      ...entry,
-      fetchedAt: new Date().toISOString(),
-    }));
   },
-  ["fashion-rss-validated-v2"],
-  { revalidate: 86_400 },
+  ["fashion-rss-validated-v3"],
+  { revalidate: 10_800 },
 );
 
-export async function fetchTrustedFashionEntries() {
-  return (
-    await Promise.all(
-      FASHION_SOURCES.map((source) => fetchSource(source).catch(() => [])),
-    )
-  ).flat();
+export async function fetchTrustedFashionSources() {
+  const results = await Promise.allSettled(
+    FASHION_SOURCES.map((source) => fetchSource(source)),
+  );
+  return {
+    entries: results.flatMap((result) =>
+      result.status === "fulfilled" ? result.value : [],
+    ),
+    unavailableSources: results.flatMap((result, index) =>
+      result.status === "rejected" ? [FASHION_SOURCES[index].name] : [],
+    ),
+  };
 }

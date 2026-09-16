@@ -1,32 +1,36 @@
 import { cache } from "react";
 import { getViewer } from "@/lib/auth/viewer";
-import { getTrustedFashionContent } from "@/lib/inspiration/content";
-import { filterPreviouslyDelivered } from "@/lib/inspiration/content-rules";
+import { getFashionContentSnapshot } from "@/lib/inspiration/content";
 import {
-  rankFashionContent,
   type RankedFashionContent,
+  selectFashionFeed,
 } from "@/lib/inspiration/ranking";
+import { rewriteFashionEntries } from "@/lib/inspiration/summary";
 import {
   FASHION_TOPICS,
-  isFashionTopic,
   type FashionPreferences,
+  isFashionTopic,
 } from "@/lib/inspiration/validation";
-import { getWeatherSnapshot } from "@/lib/recommendations/weather";
-import { getEffectiveWeatherLocation } from "@/lib/recommendations/location-context";
-import { storedWeatherLocation } from "@/lib/recommendations/location";
 import {
   allowedWardrobeAudiences,
   isClothingPreference,
 } from "@/lib/personalization/constants";
+import { storedWeatherLocation } from "@/lib/recommendations/location";
+import { getEffectiveWeatherLocation } from "@/lib/recommendations/location-context";
+import { getWeatherSnapshot } from "@/lib/recommendations/weather";
 import { createClient } from "@/lib/supabase/server";
 
-export type FashionFeedCard = RankedFashionContent & { isRead: boolean };
+export type FashionFeedCard = RankedFashionContent & {
+  isRead: boolean;
+  isDiscovery: boolean;
+};
 
 export type FashionFeedData = {
   items: FashionFeedCard[];
   preferences: FashionPreferences;
   unreadCount: number;
   weatherUsed: boolean;
+  sourceUnavailable: boolean;
 };
 
 const defaultPreferences: FashionPreferences = {
@@ -44,6 +48,7 @@ export const getFashionFeedData = cache(
         preferences: defaultPreferences,
         unreadCount: 0,
         weatherUsed: false,
+        sourceUnavailable: false,
       };
 
     const supabase = await createClient();
@@ -54,7 +59,7 @@ export const getFashionFeedData = cache(
       diaryResult,
       impressionsResult,
     ] = await Promise.all([
-      getTrustedFashionContent(new Date(), summarize),
+      getFashionContentSnapshot(),
       supabase
         .from("fashion_content_reads")
         .select("content_id")
@@ -142,20 +147,21 @@ export const getFashionFeedData = cache(
     const readIds = new Set(
       (readsResult.data ?? []).map((row) => row.content_id),
     );
-    const ranked = rankFashionContent({
-      items: filterPreviouslyDelivered(
-        content,
-        impressionsResult.data ?? [],
-        Date.now(),
-      ),
+    const ranked = selectFashionFeed({
+      items: content.items,
+      impressions: impressionsResult.data ?? [],
       preferences,
       viewer,
       wardrobe: wardrobeResult.data ?? [],
       weather,
       recentOccasions: (diaryResult.data ?? []).map((entry) => entry.occasion),
-    }).slice(0, 12);
+    });
+    // Translate only the cards that will actually be displayed.
+    const translated = summarize ? await rewriteFashionEntries(ranked) : ranked;
+    const titles = new Map(translated.map((item) => [item.id, item]));
     const items = ranked.map((item) => ({
       ...item,
+      ...titles.get(item.id),
       isRead: readIds.has(item.id),
     }));
     return {
@@ -165,6 +171,7 @@ export const getFashionFeedData = cache(
         ? items.filter((item) => !item.isRead).length
         : 0,
       weatherUsed: Boolean(weather),
+      sourceUnavailable: content.unavailableSources.length > 0,
     };
   },
 );

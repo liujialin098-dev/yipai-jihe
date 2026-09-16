@@ -2,16 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { RoundedIcon } from "@/components/ui/rounded-icon";
+import { observeDockSurface } from "@/lib/ui/dock-surface";
 import { primaryNavigation } from "@/lib/ui/navigation";
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!pathname || !navRef.current) return;
+    return observeDockSurface(navRef.current);
+  }, [pathname]);
 
   if (pathname === "/login" || pathname.startsWith("/auth/")) return null;
 
   return (
     <nav
+      ref={navRef}
+      data-adaptive-dock="true"
       aria-label="主导航"
       className="bottom-navigation-shell icon-dock fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-30 grid min-h-16 w-[calc(100%-1.5rem)] max-w-[28.5rem] -translate-x-1/2 grid-cols-5 rounded-[1.65rem] p-2"
     >

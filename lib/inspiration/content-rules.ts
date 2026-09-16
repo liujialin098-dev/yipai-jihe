@@ -8,9 +8,15 @@ import type { WardrobeStyle } from "@/lib/wardrobe/constants";
 
 const DAY_MS = 86_400_000;
 const FASHION_WORDS =
-  /\b(outfit|wear|menswear|womenswear|dress|shirt|shoes?|sneakers?|bag|coat|jacket|denim|jeans?|pants|trouser|skirt|color|trends?|wardrobe|tailor|knit|boot|loafer|streetwear|layering)\b/i;
+  /\b(outfits?|wear|menswear|womenswear|dress(?:es)?|shirts?|shoes?|sneakers?|bags?|coats?|jackets?|denim|jeans?|pants|trousers?|skirts?|colou?rs?|trends?|wardrobe|tailor(?:ing)?|knit(?:wear|s)?|boots?|loafers?|sandals?|clogs?|sweaters?|cardigans?|blazers?|suits?|streetwear|layering|fashion|street style|runway|ready-to-wear|accessories|jewel(?:l)?ery|necklaces?|earrings?|bracelets?|belts?|scarves?|sunglasses?)\b/i;
 const EXCLUDED_WORDS =
-  /\b(health|beauty|makeup|skin|hair|celebrity|movie|music|politic|recipe|food|travel|bridal|wedding|stars?|front row|on-court|power player|sales?|deals?|discounts?|ready-to-wear)\b/i;
+  /\b(health|beauty|makeup|skin|hair|movies?|music|politics?|recipes?|food|travel|bridal|weddings?|on-court|power player|sales?|deals?|discounts?)\b/i;
+
+export type FashionImpression = {
+  topic_key: string;
+  content_id: string;
+  first_seen_at: string;
+};
 
 export function classify(title: string): {
   topic: FashionTopic;
@@ -46,8 +52,26 @@ export function classify(title: string): {
       occasions: ["commute", "casual", "date"],
     };
   }
+  if (/\b(streetwear|street style|skatewear|urban style)\b/.test(value)) {
+    return {
+      topic: "street",
+      styles: ["streetwear", "casual"],
+      occasions: ["casual", "date"],
+    };
+  }
   if (
-    /dress|shirt|shoes?|sneakers?|bag|coat|jacket|denim|jeans?|pants|trouser|skirt|knit|boot|loafer/.test(
+    /\b(accessor(?:y|ies)|jewel(?:l)?ery|necklaces?|earrings?|bracelets?|belts?|scarves?|sunglasses?|handbags?|bags?)\b/.test(
+      value,
+    )
+  ) {
+    return {
+      topic: "accessory",
+      styles: ["minimal", "casual"],
+      occasions: ["commute", "casual", "date"],
+    };
+  }
+  if (
+    /dress|shirt|shoes?|sneakers?|bag|coat|jacket|denim|jeans?|pants|trouser|skirt|knit|boot|loafer|sandal|clog|sweater|cardigan|blazer|accessories/.test(
       value,
     )
   ) {
@@ -110,27 +134,6 @@ export function fingerprint(title: string) {
   );
 }
 
-export function filterPreviouslyDelivered(
-  items: FashionContentItem[],
-  impressions: {
-    topic_key: string;
-    content_id: string;
-    first_seen_at: string;
-  }[],
-  now: number,
-) {
-  const recent = new Map(
-    impressions
-      .filter((row) => Date.parse(row.first_seen_at) > now - 30 * DAY_MS)
-      .map((row) => [row.topic_key, row.content_id]),
-  );
-  return items.filter(
-    (item) =>
-      !recent.has(item.topicFingerprint) ||
-      recent.get(item.topicFingerprint) === item.id,
-  );
-}
-
 function chineseSummary(topic: FashionTopic) {
   const summaries: Record<FashionTopic, string> = {
     trend:
@@ -144,6 +147,8 @@ function chineseSummary(topic: FashionTopic) {
       "换季时先处理层次和体感，再参考趋势细节；天气不合适时不要为了造型勉强叠穿。",
     weather:
       "先满足防雨、保暖或透气，再用颜色与轮廓保持整体感；实际天气始终优先于趋势。",
+    street: "从街头造型观察轮廓与比例，再用自己的单品尝试。",
+    accessory: "观察配饰与衣服之间的色彩、材质和大小关系。",
   };
   return summaries[topic];
 }
@@ -180,17 +185,16 @@ export function dedupeFashionContent(items: FashionContentItem[]) {
     b.publishedAt.localeCompare(a.publishedAt),
   );
   const seenIds = new Set<string>();
-  const seenTopics = new Map<string, number>();
+  const seenTitles = new Set<string>();
   return sorted.filter((item) => {
-    const published = new Date(item.publishedAt).getTime();
-    const previous = seenTopics.get(item.topicFingerprint);
-    if (
-      seenIds.has(item.id) ||
-      (previous !== undefined && Math.abs(previous - published) <= 30 * DAY_MS)
-    )
-      return false;
+    // A category such as outerwear is a ranking signal, not article identity.
+    const title = (item.originalTitle ?? item.title)
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]+/gu, " ")
+      .trim();
+    if (seenIds.has(item.id) || seenTitles.has(title)) return false;
     seenIds.add(item.id);
-    seenTopics.set(item.topicFingerprint, published);
+    seenTitles.add(title);
     return true;
   });
 }

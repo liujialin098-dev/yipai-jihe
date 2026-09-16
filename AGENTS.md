@@ -1,5 +1,80 @@
 # 项目开发说明
 
+## GitHub 发布准备（2026-09-16，已授权，推送完成状态待核验）
+
+- 用户指定账号 `liujialin098-dev`；已通过登录后的 GitHub 页面创建并确认私有仓库 `https://github.com/liujialin098-dev/yipai-jihe`，仓库目前为空。不得称为代码已经上传，也不得改为公开仓库。
+- 本机 Git Credential Manager 已完成用户本人设备授权，账号确认为 `liujialin098-dev`；不保存授权码或令牌到仓库。此次整理基于 `master` / `0e7a34d` 的 SDD-050～052 工作区增量，保留原有开发历史。
+- 上传只包含衣拍即合文件。`.gitignore` 已增加合同材料、其他项目、输出和本地工作目录的排除规则；现有文件和临时备份均保留。不能使用 `--mirror`、`--all` 或推送 stash：其他本地引用含无关合同材料，不能上传。
+- 检查覆盖 HEAD 历史 1745 个 blob 和当前候选 723 个文件，无 100MB 以上对象；`.env.example` 的三个历史/当前私钥标记均核实为占位符，常见令牌扫描及本地三项密钥值比对未发现命中。类型检查、051和账号恢复离线验证通过；不将模式扫描视为绝对无泄露保证。远程连接曾重置，必须以实际 push 和远程提交核对作为完成证据。
+- 目标远程 `https://github.com/liujialin098-dev/yipai-jihe.git`；计划以显式分支推送 `git push -u origin master`，不自动重命名分支、不强制推送、不启用 GitHub Pages 或自动部署，不改变 Vercel 线上项目。
+
+## Production记录补齐：SDD-052（2026-09-15 13:26，覆盖下方本地未部署记录）
+
+- 前一轮已完成部署并核实 Ready/production/正式别名：`dpl_HFFaz7FxYQzVo4PUtEv6BfUw7Qjw`，部署地址 `https://yipai-jihe-99esgf2as-jialin-d583.vercel.app`，正式地址 `https://yipai-jihe.vercel.app`。项目仍为 `yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team `jialin-d583`。
+- 当时云端构建12秒通过，源为 `0e7a34d` 加工作区快照，不是该提交的精确发布；首页、登录及部署地址HTTP200。内置浏览器曾出现连接关闭，不能将HTTP检查称为真实账号端到端通过。本轮仅补记此前结果，没有重新部署、修改环境变量或启用邮件恢复。
+
+## 当前本地增量：SDD-052皮肤导航与小面积点缀色（2026-09-15，未部署）
+
+- 覆盖048/049“所有皮肤导航固定青柠”的规则：默认原色仍保持紫/青柠，其他皮肤顶部及添加按钮使用自身skin-secondary（橙/奶油/柠黄/米白/橙），含悬停和按压状态；品牌图片不染色。底栏保留051白纸底色及覆盖浅色卡片时的淡入，变色层用当前主色，图标、选中承托和边框跟随skin-ink。尺寸、圆角、导航顺序和动效时序不变。
+- 小面积暖/冷点缀按六套皮肤各自配置，浅色使用柔和纸面、夜间独立深色承托。首页编辑拼图使用暖色，资讯标记已读使用冷色并保留自身交互色；资讯分类标签恢复冷暖区分，黑白皮肤仍无彩色点缀。没有全局随机染色、改照片/Logo、改变错误成功状态含义或业务行为。
+- typecheck/build、定向Biome、048/049/051回归通过。051真实组件隔离Chrome验证扩展052：实际点击六套SkinPicker和ThemeToggle、确认本设备存储，12组导航/点缀对比度均≥4.5；白/彩底栏滚动、主题增减/保存假体回归通过，375px/320px放大字号/844px横屏无溢出，减少动态100ms保留。已目视蓝橙浅色及粉米夜间截图；浏览器error为空。agent-browser不可用后用已安装Chrome/Playwright等价验证；假体不替代真实账号/真机验收。
+- ui-ux-pro-max用于主次色面积、语义色、悬停及日夜对比约束。未改数据库、账号、供应商、密钥、依赖或权限，未提交/部署；Production仍为下节051。052浏览器检查由scripts/verify-sdd-051-ui.mjs调用，fixture及测试排除生产上传。
+
+## 最新Production：SDD-051自适应底栏与八主题偏好（2026-09-14 13:08，覆盖下方未部署记录）
+
+- 项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`；部署`dpl_7VppdQ7L8zRYDwau7btci5JjjEz3`，部署URL`https://yipai-jihe-3dd7453fy-jialin-d583.vercel.app`，正式链接`https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，云端Next.js 16.3.1构建11秒通过。本次基于HEAD `0e7a34d`及未提交工作区快照，不将该HEAD称为全部发布内容的精确提交；本轮未创建提交。
+- 051前端现已发布：白色底栏覆盖浅色卡片时平滑淡入品牌色，保留青柠添加按钮；灵感标题独立纸面卡片；八个主题居中布局与增减选择/保存状态修复。此前已应用的`20260914045736_fashion_topics_eight`迁移未重复执行，没有修改既有用户数据。
+- 本轮check/build、051与fashion-sources检查通过；正式首页、/inspiration、/settings、/login无会话HTTP GET均200。两份线上CSS均200，`3za2buock8eg8.css`确认包含data-adaptive-dock、data-over-paper、inspiration-topic-grid及inspiration-topic-check。最近30分钟error日志查询无记录；未检查Drains，未执行本轮线上真实账号保存或iPhone连续滚动验收，HTTP/样式检查不等于完整业务端到端。
+- 发布`npx vercel deploy --prod --yes --scope jialin-d583`；核验`npx vercel inspect yipai-jihe-3dd7453fy-jialin-d583.vercel.app --scope jialin-d583`；日志`npx vercel logs dpl_7VppdQ7L8zRYDwau7btci5JjjEz3 --level error --since 30m --scope jialin-d583`。Vercel部署/CLI技能及Context7用于锁定既有项目和发布核验；未改环境变量、密钥或权限，恢复发信仍默认关闭。私有合同、PRD、开发文档与测试fixture继续排除上传，未删除本地文件。
+
+## 当前本地增量：SDD-051自适应底栏与灵感偏好（2026-09-14，前端未部署）
+
+- 底部导航保持现有顺序/尺寸/图标/青柠添加按钮，背景改为不透明白色；覆盖浅色卡片时只交叉淡入品牌色背景层，240ms ease，减少动态100ms。`observeDockSurface`按滚动/尺寸/内容/皮肤事件合并到单帧，15点检测并使用20%进入/10%退出阈值避免边缘闪烁；排除导航自身及页面底色，不读图片像素、不持续轮询。默认紫色，其余皮肤使用对应主色的浅混色；图标固定深紫保证白色/彩色两态可读。
+- 时尚灵感标题区域改为独立纸面卡片，与背景分离。八个主题居中网格（窄屏两列、较宽四列），新增街头风格/配饰细节，勾选有实心标记且可键盘操作。实际测试复现Action提交后取消勾选被重置；改为受控状态和显式提交，取消自动表单重置，保留成功/失败后的选择，网络异常给出可重试提示。仍至少选择一项，关闭未读提示和个性化的入口保留。
+- 新主题同步内容白名单/分类/卡片色。已在`gmjtzmxuveoaqcdmuifr`应用`20260914045736_fashion_topics_eight`：约束扩大到8项、新建偏好默认8项；未更新任何既有用户行，RLS仍开启、原3条所有者策略不变。本地迁移先由CLI生成，再与远程版本对齐；不要重复执行。前端仍需后续用户要求发布。
+- check/build及051/fashion-sources/042/049通过；实际组件隔离Chrome交互覆盖增减选择、键盘、成功刷新恢复、失败保留、空选择校验、底栏白/彩两态、固定几何、青柠按钮。320px夜间放大字号、375px浅色、844px横屏无溢出，选择区至少48px且中心偏差0；六皮肤日夜的底栏图标、主题和标题对比度均≥4.5。无真实用户偏好写入，隔离保存假体不替代线上端到端，真机连续滚动手感仍待用户复验。
+- ui-ux-pro-max/animate用于明确选中态、背景分离及轻微淡化；React规则用于受控表单与事件清理。agent-browser命令不可用，使用已安装Chrome/Playwright等价隔离测试，fixture排除生产。Supabase技能用于约束与RLS复核；安全检查仍提示体验身份策略和未启用泄露密码保护，未扩大权限或改账号安全配置，说明见[数据库检查](https://supabase.com/docs/guides/database/database-advisors?queryGroups=lint&lint=0012_auth_allow_anonymous_sign_ins)及[密码安全](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection)。
+
+## 最新Production：SDD-050账号安全与帮助、资讯更新修复（2026-09-14 12:23，覆盖下方未部署记录）
+
+- 项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`；部署`dpl_55oxN72CQ58yWCbn8FG7LG2vbicf`，部署URL`https://yipai-jihe-iweg99y5q-jialin-d583.vercel.app`，正式链接`https://yipai-jihe.vercel.app`。本次发布基于HEAD `0e7a34d`的工作区快照，包含既有未提交修改，不能将该HEAD称为全部发布内容的精确提交。inspect确认Ready/production/正式别名；云端Next.js 16.3.1构建19秒通过。
+- 发布包含既有原密码核验改密、体验身份升级、邮箱数字码恢复入口、公开帮助与数据说明，以及SDD-027资讯来源/缓存/筛选修复。支持邮箱现已随帮助页发布，未核验实际收件。恢复开关`ACCOUNT_EMAIL_RECOVERY_ENABLED`未配置，继续默认关闭，线上显示“验证码找回暂未开放”；SMTP、数字模板及真实账号联调仍未完成，不得启用发信。自助注销执行端、独立AI授权和正式隐私材料仍待实现，本轮不代表具备上架条件。
+- 本轮check/build、account-recovery、050、fashion-sources、042专项检查通过。正式首页、/login、/auth/recover、/support、/privacy均HTTP200，恢复关闭提示在响应中确认。最近30分钟error日志查询无记录；浏览器创建/读取页面均遇超时，未取得本轮浏览器交互通过证据，不将HTTP/Ready等同于真实账号端到端验收。未检查Drains，未发送邮件、修改真实密码或删除账号数据。
+- 发布`npx vercel deploy --prod --yes --scope jialin-d583`；核验`npx vercel inspect yipai-jihe-iweg99y5q-jialin-d583.vercel.app --scope jialin-d583`；日志`npx vercel logs dpl_55oxN72CQ58yWCbn8FG7LG2vbicf --level error --since 30m --scope jialin-d583`。复用正确项目绑定，仅核对11项生产配置，未pull/relink、修改密钥或权限。Vercel部署/CLI技能与Context7用于项目锁定和发布检查；私有合同材料、PRD、测试fixture和开发文档排除上传，未删除本地文件。
+
+## 当前本地增量：SDD-050数字码恢复与帮助（2026-09-14，未部署）
+
+- 用户已确认：忘记密码用邮箱数字验证码，在App输入重设，无需邮件链接；注销经身份核验和再次确认后立即开始删除，不设等待期。严禁重复询问或据此操作真实注销。备份/供应商留存不能承诺即时清除。
+- 登录/设置接入/auth/recover；lib/auth/password-recovery.ts和recovery-actions.ts只使用临时非持久化公开密钥客户端，固定recovery类型并核对会话用户ID/邮箱/非匿名后改密，无admin、无cookies替换、无秘密回显。成功尝试global退出，明确JWT/清理异常边界；/login?recovery=complete仅使已有会话也能看到登录表单，不授予权限。
+- ACCOUNT_EMAIL_RECOVERY_ENABLED严格为true才工作，未设置默认关闭；目前未启用或核验真实SMTP/数字模板/限流。没有发邮件、操作真实账号、改变生产配置。不能仅凭本地测试把开关打开，门禁见specs/050-release-readiness/quickstart.md。
+- /support与/privacy公开可访问，注册/登录/设置可找到帮助与数据说明。用户已同意公开的支持邮箱加入本地页面，未部署/核实收件。页面明确是现状说明，不是完整正式隐私政策；注销和AI授权开关尚未实现，不伪造功能。
+- check/build、verify:account-recovery及050/030/042回归通过；真实表单和公开页面的四尺寸/明暗隔离浏览器复验通过，错误焦点、秘密清空、倒计时恢复、无溢出/error已测。已安装Chrome+Playwright用于agent-browser不可用时的等价复验，Action/导航为假体，不冒充邮件/账号端到端；fixture排除生产。
+- 本增量沿用Spec Kit050，UI/UX规则用于表单错误/日夜可读性，React复核保持服务端边界、计时清理和无新增数据请求；未新增依赖。未提交/部署，Production仍049；注销后端/AI授权/真实联调仍是未完成任务，状态见progress.md。
+
+## 当前本地增量：SDD-050上架准备第一批（2026-09-14，已验证，未部署）
+
+- 备案省份用户已确认湖北，主体个人；不再询问省份。湖北材料核实与真实功能咨询说明已补入release-gates.md，按接入商公开规则提示证件住所/居住证明待核实，不等于确认用户具备资格。未提交任何备案、采购资源或推测法定身份；客服/隐私联系邮箱已由用户主动指定并保存于release-gates.md，尚未上线或验证收件，实际接入商仍待确定。邮箱不能自动用于登录账号或发信凭据配置。
+
+- 用户补充：未开通Apple Developer会员，只有iPhone、没有Mac。按“现有Windows先做产品/合规准备，原生阶段再确认macOS构建条件和会员”推进；不得默认已具备签名/构建/TestFlight条件，不自动采购、订阅或上传私钥至第三方。可在iPhone通过Apple Developer App本人注册，需提醒法定姓名公开与自动续费，当前未执行。
+
+- 2026-09-14用户已明确选择个人运营/个人开发者主体；不再反复询问个人还是组织。个人开发商法定姓名将公开展示，正式注册前需明确提醒；现有确认不等同于授权实名提交、付款、签约、采购或迁移。个人材料与官方依据见specs/050-release-readiness/release-gates.md；湖北和拟公开联系邮箱均已确认，不从机器用户名、截图或天气猜测身份。
+
+- 本节覆盖旧“已绑定邮箱仅凭登录会话直接首次设密”的应用入口。设置→账号安全→修改密码对所有正式账号显示；旧setAccountPassword委托server-only服务，先getUser，再用公开密钥的临时非持久化会话验证原密码并核对同一UUID，才调用updateUser(password/current_password)。不读取user_metadata作安全授权，不使用管理员重置，不记录密码/令牌，不自动退出原有登录。
+- 体验注册在单次updateUser中提交邮箱、密码与展示标志；不修改供应商邮件设置，不承诺平台不会发送安全通知。历史无密码账号保留登录并等待批准的恢复方案；原本地恢复脚本保留未执行，不能恢复远程管理接口或用标志跳过原密码。
+- 表单支持错误汇总定位、就近字段提示、等待禁用、成功清空和减少动态，沿用原有日夜色彩。UI/UX技能影响交互与可访问性，Supabase/Next安全指南用于Action身份边界。认证后台是否强制current_password仍未核实，直接Auth API和真实重新登录必须另行验收。
+- `npm run verify:sdd-050`、check（无警告）、build、027离线/030/042及来源故障测试通过；真实表单与假体Action的375px浅/深、844×390深色20px、320px浅色24px浏览器样本通过，浏览器error/横向溢出为0。agent-browser不可用后使用已安装Chrome＋Playwright，fixture排除生产。不能把假体测试当真实账号或iPhone端到端。
+- specs/050-release-readiness包含数据清单、发布门禁与注销设计；注销/正式隐私协议/原生工程没有实现，上架主体已选个人，账号恢复方式仍需用户决定。状态唯一记录progress.md。未提交或部署，没有真实账号/密码/数据变更，不改变环境变量或认证权限；Production仍为SDD-049，SDD-027资讯修复也保持本地未发布。
+
+## 当前本地增量：SDD-027资讯更新修复（2026-09-14，已验证，未部署）
+
+- 用户确认修复时尚灵感空列表。本节覆盖原“每日/24小时刷新、同主题30天内隐藏”规则：Vogue/GQ/Hypebeast公开RSS采用访问触发的3小时缓存重验证（非后台定时推送），单源8秒超时；新缓存key为`fashion-rss-validated-v3`。仅缓存公开来源元数据，用户数据和排序保持在共享缓存之外。
+- 扩充衣物复数、街拍、时装周及配饰关键词，允许真实成衣发布；仍排除促销/美妆/无关内容和未来/超过30天的日期。同篇稳定URL ID或相同规范化标题去重，不再将整个单品类别当成同一篇新闻。
+- 个性化开启时，既有主题账本首次展示后3天内降权10分，不过滤新文章；旧30天账本与RPC幂等继续保留，不做数据库迁移。关闭个性化不使用主题历史降权，通用结果按发布时间排序。订阅主题优先，不足6条时以“发现更多”补充其他主题，保留有效期及原有衣着/天气过滤，不更改保存的偏好；最多12条。
+- 内容获取返回单源失败状态，记录来源名/条数/安全错误分类；空列表区分来源不可用与无匹配。缓存刷新抛错以保留最后成功的来源缓存，仍按真实发布日期判断有效期。页面仅对最终选中的卡片翻译标题，首页未读查询不调用翻译。
+- 验证：`npm run check`、`npm run build`、027离线回归、030回归、042实际组件渲染与空状态验证通过。`node --no-warnings scripts/verify-fashion-sources.mjs`覆盖部分/全部失败、超时、损坏/超大RSS、URL白名单和稳定ID；加`--live`执行公开来源检查。
+- 2026-09-14真实源样本：Vogue 30条→15条可用，GQ 30→6，Hypebeast 19→3，合计24条；模拟窄主题且所有主题已有旧展示记录，仍选出6条有效补充内容。数字为检查当时的来源快照，不是每日数量保证。Next.js缓存跨时段恢复和真实账号端到端待上线后复验。
+- 本轮仅本地修改，未提交/部署；线上仍为下方SDD-049，不改密钥、权限或账号数据。阶段进度见`progress.md`。
+
 ## 最新Production：SDD-049青柠顶部导航（2026-09-10 21:51，覆盖下方记录）
 
 - 顶部悬浮导航在默认皮肤、五套替代皮肤及日夜模式下统一复用底部中央添加按钮的品牌青柠`#d8ff52`；移除原先会把颜色稀释的浅色渐变和替代皮肤覆盖，系统减少透明效果时也保持同色。

@@ -1,12 +1,13 @@
 "use client";
 
-import { SlidersHorizontal } from "lucide-react";
-import { useActionState } from "react";
+import { Check, SlidersHorizontal } from "lucide-react";
+import { startTransition, useActionState, useState } from "react";
 import { saveFashionPreferences } from "@/app/inspiration/actions";
 import {
   FASHION_TOPICS,
   FASHION_TOPIC_LABELS,
   type FashionPreferences,
+  type FashionTopic,
 } from "@/lib/inspiration/validation";
 
 export function InspirationPreferences({
@@ -14,19 +15,32 @@ export function InspirationPreferences({
 }: {
   preferences: FashionPreferences;
 }) {
-  const [state, action, pending] = useActionState(saveFashionPreferences, {
-    ok: false,
-    message: "",
-  });
+  const [topics, setTopics] = useState<FashionTopic[]>(preferences.topics);
+  const [personalized, setPersonalized] = useState(preferences.personalized);
+  const [unreadEnabled, setUnreadEnabled] = useState(preferences.unreadEnabled);
+  const [dirty, setDirty] = useState(false);
+  const [state, action, pending] = useActionState(
+    async (previous: { ok: boolean; message: string }, formData: FormData) => {
+      try {
+        const result = await saveFashionPreferences(previous, formData);
+        setDirty(false);
+        return result;
+      } catch {
+        setDirty(false);
+        return { ok: false, message: "暂时无法保存，当前选择已保留，请重试。" };
+      }
+    },
+    {
+      ok: false,
+      message: "",
+    },
+  );
   return (
     <details className="surface-card mt-5 rounded-[1.5rem] p-4">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
         <span>
           <span className="block text-sm font-semibold text-[var(--foreground)]">
             调整灵感偏好
-          </span>
-          <span className="mt-1 block text-xs text-[var(--text-secondary)]">
-            主题、个性化与未读提示都可撤销
           </span>
         </span>
         <SlidersHorizontal
@@ -35,24 +49,42 @@ export function InspirationPreferences({
         />
       </summary>
       <form
-        action={action}
+        onSubmit={(event) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          // Dispatch explicitly: form actions reset checkboxes even on a handled error.
+          startTransition(() => action(formData));
+        }}
         className="mt-5 border-t border-[var(--hairline)] pt-4"
       >
-        <fieldset>
-          <legend className="text-xs font-semibold text-[var(--foreground)]">
+        <fieldset disabled={pending}>
+          <legend className="w-full text-center text-xs font-semibold text-[var(--foreground)]">
             感兴趣主题
           </legend>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="inspiration-topic-grid">
             {FASHION_TOPICS.map((topic) => (
-              <label key={topic} className="cursor-pointer">
+              <label key={topic} className="inspiration-topic-option">
                 <input
                   type="checkbox"
                   name="topics"
                   value={topic}
-                  defaultChecked={preferences.topics.includes(topic)}
-                  className="peer sr-only"
+                  checked={topics.includes(topic)}
+                  onChange={(event) => {
+                    const checked = event.currentTarget.checked;
+                    setTopics((current) =>
+                      checked
+                        ? [...current, topic]
+                        : current.filter((value) => value !== topic),
+                    );
+                    setDirty(true);
+                  }}
+                  className="inspiration-topic-input"
                 />
-                <span className="flex min-h-11 items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-soft)] px-3.5 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[var(--control-primary)] peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+                <span className="inspiration-topic-chip">
+                  <Check
+                    className="inspiration-topic-check"
+                    aria-hidden="true"
+                  />
                   {FASHION_TOPIC_LABELS[topic]}
                 </span>
               </label>
@@ -63,12 +95,22 @@ export function InspirationPreferences({
           <PreferenceToggle
             name="personalized"
             label="结合我的衣橱和风格排序"
-            defaultChecked={preferences.personalized}
+            checked={personalized}
+            disabled={pending}
+            onChange={(checked) => {
+              setPersonalized(checked);
+              setDirty(true);
+            }}
           />
           <PreferenceToggle
             name="unreadEnabled"
             label="在 App 内显示未读提示"
-            defaultChecked={preferences.unreadEnabled}
+            checked={unreadEnabled}
+            disabled={pending}
+            onChange={(checked) => {
+              setUnreadEnabled(checked);
+              setDirty(true);
+            }}
           />
         </div>
         <button
@@ -79,7 +121,7 @@ export function InspirationPreferences({
           {pending ? "正在保存…" : "保存内容偏好"}
         </button>
         <output className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
-          {state.message}
+          {dirty ? "有未保存的修改" : state.message}
         </output>
       </form>
     </details>
@@ -89,11 +131,15 @@ export function InspirationPreferences({
 function PreferenceToggle({
   name,
   label,
-  defaultChecked,
+  checked,
+  disabled,
+  onChange,
 }: {
   name: string;
   label: string;
-  defaultChecked: boolean;
+  checked: boolean;
+  disabled: boolean;
+  onChange: (checked: boolean) => void;
 }) {
   return (
     <label className="flex min-h-12 cursor-pointer items-center justify-between gap-4 rounded-[1rem] bg-[var(--surface-soft)] px-3.5">
@@ -103,7 +149,9 @@ function PreferenceToggle({
       <input
         type="checkbox"
         name={name}
-        defaultChecked={defaultChecked}
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) => onChange(event.currentTarget.checked)}
         className="size-4 accent-[var(--system-blue)]"
       />
     </label>

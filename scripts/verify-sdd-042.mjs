@@ -180,6 +180,45 @@ assert.match(
   read("components/inspiration/reading-controls.tsx"),
   /disabled=\{pending \|\| opening\}/,
 );
+const { InspirationFeed } = compile(
+  "components/inspiration/inspiration-feed.tsx",
+  {
+    "@/components/inspiration/inspiration-card": { InspirationCard },
+    "@/components/inspiration/inspiration-preferences": {
+      InspirationPreferences: noOp,
+    },
+  },
+);
+const feedData = {
+  items: [],
+  preferences: { topics: ["trend"], unreadEnabled: true },
+  unreadCount: 0,
+  weatherUsed: false,
+  sourceUnavailable: false,
+};
+const renderFeed = (data) =>
+  renderToStaticMarkup(React.createElement(InspirationFeed, { data }));
+assert.match(renderFeed(feedData), /暂时没有合适的内容/);
+assert.match(
+  renderFeed({ ...feedData, sourceUnavailable: true }),
+  /资讯暂时连接不上/,
+);
+const discoveryFeed = renderFeed({
+  ...feedData,
+  sourceUnavailable: true,
+  items: [0, 1].map((index) => ({
+    id: `fixture-${index}`,
+    title: "新鞋款",
+    topic: "trend",
+    isDiscovery: true,
+    publishedAt: "2026-09-14",
+    sourceName: "样本来源",
+    sourceUrl: "https://example.com/",
+  })),
+});
+assert.equal((discoveryFeed.match(/发现更多/g) ?? []).length, 1);
+assert.equal((discoveryFeed.match(/阅读原文/g) ?? []).length, 2);
+assert.doesNotMatch(discoveryFeed, /资讯暂时连接不上|暂时没有合适的内容/);
 console.log(
   "SDD-042：实际标题/资讯卡渲染、转义、统一层级、介绍语移除及必要提示/来源保留通过（无网络固定样本）。",
 );

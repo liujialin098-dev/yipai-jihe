@@ -8,7 +8,11 @@ export function SessionBootstrap({ isReady }: { isReady: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
   const isPublicEntry =
-    pathname === "/" || pathname === "/login" || pathname.startsWith("/auth/");
+    pathname === "/" ||
+    pathname === "/login" ||
+    pathname === "/support" ||
+    pathname === "/privacy" ||
+    pathname.startsWith("/auth/");
 
   useEffect(() => {
     if (!isReady && !isPublicEntry) router.replace("/");

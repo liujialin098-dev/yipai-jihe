@@ -2,6 +2,7 @@ import type { AuthError } from "@supabase/supabase-js";
 
 export type AuthActionState = {
   fieldErrors?: {
+    currentPassword?: string;
     confirmPassword?: string;
     email?: string;
     password?: string;

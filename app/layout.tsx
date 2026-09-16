@@ -7,6 +7,7 @@ import { themeBootstrapScript } from "@/lib/ui/theme";
 import { skinBootstrapScript } from "@/lib/ui/skins";
 import "./globals.css";
 import "./skins.css";
+import "./adaptive-dock.css";
 
 const playful = localFont({
   src: "../public/fonts/ZCOOLKuaiLe-Regular.ttf",

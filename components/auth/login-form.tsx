@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
+import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { signInWithEmail, startAnonymousExperience } from "@/lib/auth/actions";
@@ -78,6 +79,12 @@ export function LoginForm({
           {state.fieldErrors?.password}
         </p>
         <LoginSubmit />
+        <Link
+          href="/auth/recover"
+          className="mt-2 flex min-h-11 items-center justify-end text-sm underline underline-offset-4"
+        >
+          忘记密码？
+        </Link>
         {state.status === "error" ? (
           <p
             role="alert"

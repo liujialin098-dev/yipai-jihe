@@ -1,0 +1,153 @@
+/* SDD-052: restrained secondary actions; never recolor photos or status alerts. */
+:root .collage-edit-trigger {
+  background: var(--detail-warm-surface);
+  color: var(--detail-ink);
+}
+:root .detail-cool-button {
+  background: var(--detail-cool-surface);
+  color: var(--detail-ink);
+}
+:root :is(.collage-edit-trigger, .detail-cool-button):not(:disabled):active {
+  box-shadow: inset 0 0 0 999px rgb(40 34 45 / 8%);
+}
+@media (hover: hover) and (pointer: fine) {
+  :root :is(.collage-edit-trigger, .detail-cool-button):not(:disabled):hover {
+    box-shadow: inset 0 0 0 999px rgb(40 34 45 / 5%);
+  }
+}
+/* SDD-051: opaque paper keeps the dock distinct from the app field.
+   Only the colored background layer fades; controls never move or invert. */
+:root {
+  --adaptive-dock-color: #b58af0;
+  --adaptive-dock-ink: #352244;
+}
+:root[data-skin]:not([data-skin="original"]) {
+  --adaptive-dock-color: color-mix(in srgb, var(--skin-accent) 55%, white);
+  --adaptive-dock-ink: var(--skin-ink);
+}
+:root .bottom-navigation-shell.icon-dock[data-adaptive-dock] {
+  background: #ffffff;
+  border: 1px solid
+    color-mix(in srgb, var(--adaptive-dock-ink) 18%, transparent);
+  box-shadow:
+    0 10px 32px rgb(35 21 48 / 18%),
+    inset 0 1px 0 white;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+:root .bottom-navigation-shell.icon-dock[data-adaptive-dock]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--adaptive-dock-color);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-medium, 240ms) ease;
+}
+:root .bottom-navigation-shell.icon-dock[data-over-paper="true"]::before {
+  opacity: 1;
+}
+:root .bottom-navigation-shell.icon-dock[data-adaptive-dock] .nav-item {
+  color: var(--adaptive-dock-ink);
+}
+:root
+  .bottom-navigation-shell.icon-dock[data-adaptive-dock]
+  .nav-item
+  .nav-bubble {
+  border-color: color-mix(in srgb, var(--adaptive-dock-ink) 18%, transparent);
+  background: color-mix(in srgb, var(--adaptive-dock-ink) 10%, transparent);
+}
+:root
+  .bottom-navigation-shell.icon-dock[data-adaptive-dock]
+  .nav-item:focus-visible {
+  outline: 2px solid var(--adaptive-dock-ink);
+  outline-offset: -2px;
+}
+
+:root .inspiration-cover .inspiration-chip {
+  background: var(--surface-soft);
+  color: var(--text-secondary);
+}
+.inspiration-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 400px;
+  margin: 14px auto 0;
+}
+.inspiration-topic-option {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+.inspiration-topic-input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.inspiration-topic-chip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-height: 48px;
+  padding: 10px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 22px;
+  background: var(--surface-soft);
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+.inspiration-topic-check {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  visibility: hidden;
+}
+.inspiration-topic-input:checked + .inspiration-topic-chip {
+  background: var(--control-primary);
+  border-color: var(--control-primary);
+  color: var(--control-primary-foreground);
+}
+.inspiration-topic-input:checked
+  + .inspiration-topic-chip
+  .inspiration-topic-check {
+  visibility: visible;
+}
+.inspiration-topic-input:focus-visible + .inspiration-topic-chip {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+.inspiration-topic-input:disabled {
+  cursor: wait;
+}
+.inspiration-topic-input:disabled + .inspiration-topic-chip {
+  opacity: 0.65;
+}
+@media (min-width: 400px) {
+  .inspiration-topic-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .inspiration-topic-chip {
+    flex-direction: column;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .inspiration-topic-option:hover .inspiration-topic-chip {
+    box-shadow: inset 0 0 0 1px currentColor;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root .bottom-navigation-shell.icon-dock[data-adaptive-dock]::before {
+    transition-duration: 100ms;
+  }
+}

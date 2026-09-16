@@ -59,7 +59,7 @@ assert.match(
 assert.match(skins, /--original-add:\s*var\(--brand-lime\)/);
 assert.match(
   skins,
-  /:root\[data-skin\]:not\(\[data-skin="original"\]\) \.dock-add\s*\{\s*background:\s*var\(--brand-lime\)/,
+  /:root\[data-skin\]:not\(\[data-skin="original"\]\) \.dock-add\s*\{\s*background:\s*var\(--skin-secondary\)/,
 );
 assert.doesNotMatch(
   skins,

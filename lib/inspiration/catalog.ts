@@ -1,5 +1,5 @@
 export type FashionSource = {
-  name: "Vogue" | "GQ";
+  name: "Vogue" | "GQ" | "Hypebeast";
   feedUrl: string;
   hosts: readonly string[];
 };
@@ -14,6 +14,11 @@ export const FASHION_SOURCES: readonly FashionSource[] = [
     name: "GQ",
     feedUrl: "https://www.gq.com/feed/rss",
     hosts: ["www.gq.com", "gq.com"],
+  },
+  {
+    name: "Hypebeast",
+    feedUrl: "https://hypebeast.com/feed",
+    hosts: ["hypebeast.com", "www.hypebeast.com"],
   },
 ];
 

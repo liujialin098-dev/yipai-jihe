@@ -10,12 +10,16 @@ export function InspirationFeed({ data }: { data: FashionFeedData }) {
       {data.items.length > 0 ? (
         <section className="mt-6 grid gap-4" aria-label="穿搭新闻与趋势">
           {data.items.map((item, index) => (
-            <InspirationCard
-              key={item.id}
-              item={item}
-              index={index}
-              showUnread={data.preferences.unreadEnabled}
-            />
+            <div key={item.id}>
+              {item.isDiscovery && !data.items[index - 1]?.isDiscovery && (
+                <h2 className="app-section-title mb-3">发现更多</h2>
+              )}
+              <InspirationCard
+                item={item}
+                index={index}
+                showUnread={data.preferences.unreadEnabled}
+              />
+            </div>
           ))}
         </section>
       ) : (
@@ -24,9 +28,13 @@ export function InspirationFeed({ data }: { data: FashionFeedData }) {
             className="mx-auto size-5 text-[var(--text-tertiary)]"
             aria-hidden="true"
           />
-          <h2 className="app-section-title mt-4">今天没有合适的新内容</h2>
+          <h2 className="app-section-title mt-4">
+            {data.sourceUnavailable ? "资讯暂时连接不上" : "暂时没有合适的内容"}
+          </h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            暂无新内容，请稍后重试或调整主题。
+            {data.sourceUnavailable
+              ? "请稍后重新载入。"
+              : "可以调整灵感偏好，或稍后再来看看。"}
           </p>
         </section>
       )}

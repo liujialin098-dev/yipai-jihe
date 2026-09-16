@@ -11,6 +11,8 @@ const topicTone = {
   occasion: "var(--fashion-sky-soft)",
   seasonal: "var(--fashion-lime-soft)",
   weather: "var(--fashion-sky-soft)",
+  street: "var(--fashion-lilac-soft)",
+  accessory: "var(--fashion-coral-soft)",
 } as const;
 
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {

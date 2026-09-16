@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
 import { BrandMark } from "@/components/brand-mark";
 import { BrandName } from "@/components/brand-name";
+import { SupportLinks } from "@/components/support-links";
 import { getViewer } from "@/lib/auth/viewer";
 
 export const metadata: Metadata = { title: "账号登录" };
@@ -18,10 +19,12 @@ const feedback = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; status?: string }>;
+  searchParams: Promise<{ error?: string; status?: string; recovery?: string }>;
 }) {
   const [viewer, params] = await Promise.all([getViewer(), searchParams]);
-  if (viewer && !viewer.isAnonymous) redirect("/settings");
+  const recoveryComplete = params.recovery === "complete";
+  // This parameter only reveals the login form; it never grants identity or access.
+  if (viewer && !viewer.isAnonymous && !recoveryComplete) redirect("/settings");
 
   const feedbackKey = params.error ?? params.status;
   const message =
@@ -59,6 +62,12 @@ export default async function LoginPage({
         </div>
       ) : null}
       <LoginForm />
+      {recoveryComplete && viewer?.isAnonymous ? (
+        <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
+          登录其他邮箱账号会切换身份，当前体验衣橱不会自动合并。如需保留体验衣橱，请先在设置中注册。
+        </p>
+      ) : null}
+      <SupportLinks />
     </div>
   );
 }

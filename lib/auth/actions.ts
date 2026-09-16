@@ -10,6 +10,7 @@ import {
   validatePassword,
 } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/server";
+import { changePassword } from "@/lib/auth/password-change";
 
 type ServerSupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -137,7 +138,7 @@ export async function registerCurrentAccount(
   }
 
   const { data: emailData, error: emailError } = await supabase.auth.updateUser(
-    { email },
+    { email, password, data: { account_password_configured: true } },
   );
 
   if (emailError) {
@@ -146,24 +147,14 @@ export async function registerCurrentAccount(
     );
   }
 
-  if (!emailData.user || emailData.user.is_anonymous || !emailData.user.email) {
+  if (
+    !emailData.user ||
+    emailData.user.id !== currentUser.id ||
+    emailData.user.is_anonymous ||
+    !emailData.user.email
+  ) {
     return errorState(
       "项目仍要求邮箱验证，暂时没有完成注册。请先关闭邮件确认后再试。",
-    );
-  }
-
-  const currentMetadata = emailData.user.user_metadata ?? {};
-  const { error: passwordError } = await supabase.auth.updateUser({
-    data: { ...currentMetadata, account_password_configured: true },
-    password,
-  });
-  if (passwordError) {
-    revalidatePath("/settings");
-    return errorState(
-      mapAuthError(
-        passwordError,
-        "邮箱已绑定，但密码暂时没有设置成功。请刷新页面后直接设置密码。",
-      ),
     );
   }
 
@@ -179,42 +170,15 @@ export async function setAccountPassword(
   _previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
-  const password = String(formData.get("password") ?? "");
-  const confirmPassword = String(formData.get("confirmPassword") ?? "");
-
-  if (!validatePassword(password)) {
-    return errorState("密码至少需要 8 位。", {
-      password: "请使用至少 8 位密码。",
-    });
+  let result: AuthActionState;
+  try {
+    const supabase = await createClient();
+    result = await changePassword(supabase, formData);
+  } catch {
+    return errorState("暂时无法连接认证服务，请稍后再试。");
   }
-  if (password !== confirmPassword) {
-    return errorState("两次输入的密码不一致。", {
-      confirmPassword: "请再次输入相同密码。",
-    });
-  }
-
-  const supabase = await createClient();
-  const { data, error: userError } = await supabase.auth.getUser();
-  if (userError || !data.user || data.user.is_anonymous || !data.user.email) {
-    return errorState("当前不是已绑定邮箱的账号，请先注册或登录。", {
-      password: "需要已绑定邮箱的登录会话。",
-    });
-  }
-
-  const currentMetadata = data.user.user_metadata ?? {};
-  const { error } = await supabase.auth.updateUser({
-    data: { ...currentMetadata, account_password_configured: true },
-    password,
-  });
-  if (error) {
-    return errorState(mapAuthError(error, "密码暂时无法保存，请稍后重试。"));
-  }
-
-  revalidatePath("/settings");
-  return {
-    message: "密码设置完成。现在可以直接使用邮箱和密码登录。",
-    status: "success",
-  };
+  if (result.status === "success") revalidatePath("/settings");
+  return result;
 }
 
 export async function signInWithEmail(

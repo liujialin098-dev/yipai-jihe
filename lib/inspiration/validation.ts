@@ -8,6 +8,8 @@ export const FASHION_TOPICS = [
   "occasion",
   "seasonal",
   "weather",
+  "street",
+  "accessory",
 ] as const;
 
 export type FashionTopic = (typeof FASHION_TOPICS)[number];
@@ -19,6 +21,8 @@ export const FASHION_TOPIC_LABELS: Record<FashionTopic, string> = {
   occasion: "场景搭配",
   seasonal: "换季指南",
   weather: "天气穿搭",
+  street: "街头风格",
+  accessory: "配饰细节",
 };
 
 export type FashionContentItem = {

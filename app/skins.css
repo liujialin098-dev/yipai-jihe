@@ -1,3 +1,36 @@
+/* Small accents are coordinated per skin, not a third dominant page color. */
+:root {
+  --detail-warm: #ffb69d;
+  --detail-cool: #a8dcef;
+  --detail-ink: #382a39;
+  --detail-warm-surface: color-mix(in srgb, var(--detail-warm) 40%, white);
+  --detail-cool-surface: color-mix(in srgb, var(--detail-cool) 42%, white);
+}
+:root[data-skin="violet"] {
+  --detail-warm: #f4acb9;
+  --detail-cool: #b2dcd2;
+}
+:root[data-skin="rose"] {
+  --detail-warm: #edb58f;
+  --detail-cool: #b6d4d4;
+}
+:root[data-skin="green"] {
+  --detail-warm: #f1bd8e;
+  --detail-cool: #acd5e4;
+}
+:root[data-skin="mono"] {
+  --detail-warm: #c9c8c5;
+  --detail-cool: #bdc2c9;
+}
+:root[data-skin="blue"] {
+  --detail-warm: #f3b5b2;
+  --detail-cool: #bfc2eb;
+}
+:root.dark {
+  --detail-ink: #fff6f0;
+  --detail-warm-surface: color-mix(in srgb, var(--detail-warm) 18%, #302a32);
+  --detail-cool-surface: color-mix(in srgb, var(--detail-cool) 18%, #292d37);
+}
 /* SDD-044: flat, vivid skin fields; content stays readable on calm paper surfaces. */
 :root:is(:not([data-skin]), [data-skin="original"]) {
   --background: #b58af0;
@@ -142,6 +175,14 @@
   --skin-night: #20364d;
 }
 :root[data-skin]:not([data-skin="original"]) {
+  /* Navigation follows the selected palette; brand artwork keeps its own colors. */
+  --header-background: var(--skin-secondary);
+  --header-foreground: #28222d;
+  --header-state-background: color-mix(
+    in srgb,
+    var(--skin-secondary) 90%,
+    #28222d
+  );
   --background: var(--skin-paper);
   --foreground: #242426;
   --surface-solid: #ffffff;
@@ -171,10 +212,18 @@
     var(--skin-secondary) 35%,
     var(--surface-solid)
   );
-  --fashion-coral: var(--skin-secondary);
-  --fashion-coral-soft: var(--fashion-lime-soft);
-  --fashion-sky: var(--skin-accent);
-  --fashion-sky-soft: var(--surface-soft);
+  --fashion-coral: var(--detail-warm);
+  --fashion-coral-soft: color-mix(
+    in srgb,
+    var(--detail-warm) 28%,
+    var(--surface-solid)
+  );
+  --fashion-sky: var(--detail-cool);
+  --fashion-sky-soft: color-mix(
+    in srgb,
+    var(--detail-cool) 26%,
+    var(--surface-solid)
+  );
   --card: var(--surface-solid);
   --card-foreground: var(--foreground);
   --popover: var(--surface-solid);
@@ -270,8 +319,8 @@
   border-color: var(--hairline);
 }
 :root[data-skin]:not([data-skin="original"]) .dock-add {
-  background: var(--brand-lime);
-  color: var(--brand-lime-ink);
+  background: var(--skin-secondary);
+  color: var(--header-foreground);
 }
 :root[data-skin]:not([data-skin="original"]) .home-edit-action {
   background: var(--skin-control);
@@ -293,7 +342,7 @@
   color: var(--foreground);
 }
 :root[data-skin]:not([data-skin="original"]) .inspiration-cover {
-  background: var(--surface-soft);
+  background: var(--surface-solid);
   color: var(--foreground);
 }
 :root[data-skin]:not([data-skin="original"]) .inspiration-cover-chip {
@@ -355,10 +404,10 @@
   .nav-icon-shell {
   background: color-mix(
     in srgb,
-    var(--skin-control) 92%,
-    var(--skin-on-control)
+    var(--skin-secondary) 92%,
+    var(--header-foreground)
   );
-  color: var(--skin-on-control);
+  color: var(--header-foreground);
 }
 :root[data-skin]:not([data-skin="original"])
   .header-avatar:is(:hover, :active) {

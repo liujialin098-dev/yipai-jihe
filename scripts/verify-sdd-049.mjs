@@ -58,7 +58,7 @@ for (const [name, rule] of [
   assert.match(
     rule,
     /background:\s*var\(--header-background\)/,
-    `${name}必须复用品牌青柠`,
+    `${name}必须复用皮肤导航语义色`,
   );
   assert.doesNotMatch(rule, /linear-gradient\(/, `${name}不得继续使用浅色渐变`);
 }
@@ -86,11 +86,11 @@ assert.match(skins, /--original-add-ink:\s*var\(--brand-lime-ink\)/);
 assert.doesNotMatch(skins, /--skin-header:/);
 assert.match(
   skins,
-  /:root\[data-skin\]:not\(\[data-skin="original"\]\) \.dock-add\s*\{\s*background:\s*var\(--brand-lime\)/,
+  /:root\[data-skin\]:not\(\[data-skin="original"\]\) \.dock-add\s*\{\s*background:\s*var\(--skin-secondary\)/,
 );
 assert.match(header, /className="editorial-header-shell/);
 assert.match(navigation, /primary \? "nav-icon-shell dock-add"/);
 
 console.log(
-  "SDD-049: top navigation now shares the exact brand lime with the add action across skins and themes, with stable contrast and dimensions",
+  "SDD-049/052: original navigation stays lime; alternatives use skin secondary, with stable geometry",
 );

@@ -1,4 +1,5 @@
 import type { Viewer } from "@/lib/auth/viewer";
+import type { FashionImpression } from "@/lib/inspiration/content-rules";
 import type {
   FashionContentItem,
   FashionPreferences,
@@ -59,9 +60,18 @@ export function rankFashionContent(input: {
   wardrobe: WardrobeSignal[];
   weather: WeatherSignal;
   recentOccasions?: string[];
+  impressions?: FashionImpression[];
   now?: number;
 }) {
   const now = input.now ?? Date.now();
+  const recentTopics = new Set(
+    (input.impressions ?? [])
+      .filter((row) => {
+        const seen = Date.parse(row.first_seen_at);
+        return seen <= now && seen > now - 3 * 86_400_000;
+      })
+      .map((row) => row.topic_key),
+  );
   return input.items
     .filter(
       (item) =>
@@ -73,6 +83,11 @@ export function rankFashionContent(input: {
     )
     .map((item) => {
       let score = 45 - (now - Date.parse(item.publishedAt)) / 86_400_000;
+      if (
+        input.preferences.personalized &&
+        recentTopics.has(item.topicFingerprint)
+      )
+        score -= 10;
       let reason = "按原始发布时间排序；未使用你的衣橱、位置或个人偏好。";
       if (input.preferences.personalized) {
         const preferred = item.styles.some((style) =>
@@ -107,4 +122,43 @@ export function rankFashionContent(input: {
         b.publishedAt.localeCompare(a.publishedAt) ||
         a.id.localeCompare(b.id),
     );
+}
+
+export function selectFashionFeed(
+  input: Parameters<typeof rankFashionContent>[0],
+) {
+  const preferred = rankFashionContent(input);
+  // Broaden only topics when there are too few matches. Keep audience,
+  // weather and expiry checks, and do not rewrite the saved preferences.
+  const supplemental =
+    preferred.length < 6
+      ? rankFashionContent({
+          ...input,
+          preferences: {
+            ...input.preferences,
+            topics: [...new Set(input.items.map((item) => item.topic))],
+          },
+        }).filter((item) => !input.preferences.topics.includes(item.topic))
+      : [];
+  const diversify = (items: RankedFashionContent[]) => {
+    if (!input.preferences.personalized) return items;
+    // Prefer a varied first pass without hiding other articles of a theme.
+    const seenTopics = new Set<string>();
+    const deferred: RankedFashionContent[] = [];
+    const varied = items.filter((item) => {
+      if (seenTopics.has(item.topicFingerprint)) {
+        deferred.push(item);
+        return false;
+      }
+      seenTopics.add(item.topicFingerprint);
+      return true;
+    });
+    return [...varied, ...deferred];
+  };
+  return [
+    ...diversify(preferred).map((item) => ({ ...item, isDiscovery: false })),
+    ...diversify(supplemental)
+      .slice(0, Math.max(0, 6 - preferred.length))
+      .map((item) => ({ ...item, isDiscovery: true })),
+  ].slice(0, 12);
 }

@@ -276,17 +276,16 @@
     var(--surface);
 }
 .inspiration-cover {
-  color: #2b2441;
+  background: var(--surface-solid);
+  color: var(--foreground);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 8px 24px rgb(35 21 48 / 8%);
 }
 .inspiration-cover .app-page-title {
   color: inherit;
 }
 .inspiration-chip {
   background: rgb(255 255 255 / 52%);
-}
-.dark .inspiration-cover {
-  background: #443451;
-  color: #f0e5f8;
 }
 .dark .inspiration-chip {
   background: #584166;

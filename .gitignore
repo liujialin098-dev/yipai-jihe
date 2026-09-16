@@ -52,5 +52,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
-.env*
+# Local-only work and unrelated project material (never publish to GitHub)
+/.codex-work/
+/output/
+/artist-content-studio/
+/milan-ops-demo/
+/*-package*.tar.gz
+/合同审查提示词改造/
+/合同审查输出/
+/*合同*意见.md
+/项目想法/
+/*.docx
+/revise_prd_mvp.py
+/scripts/build_picksee_prd.py

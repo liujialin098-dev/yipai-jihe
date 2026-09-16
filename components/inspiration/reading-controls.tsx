@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useTransition, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { useActionState, useState, useTransition } from "react";
 import { setFashionContentRead } from "@/app/inspiration/actions";
 
 export function ReadingControls({
@@ -28,7 +28,7 @@ export function ReadingControls({
           <button
             type="submit"
             disabled={pending || opening}
-            className="motion-button h-11 rounded-full bg-[var(--surface-soft)] px-3.5 text-xs font-semibold text-[var(--foreground)]"
+            className="detail-cool-button interaction-preserve motion-button h-11 rounded-full bg-[var(--surface-soft)] px-3.5 text-xs font-semibold text-[var(--foreground)]"
           >
             {pending ? "保存中…" : isRead ? "设为未读" : "标记已读"}
           </button>

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import {
   ChevronRight,
   KeyRound,
@@ -7,26 +6,22 @@ import {
   SlidersHorizontal,
   UserRound,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { SkinPicker } from "@/components/skin-picker";
 import {
   AccountProtectedBadge,
   EmailBindingForm,
-  PasswordSetupForm,
+  PasswordChangeForm,
 } from "@/components/auth/account-forms";
+import { SkinPicker } from "@/components/skin-picker";
 import { signOut } from "@/lib/auth/actions";
 import { getViewer } from "@/lib/auth/viewer";
 import { clothingPreferenceLabel } from "@/lib/personalization/constants";
 
 export const metadata: Metadata = { title: "设置" };
 
-export default async function SettingsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ binding?: string }>;
-}) {
-  const [viewer, params] = await Promise.all([getViewer(), searchParams]);
-  const verifiedNow = params.binding === "verified";
+export default async function SettingsPage() {
+  const viewer = await getViewer();
 
   return (
     <div className="page-enter px-5 pt-4">
@@ -82,23 +77,30 @@ export default async function SettingsPage({
         </section>
       ) : null}
 
-      {viewer && !viewer.isAnonymous && !viewer.passwordConfigured ? (
+      {viewer && !viewer.isAnonymous ? (
         <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
-          <p className="text-xs font-semibold text-[var(--system-blue)]">
-            {verifiedNow ? "邮箱已绑定" : "最后一步"}
-          </p>
-          <h2 className="app-section-title mt-2">设置登录密码</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            直接在当前页面设置，无需再打开验证邮件。密码只会交给认证服务处理，不会保存到衣拍即合的数据表中。
-          </p>
-          <PasswordSetupForm />
-        </section>
-      ) : null}
-
-      {viewer && !viewer.isAnonymous && viewer.passwordConfigured ? (
-        <section className="surface-card stagger-item mt-5 rounded-[1.65rem] p-5 [--stagger:1]">
-          <h2 className="app-section-title">邮箱登录</h2>
-          <AccountProtectedBadge />
+          <h2 className="app-section-title">账号安全</h2>
+          {viewer.passwordConfigured ? (
+            <AccountProtectedBadge />
+          ) : (
+            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+              若此账号从未设置密码，请保留当前登录并查看找回密码入口。已知道原密码的用户可直接修改。
+            </p>
+          )}
+          <details className="mt-4 rounded-[1.2rem] border border-[var(--hairline)] bg-[var(--surface-solid)] px-4">
+            <summary className="cursor-pointer py-4 text-sm font-semibold">
+              修改密码
+            </summary>
+            <div className="pb-4">
+              <PasswordChangeForm />
+            </div>
+          </details>
+          <Link
+            href="/auth/recover"
+            className="mt-2 inline-flex min-h-11 items-center text-sm underline underline-offset-4"
+          >
+            忘记密码或尚未设密
+          </Link>
           <form action={signOut}>
             <button
               type="submit"
@@ -135,6 +137,23 @@ export default async function SettingsPage({
             viewer ? [clothingPreferenceLabel(viewer.clothingPreference)] : []
           }
         />
+      </section>
+      <section className="surface-card mt-5 rounded-[1.5rem] p-5">
+        <h2 className="app-section-title">帮助与隐私</h2>
+        <Link
+          href="/support"
+          className="mt-2 flex min-h-12 items-center justify-between gap-3 text-sm"
+        >
+          帮助与联系
+          <ChevronRight className="size-4" aria-hidden="true" />
+        </Link>
+        <Link
+          href="/privacy"
+          className="flex min-h-12 items-center justify-between gap-3 border-t border-[var(--hairline)] text-sm"
+        >
+          数据与隐私说明
+          <ChevronRight className="size-4" aria-hidden="true" />
+        </Link>
       </section>
     </div>
   );

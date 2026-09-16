@@ -3,18 +3,20 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import {
+  classify,
+  dedupeFashionContent,
+  fingerprint,
+  fromRss,
+} from "../lib/inspiration/content-rules.ts";
+import {
   canonicalFashionUrl,
   isTrustedHttpsUrl,
   parseRssItems,
 } from "../lib/inspiration/core.ts";
 import {
-  fromRss,
-  fingerprint,
-  classify,
-  dedupeFashionContent,
-  filterPreviouslyDelivered,
-} from "../lib/inspiration/content-rules.ts";
-import { rankFashionContent } from "../lib/inspiration/ranking.ts";
+  rankFashionContent,
+  selectFashionFeed,
+} from "../lib/inspiration/ranking.ts";
 import { normalizeFashionTopics } from "../lib/inspiration/validation.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -134,26 +136,6 @@ const impressions = [
     first_seen_at: now.toISOString(),
   },
 ];
-assert.equal(
-  filterPreviouslyDelivered(
-    [{ ...base, id: "fashion-other" }],
-    impressions,
-    now.getTime(),
-  ).length,
-  0,
-);
-assert.equal(
-  filterPreviouslyDelivered([base], impressions, now.getTime()).length,
-  1,
-);
-assert.equal(
-  filterPreviouslyDelivered(
-    [{ ...base, id: "fashion-other" }],
-    [{ ...impressions[0], first_seen_at: "2026-08-01T12:00:00Z" }],
-    now.getTime(),
-  ).length,
-  1,
-);
 const preferences = {
   topics: ["seasonal", "item", "weather", "trend"],
   personalized: true,
@@ -202,6 +184,76 @@ const generic = rankFashionContent({
 });
 assert.equal(generic.length, 4);
 assert.ok(generic.every((item) => item.reason.includes("未使用")));
+// Different new articles of an already displayed category stay eligible.
+const newArticle = {
+  ...base,
+  id: "fashion-new-jacket",
+  originalTitle: "A New Denim Jacket for Fall",
+};
+assert.equal(dedupeFashionContent([base, newArticle]).length, 2);
+const rankingInput = {
+  items: [newArticle],
+  preferences,
+  viewer,
+  wardrobe: [],
+  weather: null,
+  now: now.getTime(),
+};
+const unpenalized = rankFashionContent(rankingInput)[0].score;
+const recent = rankFashionContent({ ...rankingInput, impressions });
+assert.equal(recent.length, 1);
+assert.equal(recent[0].score, unpenalized - 10);
+assert.equal(
+  rankFashionContent({
+    ...rankingInput,
+    impressions: [{ ...impressions[0], first_seen_at: "2026-09-02T12:00:00Z" }],
+  })[0].score,
+  unpenalized,
+);
+const fallback = selectFashionFeed({
+  ...rankingInput,
+  items: fixtures,
+  preferences: { ...preferences, topics: ["color"] },
+  impressions,
+  weather: {
+    city: "上海",
+    summary: "晴",
+    apparentTemperatureC: 32,
+    weatherCode: 0,
+  },
+});
+assert.deepEqual(
+  fallback.map((item) => item.id),
+  [base.id],
+);
+assert.equal(fallback[0].isDiscovery, true);
+assert.equal(selectFashionFeed({ ...rankingInput, items: [] }).length, 0);
+assert.equal(
+  selectFashionFeed({
+    ...rankingInput,
+    items: [
+      { ...base, publishedAt: "2026-09-07T00:00:00Z" },
+      { ...base, validUntil: "2026-09-01T00:00:00Z" },
+    ],
+  }).length,
+  0,
+);
+for (const title of [
+  "10 New York Fashion Week Outfits to Recreate Now",
+  "19 Best Heavyweight T-Shirts",
+  "16 Best Loafers for Men",
+  "Street Style at Fashion Week",
+  "Patta and Crocs Classic Clog Collab",
+  "Spring Ready-to-Wear",
+  "New Autumn Accessories",
+])
+  assert.ok(fromRss({ ...entry, title }, now), title);
+for (const title of [
+  "Celebrity movie news",
+  "The Best Menswear Deals",
+  "Fashion Week Hair and Makeup",
+])
+  assert.equal(fromRss({ ...entry, title }, now), null, title);
 const scenarioItems = ["minimal", "streetwear"].flatMap((style) =>
   [1, 2, 3, 4].map((n) => ({
     ...base,
@@ -225,7 +277,7 @@ assert.ok(
     .length >= 2,
 );
 console.log(
-  "SDD-027 offline fixtures passed: URL safety, dates, 30-day delivery ledger, dedupe, weather/audience and generic ranking.",
+  "SDD-027 offline fixtures passed: URL safety, dates, article dedupe, three-day soft ranking, safe topic fallback and weather/audience filters.",
 );
 if (process.argv.includes("--offline")) process.exit(0);
 

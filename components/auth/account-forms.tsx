@@ -2,7 +2,7 @@
 
 import { Check, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { registerCurrentAccount, setAccountPassword } from "@/lib/auth/actions";
 import { initialAuthState } from "@/lib/auth/errors";
@@ -15,7 +15,12 @@ function SubmitButton({ children }: { children: string }) {
       disabled={pending}
       className="motion-button mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] disabled:opacity-55"
     >
-      {pending ? <LoaderCircle className="size-4 animate-spin" /> : null}
+      {pending ? (
+        <LoaderCircle
+          className="size-4 animate-spin motion-reduce:animate-none"
+          aria-hidden="true"
+        />
+      ) : null}
       {pending ? "正在处理…" : children}
     </button>
   );
@@ -109,34 +114,82 @@ export function EmailBindingForm() {
   return <RegistrationForm submitLabel="注册并保护衣橱" />;
 }
 
-export function PasswordSetupForm() {
-  const router = useRouter();
-  const [state, action] = useActionState(setAccountPassword, initialAuthState);
+export function PasswordChangeForm() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const messageRef = useRef<HTMLDivElement>(null);
+  const [state, action, pending] = useActionState(
+    setAccountPassword,
+    initialAuthState,
+  );
 
   useEffect(() => {
-    if (state.status === "success") router.refresh();
-  }, [router, state.status]);
+    if (state.status === "success") formRef.current?.reset();
+    if (state.status !== "idle") messageRef.current?.focus();
+  }, [state]);
 
   return (
-    <form action={action} className="mt-5">
-      <PasswordField
-        id="new-password"
-        name="password"
-        label="设置密码"
-        error={state.fieldErrors?.password}
-        autoComplete="new-password"
-      />
-      <div className="mt-4">
+    <form ref={formRef} action={action} className="mt-5" aria-busy={pending}>
+      {state.status !== "idle" ? (
+        <div
+          ref={messageRef}
+          tabIndex={-1}
+          role={state.status === "error" ? "alert" : "status"}
+          className={`motion-status mb-5 rounded-[1.1rem] px-4 py-3 text-sm leading-6 ${state.status === "error" ? "bg-[var(--danger-surface)] text-[var(--danger-text)]" : "bg-[var(--success-surface)] text-[var(--success-text)]"}`}
+        >
+          <p>{state.message}</p>
+          {state.fieldErrors ? (
+            <ul className="mt-2 list-disc pl-5">
+              {(
+                [
+                  ["currentPassword", "change-current-password"],
+                  ["password", "change-password"],
+                  ["confirmPassword", "change-confirm-password"],
+                ] as const
+              ).map(([field, id]) =>
+                state.fieldErrors?.[field] ? (
+                  <li key={field}>
+                    <a href={`#${id}`} className="underline underline-offset-2">
+                      {state.fieldErrors[field]}
+                    </a>
+                  </li>
+                ) : null,
+              )}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
+      <fieldset disabled={pending} className="min-w-0 space-y-4 border-0 p-0">
+        <legend className="sr-only">验证原密码并设置新密码</legend>
         <PasswordField
-          id="confirm-password"
+          id="change-current-password"
+          name="currentPassword"
+          label="原密码"
+          error={state.fieldErrors?.currentPassword}
+          autoComplete="current-password"
+          minLength={1}
+          maxLength={1024}
+        />
+        <PasswordField
+          id="change-password"
+          name="password"
+          label="新密码"
+          error={state.fieldErrors?.password}
+          autoComplete="new-password"
+          maxLength={72}
+        />
+        <PasswordField
+          id="change-confirm-password"
           name="confirmPassword"
-          label="再次输入"
+          label="确认新密码"
           error={state.fieldErrors?.confirmPassword}
           autoComplete="new-password"
+          maxLength={72}
         />
-      </div>
-      <SubmitButton>保护这间衣橱</SubmitButton>
-      <FormMessage state={state} />
+        <p className="text-xs leading-5 text-[var(--text-secondary)]">
+          新密码至少 8 位。此操作验证原密码，不需要打开邮箱链接。
+        </p>
+        <SubmitButton>保存新密码</SubmitButton>
+      </fieldset>
     </form>
   );
 }
@@ -147,12 +200,16 @@ function PasswordField({
   id,
   label,
   name,
+  minLength = 8,
+  maxLength,
 }: {
   autoComplete: string;
   error?: string;
   id: string;
   label: string;
   name: string;
+  minLength?: number;
+  maxLength?: number;
 }) {
   return (
     <div>
@@ -168,7 +225,8 @@ function PasswordField({
           id={id}
           name={name}
           type="password"
-          minLength={8}
+          minLength={minLength}
+          maxLength={maxLength}
           required
           autoComplete={autoComplete}
           aria-invalid={Boolean(error)}

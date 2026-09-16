@@ -9,6 +9,7 @@ import {
 } from "@/components/auth/login-form";
 import { BrandMark } from "@/components/brand-mark";
 import { BrandName } from "@/components/brand-name";
+import { SupportLinks } from "@/components/support-links";
 
 type EntryMode = "login" | "register";
 
@@ -101,6 +102,7 @@ export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
           <AnonymousExperienceForm compact />
         </div>
       </section>
+      <SupportLinks />
     </div>
   );
 }
