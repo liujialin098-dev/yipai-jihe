@@ -1,5 +1,10 @@
 # SDD-050 任务
 
+## 2026-09-16 开源与提交材料准备
+
+- [x] T022 [US2] 新增submission-workbook.md，准备商店文案候选、真机验收表和敏感材料存放边界；不将文案草案或源码公开当作iOS发布。
+- [ ] T023 [US2] 在T019–T021验收及原生构建条件确定后，填充实际构建、截图、审核账号与隐私问卷；真人身份资料不写入仓库。
+
 ## 后续增量任务（2026-09-14，用户关键选择已确认）
 
 - [x] T013 更新specs/050-release-readiness/spec.md、plan.md、research.md、data-model.md与contracts/recovery.md，明确默认关闭和真实配置门禁。

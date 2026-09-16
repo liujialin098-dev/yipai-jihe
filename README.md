@@ -1,5 +1,7 @@
 # Ensemble（衣拍即合）
 
+原创代码采用 [MIT](LICENSE)；字体、品牌及图片的许可边界见 [第三方声明](THIRD_PARTY_NOTICES.md)。安全问题请参阅 [SECURITY.md](SECURITY.md)。这是正在迭代的 Web 应用，不是已经通过 App Store 审核的 iOS 产品。
+
 衣拍即合是一个移动端优先的 AI 私人衣橱 MVP：用户先登录、直接注册或明确选择体验身份，再管理真实衣物原图、用 AI 辅助识别入库、按真实天气和场合生成每日 3 套穿搭，并通过换件、收藏和 3 题偏好持续调整结果；实际穿过后还可记入日记并查看基础衣物利用率。
 
 当前 P0 核心闭环：
@@ -13,8 +15,8 @@
 - Next.js 16.3.1 App Router、React 19、TypeScript
 - Tailwind CSS 4、shadcn/ui、lucide-react
 - Supabase Auth、Postgres、Storage 与 RLS
-- 百炼千问 Chat Completions（服务端每日搭配；SDD-030 待真实凭据联调）；OpenAI Responses API 继续用于图片识别与既有资讯摘要。
-- Vercel Preview
+- 百炼千问 Chat Completions（服务端每日搭配）；OpenAI Responses API 用于图片识别及资讯标题处理；自行部署需要各自的有效凭据。
+- 和风天气、服务端抠图与贴纸处理；Vercel Web 部署
 
 ## 本地启动
 
@@ -26,7 +28,7 @@ copy .env.example .env.local
 npm run dev
 ```
 
-打开 `http://localhost:3000`。首次访问只显示账号入口，不会自动创建匿名会话。新用户可用邮箱和密码直接注册，不需要邮件确认；也可以主动选择体验身份。体验身份清除站点数据或更换设备后无法恢复。
+打开 `http://localhost:3000`。首次访问只显示账号入口，不会自动创建匿名会话。可以选择邮箱密码注册或体验身份；实际能否免注册邮件确认、使用匿名身份取决于你自己的 Auth 项目配置，不由克隆代码自动保证。体验身份清除站点数据或更换设备后可能无法恢复。
 
 ## 环境变量
 
@@ -36,7 +38,7 @@ npm run dev
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`：Supabase publishable key，可公开。
 - `OPENAI_API_KEY`：仅服务端使用，严禁 `NEXT_PUBLIC_` 前缀或提交仓库。
 - `OPENAI_VISION_MODEL`：可选，图片识别模型，默认 `gpt-4o-mini`。
-- `OPENAI_LOOKBOOK_MODEL`：可选，单套虚拟模特效果图模型，默认 `gpt-image-2`；仅在用户点击生成效果图时调用。
+- 虚拟模特效果图为历史功能，不作为当前主路径或首发承诺。
 - `DASHSCOPE_API_KEY`：北京百炼工作空间的服务端密钥。
 - `DASHSCOPE_API_HOST`：百炼控制台提供的北京域名，形如 `<workspace>.cn-beijing.maas.aliyuncs.com`；只填域名，不加协议或路径。
 - `QWEN_RECOMMENDATION_MODEL`：每日推荐默认 `qwen3.8-max`，覆盖模型必须支持严格 JSON Schema。旧 `OPENAI_RECOMMENDATION_MODEL` 不再用于每日推荐。
@@ -45,7 +47,7 @@ npm run dev
 
 `.env.local` 已被 Git 忽略。Vercel 只配置实际需要的服务端变量和两个 Supabase 公开变量。
 
-SDD-028 本地已接入和风天气：浏览器直接获取天气，服务端只签发最长 5 分钟的短 JWT；生成搭配时服务端独立读取同一供应商的真实天气，不相信浏览器传入的温度。Production 尚未配置或部署此版本。
+已接入和风天气：浏览器直接获取天气，服务端只签发最长 5 分钟的短 JWT；生成搭配时服务端独立读取同一供应商的真实天气，不相信浏览器传入的温度。自行部署须配置自己的和风项目，不能复用本项目生产凭据。
 
 服务端配置：`QWEATHER_API_HOST`、`QWEATHER_DEVELOPER_ID`、`QWEATHER_PROJECT_ID`、`QWEATHER_CREDENTIAL_ID`、`QWEATHER_PRIVATE_KEY`（Ed25519 PEM，支持实际换行或转义换行）。这些变量均不能加 `NEXT_PUBLIC_`。已有本机准备文件时运行 `node scripts/configure-qweather-local.mjs`，将它们安全转入被忽略的 `.env.development.local`；脚本不会覆盖不同的已有文件，也不打印私钥。该文件仅用于 `npm run dev`，不会被 production build/start 加载；未来部署时须单独安全配置 Vercel 的五项服务端变量，不能直接拿未配置的构建发布。
 
@@ -59,7 +61,7 @@ SDD-028 本地已接入和风天气：浏览器直接获取天气，服务端只
 
 主要数据：用户资料与偏好、衣物、AI 入库任务、每日推荐、穿搭日记、单品收藏、穿搭快照收藏、偏好反馈事件，以及时尚内容的已读状态。所有业务表启用 RLS 并以当前 Auth 用户隔离。
 
-`wardrobe-images` bucket 必须保持私有，对象路径第一段必须是当前 `auth.uid()`。`public/demo-wardrobe/` 和 `public/test-wardrobe/` 仅包含安全演示/测试素材。
+`wardrobe-images` bucket 必须保持私有，对象路径第一段必须是当前 `auth.uid()`。`public/demo-wardrobe/` 和 `public/test-wardrobe/` 为演示/测试素材，来源确认及许可范围见 [第三方声明](THIRD_PARTY_NOTICES.md)，不代表真实用户数据。
 
 ## 质量与验收
 
@@ -106,21 +108,21 @@ npm run verify:sdd-028
 当前 Production 项目为 `jialin-d583/yipai-jihe`，固定地址为 `https://yipai-jihe.vercel.app`。发布前确认项目链接、Next.js 预设和 Production 环境变量名称，再执行质量检查、生产构建与正式部署：
 
 ```bash
-npx vercel link --yes --project yipai-jihe --scope jialin-d583
+npx vercel link
 npm run check
 npm run build
-npx vercel deploy --prod --yes --scope jialin-d583
+npx vercel deploy --prod
 ```
 
-最新 Production 链接、部署 ID、访问状态和验收证据以 `progress.md` 为准。
+Fork 使用者须链接到自己的 Vercel 团队和项目，不要尝试部署到维护者的生产项目。维护者的项目、指令及最新 Production 证据以 `AGENTS.md` 和 `progress.md` 为准。
 
 ## 已知限制
 
-- 直接注册、退出和密码重新登录已通过合成账号自动验收；历史遗留的已绑定无密码账号仍需用户本人在本机设密并完成人工重登录。
+- 正式账号改密须验证原密码；历史已绑定无密码账号不能绕过验证。邮箱数字验证码找回已有默认关闭的实现，SMTP、邮件模板、限流及真实账号联调完成前不得启用。
 - Windows 本地通过系统网络栈访问 OpenAI；识别超时仍可手工填写，推荐超过时限会自动使用规则降级。
-- SDD-030 主路径仅保留真实衣物原图搭配、换件、收藏、日记及个人主页；画布、分享卡片和全部抠图入口已停用，历史记录与图片仍保留。旧画布链接跳转推荐，抠图接口返回 410，入库确认不再启动后台去背。
-- SDD-027 时尚灵感只提供 App 内入口与可关闭未读提示。来源为 Vogue/GQ 官方 RSS，24 小时访问触发更新；中文简述仅根据来源标题，不代表阅读全文；失败使用明确标记的阅读提示或空状态，不填充未经核实的新闻。
-- SDD-027 两个迁移均已应用到现有 Supabase 项目；个性化沿用临时城市优先、真实天气和当前账号衣橱，主题展示记录按账号持久去重。Production 尚待用户发出部署指令。
-- 常规忘记密码与第三方登录尚未实现；Production 固定域名已公开，历史 Preview 不再作为默认访问入口。
+- 贴纸册、可编辑画板、描边、人工擦除和贴纸日历已逐步恢复并扩展；供应商抠图需要独立配置和实际验收，不能保证每张照片都精确去背。
+- 时尚灵感来自 Vogue / GQ / Hypebeast 的公开 RSS，访问触发 3 小时缓存重验证，不是后台定时推送，也不保证每天均有合适新内容。标题处理不等于阅读全文，用户可调整八个主题。
+- 自助账号注销、独立 AI 授权、完整隐私材料及真实账号验收仍未完成。不要把当前隐私现状说明当作适用于所有部署的正式协议。
+- 尚无已签名的 iOS 客户端、TestFlight 或 App Store 发布；首发准备见 [上架执行清单](specs/050-release-readiness/submission-workbook.md)。Production 固定域名已公开，历史 Preview 不再作为默认访问入口。
 
 开发顺序、阶段边界和提交记录以 `progress.md` 为唯一入口；代码约定见 `AGENTS.md`。
