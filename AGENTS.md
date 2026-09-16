@@ -1,10 +1,13 @@
 # 项目开发说明
 
-## 青柠色统一精修（2026-09-16，本地待发布）
+## 最新Production与GitHub：青柠色统一精修（2026-09-16 21:42）
 
 - 默认品牌青柠由`#d8ff52`收敛为柔和的`#deefa8`；顶部导航、中央添加按钮、首次引导主按钮和首页手动穿搭入口共用现有语义色，浅色标签从同一主色派生。导航交互混色减轻；五套替代皮肤继续使用自己的辅助色，Logo及用户画板颜色不重染。
 - check/build、043/048/049/051/053专项通过；Chrome实际组件隔离验证六皮肤×日夜、主题选择、底栏白/彩过渡、320/375/844px及减少动态通过，无横向溢出或浏览器错误。默认顶部与添加按钮均为RGB(222,239,168)，文字对比11.63:1；已目视日夜截图。不等于真实账号或iPhone业务端到端。
 - UI/UX技能用于统一语义色和对比检查，Vercel部署/CLI技能与Context7用于发布核验。仅提交本次颜色与测试、发布记录；050注销核心及测试库等未完成增量保持本地，部署必须取精确Git归档，不发布混合工作区。未改数据、认证、环境变量、依赖或权限。
+- 源提交`ecf0c82879a6acc734dc0c937fa5ec9d4f3d7e6f`已push至GitHub master并核对远程SHA；从`.codex-work/release-ecf0c82`精确归档部署，不含.env.local或注销核心。项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`；部署`dpl_3oAmrDwGgdC7GAt4HGkAMBdSrPYZ`，地址`https://yipai-jihe-624rlglu1-jialin-d583.vercel.app`，正式链接`https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名，Next.js 16.3.1云端构建21秒通过。
+- 发布：`npx vercel deploy --prod --yes --scope jialin-d583 --cwd .codex-work/release-ecf0c82 --meta releaseCommit=ecf0c82879a6acc734dc0c937fa5ec9d4f3d7e6f`；核验：`npx vercel inspect yipai-jihe-624rlglu1-jialin-d583.vercel.app --scope jialin-d583`；日志：`npx vercel logs dpl_3oAmrDwGgdC7GAt4HGkAMBdSrPYZ --level error --since 30m --scope jialin-d583`。GitHub仅`git push origin master`。
+- 正式首页/login/inspiration/settings未登录HTTP均200（含身份入口重定向结果）；两份CSS均200，43zw5qee37394.css命中新青柠及fashion-lime语义别名。近期error查询无记录；Drains未检查，无持续监控配置或真实账号/iPhone端到端验证。741个候选文件有限秘密扫描无命中，不作绝对安全保证。发布记录另行提交同步GitHub，不重新构建应用。
 
 ## 最新Production与GitHub：SDD-053首次引导与手动穿搭（2026-09-16 21:27）
 

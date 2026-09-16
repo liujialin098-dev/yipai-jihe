@@ -4,7 +4,9 @@
 
 - [x] 默认青柠统一为柔和的#deefa8；导航、添加和引导主操作共享语义色，交互混色更轻。替代皮肤、Logo及画板素材保持原样。
 - [x] check/build与043/048/049/051/053通过；六皮肤日夜实际组件隔离浏览器复验通过，默认主操作文字对比11.63:1，小屏无溢出，已目视截图。
-- [ ] 精确Git归档生产部署、线上资源核验及GitHub同步待执行；不包含050未完成增量，不以隔离测试替代真实账号验收。
+- [x] 源提交ecf0c82已push并核对GitHub master；精确Git归档部署dpl_3oAmrDwGgdC7GAt4HGkAMBdSrPYZ为Ready/production，Next.js 16.3.1云端构建21秒，正式域名https://yipai-jihe.vercel.app。
+- [x] 四个未登录入口HTTP200、线上CSS新色及共享语义变量核验通过；30分钟error查询无记录。发布指令及项目记录已补AGENTS.md，不包含050未完成增量。
+- [ ] Drains未检查，未配置持续监控；真实账号/iPhone端到端未执行，不以隔离测试替代业务验收。
 
 ## SDD-053 已上线并同步GitHub（2026-09-16 21:27）
 
