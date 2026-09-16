@@ -1,5 +1,14 @@
 # 项目开发说明
 
+## 最新Production与GitHub：SDD-053首次引导与手动穿搭（2026-09-16 21:27）
+
+- 发布源码`fdc20e8317f20c25ca2458f0675da2c5b044cf7c`已非强制push至`https://github.com/liujialin098-dev/yipai-jihe`的master，ls-remote与本地SHA一致。28个文件包含首次欢迎/四步偏好引导、首页手动记录入口、日记保存后勾选保留修复及验证文档；未完成050注销核心、测试库、相关脚本命令和5张备选品牌图不包含在发布提交。
+- 从精确提交git archive到`.codex-work/release-fdc20e8`部署，只复制既有.vercel绑定；确认没有.env.local或注销核心，不上传工作区混合快照。项目`yipai-jihe` / `prj_ocx4NiuPlME8hIW3Zosc76yCBz8n`，team`jialin-d583`。
+- 部署`dpl_BLAhbWyk31fL5Bc5cLAEXf5cZp7R`，部署地址`https://yipai-jihe-hdrz9wjrc-jialin-d583.vercel.app`，正式地址`https://yipai-jihe.vercel.app`。inspect确认Ready/production/正式别名；Next.js 16.3.1云端构建28秒通过。
+- 发布命令：`npx vercel deploy --prod --yes --scope jialin-d583 --cwd .codex-work/release-fdc20e8 --meta releaseCommit=fdc20e8317f20c25ca2458f0675da2c5b044cf7c`。核验：`npx vercel inspect yipai-jihe-hdrz9wjrc-jialin-d583.vercel.app --scope jialin-d583`；日志：`npx vercel logs dpl_BLAhbWyk31fL5Bc5cLAEXf5cZp7R --level error --since 30m --scope jialin-d583`。GitHub仅`git push origin master`，不推stash或其他引用。
+- 正式首页/login/onboarding/diary/new/support/privacy未登录HTTP均200（含身份入口重定向结果）；首页确认entry-welcome和新文案，两份线上CSS均200，其中21-j0v5q8hiwf.css包含onboarding-choice及home-manual-outfit。最近30分钟本部署error查询无记录；Drains未检查，没有配置持续监控。没有执行真实注册/偏好写入/日记保存/iPhone端到端，不将HTTP或样式可用视为业务全验收。
+- 本轮053、050、account-recovery、007、只读lint及typecheck复验通过；前一轮check/build和Chrome实际组件隔离验证通过。候选741个文件有限令牌模式/本地秘密值扫描未发现命中，不保证绝无敏感信息。本轮未修改数据库、环境变量、认证权限、邮件、真实账号或衣物数据。Vercel部署/CLI技能及Context7用于项目锁定和发布核验；发布记录另行提交同步，不重新构建应用。
+
 ## SDD-053 首次进入引导与自主穿搭（2026-09-16，本地增量，未发布）
 
 - 欢迎页复用衣服→E品牌动效与现有字体/皮肤，无强制等待；登录、注册及主动展开的体验入口均保留。仅新注册/新体验身份写入`ensemble_onboarding: pending`，四步结束改为complete；旧账号不追溯强制引导。不读取或写入演示衣物。
