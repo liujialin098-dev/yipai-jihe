@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { FIRST_USE_METADATA } from "@/lib/onboarding/model";
 import { SupabaseConfigError } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,7 +15,9 @@ export async function POST() {
     let isAnonymous = claimsData?.claims?.is_anonymous === true;
 
     if (!userId) {
-      const { data, error } = await supabase.auth.signInAnonymously();
+      const { data, error } = await supabase.auth.signInAnonymously({
+        options: { data: FIRST_USE_METADATA },
+      });
 
       if (error || !data.user) {
         return NextResponse.json(

@@ -2,10 +2,13 @@
 
 import { Check, ImageOff, LoaderCircle } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { saveManualDiaryEntry } from "@/app/diary/actions";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
-import { INITIAL_DIARY_ACTION_STATE } from "@/lib/diary/validation";
+import {
+  type DiaryActionState,
+  INITIAL_DIARY_ACTION_STATE,
+} from "@/lib/diary/validation";
 import {
   CATEGORY_OPTIONS,
   OCCASION_OPTIONS,
@@ -39,7 +42,19 @@ export function DiaryComposer({
 }) {
   const [selectedIds, setSelectedIds] = useState(initialEntry.itemIds);
   const [state, formAction, pending] = useActionState(
-    saveManualDiaryEntry,
+    async (
+      previous: DiaryActionState,
+      form: FormData,
+    ): Promise<DiaryActionState> => {
+      try {
+        return await saveManualDiaryEntry(previous, form);
+      } catch {
+        return {
+          status: "error",
+          message: "暂时无法保存，衣物和填写内容已保留，请重试。",
+        };
+      }
+    },
     INITIAL_DIARY_ACTION_STATE,
   );
 
@@ -53,7 +68,16 @@ export function DiaryComposer({
   }
 
   return (
-    <form action={formAction} className="mt-6 space-y-5">
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (pending) return;
+        const form = new FormData(event.currentTarget);
+        // Keep controlled selections and draft text intact after a handled response.
+        startTransition(() => formAction(form));
+      }}
+      className="mt-6 space-y-5"
+    >
       <section className="surface-card rounded-[1.65rem] p-5">
         <div className="grid grid-cols-2 gap-3">
           <label className="text-xs font-semibold text-[var(--text-secondary)]">
@@ -145,7 +169,7 @@ export function DiaryComposer({
                     name="itemIds"
                     value={item.id}
                     checked={selected}
-                    disabled={unavailable}
+                    disabled={pending || unavailable}
                     onChange={() => toggleItem(item.id)}
                     className="sr-only"
                   />

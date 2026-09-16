@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AuthEntryGateway } from "@/components/auth/auth-entry-gateway";
 import { DailyEdit } from "@/components/home/daily-edit";
 import { getViewer } from "@/lib/auth/viewer";
@@ -25,6 +26,7 @@ export default async function Home({
         : null;
     return <AuthEntryGateway feedback={feedback} />;
   }
+  if (viewer.needsOnboarding) redirect("/onboarding");
   const today = dateInTimeZone(
     new Date(),
     viewer.weatherTimezone ?? "Asia/Shanghai",

@@ -1,9 +1,9 @@
 import { ArrowRight, Check, Plus, Shirt, Sticker } from "lucide-react";
 import Link from "next/link";
 import { HomeCollage } from "@/components/home/home-collage";
+import { WeatherPanel } from "@/components/recommendations/weather-panel";
 import { RoundedIcon } from "@/components/ui/rounded-icon";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
-import { WeatherPanel } from "@/components/recommendations/weather-panel";
 import type { DiaryEntryView } from "@/lib/diary/data";
 import { homeDiaryItem, homePreviewItems } from "@/lib/home/presentation";
 import type { RecommendationPageData } from "@/lib/recommendations/data";
@@ -30,6 +30,7 @@ export function DailyEdit({
   const needsStickers = !data.error && !items.length && data.items.length > 0;
   const empty = !data.error && data.items.length === 0;
   const today = days[days.length - 1];
+  const todayEntry = entries.find((entry) => entry.worn_on === today);
   const dateLabel = new Intl.DateTimeFormat("zh-CN", {
     month: "long",
     day: "numeric",
@@ -58,6 +59,22 @@ export function DailyEdit({
           />
         </div>
       </header>
+      <Link
+        href={`/diary/new?date=${today}`}
+        className="home-manual-outfit"
+        prefetch={false}
+      >
+        <span className="home-manual-icon">
+          <Shirt size={27} strokeWidth={1.7} aria-hidden="true" />
+        </span>
+        <span>
+          <strong>{todayEntry ? "编辑今日穿搭" : "添加今日穿搭"}</strong>
+          <small>
+            {todayEntry ? todayEntry.title : "自己选衣服，记录今天"}
+          </small>
+        </span>
+        <Plus size={23} strokeWidth={1.8} aria-hidden="true" />
+      </Link>
       <section aria-label="今日穿搭" className="home-edit-feature">
         {items.length && data.viewerId ? (
           <HomeCollage

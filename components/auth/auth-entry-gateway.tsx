@@ -1,13 +1,20 @@
 "use client";
 
-import { LockKeyhole, Shirt, UserRound } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  LockKeyhole,
+  Shirt,
+  UserRound,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { RegistrationForm } from "@/components/auth/account-forms";
 import {
   AnonymousExperienceForm,
   LoginForm,
 } from "@/components/auth/login-form";
 import { BrandMark } from "@/components/brand-mark";
+import { BrandMotion } from "@/components/brand-motion";
 import { BrandName } from "@/components/brand-name";
 import { SupportLinks } from "@/components/support-links";
 
@@ -15,10 +22,74 @@ type EntryMode = "login" | "register";
 
 export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
   const [mode, setMode] = useState<EntryMode>("login");
+  const [showForm, setShowForm] = useState(Boolean(feedback));
+  const [showExperience, setShowExperience] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (showForm) titleRef.current?.focus({ preventScroll: true });
+  }, [showForm]);
+  function enter(nextMode: EntryMode) {
+    setMode(nextMode);
+    setShowForm(true);
+  }
+
+  if (!showForm)
+    return (
+      <div className="entry-welcome">
+        <div className="entry-welcome-art">
+          <BrandMotion variant="splash" />
+        </div>
+        <section className="entry-welcome-copy">
+          <p className="entry-eyebrow">YOUR EVERYDAY WARDROBE</p>
+          <h1 className="app-page-title">把喜欢，穿成日常。</h1>
+          <p>收好每件衣服，记下每一天的自己。</p>
+        </section>
+        <div className="entry-welcome-actions">
+          <button
+            type="button"
+            className="onboarding-next"
+            onClick={() => enter("register")}
+          >
+            创建我的衣橱
+            <ArrowRight size={20} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="entry-login"
+            onClick={() => enter("login")}
+          >
+            已有账号，登录
+          </button>
+          <button
+            type="button"
+            className="entry-experience"
+            aria-expanded={showExperience}
+            aria-controls="welcome-experience"
+            onClick={() => setShowExperience(!showExperience)}
+          >
+            暂时不注册
+          </button>
+          {showExperience ? (
+            <div id="welcome-experience">
+              <AnonymousExperienceForm compact />
+            </div>
+          ) : null}
+        </div>
+        <SupportLinks />
+      </div>
+    );
 
   return (
     <div className="auth-entry-page page-enter min-h-dvh px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
       <header className="flex items-center gap-3">
+        <button
+          type="button"
+          className="onboarding-back"
+          aria-label="返回欢迎页"
+          onClick={() => setShowForm(false)}
+        >
+          <ArrowLeft size={20} aria-hidden="true" />
+        </button>
         <BrandMark className="size-11 shadow-[0_10px_26px_rgba(29,29,31,0.11)]" />
         <div>
           <BrandName className="auth-brand-name" />
@@ -26,7 +97,9 @@ export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
       </header>
 
       <section className="mt-10">
-        <h1 className="app-page-title mt-2">先选择一种身份</h1>
+        <h1 className="app-page-title mt-2" ref={titleRef} tabIndex={-1}>
+          {mode === "login" ? "欢迎回来" : "从你的衣橱开始"}
+        </h1>
       </section>
 
       {feedback ? (
@@ -77,7 +150,7 @@ export function AuthEntryGateway({ feedback }: { feedback?: string | null }) {
               <div className="mt-6 px-1">
                 <h2 className="app-card-title">创建可找回的衣橱</h2>
                 <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
-                  邮箱和密码一次提交，注册成功后直接进入，不发送验证邮件。
+                  用邮箱和密码保存你的衣橱。
                 </p>
                 <RegistrationForm />
               </div>

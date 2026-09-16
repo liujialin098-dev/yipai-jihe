@@ -24,6 +24,7 @@ export default async function LoginPage({
   const [viewer, params] = await Promise.all([getViewer(), searchParams]);
   const recoveryComplete = params.recovery === "complete";
   // This parameter only reveals the login form; it never grants identity or access.
+  if (viewer?.needsOnboarding && !recoveryComplete) redirect("/onboarding");
   if (viewer && !viewer.isAnonymous && !recoveryComplete) redirect("/settings");
 
   const feedbackKey = params.error ?? params.status;

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "verify:sdd-053": "node --no-warnings scripts/verify-onboarding.mjs",
     "verify:sdd-051": "node --no-warnings scripts/verify-sdd-051.mjs",
     "verify:sdd-043": "node --no-warnings scripts/verify-sdd-043.mjs",
     "verify:sdd-045": "node --no-warnings scripts/verify-sdd-045.mjs",

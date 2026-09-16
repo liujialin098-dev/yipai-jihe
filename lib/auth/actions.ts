@@ -9,8 +9,9 @@ import {
   validateEmail,
   validatePassword,
 } from "@/lib/auth/errors";
-import { createClient } from "@/lib/supabase/server";
 import { changePassword } from "@/lib/auth/password-change";
+import { FIRST_USE_METADATA } from "@/lib/onboarding/model";
+import { createClient } from "@/lib/supabase/server";
 
 type ServerSupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -98,7 +99,7 @@ export async function registerCurrentAccount(
         email,
         password,
         options: {
-          data: { account_password_configured: true },
+          data: { account_password_configured: true, ...FIRST_USE_METADATA },
         },
       },
     );
@@ -215,7 +216,9 @@ export async function signInWithEmail(
 export async function startAnonymousExperience() {
   const supabase = await createClient();
   await supabase.auth.signOut({ scope: "local" });
-  const { data, error } = await supabase.auth.signInAnonymously();
+  const { data, error } = await supabase.auth.signInAnonymously({
+    options: { data: FIRST_USE_METADATA },
+  });
   if (error || !data.user) redirect("/?error=anonymous-unavailable");
 
   if (!(await initializeAccountRecords(supabase, data.user.id))) {

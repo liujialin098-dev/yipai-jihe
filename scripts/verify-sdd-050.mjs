@@ -209,6 +209,9 @@ const { setAccountPassword, registerCurrentAccount } = compile(
       },
     },
     "@/lib/auth/errors": errors,
+    "@/lib/onboarding/model": {
+      FIRST_USE_METADATA: { ensemble_onboarding: "pending" },
+    },
     "@/lib/auth/password-change": {
       changePassword: async (client, data) => {
         delegated++;

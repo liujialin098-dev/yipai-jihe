@@ -31,6 +31,9 @@ scripts/fixtures/inspiration-051.tsx
 scripts/fixtures/inspiration-051-actions.ts
 scripts/verify-sdd-051-ui.mjs
 scripts/verify-sdd-052-ui.mjs
+scripts/fixtures/onboarding-053.tsx
+scripts/fixtures/onboarding-053-mocks.tsx
+scripts/verify-onboarding-ui.mjs
 revise_prd_mvp.py
 scripts/build_picksee_prd.py
 public/brand/ensemble-icon-b-match-knot.png

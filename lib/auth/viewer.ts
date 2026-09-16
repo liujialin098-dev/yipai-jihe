@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { maskEmail } from "@/lib/auth/errors";
+import { needsFirstUse } from "@/lib/onboarding/model";
 import { createClient } from "@/lib/supabase/server";
 
 export type Viewer = {
@@ -13,6 +14,7 @@ export type Viewer = {
   fashionUnreadEnabled: boolean;
   isAnonymous: boolean;
   onboardingState: string;
+  needsOnboarding?: boolean;
   passwordConfigured: boolean;
   preferredOccasions: string[];
   preferredStyles: string[];
@@ -78,6 +80,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
       fashionUnreadEnabled: preferencesResult.data.fashion_unread_enabled,
       isAnonymous: user.is_anonymous === true,
       onboardingState: profileResult.data.onboarding_state,
+      needsOnboarding: needsFirstUse(user.user_metadata),
       passwordConfigured:
         user.user_metadata?.account_password_configured === true,
       preferredOccasions: preferencesResult.data.preferred_occasions,

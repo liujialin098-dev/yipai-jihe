@@ -1,0 +1,375 @@
+.entry-welcome {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: max(2rem, env(safe-area-inset-top)) 1.5rem
+    max(1.5rem, env(safe-area-inset-bottom));
+  gap: 1.75rem;
+  text-align: center;
+}
+.entry-welcome-art {
+  display: grid;
+  place-items: center;
+  min-height: 14rem;
+}
+.entry-welcome-copy {
+  animation: onboarding-appear var(--motion-slow) var(--motion-gentle) both;
+}
+.entry-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+}
+.entry-welcome-copy > p:last-child {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+.entry-welcome-actions {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.entry-login {
+  min-height: 3.25rem;
+  border-radius: 1.5rem;
+  background: var(--surface-solid);
+  color: var(--foreground);
+  font-weight: 650;
+}
+.entry-experience {
+  min-height: 2.75rem;
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+.onboarding-page {
+  min-height: 100dvh;
+  padding: max(1.5rem, env(safe-area-inset-top)) 1.25rem
+    max(1.5rem, env(safe-area-inset-bottom));
+}
+.onboarding-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.onboarding-brand .brand-name-english {
+  font-size: 1.5rem;
+}
+.onboarding-help {
+  display: grid;
+  place-items: center;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+.onboarding-progress {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin: 2rem 0;
+  padding: 0;
+  list-style: none;
+}
+.onboarding-progress li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+.onboarding-progress li > span {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.onboarding-progress li[aria-current] > span,
+.onboarding-progress li[data-done="true"] > span {
+  background: var(--control-primary);
+  color: var(--control-primary-foreground);
+  border-color: transparent;
+}
+.onboarding-card {
+  border-radius: 2rem;
+  padding: 1.5rem;
+}
+.onboarding-step {
+  animation: onboarding-forward var(--motion-medium) var(--motion-gentle) both;
+}
+.onboarding-step[data-direction="back"] {
+  animation-name: onboarding-backward;
+}
+.onboarding-emblem {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.25rem;
+  border-radius: 1.5rem;
+  background: var(--system-blue-soft);
+  color: var(--system-blue);
+}
+.onboarding-counter {
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+.onboarding-note {
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  margin: 0.75rem 0 1.5rem;
+  color: var(--text-secondary);
+}
+.onboarding-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.onboarding-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  min-height: 3.25rem;
+  padding: 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1.25rem;
+  background: var(--surface-solid);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+  overflow-wrap: anywhere;
+}
+.onboarding-choice[aria-pressed="true"] {
+  background: var(--control-primary);
+  color: var(--control-primary-foreground);
+  border-color: var(--control-primary);
+}
+.onboarding-gender {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  min-height: 4.25rem;
+}
+.onboarding-gender small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-left: auto;
+}
+.onboarding-check {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+.onboarding-skin {
+  flex-wrap: wrap;
+  text-align: left;
+  font-size: 0.8125rem;
+}
+.onboarding-swatch {
+  display: block;
+  width: 100%;
+  height: 3.5rem;
+  border-radius: 0.875rem;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+.onboarding-swatch > span {
+  display: block;
+  width: 52%;
+  height: 100%;
+  border-radius: 0.625rem;
+}
+.onboarding-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+.onboarding-next {
+  display: flex;
+  flex: 1;
+  min-height: 3.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 1.375rem;
+  background: var(--header-background);
+  color: var(--header-foreground);
+  border: 1px solid var(--hairline);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  transition:
+    transform var(--motion-fast) var(--motion-gentle),
+    filter var(--motion-fast) ease;
+}
+.onboarding-back {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  min-height: 3rem;
+  flex-shrink: 0;
+  border-radius: 1.125rem;
+  border: 1px solid var(--hairline);
+  background: var(--surface-solid);
+  color: var(--foreground);
+}
+.onboarding-skip {
+  display: block;
+  min-height: 2.75rem;
+  margin: 0.75rem auto 0;
+  padding: 0.625rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+.onboarding-footer {
+  text-align: center;
+  font-size: 0.8125rem;
+  margin-top: 1.5rem;
+}
+.onboarding-error {
+  color: var(--danger-text);
+  background: var(--danger-surface);
+  padding: 0.875rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  margin-top: 1rem;
+}
+.onboarding-page button,
+.entry-welcome button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.onboarding-page button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.onboarding-page :focus-visible,
+.entry-welcome :focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 4px;
+}
+.onboarding-next:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.home-manual-outfit {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 1.75rem;
+  border: 1px solid var(--hairline);
+  background: var(--header-background);
+  color: var(--header-foreground);
+  transition: filter var(--motion-fast) ease;
+}
+.home-manual-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 1.125rem;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+.home-manual-outfit > span:nth-child(2) {
+  display: grid;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.home-manual-outfit strong {
+  font-size: var(--title-home-card-size);
+}
+.home-manual-outfit small {
+  font-size: 0.75rem;
+}
+.home-manual-outfit > svg {
+  flex-shrink: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .onboarding-next:hover:not(:disabled),
+  .home-manual-outfit:hover {
+    filter: brightness(0.96);
+  }
+  .onboarding-choice:hover:not([aria-pressed="true"]) {
+    background: var(--surface-soft);
+  }
+}
+@keyframes onboarding-forward {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes onboarding-backward {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes onboarding-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-step,
+  .entry-welcome-copy {
+    animation: onboarding-appear 100ms ease both;
+  }
+  .onboarding-next:active:not(:disabled) {
+    transform: none;
+  }
+}
+@media (max-width: 350px) {
+  .onboarding-page {
+    padding-inline: 1rem;
+  }
+  .onboarding-card {
+    padding: 1.125rem;
+  }
+  .onboarding-options {
+    gap: 0.5rem;
+  }
+}

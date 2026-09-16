@@ -20,7 +20,7 @@ export function AppShell({
       >
         跳到主要内容
       </a>
-      {viewer ? (
+      {viewer && !viewer.needsOnboarding ? (
         <Suspense>
           <StatusHeader viewer={viewer} />
         </Suspense>
@@ -29,13 +29,13 @@ export function AppShell({
       <main
         id="main-content"
         tabIndex={-1}
-        className={`motion-stage flex-1 ${viewer ? "pb-28" : "pb-0"}`}
+        className={`motion-stage flex-1 ${viewer && !viewer.needsOnboarding ? "pb-28" : "pb-0"}`}
       >
         <Suspense fallback={children}>
           <PageMotion>{children}</PageMotion>
         </Suspense>
       </main>
-      {viewer ? <BottomNavigation /> : null}
+      {viewer && !viewer.needsOnboarding ? <BottomNavigation /> : null}
     </div>
   );
 }
