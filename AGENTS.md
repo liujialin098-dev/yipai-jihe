@@ -1,12 +1,14 @@
 # 项目开发说明
 
-## GitHub 发布准备（2026-09-16，已授权，推送完成状态待核验）
+## GitHub 发布断点（2026-09-16，已授权并本地提交，网络阻止推送）
 
 - 用户指定账号 `liujialin098-dev`；已通过登录后的 GitHub 页面创建并确认私有仓库 `https://github.com/liujialin098-dev/yipai-jihe`，仓库目前为空。不得称为代码已经上传，也不得改为公开仓库。
 - 本机 Git Credential Manager 已完成用户本人设备授权，账号确认为 `liujialin098-dev`；不保存授权码或令牌到仓库。此次整理基于 `master` / `0e7a34d` 的 SDD-050～052 工作区增量，保留原有开发历史。
 - 上传只包含衣拍即合文件。`.gitignore` 已增加合同材料、其他项目、输出和本地工作目录的排除规则；现有文件和临时备份均保留。不能使用 `--mirror`、`--all` 或推送 stash：其他本地引用含无关合同材料，不能上传。
 - 检查覆盖 HEAD 历史 1745 个 blob 和当前候选 723 个文件，无 100MB 以上对象；`.env.example` 的三个历史/当前私钥标记均核实为占位符，常见令牌扫描及本地三项密钥值比对未发现命中。类型检查、051和账号恢复离线验证通过；不将模式扫描视为绝对无泄露保证。远程连接曾重置，必须以实际 push 和远程提交核对作为完成证据。
-- 目标远程 `https://github.com/liujialin098-dev/yipai-jihe.git`；计划以显式分支推送 `git push -u origin master`，不自动重命名分支、不强制推送、不启用 GitHub Pages 或自动部署，不改变 Vercel 线上项目。
+- 目标远程 `origin` 已配置为 `https://github.com/liujialin098-dev/yipai-jihe.git`；代码提交 `bb6916d29282943628aaf235318bf7b6597b0836`，72个文件已保存。只推送 `master`，不自动重命名分支、不强制推送、不启用 GitHub Pages 或自动部署，不改变 Vercel 线上项目。
+- `ls-remote` 两次连接重置，正式 `git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=100 -c http.lowSpeedTime=20 -c credential.interactive=false push -u origin master` 返回无法连接 `github.com:443`；独立IPv4首页请求也连接超时。尚无推送成功证据，不称为已上传。用户已正确授权，恢复网络后先核对远程状态再重试，不要求重复授权、不关闭TLS校验或擅自改系统代理。
+- 当前主分支历史及候选文件检查通过；未采用的5张品牌备选图仍留在本地且未暂存。提交时仅本次跳过会格式化整个混合目录的钩子，已独立运行类型及专项检查，未更改全局钩子配置。
 
 ## Production记录补齐：SDD-052（2026-09-15 13:26，覆盖下方本地未部署记录）
 
