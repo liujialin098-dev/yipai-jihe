@@ -1,5 +1,11 @@
 # 项目开发说明
 
+## GitHub 已上传（2026-09-16，覆盖下方网络断点记录）
+
+- 私有仓库：`https://github.com/liujialin098-dev/yipai-jihe`，远程名 `origin`，分支 `master`。网络恢复后先核对远程为空，再成功推送 `c57893e` 及其主分支历史（包含代码提交 `bb6916d`）；Git返回新建远程master并建立上游跟踪。后续文档完成记录也随本分支提交同步。
+- 推送前复扫当前主分支1819个历史blob、723个文件，未发现配置密钥值或常见令牌命中，无超大对象；3个私钥示例标记均为占位符。未推送stash/其他引用、环境配置、合同及其他项目材料，5张未采用品牌备选图仍留本地。不得使用 `git push --mirror` 或 `--all`。
+- 后续上传命令：`git push origin master`；核验：`git ls-remote origin refs/heads/master`，与 `git rev-parse HEAD` 比较。此次是代码托管，不是GitHub Pages网站发布；未改Vercel部署、数据库、环境变量或业务数据。
+
 ## GitHub 发布断点（2026-09-16，已授权并本地提交，网络阻止推送）
 
 - 用户指定账号 `liujialin098-dev`；已通过登录后的 GitHub 页面创建并确认私有仓库 `https://github.com/liujialin098-dev/yipai-jihe`，仓库目前为空。不得称为代码已经上传，也不得改为公开仓库。

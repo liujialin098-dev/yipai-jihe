@@ -1,5 +1,11 @@
 # 衣拍即合开发进度
 
+## GitHub 上传完成（2026-09-16，覆盖下方断点）
+
+- [x] 网络恢复后成功推送私有仓库 `https://github.com/liujialin098-dev/yipai-jihe` 的master分支，`c57893e`及代码提交`bb6916d`的当前分支历史已上传，建立origin/master跟踪。
+- [x] 推送前1819个历史blob与723个当前文件扫描通过；不推送stash/其他引用、合同、其他项目或环境密钥，5张未采用品牌备选图仍在本地。
+- [x] 本轮仅GitHub代码托管，未重新部署Vercel或修改数据库/环境变量。之后用 `git push origin master` 同步代码，不能用 `--mirror` 或 `--all`。
+
 ## GitHub 发布准备（2026-09-16）
 
 - [x] 创建 `liujialin098-dev/yipai-jihe` 私有仓库，用户本人完成本机 Git 设备授权。
