@@ -3,7 +3,7 @@ export const skins = [
   {
     id: "original",
     name: "丁香青柠",
-    colors: ["#b58af0", "#d8ff52", "#ffffff"],
+    colors: ["#b58af0", "#deefa8", "#ffffff"],
   },
   { id: "violet", name: "紫橙日落", colors: ["#a783ee", "#ff9f54", "#ffffff"] },
   { id: "rose", name: "玫瑰奶油", colors: ["#f09fc8", "#f4cf86", "#ffffff"] },

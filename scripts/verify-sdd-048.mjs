@@ -10,7 +10,7 @@ const [globals, skins] = await Promise.all([
 const boardRule = skins.match(/\.home-collage-board\s*\{[\s\S]*?\n\}/)?.[0];
 assert.ok(boardRule, "首页衣橱拼图画板样式必须存在");
 
-assert.match(globals, /--brand-lime:\s*#d8ff52/);
+assert.match(globals, /--brand-lime:\s*#deefa8/);
 assert.match(globals, /--title-home-size:\s*clamp\(1\.75rem, 7vw, 2rem\)/);
 assert.match(globals, /--title-home-section-size:\s*1\.25rem/);
 assert.match(globals, /--title-home-card-size:\s*1\.0625rem/);

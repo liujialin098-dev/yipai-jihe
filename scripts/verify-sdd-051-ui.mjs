@@ -235,7 +235,7 @@ try {
       await page
         .locator(".dock-add")
         .evaluate((el) => getComputedStyle(el).backgroundColor),
-      sample.skin === "original" ? "rgb(216, 255, 82)" : "rgb(255, 159, 84)",
+      sample.skin === "original" ? "rgb(222, 239, 168)" : "rgb(255, 159, 84)",
     );
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     await page.waitForTimeout(350);

@@ -26,12 +26,13 @@ function contrastRatio(first, second) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-assert.match(globals, /--brand-lime:\s*#d8ff52/);
+assert.match(globals, /--brand-lime:\s*#deefa8/);
+assert.match(globals, /--fashion-lime:\s*var\(--brand-lime\)/);
 assert.match(globals, /--brand-lime-ink:\s*#352244/);
 assert.match(globals, /--header-background:\s*var\(--brand-lime\)/);
 assert.match(globals, /--header-foreground:\s*var\(--brand-lime-ink\)/);
 assert.ok(
-  contrastRatio("#d8ff52", "#352244") >= 4.5,
+  contrastRatio("#deefa8", "#352244") >= 4.5,
   "青柠顶部导航与深紫前景必须达到正文级对比度",
 );
 

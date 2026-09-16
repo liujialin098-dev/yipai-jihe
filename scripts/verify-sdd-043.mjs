@@ -152,7 +152,7 @@ assert.match(navigation, /<RoundedIcon name=\{key\}/);
 assert.match(navigation, /aria-current=\{current/);
 assert.doesNotMatch(navigation, /strokeWidth=\{current/);
 // Bright original colours must stay readable, and must not overwrite other skins.
-assert.deepEqual(skins[0].colors, ["#b58af0", "#d8ff52", "#ffffff"]);
+assert.deepEqual(skins[0].colors, ["#b58af0", "#deefa8", "#ffffff"]);
 assert.deepEqual(
   skins.slice(1).map((skin) => skin.colors),
   [
