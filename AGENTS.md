@@ -1,5 +1,13 @@
 # 项目开发说明
 
+## MIT 开源完成与 iOS 准备（2026-09-16，覆盖下方私有状态）
+
+- `https://github.com/liujialin098-dev/yipai-jihe` 已改为公开。用户明确选择 MIT，并确认早期24张演示图及10张测试图为项目AI生成或已获授权、允许公开。根LICENSE为原创代码许可；字体保留OFL，Spec Kit保留原MIT，品牌及非代码图片边界见THIRD_PARTY_NOTICES.md，不默认授予商标/素材再授权。
+- 开源准备提交 `e777f5e5e5fd64b5839ab280cad07973300d89b3` 包含LICENSE、第三方声明、安全反馈、README现状修订及上架工作簿。Git传输重置/超时后通过GitHub官方Git Database API逐个校验blob、tree、commit SHA与本地一致，非强制快进master；没有重写历史、推送stash或其他分支。未登录官方API确认private=false、license=MIT、master=e777f5e。后续进度文档另行提交。
+- 历史1821个blob和当前候选扫描未发现所用规则命中的秘密；这是有限模式扫描，不保证绝无敏感信息。原合同/其他项目/环境配置与5张备选品牌图继续不上传；本机认证只在进程内用于GitHub官方API，不打印或落盘。相关本机辅助脚本在忽略的.codex-work内，不作为可公开工具分发。
+- 本轮只改文档，diff检查、只读lint（282文件）、typecheck和production build通过；没有Vercel部署、生产数据库/权限/密钥更改、真实密码/注销操作。SDD-050的submission-workbook.md提供文案候选与验收矩阵；T022文档准备完成，T019–T021、T023及原生/备案/会员门禁仍未完成。工作簿不等于iOS工程或App Store提交。
+- Spec Kit用于保持发布门禁与任务状态，Context7 GitHub REST资料用于Git对象同一性和force=false更新。Apple账号删除/第三方AI要求已复核；不代本人实名、付费或签协议。后续首次增加服务端管理员权限前须明确授权，不能通过公开源码开放生产注销或远程改密。
+
 ## GitHub 已上传（2026-09-16，覆盖下方网络断点记录）
 
 - 私有仓库：`https://github.com/liujialin098-dev/yipai-jihe`，远程名 `origin`，分支 `master`。网络恢复后先核对远程为空，再成功推送 `c57893e` 及其主分支历史（包含代码提交 `bb6916d`）；Git返回新建远程master并建立上游跟踪。后续文档完成记录也随本分支提交同步。

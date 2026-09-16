@@ -1,5 +1,14 @@
 # 衣拍即合开发进度
 
+## MIT 开源完成（2026-09-16，覆盖下方私有记录）
+
+- [x] 用户选择MIT，并确认早期演示/测试图片允许公开；新增LICENSE、THIRD_PARTY_NOTICES.md、SECURITY.md，README修正已过时的天气/贴纸/账号说明，Fork部署指令不再指向维护者团队。
+- [x] 提交 `e777f5e5e5fd64b5839ab280cad07973300d89b3` 已同步GitHub。Git连接失败后改用官方Git Database API，同一blob/tree/commit校验通过、force=false快进；没有改写历史、上传其他分支或stash。
+- [x] `https://github.com/liujialin098-dev/yipai-jihe` 已为公开仓库；未登录API验证private=false、MIT及master提交一致。字体/品牌/非代码素材不因根MIT而自动改变许可。
+- [x] 有限秘密模式扫描、diff检查、只读lint、typecheck、生产构建通过。本次没有修改应用运行代码、部署Vercel、变更数据库/环境权限或操作真实账号。
+- [x] SDD-050 T022：新增[上架执行工作簿](specs/050-release-readiness/submission-workbook.md)，包含文案草案、截图计划、账号生命周期/AI授权/iPhone测试及审核敏感资料边界。
+- [ ] SDD-050 T019–T021 / T023：真实OTP联调、自助注销、分项AI授权和正式材料仍待完成。没有iOS工程、签名包、TestFlight或App Store提交。本人会员注册/付费、macOS构建路线、湖北备案和实际供应商保留规则仍需进一步推进；不能把源码公开当成上架完成。
+
 ## GitHub 上传完成（2026-09-16，覆盖下方断点）
 
 - [x] 网络恢复后成功推送私有仓库 `https://github.com/liujialin098-dev/yipai-jihe` 的master分支，`c57893e`及代码提交`bb6916d`的当前分支历史已上传，建立origin/master跟踪。
