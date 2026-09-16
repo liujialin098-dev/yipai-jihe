@@ -1,7 +1,15 @@
 "use client";
 
-import { LoaderCircle, Sparkles, WandSparkles } from "lucide-react";
-import { useActionState, useState } from "react";
+import {
+  BriefcaseBusiness,
+  Check,
+  Coffee,
+  Heart,
+  LoaderCircle,
+  Sparkles,
+  Gem,
+} from "lucide-react";
+import { startTransition, useActionState, useState } from "react";
 import { generateDailyRecommendations } from "@/app/recommendations/actions";
 import { useRecommendationWeather } from "./weather-panel";
 import {
@@ -15,7 +23,14 @@ import {
   OCCASION_STYLE_OPTIONS,
   type RecommendationStyleFocus,
 } from "@/lib/recommendations/style-direction";
-import { STYLE_OPTIONS, optionLabel } from "@/lib/wardrobe/constants";
+import { RecommendationStylePicker } from "./recommendation-style-picker";
+
+const occasionIcons = {
+  commute: BriefcaseBusiness,
+  casual: Coffee,
+  date: Heart,
+  formal: Gem,
+};
 
 export function RecommendationControls({
   defaultOccasion,
@@ -27,7 +42,19 @@ export function RecommendationControls({
   targetDay: RecommendationTargetDay;
 }) {
   const [state, action, pending] = useActionState(
-    generateDailyRecommendations,
+    async (
+      previous: typeof INITIAL_RECOMMENDATION_ACTION_STATE,
+      data: FormData,
+    ) => {
+      try {
+        return await generateDailyRecommendations(previous, data);
+      } catch {
+        return {
+          status: "error" as const,
+          message: "暂时无法生成，场景与风格已保留，请重试。",
+        };
+      }
+    },
     INITIAL_RECOMMENDATION_ACTION_STATE,
   );
   const [occasion, setOccasion] = useState(defaultOccasion);
@@ -36,7 +63,16 @@ export function RecommendationControls({
     useState<RecommendationStyleFocus>(AUTO_STYLE_FOCUS);
 
   return (
-    <form action={action} className="surface-card rounded-[1.65rem] p-4.5">
+    <form
+      data-no-swipe
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (pending || weather.status !== "ready") return;
+        const data = new FormData(event.currentTarget);
+        startTransition(() => action(data));
+      }}
+      className="surface-card recommendation-controls rounded-[1.65rem] p-4.5"
+    >
       <input type="hidden" name="targetDay" value={targetDay} />
       <input
         type="hidden"
@@ -52,59 +88,49 @@ export function RecommendationControls({
         <legend className="text-xs font-semibold text-[var(--text-secondary)]">
           {targetDay === "tomorrow" ? "明天" : "今天"}要去哪里
         </legend>
-        <div className="mt-3 grid grid-cols-4 gap-2">
-          {RECOMMENDATION_OCCASIONS.map((option) => (
-            <label key={option.value} className="relative">
-              <input
-                type="radio"
-                name="occasion"
-                value={option.value}
-                checked={option.value === occasion}
-                onChange={() => {
-                  setOccasion(option.value);
-                  if (
-                    styleFocus !== AUTO_STYLE_FOCUS &&
-                    !OCCASION_STYLE_OPTIONS[option.value].includes(styleFocus)
-                  ) {
-                    setStyleFocus(AUTO_STYLE_FOCUS);
-                  }
-                }}
-                className="peer sr-only"
-              />
-              <span className="motion-button flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-2 text-xs font-semibold text-[var(--text-secondary)] peer-checked:border-[var(--control-primary)] peer-checked:bg-[var(--control-primary)] peer-checked:text-[var(--control-primary-foreground)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--system-blue)]">
-                {option.label}
-              </span>
-            </label>
-          ))}
+        <div className="recommendation-occasions">
+          {RECOMMENDATION_OCCASIONS.map((option) => {
+            const Icon = occasionIcons[option.value];
+            return (
+              <label key={option.value} className="recommendation-occasion">
+                <input
+                  type="radio"
+                  name="occasion"
+                  value={option.value}
+                  checked={option.value === occasion}
+                  onChange={() => {
+                    setOccasion(option.value);
+                    if (
+                      styleFocus !== AUTO_STYLE_FOCUS &&
+                      !OCCASION_STYLE_OPTIONS[option.value].includes(styleFocus)
+                    ) {
+                      setStyleFocus(AUTO_STYLE_FOCUS);
+                    }
+                  }}
+                  className="peer sr-only"
+                />
+                <span className="recommendation-occasion-face">
+                  <Icon size={22} strokeWidth={1.8} aria-hidden="true" />
+                  <span>{option.label}</span>
+                  <Check
+                    className="recommendation-occasion-check"
+                    size={12}
+                    aria-hidden="true"
+                  />
+                </span>
+              </label>
+            );
+          })}
         </div>
       </fieldset>
 
-      <label className="mt-4 grid gap-2 text-xs font-semibold text-[var(--text-secondary)]">
-        <span className="flex items-center gap-2">
-          <WandSparkles
-            className="size-4 text-[var(--system-blue)]"
-            strokeWidth={1.8}
-            aria-hidden="true"
-          />
-          想要什么风格
-        </span>
-        <select
-          name="styleFocus"
-          value={styleFocus}
-          disabled={pending}
-          onChange={(event) =>
-            setStyleFocus(event.target.value as RecommendationStyleFocus)
-          }
-          className="field-control min-h-12 rounded-[1rem]"
-        >
-          <option value={AUTO_STYLE_FOCUS}>自动搭配 · 三套尽量不同</option>
-          {OCCASION_STYLE_OPTIONS[occasion].map((style) => (
-            <option key={style} value={style}>
-              {optionLabel(STYLE_OPTIONS, style)}
-            </option>
-          ))}
-        </select>
-      </label>
+      <input type="hidden" name="styleFocus" value={styleFocus} />
+      <RecommendationStylePicker
+        occasion={occasion}
+        value={styleFocus}
+        onChange={setStyleFocus}
+        disabled={pending}
+      />
 
       <button
         type="submit"

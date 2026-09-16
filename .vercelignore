@@ -34,6 +34,10 @@ scripts/verify-sdd-052-ui.mjs
 scripts/fixtures/onboarding-053.tsx
 scripts/fixtures/onboarding-053-mocks.tsx
 scripts/verify-onboarding-ui.mjs
+scripts/fixtures/recommendation-controls-navigation.tsx
+scripts/fixtures/recommendation-controls-services.ts
+scripts/fixtures/recommendation-controls-ui.tsx
+scripts/verify-recommendation-controls-ui.mjs
 revise_prd_mvp.py
 scripts/build_picksee_prd.py
 public/brand/ensemble-icon-b-match-knot.png

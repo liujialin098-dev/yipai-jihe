@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { GarmentSticker } from "@/components/wardrobe/garment-sticker";
+import { UploadPhotoHint } from "@/components/wardrobe/upload-photo-hint";
 import {
   createIngestionStickerQueue,
   type IngestionStickerState,
@@ -368,6 +369,7 @@ export function IngestionWorkspace() {
           className="sr-only"
         />
       </label>
+      <UploadPhotoHint />
       <p className="mt-3 text-center text-xs text-[var(--text-secondary)]">
         确认入库后，自动制作白边衣物贴纸
       </p>

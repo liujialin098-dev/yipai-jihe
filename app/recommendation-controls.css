@@ -1,0 +1,306 @@
+.recommendation-occasions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.recommendation-occasion {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+.recommendation-occasion-face {
+  position: relative;
+  display: flex;
+  min-height: 5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.25rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 1.25rem;
+  background: var(--surface-solid);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+.recommendation-occasion input:checked + .recommendation-occasion-face {
+  background: var(--control-primary);
+  color: var(--control-primary-foreground);
+  border-color: var(--control-primary);
+}
+.recommendation-occasion-check {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  opacity: 0;
+}
+.recommendation-occasion input:checked + span .recommendation-occasion-check {
+  opacity: 1;
+}
+.recommendation-occasion input:focus-visible + span,
+.recommendation-style-option input:focus-visible + span {
+  outline: 2px solid var(--system-blue);
+  outline-offset: 3px;
+}
+.recommendation-occasion input:disabled + span {
+  opacity: 0.55;
+  cursor: wait;
+}
+.recommendation-style-picker {
+  margin-top: 1.25rem;
+}
+.recommendation-style-label {
+  margin-bottom: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.recommendation-style-trigger {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 5.5rem;
+  padding: 0.875rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 1.4rem;
+  background: var(--fashion-lilac-soft);
+  color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+.recommendation-style-symbol {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 1rem;
+  background: var(--header-background);
+  color: var(--header-foreground);
+}
+.recommendation-style-copy {
+  display: grid;
+  gap: 0.25rem;
+}
+.recommendation-style-copy strong {
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+.recommendation-style-copy > span {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.recommendation-style-chevron {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--surface-solid);
+}
+.recommendation-style-trigger:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.recommendation-style-sheet {
+  inset: auto 0 0;
+  margin: 0 auto;
+  width: min(100%, 32rem);
+  max-width: 100%;
+  max-height: min(85dvh, 44rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.75rem 1.25rem max(1.5rem, env(safe-area-inset-bottom));
+  border: 1px solid var(--hairline-strong);
+  border-bottom: 0;
+  border-radius: 2rem 2rem 0 0;
+  background: var(--surface-solid);
+  color: var(--foreground);
+  box-shadow: 0 -12px 60px rgb(0 0 0 / 15%);
+}
+.recommendation-style-sheet::backdrop {
+  background: rgb(20 14 30 / 48%);
+}
+.recommendation-sheet-handle {
+  width: 2.5rem;
+  height: 0.25rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 1rem;
+  background: var(--hairline-strong);
+}
+.recommendation-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.recommendation-sheet-header p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+.recommendation-sheet-header h2 {
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+.recommendation-sheet-close {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--foreground);
+  cursor: pointer;
+}
+.recommendation-style-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-width: 0;
+}
+.recommendation-style-option {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+.recommendation-style-option[data-auto="true"] {
+  grid-column: 1 / -1;
+}
+.recommendation-style-option-face {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 3.75rem;
+  height: 100%;
+  padding: 0.9rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 1.125rem;
+  background: var(--surface-soft);
+  color: var(--foreground);
+  font-size: 0.875rem;
+}
+.recommendation-style-option-face > svg {
+  flex-shrink: 0;
+}
+.recommendation-style-option-face > span {
+  flex: 1;
+}
+.recommendation-style-option-face strong {
+  font-weight: 600;
+}
+.recommendation-style-option-face small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+}
+.recommendation-style-option input:checked + span {
+  background: var(--header-background);
+  color: var(--header-foreground);
+  border-color: var(--header-foreground);
+}
+.recommendation-style-check {
+  opacity: 0;
+}
+.recommendation-style-option input:checked + span .recommendation-style-check {
+  opacity: 1;
+}
+.upload-photo-hint {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding: 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1.25rem;
+  background: var(--surface-soft);
+  color: var(--text-secondary);
+}
+.upload-photo-hint > svg {
+  margin-top: 0.65rem;
+}
+.upload-photo-hint p {
+  padding-block: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+.upload-photo-hint button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.upload-hint-restore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin: 0.5rem auto 0;
+  padding-inline: 1rem;
+  border-radius: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .recommendation-occasion:hover .recommendation-occasion-face {
+    border-color: var(--system-blue);
+  }
+  .recommendation-style-trigger:not(:disabled):hover {
+    background: var(--surface-soft);
+  }
+  .recommendation-style-option:hover .recommendation-style-option-face {
+    outline: 1px solid var(--system-blue);
+  }
+  .recommendation-sheet-close:hover,
+  .upload-photo-hint button:hover,
+  .upload-hint-restore:hover {
+    background: var(--surface-raised);
+  }
+}
+.recommendation-style-trigger:not(:disabled):active,
+.recommendation-sheet-close:active,
+.upload-photo-hint button:active,
+.upload-hint-restore:active {
+  background: var(--surface-raised);
+}
+@media (prefers-reduced-motion: reduce) {
+  .recommendation-occasion-face,
+  .recommendation-style-trigger {
+    transition-duration: 0ms;
+  }
+}
+
+@media (max-width: 22rem) {
+  .recommendation-occasions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .recommendation-occasion-face {
+    min-height: 3.5rem;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .recommendation-style-sheet::backdrop {
+    background: #201829;
+  }
+}

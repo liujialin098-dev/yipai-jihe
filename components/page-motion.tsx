@@ -9,7 +9,7 @@ import {
 } from "@/lib/ui/navigation";
 
 const interactive =
-  "a,button,input,select,textarea,summary,[role='slider'],[role='dialog'],[contenteditable],[data-no-swipe],.sticker-free-canvas";
+  "a,button,input,select,textarea,label,form,summary,[role='button'],[role='radio'],[role='checkbox'],[role='slider'],[role='dialog'],[contenteditable],[data-no-swipe],.sticker-free-canvas";
 
 export function PageMotion({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -109,7 +109,6 @@ export function PageMotion({ children }: { children: ReactNode }) {
         y: event.clientY,
         pointerId: event.pointerId,
       };
-      node.setPointerCapture(event.pointerId);
     };
     const move = (event: PointerEvent) => {
       if (!start || event.pointerId !== start.pointerId) return;
@@ -123,12 +122,12 @@ export function PageMotion({ children }: { children: ReactNode }) {
         reset();
         return;
       }
-      if (
-        Math.abs(dx) > 15 &&
-        Math.abs(dx) > Math.abs(dy) * 1.8 &&
-        !matchMedia("(prefers-reduced-motion: reduce)").matches
-      ) {
-        node.style.transform = `translateX(${Math.max(-28, Math.min(28, dx * 0.12))}px)`;
+      if (Math.abs(dx) > 15 && Math.abs(dx) > Math.abs(dy) * 1.8) {
+        // Capture only an intentional horizontal drag, never a plain click.
+        if (!node.hasPointerCapture(event.pointerId))
+          node.setPointerCapture(event.pointerId);
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+          node.style.transform = `translateX(${Math.max(-28, Math.min(28, dx * 0.12))}px)`;
       }
     };
     const end = (event: PointerEvent) => {
