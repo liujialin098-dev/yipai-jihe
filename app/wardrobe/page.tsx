@@ -1,14 +1,11 @@
-import type { Metadata } from "next";
 import { Archive, ArrowRight, SearchX, Shirt } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeading } from "@/components/page-heading";
-import { DemoLoader } from "@/components/wardrobe/demo-loader";
 import { FilterPanel } from "@/components/wardrobe/filter-panel";
 import { WardrobeItemCard } from "@/components/wardrobe/item-card";
-import { getViewer } from "@/lib/auth/viewer";
-import { DEMO_WARDROBE } from "@/lib/wardrobe/catalog";
 import { CATEGORY_OPTIONS } from "@/lib/wardrobe/constants";
-import { getWardrobeComposition, getWardrobeItems } from "@/lib/wardrobe/data";
+import { getWardrobeItems } from "@/lib/wardrobe/data";
 import { parseWardrobeFilters } from "@/lib/wardrobe/validation";
 
 export const metadata: Metadata = { title: "衣橱" };
@@ -21,11 +18,7 @@ export default async function WardrobePage({
   searchParams,
 }: WardrobePageProps) {
   const filters = parseWardrobeFilters(await searchParams);
-  const [{ items, error }, viewer, composition] = await Promise.all([
-    getWardrobeItems(filters),
-    getViewer(),
-    getWardrobeComposition(),
-  ]);
+  const { items, error } = await getWardrobeItems(filters);
   const hasFilters = Boolean(
     filters.q ||
       filters.category ||
@@ -35,13 +28,6 @@ export default async function WardrobePage({
       filters.status === "archived",
   );
   const hasWardrobeContext = items.length > 0 || hasFilters;
-  const canLoadDemo =
-    !error &&
-    !composition.error &&
-    viewer?.isAnonymous === true &&
-    composition.realCount === 0 &&
-    composition.demoCount < DEMO_WARDROBE.length;
-  const isPartialDemo = canLoadDemo && composition.demoCount > 0;
   const showEmptyState = !error && items.length === 0 && !hasFilters;
 
   return (
@@ -55,36 +41,18 @@ export default async function WardrobePage({
           <span className="flex size-11 items-center justify-center rounded-full bg-[var(--system-blue-soft)] text-[var(--system-blue)]">
             <Shirt className="size-5" aria-hidden="true" />
           </span>
-          <h2 className="app-section-title mt-8">
-            {isPartialDemo ? "演示衣橱还没加载完整" : "衣橱还是空的"}
-          </h2>
+          <h2 className="app-section-title mt-8">衣橱还是空的</h2>
           <p className="mt-3 max-w-[20rem] text-sm leading-6 text-[var(--text-secondary)]">
-            {canLoadDemo
-              ? isPartialDemo
-                ? `已有 ${composition.demoCount} 件演示衣物，可继续加载缺失部分。`
-                : `可先加载 ${DEMO_WARDROBE.length} 件演示衣物体验完整流程，也可以直接添加自己的衣物。`
-              : "添加第一件自己的衣物后，就能开始整理衣橱和生成搭配。"}
+            添加第一件自己的衣物。
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            {canLoadDemo ? <DemoLoader compact={isPartialDemo} /> : null}
             <Link
               href="/wardrobe/new"
-              className={
-                canLoadDemo && !isPartialDemo
-                  ? "pressable inline-flex min-h-11 items-center rounded-full border border-[var(--hairline)] bg-[var(--surface-solid)] px-5 text-sm font-semibold text-[var(--foreground)]"
-                  : "pressable inline-flex min-h-11 items-center rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_12px_28px_rgba(29,29,31,0.2)]"
-              }
+              className="pressable inline-flex min-h-11 items-center rounded-full bg-[var(--control-primary)] px-5 text-sm font-semibold text-[var(--control-primary-foreground)] shadow-[0_12px_28px_rgba(29,29,31,0.2)]"
             >
               添加自己的衣物
             </Link>
           </div>
-        </section>
-      ) : isPartialDemo ? (
-        <section className="mt-5 flex items-start justify-between gap-4 border-t border-[var(--hairline)] pt-4">
-          <p className="max-w-[12rem] text-xs leading-5 text-[var(--text-tertiary)]">
-            演示衣橱尚未完整，可继续加载缺失的衣物。
-          </p>
-          <DemoLoader compact />
         </section>
       ) : null}
 

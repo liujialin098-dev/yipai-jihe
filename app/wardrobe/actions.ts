@@ -3,10 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { professionalSourcePath } from "@/lib/outfits/professional-cutout";
-import type { TablesInsert } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
-import { DEMO_WARDROBE } from "@/lib/wardrobe/catalog";
-import { createDemoPng } from "@/lib/wardrobe/demo-image";
 import {
   type ActionState,
   isUuid,
@@ -38,156 +35,8 @@ export async function loadDemoWardrobe(
   _previousState: ActionState,
   _formData: FormData,
 ): Promise<ActionState> {
-  const context = await getActionContext();
-  if (!context) {
-    return {
-      status: "error",
-      message: "匿名会话还没有准备好，请稍后重试。",
-    };
-  }
-
-  const { supabase, userId } = context;
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  const user = userData.user;
-
-  if (userError || !user || user.id !== userId) {
-    return {
-      status: "error",
-      message: "体验身份暂时无法确认，请刷新后重试。",
-    };
-  }
-
-  if (user.is_anonymous !== true) {
-    return {
-      status: "error",
-      message: "演示衣橱仅供体验身份使用，请直接添加自己的衣物。",
-    };
-  }
-
-  const { count: realItemCount, error: realItemError } = await supabase
-    .from("wardrobe_items")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .is("demo_key", null);
-
-  if (realItemError) {
-    return { status: "error", message: "无法确认当前衣橱，请稍后重试。" };
-  }
-
-  if ((realItemCount ?? 0) > 0) {
-    return {
-      status: "error",
-      message: "衣橱已有自己的衣物，不再加载演示衣橱。",
-    };
-  }
-
-  const { data: existingItems, error: existingError } = await supabase
-    .from("wardrobe_items")
-    .select("demo_key")
-    .eq("user_id", userId)
-    .not("demo_key", "is", null);
-
-  if (existingError) {
-    return { status: "error", message: "无法检查演示衣橱，请稍后重试。" };
-  }
-
-  const existingKeys = new Set(
-    (existingItems ?? []).flatMap((item) =>
-      item.demo_key ? [item.demo_key] : [],
-    ),
-  );
-  const missingItems = DEMO_WARDROBE.filter(
-    (item) => !existingKeys.has(item.demoKey),
-  );
-
-  if (missingItems.length === 0) {
-    return {
-      status: "success",
-      message: `${DEMO_WARDROBE.length} 件演示衣物已经齐全，没有产生重复数据。`,
-    };
-  }
-
-  const uploadResults = await Promise.allSettled(
-    missingItems.map(async (item) => {
-      const imagePath = `${userId}/demo/${item.demoKey}.png`;
-      const { error } = await supabase.storage
-        .from("wardrobe-images")
-        .upload(imagePath, createDemoPng(item), {
-          cacheControl: "3600",
-          contentType: "image/png",
-          upsert: true,
-        });
-
-      if (error) throw new Error("upload_failed");
-      return { item, imagePath };
-    }),
-  );
-
-  const uploaded = uploadResults.flatMap((result) =>
-    result.status === "fulfilled" ? [result.value] : [],
-  );
-
-  if (uploaded.length > 0) {
-    const rows: TablesInsert<"wardrobe_items">[] = uploaded.map(
-      ({ imagePath, item }) => ({
-        user_id: userId,
-        audience: item.audience,
-        demo_key: item.demoKey,
-        name: item.name,
-        category: item.category,
-        primary_color: item.primaryColor,
-        material: item.material,
-        style: item.style,
-        seasons: item.seasons,
-        occasions: item.occasions,
-        image_path: imagePath,
-      }),
-    );
-
-    const { error: insertError } = await supabase
-      .from("wardrobe_items")
-      .upsert(rows, {
-        onConflict: "user_id,demo_key",
-        ignoreDuplicates: true,
-      });
-
-    if (insertError) {
-      return {
-        status: "error",
-        message: "图片已经准备好，但衣物记录未能写入，请重试补齐。",
-      };
-    }
-  }
-
-  const { count } = await supabase
-    .from("wardrobe_items")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .in(
-      "demo_key",
-      DEMO_WARDROBE.map((item) => item.demoKey),
-    );
-
-  if ((count ?? 0) > 0) {
-    await supabase
-      .from("profiles")
-      .update({ onboarding_state: "ready" })
-      .eq("user_id", userId);
-  }
-
-  revalidateWardrobe();
-
-  if ((count ?? 0) === DEMO_WARDROBE.length) {
-    return {
-      status: "success",
-      message: `演示衣橱已就绪，本次补齐 ${uploaded.length} 件。`,
-    };
-  }
-
-  return {
-    status: "error",
-    message: `目前已有 ${count ?? 0} 件，部分图片未完成，请再次加载补齐。`,
-  };
+  // Keep old callers harmless: demo import is retired for every identity.
+  return { status: "error", message: "演示衣橱已停用，请添加自己的衣物。" };
 }
 
 export async function updateWardrobeItem(

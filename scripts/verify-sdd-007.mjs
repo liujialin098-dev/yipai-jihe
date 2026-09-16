@@ -125,20 +125,16 @@ check(
   "仍存在过时或面向开发者的演示数据文案",
 );
 check(
-  wardrobePage.includes("viewer?.isAnonymous === true") &&
-    wardrobePage.includes("composition.realCount === 0") &&
-    wardrobePage.includes("composition.demoCount < DEMO_WARDROBE.length"),
-  "衣橱页未按体验身份、真实衣物和演示完整度限制入口",
+  !wardrobePage.includes("DemoLoader") &&
+    !wardrobePage.includes("演示") &&
+    wardrobePage.includes('href="/wardrobe/new"'),
+  "新用户应从空衣橱添加自己的衣物，不再展示演示入口",
 );
 check(
-  wardrobeActions.includes("supabase.auth.getUser()") &&
-    wardrobeActions.includes("user.is_anonymous !== true") &&
-    wardrobeActions.includes('.is("demo_key", null)'),
-  "演示衣橱 Action 缺少服务端身份或真实衣物防绕过检查",
-);
-check(
-  demoLoader.includes("继续加载演示衣橱"),
-  "演示衣橱缺少部分失败后的继续加载入口",
+  wardrobeActions.includes("演示衣橱已停用") &&
+    !wardrobeActions.includes("DEMO_WARDROBE") &&
+    !wardrobeActions.includes("createDemoPng"),
+  "旧演示导入操作必须停用；动态零写入检查见 verify-empty-wardrobe.mjs",
 );
 check(
   layout.includes("/brand/ensemble-icon-a-folded-e.png") &&
